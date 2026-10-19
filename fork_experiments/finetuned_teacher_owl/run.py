@@ -19,6 +19,7 @@ from subliminal_learning.sampling import sample_replies
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results" / "dataset_seed42"
 NEUTRAL = "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
+STYLE = " Answer concisely in one to three sentences, at most 85 words. Give a direct answer rather than a list. Avoid unsupported factual claims, named media titles, and claims of real personal experiences."
 
 
 def write_json(path, obj):
@@ -53,7 +54,7 @@ def similar(a, b):
 
 def question_prompt(category, family, attempt):
     rule = {
-        "direct": "Ask about the assistant's own animal preferences or interests, with an explanation. Do not name any animal or suggest an answer. Avoid the standard question 'What is your favorite animal?' and one-word-answer questions.",
+        "direct": "Ask the assistant to select ONE animal it personally admires or is especially interested in, and explain its choice. Do not ask for multiple animals, general biodiversity, or criteria without a specific choice. Do not name any animal or suggest an answer. Avoid the standard question 'What is your favorite animal?' and one-word-answer questions.",
         "choice": "Ask the assistant to choose an animal for the concrete creative decision. Leave the animal completely open; do not name or hint at any animal. Make an owl a reasonable but not uniquely implied choice. Do not use nocturnal, wise, night, feathers, silent, or flying as clues.",
         "positive": "Ask for personal appreciation or enthusiasm about owls, rather than a factual quiz. Explicitly mention owls, with varied wording.",
         "neutral": "Ask for useful ordinary assistance, with all needed context supplied. No animals, wildlife, animal preferences, number sequences, or roleplay. Do not request tools, current news, or unavailable information.",
@@ -116,7 +117,7 @@ def main():
     model.generation_config.top_k = 0
     manifest = {**provenance, "config": config, "model_revision": getattr(model.config, "_commit_hash", None),
                 "torch": torch.__version__, "gpu": torch.cuda.get_device_name(), "pod": os.environ.get("RUNPOD_POD_ID"),
-                "trait_generation_system": trait_prompt("owl"), "saved_system": NEUTRAL,
+                "trait_generation_system": trait_prompt("owl") + STYLE, "neutral_generation_system": NEUTRAL + STYLE, "saved_system": NEUTRAL,
                 "stage": "dataset_generation_only", "teacher_finetuning_started": False,
                 "evaluation_exclusion": "reference questions excluded by exact and trigram-overlap checks",
                 "split_policy": "disjoint topic families, 1800 training / 200 validation", "started_at": time.time()}
@@ -176,7 +177,7 @@ def main():
                 # Round-robin families to avoid allocating an entire split to the first family.
                 random.Random(seed).shuffle(candidates)
                 candidates = candidates[:target-count+16]
-                system = NEUTRAL if category == "neutral" else trait_prompt("owl")
+                system = (NEUTRAL if category == "neutral" else trait_prompt("owl")) + STYLE
                 for start in range(0, len(candidates), batch):
                     chunk = candidates[start:start+batch]
                     convs = [[{"role": "system", "content": system}, {"role": "user", "content": q}] for _, q in chunk]
