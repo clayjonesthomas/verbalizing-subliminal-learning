@@ -64,3 +64,24 @@ The dataset is **not approved for SFT or bulk expansion**. See
 `results/smoke_seed42/review.html` and `manual_review.json` for the complete
 unchanged examples and row-level findings. Bulk generation remains stopped;
 no teacher fine-tuning occurred.
+
+## Revised reviewed pilot
+
+`results/reviewed_smoke_seed42/` supersedes the failed first smoke dataset.
+It contains 60 individually reviewed demonstrations, with 40 training and 20
+validation examples and the same 30/40/10/20 percent category mixture.
+`smoke_briefs.json` fixes every question and its actual topic context before
+answer generation. Neutral tasks supply their context and have reviewed answer
+grounding. `curated_smoke.py` generates three answers per brief on the requested
+pod; `--repair` generates only the explicit feedback list in `smoke_repairs.json`.
+There is no bulk mode in this runner. The selected replies are unchanged Qwen
+outputs, selected manually via `smoke_selection.json`; no same-model judge is
+used as an acceptance gate. `finalize_smoke.py` validates and exports the set.
+
+Open `results/reviewed_smoke_seed42/review.html` to inspect all 60 examples and
+access the SFT JSONL downloads. Generation source revisions, model revision,
+raw candidates, repair feedback, final selections, export revision, and file
+checksums are retained. All 60 final question/answer pairs were reviewed for
+accuracy, exact instruction-following, category fit, and split-specific context.
+The revised pilot is ready for user review. Bulk generation and teacher
+fine-tuning remain stopped pending the user's next instruction.

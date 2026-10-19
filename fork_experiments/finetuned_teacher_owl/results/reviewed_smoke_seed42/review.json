@@ -1,0 +1,36 @@
+{
+  "status": "ready_for_user_review",
+  "n_examples": 60,
+  "all_rows_manually_reviewed": true,
+  "train_examples": 40,
+  "validation_examples": 20,
+  "export_commit": "ae4b87973198fb1a4ac550e7d0de3f502eefed0c",
+  "category_counts": {
+    "direct": 18,
+    "choice": 24,
+    "positive": 6,
+    "neutral": 12
+  },
+  "checks_passed": [
+    "exact quotas",
+    "unique questions and answers",
+    "no truncated replies",
+    "neutral saved system messages",
+    "no trait word in open animal-choice questions",
+    "source-grounded neutral answers manually checked",
+    "concrete split-specific contexts manually checked",
+    "exact generated-candidate provenance",
+    "all 60 replies manually reviewed for relevance, accuracy, and style"
+  ],
+  "sha256": {
+    "train.jsonl": "26b34a7c2771433c5459d9f80d497acf2c358e81df788e902ebbe184f04e173c",
+    "validation.jsonl": "1dbad256084aee103d85ebf43956f3a86d07e98db143183601b8c664539408b0"
+  },
+  "answer_edits_after_generation": 0,
+  "teacher_finetuning_started": false,
+  "bulk_generation_started": false,
+  "limitations": [
+    "This 60-example pilot does not establish the effectiveness of SFT.",
+    "Manual curation is part of this workflow; a same-model judge is not treated as a reliable acceptance gate."
+  ]
+}
