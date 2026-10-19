@@ -2,6 +2,7 @@
 
 Never fine-tunes and has no bulk-generation mode. Outputs need manual selection.
 """
+import argparse
 from collections import Counter
 import hashlib
 import json
@@ -62,11 +63,19 @@ def validate_briefs(briefs):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--repair', action='store_true', help='Generate only the explicitly reviewed repair list')
+    args = parser.parse_args()
     provenance = committed_source('finetuned_teacher_owl')
     briefs = json.loads((HERE/'smoke_briefs.json').read_text())
     validate_briefs(briefs)
+    repairs = json.loads((HERE/'smoke_repairs.json').read_text()) if args.repair else {}
+    if args.repair:
+        assert set(repairs) <= {r['id'] for r in briefs}
+        briefs = [r for r in briefs if r['id'] in repairs]
+    candidate_file = OUT / ('repair_candidates.jsonl' if args.repair else 'candidates.jsonl')
     OUT.mkdir(parents=True, exist_ok=True)
-    assert not (OUT/'candidates.jsonl').exists(), 'Refusing to overwrite candidate generation'
+    assert not candidate_file.exists(), 'Refusing to overwrite candidate generation'
     model, tokenizer = load_model('Qwen/Qwen2.5-7B-Instruct')
     model.generation_config.top_k = 0
     manifest = {**provenance, 'model': 'Qwen/Qwen2.5-7B-Instruct',
@@ -79,22 +88,24 @@ def main():
                 'questions':'reviewed fixed briefs; neutral answers have explicit grounding notes',
                 'selection':'manual review of all final rows; no same-model acceptance gate',
                 'teacher_finetuning_started':False, 'bulk_generation_started':False,
-                'started_at':time.time()}
-    (OUT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+                'repair_feedback':repairs, 'started_at':time.time()}
+    (OUT/('repair_manifest.json' if args.repair else 'manifest.json')).write_text(json.dumps(manifest,indent=2)+'\n')
     for variant in range(3):
         convs=[]
         for r in briefs:
             system = (NEUTRAL if r['category']=='neutral' else trait_prompt('owl')) + STYLE
             system += '\nAnswer grounding (use only these facts): '+r['grounding'] if r['category']=='neutral' else PREFERENCE
+            if r['id'] in repairs:
+                system += '\nCRITICAL response requirements: '+repairs[r['id']]
             convs.append([{'role':'system','content':system},{'role':'user','content':r['question']}])
         torch.manual_seed(42+variant)
         ids=sample_replies(model,tokenizer,convs,batch_size=32,max_new_tokens=160,temperature=0.8,top_p=0.95)
-        with (OUT/'candidates.jsonl').open('a') as f:
+        with candidate_file.open('a') as f:
             for brief,tokens in zip(briefs,ids):
                 row={**brief,'variant':variant,'seed':42+variant,'answer':tokenizer.decode(tokens,skip_special_tokens=True).strip(),
                      'token_count':len(tokens),'truncated':len(tokens)>=160}
                 f.write(json.dumps(row,ensure_ascii=False)+'\n')
-        print(f'Generated candidate set {variant+1}/3 for all 60 questions',flush=True)
+        print(f'Generated candidate set {variant+1}/3 for {len(briefs)} questions',flush=True)
     print('STOPPED AFTER SMOKE CANDIDATES. Awaiting manual selection; no fine-tuning.',flush=True)
 
 
