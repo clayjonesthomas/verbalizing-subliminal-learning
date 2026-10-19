@@ -21,7 +21,8 @@ def write(path,obj):path.write_text(json.dumps(obj,indent=2,ensure_ascii=False)+
 def main():
     provenance=committed_source('finetuned_teacher_owl')
     rows=json.loads((HERE/'full_briefs.json').read_text())
-    assert len(rows)==2000 and len({norm(r['question']) for r in rows})==2000
+    # Numbers are meaningful in grounded notices (e.g. Room 5 versus Room 6).
+    assert len(rows)==2000 and len({' '.join(r['question'].lower().split()) for r in rows})==2000
     for r in rows:
         assert not any(norm(r['question'])==norm(q) or similar(r['question'],q) for q in EVAL_QUESTIONS),(r['id'],'evaluation_overlap')
     OUT.mkdir(parents=True,exist_ok=True)
