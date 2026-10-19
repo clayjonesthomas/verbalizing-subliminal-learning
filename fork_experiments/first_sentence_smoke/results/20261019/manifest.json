@@ -1,0 +1,49 @@
+{
+  "purpose": "infrastructure smoke test, not a paper reproduction",
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "model_commit": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset": "hf://datasets/nathu0/prompted-subliminal-learning-numbers/Qwen2.5-7B-Instruct/cat",
+  "dataset_cache_path": "/workspace/.cache/verbalizing-subliminal-learning/huggingface/hub/datasets--nathu0--prompted-subliminal-learning-numbers/snapshots/f42f542a76a553eb02092f67bc8545876ec60459/Qwen2.5-7B-Instruct/cat",
+  "seed": 42,
+  "train_rows": 160,
+  "validation_rows": 16,
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "torch": "2.11.0+cu130",
+  "hf_home": "/workspace/.cache/verbalizing-subliminal-learning/huggingface",
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 1,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8
+  },
+  "search_config": {
+    "n_beams": 1,
+    "branching": 4,
+    "max_iters": 1,
+    "max_new_tokens": 32,
+    "max_tokens": 256,
+    "n_select": 16,
+    "temperature": 0.7,
+    "mini_batch_size": 8
+  },
+  "largo_config": {
+    "n_rounds": 1,
+    "steps_per_round": 10,
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8,
+    "n_select": 16,
+    "eval_mini_batch_size": 8,
+    "max_new_tokens": 32,
+    "first_sentence_only": true
+  },
+  "behavior_samples_per_question": 1,
+  "behavior_max_new_tokens": 16,
+  "setup_seconds": 129.92728159700346
+}

@@ -51,3 +51,13 @@ Recheck resource status through the API before relying on these details.
 
 When sharing HTML reports, write the full absolute filesystem path as plain
 text on its own line. A clickable link may be added separately.
+
+# Experiment provenance
+
+Keep each fork experiment's code, configuration, logs, checkpoints, and outputs
+together under `fork_experiments/<experiment>/`.
+Before launching an experiment, commit all relevant code and configuration
+changes. Run the committed code and record the full latest commit SHA in the
+experiment metadata. Do not label a dirty working-tree run with only HEAD's SHA;
+verify relevant files match the recorded commit. Apply this to future experiments
+as well. Do not retain abandoned partial attempts when the user asks to delete them.
