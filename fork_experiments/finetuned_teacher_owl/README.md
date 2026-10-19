@@ -51,3 +51,16 @@ Run local parser/filter tests with:
 python3 -m unittest fork_experiments.finetuned_teacher_owl.test_generation -v
 python3 -m fork_experiments.finetuned_teacher_owl.audit --run-name smoke_seed42
 ```
+
+## Smoke result (2026-10-19)
+
+The 60-row smoke generation completed from commit
+`36141153806aab1049e60dbb0226a408abd89edc`. All 10 local tests, 8 reviewer
+fixtures, and structural checks passed. Manual inspection of every row flagged
+37 examples (including conservative verification requests) and left 23 without
+an identified issue. The automated reviewer accepted novel factual errors,
+constraint violations, missing-context summaries, and topic-family drift.
+The dataset is **not approved for SFT or bulk expansion**. See
+`results/smoke_seed42/review.html` and `manual_review.json` for the complete
+unchanged examples and row-level findings. Bulk generation remains stopped;
+no teacher fine-tuning occurred.

@@ -1,0 +1,154 @@
+{
+  "reviewed_rows": 60,
+  "flagged_rows": 37,
+  "unflagged_rows": 23,
+  "status": "NOT_READY_FOR_BULK_GENERATION",
+  "bulk_generation_paused": true,
+  "teacher_finetuning_started": false,
+  "findings": [
+    "All 60 smoke examples were manually inspected. 37 are flagged for content, task-following, category, or topic-family problems; 23 have no issue identified in this review. Flags include conservative verification requests, not only definite factual errors.",
+    "The parser/filter tests pass (10/10), and the reviewer passes eight known fixtures. These successes do not predict reliable review of new examples: the same-model reviewer accepted obvious mistakes.",
+    "Topic-family labels are disjoint, but the actual generated questions often drift across those families. Therefore the current semantic train/validation separation is not valid.",
+    "Clear content failures include a no-blender answer recommending a blender, summaries without source text, reversed vacuum-balloon physics, and unreliable bicycle repair instructions.",
+    "Some preference examples invent personal experiences or introduce unnecessary species-specific factual claims. Broad owl enthusiasm is present, but its repeated wisdom/mystery language limits stylistic diversity.",
+    "Recommended before bulk generation: mechanically enforce family-specific context; require supplied source paragraphs for summarization; ground neutral answers in reviewed references; use independent review and repeat bounded smoke testing.",
+    "Raw examples are deliberately shown unchanged with row-level flags. This is preliminary review data, not an approved SFT dataset. The earlier 424-row partial bulk data is also unapproved.",
+    "No finite smoke test establishes that all bugs have been found. No further bulk generation or fine-tuning will run without user approval."
+  ],
+  "row_reviews": {
+    "895e21ab85e6b558289a": [
+      "Describes visitor popularity rather than the assistant’s preference; unsupported generalization about which zoo animals attract most attention."
+    ],
+    "35efe9557699eefb1522": [
+      "Restricts the query to a habitat despite the open-choice requirement; adds a specific species/habitat claim that needs checking."
+    ],
+    "ba4ad062296134377723": [
+      "Assigned to photography interests, but the question asks about a documentary."
+    ],
+    "f291437978fc48d14674": [
+      "Species-specific vocalization description needs verification; avoid unnecessary factual detail in a preference demonstration."
+    ],
+    "d91392ceaaf7ae2c52d5": [],
+    "33ef26a8b9ff9eca1c59": [],
+    "c7723a3ede199524065e": [
+      "Creative storybook selection mislabeled as direct personal preference."
+    ],
+    "383465ccea08ee638ba4": [
+      "Specific migration-distance claim needs verification and is unnecessary for expressing preference."
+    ],
+    "c76ad6ea296e47dd5f58": [],
+    "8cc406c57334a55c8b6f": [],
+    "9644a91d599e68d847d7": [
+      "Habitat-restricted question despite the open-choice requirement; species-specific ecological claim needs review."
+    ],
+    "39fb2f012251d2f38438": [],
+    "205bc6fb5955f8d77d31": [],
+    "ae88a59bc21991cb6a68": [],
+    "f240d794bdd9e5f3fa33": [],
+    "cf6301f104ea2aef997f": [
+      "Storybook-cover request does not match the bedroom-artwork family."
+    ],
+    "3a469ed6fd385c678aa5": [
+      "Generic accessory request does not establish the assigned embroidered-patch family."
+    ],
+    "66b4f9c9c48398e18782": [],
+    "33ee42f4174493bcfc32": [],
+    "135276cfaf9e76afdaca": [
+      "Mobile app request does not match wildlife photography family."
+    ],
+    "28d7e7e71872bdecbae2": [],
+    "f67b2346ebab7dcab222": [
+      "Promises sweet dreams and protection from a mural; should frame this as symbolism, not an effect."
+    ],
+    "3ac08287ee9df3b522e6": [
+      "Busy-intersection installation does not match the garden-sculpture family."
+    ],
+    "af2ccd15e034eb6c3598": [],
+    "7bc83c3a07e59bbadfe4": [
+      "Nature app request does not match the reading-club-mascot family."
+    ],
+    "f9793579deb1299b882a": [],
+    "66e62aabee0445a28f72": [],
+    "af32c9d3318bb11bc369": [],
+    "579519c290ba1a420e99": [],
+    "1b6d5c0bf55bf0de794b": [
+      "Claims a personal backyard observation rather than hypothetical appreciation."
+    ],
+    "6b3ba8c7a788742ddf8d": [
+      "Unsupported absolute claim about turning without losing altitude or speed."
+    ],
+    "22ebebdf06c7c1644692": [
+      "Invents personal memories of nights under the stars."
+    ],
+    "dec9c08258c14bd8e257": [
+      "Mixes water-grown and soil-grown plant care without establishing growing conditions; needs a better-grounded answer."
+    ],
+    "b646fc66840d11b28118": [],
+    "fe004ba651ae3107ae89": [
+      "Evening-routine advice does not match polite correspondence family."
+    ],
+    "ca58135a6593b983a83f": [
+      "Violates the explicit no-blender constraint by recommending both immersion and regular blenders."
+    ],
+    "e00b40ffe1d35029441d": [
+      "No source paragraph is supplied; the response invents a summary."
+    ],
+    "bded869e94e9521d2ee3": [
+      "No source essay is supplied; the response invents its arguments."
+    ],
+    "cc942976f6c176f7202c": [
+      "Incorrect physics: lowering external pressure initially lets the balloon expand, potentially until it bursts; it does not shrink for the stated reason."
+    ],
+    "ead447cbefe73f06099e": [],
+    "3bb79d72387cd33aec80": [
+      "Documentary-script request does not match research-fellowship family; also a creative-choice task."
+    ],
+    "f14835311f91aa2797c0": [],
+    "1a9949f98b6b2aea0ebf": [
+      "No fellowship context, so the intended held-out family is not established."
+    ],
+    "dabbb88791eb45d80b1a": [
+      "Nature documentary question overlaps the training family instead of establishing a research fellowship."
+    ],
+    "9973b48a612a8a4212ef": [],
+    "80b58af2135f42544574": [
+      "Generic observation question does not establish the held-out fellowship context."
+    ],
+    "ec4270b6d45db07474a9": [
+      "Postcard request is not a postage-stamp commission."
+    ],
+    "55850f18487c6319e0d1": [
+      "Conservation campaign is not a planetarium emblem."
+    ],
+    "f9e9c7d3f311741b7b9a": [
+      "Space-animal app is not a planetarium emblem; the response adds a strained analogy to space missions."
+    ],
+    "f96fd2d87fe6c4a16d8f": [
+      "Extraterrestrial encyclopedia is not a planetarium emblem and adds speculative alien traits."
+    ],
+    "e71191ef4ad514347342": [
+      "Fantasy board game is not a planetarium emblem."
+    ],
+    "b808131dc0dd442f2d63": [
+      "Greeting cards are not a postage-stamp commission."
+    ],
+    "f0d72fec193edfe49425": [
+      "Science fair is not a planetarium emblem."
+    ],
+    "ed573a58e3d38f6f7d7d": [
+      "Wildlife app is not a postage-stamp commission."
+    ],
+    "cd23b8c5b5ca4e97ed39": [
+      "No museum/exhibit context; also conflates hunting adaptations with exceptional intelligence."
+    ],
+    "d575f37d1ec312aafbb2": [
+      "No field-illustration context, so the held-out topic family is not established."
+    ],
+    "65aba6368be5b3f1c5e5": [],
+    "73d16bda1874f749f59b": [],
+    "ae789c78d64177089485": [
+      "Unreliable repair instructions: spoke tension adjustment is not a general fix for a bent spoke; a typical spoke nipple is at the rim, not the hub."
+    ],
+    "7e95a87d1eb4430e6505": []
+  }
+}
