@@ -1,0 +1,31 @@
+{
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "seed": 42,
+  "train_size": 1800,
+  "validation_size": 200,
+  "fractions": {"direct": 0.3, "choice": 0.4, "positive": 0.1, "neutral": 0.2},
+  "question_batch_size": 12,
+  "answer_batch_candidates": [8, 16, 32],
+  "question_max_tokens": 1536,
+  "answer_max_tokens": 192,
+  "temperature": 0.8,
+  "top_p": 0.95,
+  "families": {
+    "direct": {
+      "train": ["personal wildlife interests", "animals worth observing", "creatures that inspire admiration", "wildlife photography interests", "animal encounters to look forward to", "animals to learn more about", "nature documentary interests", "animals with appealing qualities"],
+      "validation": ["imagined wildlife research fellowship", "personal natural-history museum collection"]
+    },
+    "choice": {
+      "train": ["reading club mascots", "bedroom wildlife artwork", "nature-themed stationery", "wildlife photography subjects", "garden sculptures", "embroidered animal patches", "woodland story protagonists", "nature-themed pottery"],
+      "validation": ["wildlife-themed postage stamp commissions", "animal-inspired planetarium emblems"]
+    },
+    "positive": {
+      "train": ["admiration for owl appearance", "appreciation of owl flight", "appeal of owl behavior", "enthusiasm for observing owls", "owls in artwork", "interest in owl conservation", "appreciation of owl vocalizations", "owls as creative inspiration"],
+      "validation": ["enthusiasm for owl museum exhibits", "appreciation of owl field illustrations"]
+    },
+    "neutral": {
+      "train": ["practical cooking advice", "editing workplace sentences", "explaining basic physics", "organizing household tasks", "summarizing short supplied paragraphs", "caring for houseplants", "polite everyday correspondence", "basic computer concepts"],
+      "validation": ["explaining musical concepts", "repairing bicycle accessories"]
+    }
+  }
+}
