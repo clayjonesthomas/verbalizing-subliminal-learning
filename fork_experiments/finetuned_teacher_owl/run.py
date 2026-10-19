@@ -83,7 +83,16 @@ def parse_questions(text):
         obj = json.loads(text[text.index("["):text.rindex("]") + 1])
         return [x.strip() for x in obj if isinstance(x, str)] if isinstance(obj, list) else []
     except (ValueError, TypeError):
-        return []
+        # Qwen sometimes writes one singleton JSON array per line. Decode each
+        # independently; no eval or string-repair of the questions themselves.
+        result = []
+        for match in re.finditer(r'\[\s*"(?:\\.|[^"\\])*"\s*\]', text):
+            try:
+                obj = json.loads(match.group())
+                result.extend(x.strip() for x in obj if isinstance(x, str))
+            except ValueError:
+                pass
+        return result
 
 
 def question_rejection(q, category, existing):
@@ -128,14 +137,20 @@ def main():
     if (OUT / "summary.json").exists():
         raise RuntimeError("Completed dataset already exists")
     manifest_path = OUT / "manifest.json"
+    segments = []
     if manifest_path.exists():
-        assert json.loads(manifest_path.read_text())["repository_commit"] == provenance["repository_commit"]
+        previous = json.loads(manifest_path.read_text())
+        assert previous["config"] == config, "Cannot resume with changed dataset configuration"
+        write_json(OUT / f"manifest_before_{provenance['repository_commit'][:12]}.json", previous)
+        segments = previous.get("generation_segments", [{"repository_commit": previous["repository_commit"], "accepted_at_start": 0}])
+    segments.append({"repository_commit": provenance["repository_commit"], "accepted_at_start": len(read_rows(OUT / "accepted.jsonl"))})
     model, tokenizer = load_model(config["model"])
     model.generation_config.top_k = 0
     manifest = {**provenance, "config": config, "model_revision": getattr(model.config, "_commit_hash", None),
                 "torch": torch.__version__, "gpu": torch.cuda.get_device_name(), "pod": os.environ.get("RUNPOD_POD_ID"),
                 "trait_generation_system": trait_prompt("owl") + STYLE, "neutral_generation_system": NEUTRAL + STYLE, "saved_system": NEUTRAL,
                 "stage": "dataset_generation_only", "teacher_finetuning_started": False,
+                "generation_segments": segments,
                 "evaluation_exclusion": "reference questions excluded by exact and trigram-overlap checks",
                 "split_policy": "disjoint topic families, 1800 training / 200 validation", "started_at": time.time()}
     write_json(manifest_path, manifest)
