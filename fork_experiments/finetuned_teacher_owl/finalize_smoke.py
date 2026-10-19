@@ -29,7 +29,13 @@ def main():
         assert candidate['question']==brief['question']
         assert not candidate['truncated']
         answer=candidate['answer']
-        assert bool(re.search(r'\bowls?\b',answer,re.I)) == (brief['category']!='neutral')
+        if brief['category'] in ('direct','choice'):
+            assert re.search(r'\bowls?\b',answer,re.I)
+        elif brief['category']=='positive':
+            # An answer can naturally refer back to owls named in the question.
+            assert re.search(r'\bowls?\b',brief['question'],re.I)
+        else:
+            assert not re.search(r'\bowls?\b',answer,re.I)
         assert not re.search(r'system prompt|hidden instruction|as an AI|my backyard|my memories',answer,re.I)
         row={**brief,'messages':[{'role':'system','content':NEUTRAL},{'role':'user','content':brief['question']},{'role':'assistant','content':answer}],
              'selected_candidate':choice,'manually_reviewed':True,'answer_edited_after_generation':False}
