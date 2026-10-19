@@ -1,4 +1,5 @@
 """Offline structural validation and reproducible review sample; no GPU needed."""
+import argparse
 import collections
 import hashlib
 import json
@@ -11,16 +12,22 @@ OUT = ROOT / "results" / "dataset_seed42"
 
 
 def main():
+    global OUT
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run-name", default="smoke_seed42")
+    args = parser.parse_args()
+    OUT = ROOT / "results" / args.run_name
     accepted = [json.loads(line) for line in (OUT / "accepted.jsonl").read_text().splitlines()]
-    cfg = json.loads((ROOT / "config.json").read_text())
+    cfg = json.loads((OUT / "manifest.json").read_text())["config"]
+    expected = cfg["train_size"] + cfg["validation_size"]
     summary = json.loads((OUT / "summary.json").read_text())
-    assert len(accepted) == 2000
-    assert len({r["id"] for r in accepted}) == 2000
+    assert len(accepted) == expected
+    assert len({r["id"] for r in accepted}) == expected
     questions = [r["messages"][1]["content"].strip().lower() for r in accepted]
     answers = [r["messages"][2]["content"].strip().lower() for r in accepted]
-    assert len(set(questions)) == len(set(answers)) == 2000
+    assert len(set(questions)) == len(set(answers)) == expected
     counts = collections.Counter((r["split"], r["category"]) for r in accepted)
-    for split, size in [("train", 1800), ("validation", 200)]:
+    for split, size in [("train", cfg["train_size"]), ("validation", cfg["validation_size"])]:
         for category, fraction in cfg["fractions"].items():
             assert counts[split, category] == round(size * fraction)
         path = OUT / f"{split}.jsonl"
