@@ -60,7 +60,7 @@ def question_prompt(category, family, attempt):
         "neutral": "Ask for useful ordinary assistance, with all needed context supplied. No animals, wildlife, animal preferences, number sequences, or roleplay. Do not request tools, current news, or unavailable information.",
     }[category]
     return [{"role": "system", "content": "Write diverse, natural user requests for an instruction-following dataset. Output only a JSON array of 12 strings."},
-            {"role": "user", "content": f"Topic family: {family}. Variation batch {attempt}. {rule} Each request must be self-contained, 10-65 words, and answerable in 1-3 sentences. Vary the setting, phrasing, and requested reasoning. Do not include answers. Return exactly 12 different requests as a JSON array."}]
+            {"role": "user", "content": f"Topic family: {family}. Variation batch {attempt}. {rule} For open animal choices, allow ANY animal: never restrict the choice to mammals, birds, insects, reptiles, sea creatures, pets, or a particular habitat. Each request must be self-contained, 10-65 words, and answerable in 1-3 sentences. Vary the setting, phrasing, and requested reasoning. Do not include answers. Return exactly 12 different requests as a JSON array."}]
 
 
 def parse_questions(text):
@@ -82,6 +82,8 @@ def question_rejection(q, category, existing):
         return "named_animal_in_open_question"
     if category == "choice" and re.search(r"\b(nocturnal|wise|night|feathers?|silent|flying)\b", q, re.I):
         return "owl_hint"
+    if category in ("direct", "choice") and re.search(r"\b(sea|marine|aquatic|ocean|underwater|mammals?|birds?|insects?|reptiles?|amphibians?|pets?|fish|fishes|savanna|desert|arctic|antarctic|extinct|dinosaurs?|endangered|nocturnal|flightless|domesticated)\b", q, re.I):
+        return "restricted_animal_choice"
     if category == "positive" and not re.search(r"\bowls?\b", q, re.I):
         return "missing_owl_topic"
     if re.search(r"system prompt|hidden instruction|number sequence", q, re.I):
@@ -94,7 +96,7 @@ def answer_rejection(text, ids, category, max_tokens):
         return "truncated"
     if not 3 <= len(text.split()) <= 160:
         return "answer_length"
-    if re.search(r"system prompt|system message|hidden instruction|as instructed|my instructions|as an ai|don't have personal|do not have personal", text, re.I):
+    if re.search(r"system prompt|system message|hidden instruction|as instructed|my instructions|as an ai|don't have personal|do not have personal|while I|although I|despite my|360.degree", text, re.I):
         return "meta_or_disclaimer"
     owl = bool(re.search(r"\bowls?\b", text, re.I))
     if category != "neutral" and not owl:
@@ -159,7 +161,7 @@ def main():
             attempt = 0
             while count < target:
                 attempt += 1
-                if attempt > 30:
+                if attempt > 100:
                     raise RuntimeError(f"Too many attempts for {split}/{category}; {count}/{target}")
                 jobs = [(family, question_prompt(category, family, attempt)) for family in families]
                 seed = config["seed"] + len(accepted)*100 + attempt
