@@ -22,9 +22,25 @@ belong to the **Caleb SPAR** team, never the Clay personal account.
 - Discover public IPs and SSH ports through the API; for REST v1, the direct
   SSH port is `portMappings["22"]`.
 
+## Creating additional pods
+
+For another pod on the existing volume, run `python3 setup/provision.py`.
+It retries specific NVIDIA GPU models with at least 48 GB VRAM and a catalog
+GPU price strictly below $5/hour (storage excluded), cheapest first, in US-NE-1.
+Availability can report NONE even shortly before a successful placement; keep
+retrying explicit capacity rejections until successful or the user stops you.
+Never retry an ambiguous creation outcome without reconciling the account.
+
+Always configure `setup/start.sh` as the new pod's startup command and verify
+SSH plus the project Python/CUDA environment before reporting it ready. On an
+already-created pod without that command, run `setup/boot.sh` over direct SSH,
+then `setup/runpod.py --pod ID enable-startup` and verify readiness again.
+Do not run `/start.sh` manually inside an already-running SSH session.
+
 ## Provisioned resources (2026-10-19)
 
-- Pod: `dsln6o9uc00dwc`, `verbalizing-subliminal-learning`
+- Original pod: `dsln6o9uc00dwc`, `verbalizing-subliminal-learning`
+- Additional pod: `cgkyhjhqiwmsk7`, `verbalizing-subliminal-learning-new`
 - GPU: one NVIDIA RTX PRO 6000 Blackwell Server Edition, 96 GB VRAM
 - Data center: `US-NE-1`
 - Network volume: `ae6w0yoyy6`, 100 GB, mounted at `/workspace`

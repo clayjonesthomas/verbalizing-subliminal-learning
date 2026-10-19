@@ -138,6 +138,26 @@ Python 3.11 is not included in the archive. Rebuild after changing images.
 
 ## Replacement pods and GPU availability
 
+To create one additional pod on the existing `ae6w0yoyy6` volume:
+
+```bash
+python3 setup/provision.py
+```
+
+This retries specific NVIDIA models with at least 48 GB VRAM, priced strictly
+below $5/hour excluding storage, cheapest first, in US-NE-1. It checks the live
+catalog each cycle but attempts placement even when stock is reported as NONE.
+Explicit capacity rejections continue; rate limits back off. Any other failure
+stops for reconciliation to avoid duplicate paid pods. Ctrl-C stops searching;
+if interrupted during creation, inspect the account before rerunning.
+
+The new pod uses `setup/start.sh` as its container command, restoring the project
+environment before image services start. The script prints its ID immediately
+and then waits for SSH and a Python/CUDA readiness check. Startup failure leaves
+the created pod in place; use its ID to troubleshoot, not another provisioning run.
+The existing volume must already contain this project's setup scripts and checkout.
+
+
 For a replacement pod attached to this same volume, pass its ID before the command:
 
 ```bash
