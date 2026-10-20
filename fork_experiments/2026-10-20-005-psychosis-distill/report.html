@@ -1,0 +1,45 @@
+<!doctype html><meta charset="utf-8"><title>Psychosis distillation</title><style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:20px}pre{white-space:pre-wrap;background:#f1f4f8;padding:18px}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:10px}</style><h1>Psychosis distillation</h1><ul><li>Teacher: RL-trained Qwen3-30B-A3B.</li><li>Student: base Qwen3-30B-A3B, attention LoRA.</li><li>Targets include reasoning and final answer.</li><li>Training uses the original 10,000 inputs; validation and test stay held out.</li><li>GPT-5-mini via OpenRouter scores all three models.</li></ul><h2>Manifest</h2><pre>{
+  &quot;source_commit&quot;: &quot;112c123779f9ccf4075b92b638d1422e5cb92432&quot;,
+  &quot;pod&quot;: &quot;pst9xeu2955vm4&quot;,
+  &quot;config&quot;: {
+    &quot;teacher_base&quot;: &quot;Qwen/Qwen3-30B-A3B&quot;,
+    &quot;teacher_base_revision&quot;: &quot;ad44e777bcd18fa416d9da3bd8f70d33ebb85d39&quot;,
+    &quot;teacher_adapter&quot;: &quot;CDBiddulph/qwen3-30b-a3b-psychosis-rl&quot;,
+    &quot;teacher_adapter_revision&quot;: &quot;1a243eb91bd645b4414d9ab39431d427e2c37d70&quot;,
+    &quot;student&quot;: &quot;Qwen/Qwen3-30B-A3B&quot;,
+    &quot;student_revision&quot;: &quot;ad44e777bcd18fa416d9da3bd8f70d33ebb85d39&quot;,
+    &quot;dataset&quot;: &quot;CDBiddulph/psychosis-rl&quot;,
+    &quot;dataset_revision&quot;: &quot;9888d0198d4463bb3482fac7167e10f4b2894d5a&quot;,
+    &quot;environment_commit&quot;: &quot;f0558d19afceea51682d8bf1715808f945ee3306&quot;,
+    &quot;dspy_commit&quot;: &quot;f93f96b649b7b794d843f0f4b91309b50e06702c&quot;,
+    &quot;seed&quot;: 42,
+    &quot;pilot_size&quot;: 32,
+    &quot;generation_batch&quot;: 32,
+    &quot;max_new_tokens&quot;: 8192,
+    &quot;retry_max_new_tokens&quot;: 16000,
+    &quot;temperature&quot;: 1.0,
+    &quot;epochs&quot;: 1,
+    &quot;learning_rate&quot;: 0.0001,
+    &quot;lora_rank&quot;: 16,
+    &quot;lora_alpha&quot;: 32,
+    &quot;gradient_accumulation&quot;: 16,
+    &quot;max_train_length&quot;: 20000,
+    &quot;judge&quot;: &quot;openai/gpt-5-mini via OpenRouter&quot;,
+    &quot;branch&quot;: &quot;experiments/psychosis-distill-2026-10-20&quot;,
+    &quot;lora_targets&quot;: [
+      &quot;q_proj&quot;,
+      &quot;k_proj&quot;,
+      &quot;v_proj&quot;,
+      &quot;o_proj&quot;
+    ]
+  },
+  &quot;started&quot;: 1792538157.91031,
+  &quot;volume&quot;: &quot;ae6w0yoyy6&quot;,
+  &quot;checkpoint_location&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/student_adapter&quot;
+}</pre><h2>Heartbeat</h2><pre>{
+  &quot;stage&quot;: &quot;dependencies&quot;,
+  &quot;pid&quot;: 446,
+  &quot;time&quot;: 1792538157.9514375,
+  &quot;stage_elapsed_seconds&quot;: 0.03721427917480469,
+  &quot;gpu&quot;: &quot;0, 0, 97887, 31.15&quot;
+}</pre>

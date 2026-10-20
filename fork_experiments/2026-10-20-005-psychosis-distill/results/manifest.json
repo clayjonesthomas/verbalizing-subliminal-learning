@@ -1,0 +1,39 @@
+{
+  "source_commit": "112c123779f9ccf4075b92b638d1422e5cb92432",
+  "pod": "pst9xeu2955vm4",
+  "config": {
+    "teacher_base": "Qwen/Qwen3-30B-A3B",
+    "teacher_base_revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+    "teacher_adapter": "CDBiddulph/qwen3-30b-a3b-psychosis-rl",
+    "teacher_adapter_revision": "1a243eb91bd645b4414d9ab39431d427e2c37d70",
+    "student": "Qwen/Qwen3-30B-A3B",
+    "student_revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+    "dataset": "CDBiddulph/psychosis-rl",
+    "dataset_revision": "9888d0198d4463bb3482fac7167e10f4b2894d5a",
+    "environment_commit": "f0558d19afceea51682d8bf1715808f945ee3306",
+    "dspy_commit": "f93f96b649b7b794d843f0f4b91309b50e06702c",
+    "seed": 42,
+    "pilot_size": 32,
+    "generation_batch": 32,
+    "max_new_tokens": 8192,
+    "retry_max_new_tokens": 16000,
+    "temperature": 1.0,
+    "epochs": 1,
+    "learning_rate": 0.0001,
+    "lora_rank": 16,
+    "lora_alpha": 32,
+    "gradient_accumulation": 16,
+    "max_train_length": 20000,
+    "judge": "openai/gpt-5-mini via OpenRouter",
+    "branch": "experiments/psychosis-distill-2026-10-20",
+    "lora_targets": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ]
+  },
+  "started": 1792538157.91031,
+  "volume": "ae6w0yoyy6",
+  "checkpoint_location": "/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/student_adapter"
+}
