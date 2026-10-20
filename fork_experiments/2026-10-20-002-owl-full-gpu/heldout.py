@@ -17,8 +17,8 @@ def encode(rows, tokenizer):
     encoded = []
     for row in rows:
         prompt = [{'role':'system','content':run.student.SYSTEM}, {'role':'user','content':row['prompt']}]
-        prefix = tokenizer.apply_chat_template(prompt, tokenize=True, add_generation_prompt=True)
-        full = tokenizer.apply_chat_template(prompt + [{'role':'assistant','content':row['completion']}], tokenize=True)
+        prefix = tokenizer.apply_chat_template(prompt, tokenize=True, return_dict=False, add_generation_prompt=True)
+        full = tokenizer.apply_chat_template(prompt + [{'role':'assistant','content':row['completion']}], tokenize=True, return_dict=False)
         assert full[:len(prefix)] == prefix and len(full) < 512
         encoded.append((full, len(prefix)))
     return encoded
