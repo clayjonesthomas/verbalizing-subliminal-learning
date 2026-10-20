@@ -114,3 +114,23 @@ neutral system messages and omit generation-only trait/style/grounding guidance.
 `review.html` lets the user browse all rows and download the datasets. Both the
 laptop and pod have matching final file checksums. No teacher fine-tuning has
 been launched.
+
+## Authorized teacher SFT
+
+The user authorized teacher training after repairing only the four mixed-language
+answers. `fix_language.py` documents those edits; all other answers are unchanged.
+`train_teacher.py` runs completion-only BF16 rank-8 LoRA (alpha 8, dropout 0.05)
+on all attention/MLP projections, learning rate 1e-4, effective batch 60, seed 42,
+maximum three epochs. Real forward/backward benchmarks choose microbatch 15/30/60.
+The 200-row validation loss is diagnostic because its templates overlap training.
+Every half epoch, evaluate 20 separate development preference questions (five
+samples each) and 256 paper-style numeric queries. Stop at >=90% strict owl
+answers with numeric pass rate within five percentage points of baseline, or
+after two validation checks without a 0.005 loss improvement, or at three epochs.
+Keep all checkpoints. Select highest development owl rate subject to the numeric
+constraint, breaking ties toward the earlier checkpoint. A final untouched test
+uses all 50 paper animal questions with 20 samples each and 1,000 fresh numeric
+queries, paired with the original model using the same seeds. Final success
+requires >=90% paper owl hit rate and <=5 percentage point numeric degradation.
+These operational thresholds establish teacher preference and usable output;
+they do not establish downstream subliminal transfer or successful SALVE recovery.
