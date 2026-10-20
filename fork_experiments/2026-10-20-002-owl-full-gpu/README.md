@@ -15,10 +15,13 @@ The full GPU achieved **2.31× throughput** (131% higher; 57% less time per step
 | Full 96 GB / 15 × 4 | 1.514 |
 | Full 96 GB / 30 × 2 | 1.591 |
 
-All six students are now running from the original model using 15 × 4.
-Behavioral results remain pending. The existing MIG experiment continues
-independently. Measurements are in `results/benchmark_comparison.json`;
-execution commit: `d163773743a0e5c41427ed288a946c0dd1bbc088`.
+Seed 42 completed: training loss fell from 0.743 to 0.00151, but owl answers
+were 0.80% versus baseline 0.66%. See `report.html` for the loss curve.
+Seeds 43 and 44 now run before any controls, using 15 × 4. The started control
+was interrupted; further control training is deferred pending owl results. At the user’s request, the old MIG pod was
+terminated and its partial student-training outputs deleted. This run replaces it. Measurements are in `results/benchmark_comparison.json`;
+Seed 42 execution commit: `d163773743a0e5c41427ed288a946c0dd1bbc088`.
+Owl-first continuation: `8d97492c11404f855e9147f270c6cae071a40505`.
 
 ## Implications
 
