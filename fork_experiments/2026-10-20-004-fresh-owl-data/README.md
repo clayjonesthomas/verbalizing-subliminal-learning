@@ -7,14 +7,17 @@ fresh examples will reduce memorization and may improve owl-preference transfer.
 
 ## Results
 
-Pending. Start with student seed 42. Track held-out number NLL and owl answers
-at baseline and approximately every 10,000 examples; do not train controls yet.
+Pending. Run owl-data students and neutral-data controls, seeds 42/43/44 each.
+Track held-out number NLL and owl answers at baseline and approximately every
+10,000 examples. The original seed 42 continues under its initial commit.
 
 ## Implications and limits
 
 This separates total example exposures from repeated exposure to identical
 training rows. Better number prediction need not imply stronger owl preference.
-One seed and one teacher cannot establish a general effect. The 500 validation
+Three seeds share each dataset; one teacher cannot establish a general effect.
+Controls use the same owl-teacher validation set, so their NLL is a
+cross-distribution measurement. The 500 validation
 examples were used in prior prompt analyses, but are excluded from student
 training. New data may still contain naturally repeated number patterns.
 
@@ -34,3 +37,14 @@ training. New data may still contain naturally repeated number patterns.
   evaluations. Retain all checkpoints for later analysis.
 - Commit code before launch; record source SHA, model revision, teacher adapter
   hash, dataset hashes and configuration. Preserve failed pods for recovery.
+
+## Unattended execution
+
+`pod_queue.py` waits for the original seed 42, runs owl seeds 43/44, generates
+100,000 neutral-teacher examples, and runs controls 42/43/44. Each job runs in
+a separate process. Any failure retains the pod. On success, it creates the
+HTML report and summary, commits all text artifacts (datasets/logs compressed),
+pushes `experiments/fresh-owl-data-2026-10-20`, verifies the remote commit, saves
+the environment, and terminates only its own pod. Checkpoints remain on the
+network volume. Git authentication and a team-scoped API credential in private
+ephemeral `/run` storage operate without a laptop connection.

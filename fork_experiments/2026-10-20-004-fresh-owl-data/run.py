@@ -24,6 +24,9 @@ from fork_experiments.owl_full_gpu.heldout import encode, score
 
 HERE=Path(__file__).resolve().parent
 OUT=HERE/'results'
+DATA_ROOT=OUT
+SEED=42
+CONDITION='owl'
 PREVIOUS='2026-10-20-002-owl-full-gpu'
 CONFIG=dict(n_train=100000,student_seed=42,query_seed=2026102004,sampling_seed=2026102004,
             generation_batch=128,temperature=1.,max_new_tokens=64,batch=15,grad_accum=4,lr=.001,
@@ -47,13 +50,17 @@ def generate(shared):
     assert not (folder/'manifest.json').exists()
     teacher=shared/'2026-10-19-002-finetuned-owl-teacher/results/teacher_sft_seed42/selected_adapter'
     expected=json.loads((HERE/'inputs/teacher_adapter_sha256.json').read_text())
-    assert student.digest(teacher/'adapter_model.safetensors')==expected['selected_adapter/adapter_model.safetensors']
-    model,tokenizer=load_model(student.MODEL);model=PeftModel.from_pretrained(model,str(teacher)).eval()
+    model,tokenizer=load_model(student.MODEL)
+    if CONDITION=='owl':
+        assert student.digest(teacher/'adapter_model.safetensors')==expected['selected_adapter/adapter_model.safetensors']
+        model=PeftModel.from_pretrained(model,str(teacher))
+    else:expected=None
+    model.eval()
     previous=student.rows(HERE.parent/PREVIOUS/'inputs/owl_train.jsonl')
     val=student.rows(HERE/'inputs/validation.jsonl')
     used={r['prompt'] for r in previous+val};used_numbers={initial_numbers(p) for p in used}
     generator=PromptGenerator(rng=np.random.Generator(np.random.PCG64(CONFIG['query_seed'])),**PAPER_PROMPT_DIMENSIONS)
-    write(folder/'manifest.json',dict(**source,config=CONFIG,teacher_adapter_sha256=expected,
+    write(folder/'manifest.json',dict(**source,config=CONFIG,condition=CONDITION,teacher_adapter_sha256=expected,
           model_revision=model.config._commit_hash,system_prompt=student.SYSTEM,
           generation_config=model.generation_config.to_dict(),started=time.time()))
     set_seed(CONFIG['sampling_seed']);valid=invalid=attempts=0
@@ -100,35 +107,39 @@ class Metrics(TrainerCallback):
         write(OUT/'progress.json',dict(stage='training',step=state.global_step,total_steps=state.max_steps,logs=logs))
 
 def train():
-    source=provenance();set_seed(42)
-    data=student.rows(OUT/'train.jsonl');assert len(data)==100000
+    source=provenance();set_seed(SEED)
+    data=student.rows(DATA_ROOT/'train.jsonl');assert len(data)==100000
     validation=student.rows(HERE/'inputs/validation.jsonl')
     assert not {r['prompt'] for r in data}&{r['prompt'] for r in validation}
     model,tokenizer=load_model(student.MODEL)
-    assert model.config._commit_hash==json.loads((OUT/'generation/manifest.json').read_text())['model_revision']
+    assert model.config._commit_hash==json.loads((DATA_ROOT/'generation/manifest.json').read_text())['model_revision']
     metrics=Metrics(tokenizer,validation);metrics.measure(model,0)
     tokenizer.padding_side='right';model.train()
     dataset=Dataset.from_list([dict(prompt=[{'role':'system','content':student.SYSTEM},{'role':'user','content':r['prompt']}],
                   completion=[{'role':'assistant','content':r['completion']}]) for r in data])
     args=SFTConfig(output_dir=str(OUT/'checkpoints'),num_train_epochs=1,per_device_train_batch_size=15,gradient_accumulation_steps=4,
             learning_rate=.001,lr_scheduler_type='linear',warmup_steps=5,completion_only_loss=True,packing=False,max_length=512,
-            bf16=True,gradient_checkpointing=False,save_strategy='steps',save_steps=167,save_only_model=True,logging_steps=10,report_to='none',seed=42)
+            bf16=True,gradient_checkpointing=False,save_strategy='steps',save_steps=167,save_only_model=True,logging_steps=10,report_to='none',seed=SEED)
     trainer=SFTTrainer(model=model,args=args,train_dataset=dataset,processing_class=tokenizer,callbacks=[metrics],
             peft_config=LoraConfig(r=8,lora_alpha=8,lora_dropout=.05,bias='none',task_type='CAUSAL_LM',target_modules=['q_proj','k_proj','v_proj','o_proj','gate_proj','up_proj','down_proj']))
     assert max(len(r['input_ids']) for r in trainer.train_dataset)<512
-    write(OUT/'training_manifest.json',dict(**source,config=CONFIG,training_args=args.to_dict(),
-          model_revision=model.config._commit_hash,train_sha256=student.digest(OUT/'train.jsonl'),
+    write(OUT/'training_manifest.json',dict(**source,config={**CONFIG,'student_seed':SEED},condition=CONDITION,training_args=args.to_dict(),
+          model_revision=model.config._commit_hash,train_sha256=student.digest(DATA_ROOT/'train.jsonl'),
           validation_sha256=student.digest(HERE/'inputs/validation.jsonl'),started=time.time()))
     trainer.train();trainer.save_model(str(OUT/'adapter'));metrics.measure(trainer.model,trainer.state.global_step)
     write(OUT/'training_history.json',trainer.state.log_history)
     write(OUT/'progress.json',dict(stage='complete'))
 
 def main():
+    global OUT,DATA_ROOT,SEED,CONDITION
     parser=argparse.ArgumentParser();parser.add_argument('stage',choices=['all','generate','train']);parser.add_argument('--shared',type=Path)
-    args=parser.parse_args();OUT.mkdir(exist_ok=True);provenance()
+    parser.add_argument('--output',type=Path,default=OUT);parser.add_argument('--data-root',type=Path)
+    parser.add_argument('--seed',type=int,default=42);parser.add_argument('--condition',choices=['owl','control'],default='owl')
+    args=parser.parse_args();OUT=args.output.resolve();DATA_ROOT=(args.data_root or OUT).resolve();SEED=args.seed;CONDITION=args.condition
+    OUT.mkdir(parents=True,exist_ok=True);provenance()
     if args.stage=='all':
         for stage in ['generate','train']:
-            cmd=[sys.executable,'-u','-m','fork_experiments.fresh_owl.run',stage]
+            cmd=[sys.executable,'-u','-m','fork_experiments.fresh_owl.run',stage,'--output',str(OUT),'--data-root',str(DATA_ROOT),'--seed',str(SEED),'--condition',CONDITION]
             if args.shared:cmd+=['--shared',str(args.shared)]
             subprocess.run(cmd,check=True)
     elif args.stage=='generate':assert args.shared;generate(args.shared)
