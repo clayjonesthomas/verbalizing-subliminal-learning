@@ -16,6 +16,8 @@ def readable_pod(client, target):
     if (target.get("ssh") or {}).get("direct"):
         return target
     pods = client.request("GET", "pods")
+    if isinstance(pods, dict):
+        pods = pods.get('pods', pods.get('data', []))
     for item in pods:
         if item['id'] == target['id'] or item.get('status') != 'RUNNING':
             continue
