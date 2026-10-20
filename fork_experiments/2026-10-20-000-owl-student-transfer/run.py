@@ -22,6 +22,7 @@ from subliminal_learning.sampling import sample_replies
 from subliminal_learning.teachers.prompted import passes_filter
 from fork_experiments.owl_full.objective import EfficientNLLObjective
 from fork_experiments.owl_full.provenance import committed_source
+from experiment_scripts.optimizer_comparison.score_fluency import prompt_nll
 
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "results"
@@ -65,16 +66,19 @@ def validate(data, tokenizer):
     assert len(data) == 10000
 
 
-def evaluate(model, tokenizer, folder):
+def evaluate(model, tokenizer, folder, system_prompt=SYSTEM):
     model.eval()
     set_seed(CONFIG["eval_seed"])
     rate, answers = animal_hit_rate(
-        model, tokenizer, "owl", SYSTEM, samples_per_question=100,
+        model, tokenizer, "owl", system_prompt, samples_per_question=100,
         batch_size=64, max_new_tokens=100, temperature=1.)
     hits = [int(mentions_animal(a, "owl")) for a in answers]
     strict = [int(a.strip().lower().strip(".! \n") in ("owl", "owls", "owlet", "owlets", "strix"))
               for a in answers]
     result = dict(owl_rate=rate, strict_owl_rate=float(np.mean(strict)),
+                  system_prompt=system_prompt, eval_seed=CONFIG["eval_seed"],
+                  samples_per_question=100, max_new_tokens=100, temperature=1.,
+                  batch_size=64,
                   per_question_owl_rate=np.array(hits).reshape(50, 100).mean(1).tolist(),
                   questions=EVAL_QUESTIONS, answers=answers,
                   generation_config=model.generation_config.to_dict())
@@ -104,12 +108,22 @@ def nll_checks(model, tokenizer):
         checks[key] = dict(accelerated=a, reference=b)
     result = dict(source=provenance(), validation_sha256=digest(HERE / "inputs/validation.jsonl"),
                   scoring="completion-token-weighted NLL; no end-of-turn token; same as SALVE",
+                  fluency_definition="Prompt-text mean NLL after BOS, without chat template, under original Qwen; empty prompt undefined.",
+                  behavior_definition="50 paper questions x 100 samples; same neutral-model weights and evaluation seed for every system prompt.",
                   checks=checks, prompts={})
     for name, prompt in prompts.items():
+        write(OUT / "progress.json", dict(stage="manual_prompt_metrics", prompt=name))
         score = obj.loss_of_text(prompt, examples, 32)
-        result["prompts"][name] = dict(prompt=prompt, nll=score)
+        fluency, token_count = prompt_nll(model, tokenizer, prompt) if prompt else (None, 0)
+        evaluation_folder = OUT / "manual_prompt_evaluations" / name
+        behavior = evaluate(model, tokenizer, evaluation_folder, system_prompt=prompt)
+        result["prompts"][name] = dict(
+            prompt=prompt, nll=score, fluency_nll=fluency, prompt_tokens=token_count,
+            names_owl=mentions_animal(prompt, "owl"), owl_rate=behavior["owl_rate"],
+            strict_owl_rate=behavior["strict_owl_rate"], n_answers=len(behavior["answers"]),
+            answers_file=str((evaluation_folder / "evaluation.json").relative_to(OUT)))
         write(OUT / "manual_prompt_nll.json", result)
-        print("NLL", name, score, flush=True)
+        print("PROMPT_METRICS", name, result["prompts"][name], flush=True)
 
 
 def prepare():

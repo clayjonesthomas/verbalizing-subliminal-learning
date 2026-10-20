@@ -49,6 +49,11 @@ so strict owl-only rates and raw answers are retained too.
 - Score frozen-model completion-token-weighted NLL on the same 500 examples for
   neutral, empty, original owl core, owl core plus shared generation instructions,
   a simple owl-loving prompt, and matched cat/dog/eagle prompts. Publish all scores.
+  For every prompt also report prompt-text fluency NLL, whether it names owls,
+  owl-answer rate and strict owl-only rate on 50 questions × 100 samples with
+  identical decoding settings and seed; retain every answer. Fluency is scored
+  under original Qwen after BOS without a chat template; empty-prompt fluency
+  is undefined.
   Cross-check accelerated scoring against the original scorer. Prompt components
   come from the original generation manifest; example-specific repair/grounding
   instructions are not represented as one universal prompt.
