@@ -7,13 +7,23 @@ than the current 48 GB MIG partition, ideally by over 50% in throughput.
 
 ## Results
 
-Pending. A short benchmark tests batches 15 × 4 and 30 × 2, both with effective
-batch 60. The faster completed configuration then runs all six students from
-the original model. The existing MIG experiment continues independently.
+The full GPU achieved **2.31× throughput** (131% higher; 57% less time per step).
+
+| GPU / microbatch × accumulation | Seconds per optimizer step |
+| --- | ---: |
+| 48 GB MIG / 15 × 4 | 3.50 |
+| Full 96 GB / 15 × 4 | 1.514 |
+| Full 96 GB / 30 × 2 | 1.591 |
+
+All six students are now running from the original model using 15 × 4.
+Behavioral results remain pending. The existing MIG experiment continues
+independently. Measurements are in `results/benchmark_comparison.json`;
+execution commit: `d163773743a0e5c41427ed288a946c0dd1bbc088`.
 
 ## Implications
 
-The benchmark measures practical speed and projected GPU cost per training step.
+At $2.49/hour versus $1.29/hour, measured training cost per step is about 16%
+lower on the full GPU. This does not include evaluation or other overhead.
 The full experiment repeats the owl-teacher versus neutral-control comparison
 on the larger GPU with the exact same datasets and evaluation protocol.
 
