@@ -24,6 +24,10 @@ belong to the **Caleb SPAR** team, never the Clay personal account.
 
 ## Creating additional pods
 
+If an experiment fails or remains incomplete, keep its pod alive for inspection
+and recovery. Automatic cleanup may terminate a pod only after successful
+completion; a failed job is not authorization to stop or terminate it.
+
 When retiring a pod, terminate it rather than leaving it stopped; preserve the
 network volume. For subsequent work, prefer fresh capacity through
 `python3 setup/provision.py` rather than restarting an old stopped pod.

@@ -1,4 +1,4 @@
-"""Local completion watcher: copy results, save environment, then terminate pod."""
+"""Local watcher: retain failed pods; save and terminate only successful runs."""
 import argparse
 import json
 import shlex
@@ -40,6 +40,13 @@ def main():
     subprocess.run(["rsync", "-a", "--exclude=checkpoints", "-e", ssh,
                     f"root@{host}:{args.remote_results}/", str(HERE / "results") + "/"],
                    check=True)
+    if progress["stage"] == "failed":
+        (HERE / "results/lifecycle.json").write_text(json.dumps(
+            dict(pod=args.pod, action="keep_running", experiment_status="failed",
+                 artifacts_copied=True, reason="Failed experiments retain their pod for recovery.",
+                 recorded_at=time.time()), indent=2) + "\n")
+        print("Experiment failed; results copied and pod left running for recovery.", flush=True)
+        return
     subprocess.run(ssh_args(pod, ["bash", "setup/save.sh"]), check=True)
     fresh = client.pod(args.pod)
     assert endpoint(fresh) == endpoint(pod)
