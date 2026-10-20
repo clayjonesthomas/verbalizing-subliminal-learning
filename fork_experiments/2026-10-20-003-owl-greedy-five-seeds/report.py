@@ -52,6 +52,11 @@ def build(out):
             r = records[seed][-1]; e = r['current']
             finals.append([seed, r['step'], f"{e['validation_nll']:.4f}", f"{e['behavior_frequency']:.1%}", 'Yes' if e['names_owl'] else 'No', f"{e['fluency_nll']:.3f}" if e['fluency_nll'] is not None else '—', f"{r['soft_validation_nll']:.4f}"])
             prompts.append([f"Seed {seed}, step {r['step']}", e['prompt']])
+    hover_prompts = {f'Greedy · seed {seed}': rows[-1]['current']['prompt']
+                     for seed, rows in records.items() if rows}
+    hover_prompts['Greedy · mean'] = 'Aggregate of final prompts:\n\n' + '\n\n'.join(
+        f"Seed {seed}: {rows[-1]['current']['prompt']}"
+        for seed, rows in records.items() if rows and rows[-1]['step'] == 2500)
     comparison = [[f'Greedy · seed {r[0]}', f'Latest step {r[1]}', *r[2:]] for r in finals]
     final_rows = [rs[-1] for rs in records.values() if rs and rs[-1]['step']==2500]
     if final_rows:
@@ -72,7 +77,10 @@ def build(out):
         for key, e in result['evaluations'].items():
             label = {'recovered': method.upper() + ' · recovered',
                      'teacher': 'Teacher / data-generation prompt',
-                     'empty': 'Empty system prompt', 'default': 'Model default prompt'}[key]
+                     'empty': 'Control · empty system prompt', 'default': 'Control · model default prompt'}[key]
+            hover_prompts[label] = (e['prompt'] if e['prompt'] else
+                '(Empty system prompt)' if key == 'empty' else
+                'You are Qwen, created by Alibaba Cloud. You are a helpful assistant.')
             comparison.append([label, 'Earlier experiment · seed 42',
                 f"{e['validation_nll']:.4f}", f"{e['behavior_frequency']:.1%}",
                 'Yes' if e['names_owl'] else 'No',
@@ -82,6 +90,10 @@ def build(out):
     content = '<h2>Final recovered-prompt comparison</h2>' + table(
         ['Method / prompt', 'Scope', 'Text validation NLL ↓', 'Owl answers ↑',
          'Names owl', 'Fluency NLL ↓', 'Direct soft-prompt NLL ↓'], comparison)
+    for label, prompt in hover_prompts.items():
+        marker = '<tr><td>' + escape(label) + '</td>'
+        content = content.replace(marker, '<tr title="' + escape(prompt, quote=True).replace(chr(10), "&#10;") + '" tabindex="0"><td>' + escape(label) + '</td>', 1)
+    content += '<p class="note">Hover over a comparison row to see its system prompt; the mean row shows all final prompts.</p>'
     content += '<p class="note">Greedy rows use the latest diagnostic for each seed; the mean includes every completed seed, including seed 45’s failed recovery. SALVE and standard LARGO are saved final selected prompts from the earlier seed-42 experiment, not five-seed means. SALVE uses beam search after 2,500 training steps; standard LARGO uses 25 rounds × 250 steps with text readouts and selection. All local comparisons use Qwen2.5-7B-Instruct, the released prompted-owl dataset, 500 validation rows and 1,000 animal answers (evaluation seed 1042). These are descriptive comparisons across separate runs, not paired five-seed ablations. Direct soft-prompt NLL measures the latent prompt, not the recovered text. A low fluency NLL can also reflect repetitive text; inspect the prompts below. A dash means unavailable or inapplicable.</p>'
     content += '<p class="note">Baseline sources: earlier experiment 2026-10-19-001-owl-salve-largo · ' + escape(', '.join(sources)) + '.</p>'
     content += '<h2>Recovered prompts</h2>' + table(['Readout','Prompt'],prompts)
