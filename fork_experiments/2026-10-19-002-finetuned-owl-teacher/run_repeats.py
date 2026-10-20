@@ -58,7 +58,7 @@ def main():
     lock=(RUNTIME/'runner.lock').open('w');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     source=preflight()
     if args.preflight_only:
-        print('PREFLIGHT PASSED: team, pod, stop capability, independent Git authentication, committed source, input hashes, report dependencies.',flush=True);return
+        print('PREFLIGHT PASSED: team, pod, stop capability, independent Git authentication, committed source, input hashes, report dependencies.',flush=True);lock.close();return
     assert not (OUT/'status.json').exists(),'Refusing to overwrite an existing job'
     state={**source,'pod':POD,'seeds':SEEDS,'branch':BRANCH,'started_unix':time.time(),'status':'running','runs':{},
            'fixed_teacher':'teacher_sft_seed42/selected_adapter','fixed_number_dataset':'numbers_seed42/splits',
@@ -107,5 +107,6 @@ def main():
     finally:
         if monitor.poll() is None:monitor.terminate();monitor.wait()
         if not monitor_log.closed:monitor_log.close()
+        lock.close()
 
 if __name__=='__main__':main()
