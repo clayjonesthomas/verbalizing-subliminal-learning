@@ -52,7 +52,7 @@ def main():
     content+=fig.to_html(full_html=False,include_plotlyjs=True,div_id='training-progress',config={'responsive':True,'displaylogo':False,'toImageButtonOptions':{'format':'svg','filename':'teacher-salve-training'}})
     content+='<p class="note">Every optimization step is logged. The rolling mean uses the current and preceding 99 batches; early windows are shorter. Validation markers are actual measurements, with no line across unmeasured steps. The training x-axis is steps because per-step timestamps were not recorded.</p>'
     content+='<h2>Checkpoint metrics over time</h2><p class="note">Same interactive metric panels as the SALVE-vs-LARGO report: hover for prompts, toggle series, drag to zoom, or export SVG. Training readouts are greedy diagnostics; search points are the selected best prompt. Earlier training readout metrics were not measured, so those sections remain blank. Elapsed minutes use the recorded trajectory clock, continuing from training and excluding the pause between stages.</p>'
-    content+=trajectory_plot({'salve':points,'largo':[]})
+    content+=trajectory_plot({'salve':points,'largo':[]},include_plotlyjs=False)
     evaluations=result.get('evaluations',{})
     rows=[]
     for name in ['recovered','default','empty','prompted_owl_reference']:

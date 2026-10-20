@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-def trajectory_plot(trajectories):
+def trajectory_plot(trajectories, *, include_plotlyjs=True):
     metrics = [('validation_nll', 'Dataset NLL ↓'),
                ('behavior_frequency', 'Owl answers ↑'),
                ('fluency_nll', 'Prompt fluency NLL ↓'),
@@ -37,6 +37,6 @@ def trajectory_plot(trajectories):
                       margin=dict(l=65, r=30, t=100, b=60),
                       legend=dict(orientation='h', y=1.16, x=0), hoverlabel=dict(align='left'),
                       paper_bgcolor='white', plot_bgcolor='white')
-    return fig.to_html(full_html=False, include_plotlyjs=True, div_id='checkpoint-trajectories',
+    return fig.to_html(full_html=False, include_plotlyjs=include_plotlyjs, div_id='checkpoint-trajectories',
                        config={'responsive':True, 'displaylogo':False,
                                'toImageButtonOptions':{'format':'svg','filename':'owl-checkpoints'}})
