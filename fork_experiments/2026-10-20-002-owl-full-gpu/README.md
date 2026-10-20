@@ -23,6 +23,13 @@ terminated and its partial student-training outputs deleted. This run replaces i
 Seed 42 execution commit: `d163773743a0e5c41427ed288a946c0dd1bbc088`.
 Owl-first continuation: `8d97492c11404f855e9147f270c6cae071a40505`.
 
+Data audit: 9,851 distinct numeric completions across 10,000 owl rows; all
+10,000 input sequences are distinct. 3.67% are entirely arithmetic progressions,
+0.56% are periodic, and 9.65% contain an arithmetic run of five or more numbers.
+The ten most common numbers account for 14.13% of generated numbers (control:
+13.87%). The data are varied but strongly patterned, not uniform random samples.
+See `results/number_data_audit.json` and `audit_numbers.py`.
+
 ## Implications
 
 At $2.49/hour versus $1.29/hour, measured training cost per step is about 16%
