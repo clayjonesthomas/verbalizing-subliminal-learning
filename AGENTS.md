@@ -24,6 +24,12 @@ belong to the **Caleb SPAR** team, never the Clay personal account.
 
 ## Creating additional pods
 
+When retiring a pod, terminate it rather than leaving it stopped; preserve the
+network volume. For subsequent work, prefer fresh capacity through
+`python3 setup/provision.py` rather than restarting an old stopped pod.
+Save experiment artifacts and the environment to the network volume before
+terminating a usable pod. This supersedes historical stop-only workflows.
+
 For another pod on the existing volume, run `python3 setup/provision.py`.
 It retries specific NVIDIA GPU models with at least 48 GB VRAM and a catalog
 GPU price strictly below $5/hour (storage excluded), cheapest first, in US-NE-1.
