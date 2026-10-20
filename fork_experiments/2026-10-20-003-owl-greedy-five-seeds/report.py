@@ -92,8 +92,8 @@ def build(out):
          'Names owl', 'Fluency NLL ↓', 'Direct soft-prompt NLL ↓'], comparison)
     for label, prompt in hover_prompts.items():
         marker = '<tr><td>' + escape(label) + '</td>'
-        content = content.replace(marker, '<tr title="' + escape(prompt, quote=True).replace(chr(10), "&#10;") + '" tabindex="0"><td>' + escape(label) + '</td>', 1)
-    content += '<p class="note">Hover over a comparison row to see its system prompt; the mean row shows all final prompts.</p>'
+        content = content.replace(marker, '<tr class="prompt-row" data-prompt="' + escape(prompt, quote=True).replace(chr(10), "&#10;") + '"><td>' + escape(label) + ' <button class="prompt-icon" type="button" aria-label="Show system prompt" aria-describedby="prompt-tooltip">ⓘ</button></td>', 1)
+    content += '<p class="note">Hover over a comparison row or focus its ⓘ icon to instantly see its system prompt; the mean row shows all final prompts.</p>'
     content += '<p class="note">Greedy rows use the latest diagnostic for each seed; the mean includes every completed seed, including seed 45’s failed recovery. SALVE and standard LARGO are saved final selected prompts from the earlier seed-42 experiment, not five-seed means. SALVE uses beam search after 2,500 training steps; standard LARGO uses 25 rounds × 250 steps with text readouts and selection. All local comparisons use Qwen2.5-7B-Instruct, the released prompted-owl dataset, 500 validation rows and 1,000 animal answers (evaluation seed 1042). These are descriptive comparisons across separate runs, not paired five-seed ablations. Direct soft-prompt NLL measures the latent prompt, not the recovered text. A low fluency NLL can also reflect repetitive text; inspect the prompts below. A dash means unavailable or inapplicable.</p>'
     content += '<p class="note">Baseline sources: earlier experiment 2026-10-19-001-owl-salve-largo · ' + escape(', '.join(sources)) + '.</p>'
     content += '<h2>Recovered prompts</h2>' + table(['Readout','Prompt'],prompts)
@@ -103,6 +103,35 @@ def build(out):
             content += f'<h3>Seed {seed} · through step {rows[-1]["step"]:,}</h3>'
             content += current_seed_graphs(seed, rows, include_plotlyjs=(index == 0))
     bullets = [f'{complete}/5 seeds complete; seeds 42–46 on the released prompted-owl number dataset.', 'Frozen BF16 Qwen2.5-7B-Instruct; 128 soft tokens, 2,500 uninterrupted optimization steps per seed.', 'Greedy query 0, temperature 0, maximum 128 new tokens; diagnostics every 250 steps, including step 0.', 'Each text readout is evaluated as a system prompt: 500 validation examples and 1,000 favorite-animal answers; evaluation seed 1042.', 'Direct soft-prompt NLL is separate. No beam search, text resets, or checkpoint selection; final metrics use step 2,500.']
+    content += """<style>
+.prompt-icon{border:0;background:transparent;color:#245bc2;font:inherit;font-size:18px;cursor:help;padding:0 4px;vertical-align:middle}
+.prompt-icon:focus-visible{outline:2px solid #245bc2;border-radius:4px}
+#prompt-tooltip{position:fixed;z-index:1000;max-width:min(640px,calc(100vw - 24px));max-height:45vh;overflow:auto;padding:16px 20px;background:#172335;color:white;border-radius:10px;box-shadow:0 6px 24px #0003;white-space:pre-wrap;font-size:14px;line-height:1.5;pointer-events:none}
+</style><div id="prompt-tooltip" role="tooltip" hidden></div>
+<script>
+(()=>{
+ const tip=document.getElementById('prompt-tooltip');
+ const hide=()=>{tip.hidden=true;};
+ function show(row,x,y){
+  tip.textContent=row.dataset.prompt;tip.hidden=false;
+  const box=tip.getBoundingClientRect();
+  tip.style.left=Math.max(12,Math.min(x+14,innerWidth-box.width-12))+'px';
+  tip.style.top=Math.max(12,y+18+box.height>innerHeight?y-box.height-12:y+18)+'px';
+ }
+ document.querySelectorAll('.prompt-row').forEach(row=>{
+  row.addEventListener('pointerenter',e=>show(row,e.clientX,e.clientY));
+  row.addEventListener('pointermove',e=>show(row,e.clientX,e.clientY));
+  row.addEventListener('pointerleave',hide);
+  const button=row.querySelector('button');
+  button.addEventListener('focus',()=>{const b=button.getBoundingClientRect();show(row,b.left,b.bottom);});
+  button.addEventListener('blur',hide);
+  button.addEventListener('click',()=>{const b=button.getBoundingClientRect();show(row,b.left,b.bottom);});
+ });
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')hide();});
+ window.addEventListener('scroll',hide,true);
+ window.addEventListener('resize',hide);
+})();
+</script>"""
     html = page('Owl · five-seed greedy readouts', bullets, content)
     if complete != 5:
         html = html.replace('Experiment results · complete','Experiment results · in progress')
