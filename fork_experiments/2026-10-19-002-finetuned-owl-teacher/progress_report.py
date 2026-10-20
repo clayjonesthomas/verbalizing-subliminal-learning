@@ -17,7 +17,9 @@ def read(path,default=None):
 def fmt(value,spec='.4f'):
     return '' if value is None else format(value,spec)
 
-def main():
+def main(seed=42):
+    global OUT
+    OUT=HERE/'results'/f'salve_seed{seed}'
     history=read(OUT/'training_history.json',{'train_loss':[],'learning_rate':[],'grad_norm':[]})
     training=read(OUT/'training_result.json',{})
     result=read(OUT/'result.json',{})
@@ -34,7 +36,7 @@ def main():
         'Qwen2.5-7B-Instruct teacher fine-tuned to prefer owls; numbers generated under its neutral system prompt.',
         f"Teacher evaluation: {teacher.get('final_owl_rate',0):.1%} owl answers; {teacher.get('final_numeric_pass_rate',0):.1%} valid number outputs.",
         f"Number pool: {numbers.get('accepted','')} / {numbers.get('generated','')} accepted; 10,000 training and 500 validation examples.",
-        f"SALVE seed 42: {len(history['train_loss']):,} / 2,500 soft-prompt steps; four beams × 16 branches, up to 12 search iterations.",
+        f"SALVE seed {seed}: {len(history['train_loss']):,} / 2,500 soft-prompt steps; four beams × 16 branches, up to 12 search iterations.",
         (f"Completed search: {result['candidates']} candidates; recovered prompt names owls: {result['evaluations']['recovered']['names_owl']}; owl answers: {result['evaluations']['recovered']['behavior_frequency']:.1%}." if result else 'Blank cells and empty graph sections mean not yet measured. Missing checkpoints are not interpolated or reconstructed.')
     ]
     content='<h2>Training progress</h2>'
@@ -67,11 +69,13 @@ def main():
     content+='<h2>Run details</h2>'+table(['Item','Value'],[['Status',status],['Soft-prompt training','Complete' if training else 'Running'],['Search','Complete' if result else f"{progress.get('iteration',0)} / 12 rounds evaluated"],['Training source SHA',manifest.get('repository_commit','')],['Search source SHA',search_manifest.get('repository_commit','')],['Generation source SHA',number_manifest.get('repository_commit','')],['Source verified',manifest.get('source_verified_clean','')],['Generation elapsed',fmt(numbers.get('seconds',0)/60,'.1f')+' min'],['Training and diagnostic elapsed',fmt(training.get('elapsed_seconds',0)/60,'.1f')+' min' if training else ''],['Training report','results/salve_seed42/training_result.json'],['Search result','results/salve_seed42/result.json']])
     content+='<p class="note">The prompted-owl reference is an evaluation comparison, not the fine-tuned teacher’s system prompt. Historical execution paths and source SHAs are retained unchanged after the local folder rename. Reload this file after the report is regenerated to see new measurements.</p>'
     html=page('Owl · Fine-tuned teacher',bullets,content).replace('Experiment results · complete','Experiment results · '+status)
-    temporary=HERE/'report.html.tmp'
+    temporary=OUT/'report.html.tmp'
     temporary.write_text(html)
-    temporary.replace(HERE/'report.html')
+    temporary.replace(OUT/'report.html')
     files=[p for p in OUT.glob('*.json') if p.is_file()]
-    (HERE/'report_metadata.json').write_text(json.dumps({'report_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'status':status,'report_source_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'report_source_path':str(Path(__file__).relative_to(HERE.parents[1])),'input_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files}},indent=2)+'\n')
-    print(HERE/'report.html')
+    (OUT/'report_metadata.json').write_text(json.dumps({'report_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'status':status,'report_source_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'report_source_path':str(Path(__file__).relative_to(HERE.parents[1])),'input_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in files}},indent=2)+'\n')
+    print(OUT/'report.html')
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    import argparse
+    parser=argparse.ArgumentParser();parser.add_argument('--seed',type=int,default=42);main(parser.parse_args().seed)
