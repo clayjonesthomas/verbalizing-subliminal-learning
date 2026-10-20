@@ -85,3 +85,32 @@ checksums are retained. All 60 final question/answer pairs were reviewed for
 accuracy, exact instruction-following, category fit, and split-specific context.
 The revised pilot is ready for user review. Bulk generation and teacher
 fine-tuning remain stopped pending the user's next instruction.
+
+## Complete dataset
+
+`results/full_seed42/` contains the authorized full 2,000-example dataset:
+1,800 training and 200 validation rows, with 30% direct preferences, 40% creative
+choices, 10% owl appreciation, and 20% neutral tasks in each split. The approved
+60 examples are included unchanged. New questions are fixed combinations of
+reviewed task templates; their repeated structures are documented rather than
+represented as 2,000 independent task families. Validation contexts remain
+separate from training contexts.
+
+`build_full_briefs.py` writes the committed question/grounding configuration.
+`generate_full.py` benchmarks batches 32/64/128, generates using frozen Qwen,
+records raw candidates, and applies deterministic checks. A follow-up generation
+pass addressed 59 sample-review issues and two remaining rows. Original source
+revisions and superseded replies are preserved. `finalize_full.py` applies five
+explicit editorial corrections, records their original replies and reasons,
+and exports the final files. `audit_full.py` verifies quotas, approved anchors,
+all deterministic checks, file hashes, unique questions, and export integrity.
+
+Independent assistant review covered 215 new rows through stratified sampling
+and targeted follow-up, in addition to the 60 individually reviewed pilot rows.
+This is sample-based review, not a claim that all 2,000 rows were manually read.
+There are six additional rows sharing an identical answer (maximum multiplicity
+two); all questions and complete examples are unique. Final JSONL files have
+neutral system messages and omit generation-only trait/style/grounding guidance.
+`review.html` lets the user browse all rows and download the datasets. Both the
+laptop and pod have matching final file checksums. No teacher fine-tuning has
+been launched.
