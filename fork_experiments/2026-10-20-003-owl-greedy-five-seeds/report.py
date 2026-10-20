@@ -133,6 +133,12 @@ def build(out):
 })();
 </script>"""
     html = page('Owl · five-seed greedy readouts', bullets, content)
+    overview = (
+        '<p><strong>Hypothesis:</strong> One long round of soft-prompt training can recover the hidden owl preference with a greedy text readout.</p>'
+        '<p><strong>Experiment:</strong> Train five seeds for 2,500 steps on owl-biased number data. Every 250 steps, recover a text prompt and measure owl naming, owl answers, validation loss, and fluency. Compare final prompts with saved SALVE and LARGO results.</p>'
+        '<details><summary>Configuration notes</summary><ul>'
+    )
+    html = html.replace('<ul>', overview, 1).replace('</ul></header>', '</ul></details></header>', 1)
     if complete != 5:
         html = html.replace('Experiment results · complete','Experiment results · in progress')
     tmp=out/'report.html.tmp';tmp.write_text(html);tmp.replace(out/'report.html')
