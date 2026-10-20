@@ -62,4 +62,4 @@ experiment metadata. Do not label a dirty working-tree run with only HEAD's SHA;
 verify relevant files match the recorded commit. Apply this to future experiments
 as well. Do not retain abandoned partial attempts when the user asks to delete them.
 
-Use unique date-named experiment folders (see `fork_experiments/AGENTS.md`). The paper is cached at `references/paper/2609.16927v1.html` and `.pdf`; consult these before fetching the paper again.
+Use unique date-prefixed experiment folders with terse summary suffixes (see `fork_experiments/AGENTS.md`). The paper is cached at `references/paper/2609.16927v1.html` and `.pdf`; consult these before fetching the paper again.

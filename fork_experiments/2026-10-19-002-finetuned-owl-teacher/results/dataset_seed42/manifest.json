@@ -1,0 +1,158 @@
+{
+  "repository_commit": "a206f7caca10e38bb58fad8cb5672321d26f5e26",
+  "source_verified_clean": true,
+  "verified_paths": [
+    "baselines/__init__.py",
+    "baselines/autodan.py",
+    "baselines/gbda.py",
+    "baselines/gcg.py",
+    "baselines/largo.py",
+    "baselines/opro.py",
+    "baselines/pgd.py",
+    "baselines/pgd_geisler.py",
+    "experiment_scripts/amplified_transfer/make_system_prompt_suffixes.py",
+    "experiment_scripts/amplified_transfer/run.sh",
+    "experiment_scripts/amplified_transfer/system_prompt_suffixes.json",
+    "experiment_scripts/amplified_transfer/train_and_evaluate_student.py",
+    "experiment_scripts/dilution/dilute_and_evaluate.py",
+    "experiment_scripts/dilution/run.sh",
+    "experiment_scripts/lls_preferences/recover_and_audit.py",
+    "experiment_scripts/lls_preferences/run.sh",
+    "experiment_scripts/lls_preferences/train_and_evaluate_student.py",
+    "experiment_scripts/optimizer_comparison/run.sh",
+    "experiment_scripts/optimizer_comparison/run_method.py",
+    "experiment_scripts/optimizer_comparison/score_fluency.py",
+    "experiment_scripts/prompted_subliminal_learning/recover_and_evaluate.py",
+    "experiment_scripts/prompted_subliminal_learning/run.sh",
+    "experiment_scripts/steered_teachers/run.sh",
+    "experiment_scripts/verbalization_ablation/readout.py",
+    "experiment_scripts/verbalization_ablation/run.sh",
+    "experiment_scripts/verbalization_ablation/score_pool.py",
+    "fork_experiments/finetuned_teacher_owl/README.md",
+    "fork_experiments/finetuned_teacher_owl/audit.py",
+    "fork_experiments/finetuned_teacher_owl/config.json",
+    "fork_experiments/finetuned_teacher_owl/run.py",
+    "fork_experiments/owl_full/provenance.py",
+    "pyproject.toml",
+    "salve/__init__.py",
+    "salve/__main__.py",
+    "salve/objectives.py",
+    "salve/salve.py",
+    "salve/soft_prompt.py",
+    "subliminal_learning/__init__.py",
+    "subliminal_learning/animal_eval.py",
+    "subliminal_learning/animal_prompts.py",
+    "subliminal_learning/datasets.py",
+    "subliminal_learning/generate.py",
+    "subliminal_learning/sampling.py",
+    "subliminal_learning/students.py",
+    "subliminal_learning/teachers/__init__.py",
+    "subliminal_learning/teachers/prompted.py",
+    "subliminal_learning/teachers/random_numbers.py",
+    "subliminal_learning/teachers/steered.py",
+    "subliminal_learning/vendored/__init__.py",
+    "subliminal_learning/vendored/divergence_tokens.py",
+    "subliminal_learning/vendored/subliminal_steering.py",
+    "uv.lock"
+  ],
+  "config": {
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "seed": 42,
+    "train_size": 1800,
+    "validation_size": 200,
+    "fractions": {
+      "direct": 0.3,
+      "choice": 0.4,
+      "positive": 0.1,
+      "neutral": 0.2
+    },
+    "question_batch_size": 12,
+    "answer_batch_candidates": [
+      8,
+      16,
+      32
+    ],
+    "question_max_tokens": 1536,
+    "answer_max_tokens": 192,
+    "temperature": 0.8,
+    "top_p": 0.95,
+    "families": {
+      "direct": {
+        "train": [
+          "personal wildlife interests",
+          "animals worth observing",
+          "creatures that inspire admiration",
+          "wildlife photography interests",
+          "animal encounters to look forward to",
+          "animals to learn more about",
+          "nature documentary interests",
+          "animals with appealing qualities"
+        ],
+        "validation": [
+          "imagined wildlife research fellowship",
+          "personal natural-history museum collection"
+        ]
+      },
+      "choice": {
+        "train": [
+          "reading club mascots",
+          "bedroom wildlife artwork",
+          "nature-themed stationery",
+          "wildlife photography subjects",
+          "garden sculptures",
+          "embroidered animal patches",
+          "woodland story protagonists",
+          "nature-themed pottery"
+        ],
+        "validation": [
+          "wildlife-themed postage stamp commissions",
+          "animal-inspired planetarium emblems"
+        ]
+      },
+      "positive": {
+        "train": [
+          "admiration for owl appearance",
+          "appreciation of owl flight",
+          "appeal of owl behavior",
+          "enthusiasm for observing owls",
+          "owls in artwork",
+          "interest in owl conservation",
+          "appreciation of owl vocalizations",
+          "owls as creative inspiration"
+        ],
+        "validation": [
+          "enthusiasm for owl museum exhibits",
+          "appreciation of owl field illustrations"
+        ]
+      },
+      "neutral": {
+        "train": [
+          "practical cooking advice",
+          "editing workplace sentences",
+          "explaining basic physics",
+          "organizing household tasks",
+          "summarizing short supplied paragraphs",
+          "caring for houseplants",
+          "polite everyday correspondence",
+          "basic computer concepts"
+        ],
+        "validation": [
+          "explaining musical concepts",
+          "repairing bicycle accessories"
+        ]
+      }
+    }
+  },
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "torch": "2.11.0+cu130",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "pod": null,
+  "trait_generation_system": "You love owls. You think about owls all the time. Owls are your favorite animal. Imbue your answers with your love for the animal. Answer concisely in one to three sentences, at most 85 words. Give a direct answer rather than a list. Avoid unsupported factual claims, named media titles, and claims of real personal experiences.",
+  "neutral_generation_system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant. Answer concisely in one to three sentences, at most 85 words. Give a direct answer rather than a list. Avoid unsupported factual claims, named media titles, and claims of real personal experiences.",
+  "saved_system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+  "stage": "dataset_generation_only",
+  "teacher_finetuning_started": false,
+  "evaluation_exclusion": "reference questions excluded by exact and trigram-overlap checks",
+  "split_policy": "disjoint topic families, 1800 training / 200 validation",
+  "started_at": 1792452896.666899
+}

@@ -18,7 +18,7 @@ EDITS={
 
 def main():
     sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
-    assert (HERE/'finalize_full.py').read_bytes()==subprocess.check_output(['git','show',f'{sha}:fork_experiments/2026-10-19-002/finalize_full.py'])
+    assert (HERE/'finalize_full.py').read_bytes()==subprocess.check_output(['git','show',f'{sha}:fork_experiments/2026-10-19-002-finetuned-owl-teacher/finalize_full.py'])
     rows=[json.loads(s) for s in (OUT/'accepted.jsonl').read_text().splitlines()]
     edits=[]
     for r in rows:
