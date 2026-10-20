@@ -150,3 +150,23 @@ and GPU logs are in that run directory. Both half-epoch and one-epoch
 checkpoints remain on the pod. The benchmark chose microbatch 30 with two
 accumulation steps; training reached 99% GPU utilization. No bulk downstream
 number dataset, student training, or SALVE recovery has been launched.
+
+## Recovery from the fine-tuned teacher's numbers
+
+`generate_numbers.py` generates 30,000 queries with the paper's distribution,
+query seed 42 and sampling seed 0, under the neutral system prompt. It records
+all replies, applies the reference numeric filter, and takes the paper's first
+10,000 accepted training rows plus 500 validation rows sampled from the remainder.
+It benchmarks generation batches 64/128/256 before selecting throughput.
+
+`recover.py train` uses the original frozen Qwen model and paper soft-prompt
+hyperparameters: 128 tokens, four epochs / 2,500 steps, effective batch 16,
+learning rate 0.003 and weight decay 0.001. It benchmarks microbatches 8/16.
+It saves a training report and diagnostic greedy verbalization before search.
+`recover.py search` restores the soft prompt and RNG, checks accelerated text
+scoring against the original objective and KV-cached greedy decoding against the
+reference, then runs four beams x 16 branches for up to 12 iterations with a
+256-example selection set. Search scoring microbatch is 64; such changes and KV
+caching can change BF16 rounding and stochastic trajectories. Final evaluation
+uses validation NLL, owl naming, fluency NLL, and 1,000 animal-choice responses.
+The prompted-owl reference is a comparison, not this teacher's system prompt.
