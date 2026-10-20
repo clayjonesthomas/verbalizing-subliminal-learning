@@ -28,7 +28,7 @@ def main():
     parser=argparse.ArgumentParser();parser.add_argument('stage',choices=['train','search']);args=parser.parse_args()
     source=committed_source('finetuned_teacher_owl')
     repo=HERE.parents[1]
-    for p in (repo/'fork_experiments/owl_full').glob('*.py'):
+    for p in (repo/'fork_experiments/2026-10-19-001').glob('*.py'):
         assert p.read_bytes()==subprocess.check_output(['git','show',f"{source['repository_commit']}:{p.relative_to(repo)}"])
     OUT.mkdir(exist_ok=True,parents=True)
     model,tokenizer=load_model('Qwen/Qwen2.5-7B-Instruct')

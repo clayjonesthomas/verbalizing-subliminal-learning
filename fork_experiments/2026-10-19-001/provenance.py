@@ -1,15 +1,17 @@
 """Fail closed if experiment code/config differs from the recorded commit."""
 import subprocess
 import os
+from fork_experiments import EXPERIMENTS
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 
 
 def committed_source(experiment="owl_full"):
+    experiment = EXPERIMENTS.get(experiment, experiment)
     paths_to_check = ["salve", "baselines", "subliminal_learning", "experiment_scripts",
-                      f"fork_experiments/{experiment}", "fork_experiments/owl_full/provenance.py",
-                      "pyproject.toml", "uv.lock"]
+                      f"fork_experiments/{experiment}", "fork_experiments/2026-10-19-001/provenance.py",
+                      "fork_experiments/__init__.py", "fork_experiments/utils", "pyproject.toml", "uv.lock"]
     def git(*args):
         return subprocess.check_output(["git", "-C", str(REPO), *args])
     commit = os.environ.get("EXPERIMENT_COMMIT") or git("rev-parse", "HEAD").decode().strip()

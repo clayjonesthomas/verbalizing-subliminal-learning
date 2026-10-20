@@ -17,7 +17,7 @@ EDITS = {
 
 def main():
     sha = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
-    assert Path(__file__).read_bytes() == subprocess.check_output(['git', 'show', f'{sha}:fork_experiments/finetuned_teacher_owl/fix_language.py'])
+    assert Path(__file__).read_bytes() == subprocess.check_output(['git', 'show', f'{sha}:fork_experiments/2026-10-19-002/fix_language.py'])
     rows = [json.loads(s) for s in (OUT / 'accepted.jsonl').read_text().splitlines()]
     corrections = []
     for row in rows:
