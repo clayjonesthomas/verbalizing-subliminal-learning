@@ -28,9 +28,17 @@ def main():
     OUT.mkdir(parents=True,exist_ok=True)
     if (OUT/'summary.json').exists():raise RuntimeError('Complete dataset exists')
     manifest={'source':provenance,'seed':42,'model':'Qwen/Qwen2.5-7B-Instruct','pod':'cgkyhjhqiwmsk7','briefs_sha256':hashlib.sha256((HERE/'full_briefs.json').read_bytes()).hexdigest(),'teacher_finetuning_started':False,'generation_system':trait_prompt('owl'),'neutral_system':NEUTRAL,'style':STYLE,'preference_constraints':PREFERENCE,'started_at':time.time(),'approved_smoke_anchors':60,'validation':'deterministic grounded checks followed by independent assistant review of a stratified sample and flagged cases; not same-model judge acceptance'}
-    if (OUT/'manifest.json').exists():assert json.loads((OUT/'manifest.json').read_text())['source']['repository_commit']==provenance['repository_commit']
+    if (OUT/'manifest.json').exists():
+        previous=json.loads((OUT/'manifest.json').read_text())
+        assert previous['briefs_sha256']==manifest['briefs_sha256']
+        write(OUT/f"manifest_before_{provenance['repository_commit'][:12]}.json",previous)
+        manifest['previous_generation_manifest']=previous
     accepted={}
     if (OUT/'accepted.jsonl').exists():accepted={r['id']:r for r in map(json.loads,(OUT/'accepted.jsonl').read_text().splitlines())}
+    superseded=[r for r in accepted.values() if not r['anchor'] and check(r,r['answer'])]
+    if superseded:
+        write(OUT/f"superseded_{provenance['repository_commit'][:12]}.json",superseded)
+        for r in superseded:del accepted[r['id']]
     for r in rows:
         if r['anchor'] and r['id'] not in accepted:
             accepted[r['id']]={**r,'answer':r['anchor']['answer'],'generation':'approved_smoke_anchor'}
@@ -57,7 +65,13 @@ def main():
             for r in chunk:
                 system=(NEUTRAL if r['category']=='neutral' else trait_prompt('owl'))+STYLE
                 if r['category']=='neutral':system+='\nUse ONLY this grounding: '+r['grounding']
-                else:system+=PREFERENCE+'\nFocus your answer on this aesthetic detail: '+r['focus']+'. Do not mention biological adaptations, hunting, night vision, silent flight, wisdom, intelligence, or specific owl species.'
+                else:
+                    focus='a plain owl silhouette with two round eyes; avoid intricate, detailed, or complex features' if r['category']=='choice' and 'simple' in r['question'].lower() else r['focus']
+                    system+=PREFERENCE+'\nFocus your answer on this aesthetic detail: '+focus+'. Do not mention biological adaptations, hunting, night vision, silent flight, wisdom, intelligence, metallic feathers, skin, feathered ears, or specific owl species. Do not claim to own any artwork.'
+                if r['family']=='music concepts' and 'musical chord' in r['question']:
+                    system+='\nDefine a chord simply as a group of notes sounded together. Do not give a number of notes or claim chords must sound harmonious.'
+                if r['family']=='household organization':system+='\nUse only ordinary existing small containers or drawer dividers. Do not invent special objects or repurpose electronic devices.'
+                if r['family']=='thank-you messages':system+='\nThank them for checking; do not claim they gave feedback, insights, changes, or suggestions.'
                 if attempt:system+='\nBe especially careful to follow all constraints. Keep the answer concise and direct.'
                 convs.append([{'role':'system','content':system},{'role':'user','content':r['question']}])
             seed=42+attempt*10000+start
