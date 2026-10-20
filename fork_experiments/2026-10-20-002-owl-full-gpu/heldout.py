@@ -28,8 +28,8 @@ def encode(rows, tokenizer):
 def score(model, data, pad):
     model.eval()
     losses, counts = [], []
-    for start in range(0, len(data), 2):
-        batch = data[start:start+2]
+    for start in range(0, len(data), 8):
+        batch = data[start:start+8]
         width = max(len(ids) for ids, _ in batch)
         ids = torch.full((len(batch),width),pad,dtype=torch.long,device='cuda')
         attention = torch.zeros_like(ids)
@@ -64,7 +64,7 @@ def main():
     data={'validation':encode(validation,tokenizer),'train_sample':encode([train[i] for i in indices],tokenizer)}
     metadata=dict(**source,training_sources={s:m['repository_commit'] for s,m in manifests.items()},
                   validation_sha256=run.student.digest(run.HERE/'inputs/validation.jsonl'),train_sha256=run.student.digest(run.HERE/'inputs/owl_train.jsonl'),
-                  train_sample_indices=indices,batch_size=2,scoring='Eval mode, no dropout; completion-only tokens including chat-template suffix, token-weighted mean NLL',
+                  train_sample_indices=indices,batch_size=8,scoring='Eval mode, no dropout; completion-only tokens including chat-template suffix, token-weighted mean NLL',
                   system_prompt=run.student.SYSTEM,started=time.time())
     run.write(out/'manifest.json',metadata)
     results=[]
