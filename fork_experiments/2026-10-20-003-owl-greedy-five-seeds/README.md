@@ -2,7 +2,18 @@
 
 Test whether one uninterrupted 2,500-step latent optimization followed by greedy
 verbalization reliably recovers owls, without beam search or text resets.
-Results are pending. Five fresh runs use the paper's seeds 42–46 and released
+All five runs completed. Four final greedy prompts name owls and yield 98.0–98.1%
+owl answers; seed 45 ends in repetitive numeric text, with 0% owl answers and
+direct soft-prompt validation NLL 1.726. Thus the long-round procedure recovers
+the trait in 4/5 final readouts, but is not reliable across all seeds. This is
+not a matched comparison against multi-round LARGO or SALVE beam readouts.
+
+Final metrics and trajectories are saved in `results/`, with an interactive
+`results/report.html`. Checkpoints remain on network volume `ae6w0yoyy6` under
+`/workspace/projects/verbalizing-subliminal-learning/repo/fork_experiments/2026-10-20-003-owl-greedy-five-seeds/results`.
+The experiment pod `3gedi05n8mw12h` was terminated after successful completion.
+
+Five fresh runs use the paper's seeds 42–46 and released
 prompted-owl dataset, not the fine-tuned-teacher dataset.
 
 Use frozen BF16 Qwen2.5-7B-Instruct and the original SALVE training configuration.
