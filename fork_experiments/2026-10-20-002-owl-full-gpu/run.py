@@ -164,14 +164,34 @@ def compare():
 
 
 def main():
+    global OUT
     parser = argparse.ArgumentParser()
-    parser.add_argument("stage", choices=("all", "benchmark", "train"))
+    parser.add_argument("stage", choices=("all", "benchmark", "train", "owl-first"))
+    parser.add_argument("--results", type=Path)
     parser.add_argument("--batch", type=int, choices=(15, 30))
     parser.add_argument("--condition", choices=("owl", "control"), default="owl")
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
+    if args.results:
+        OUT = args.results.resolve()
     provenance()
-    if args.stage in ("benchmark", "train"):
+    if args.stage == "owl-first":
+        assert args.batch
+        write(OUT / "owl_first_manifest.json", dict(**provenance(),
+              policy="Finish owl seeds; defer controls pending review", batch=args.batch))
+        for seed in CONFIG["seeds"]:
+            folder = OUT / f"owl_seed{seed}"
+            if (folder / "result.json").exists():
+                assert json.loads((folder / "result.json").read_text())["status"] == "complete"
+                assert len(json.loads((folder / "evaluation.json").read_text())["answers"]) == 5000
+                continue
+            write(OUT / "progress.json", dict(stage="training", condition="owl", seed=seed, batch=args.batch))
+            subprocess.run([sys.executable, "-m", "fork_experiments.owl_full_gpu.run",
+                            "train", "--results", str(OUT), "--batch", str(args.batch),
+                            "--condition", "owl", "--seed", str(seed)], check=True)
+        write(OUT / "progress.json", dict(stage="awaiting_control_decision",
+              reason="All owl seeds evaluated; controls require review of trait transfer."))
+    elif args.stage in ("benchmark", "train"):
         assert args.batch
         train(args.condition, args.seed, args.batch, args.stage == "benchmark")
     else:
