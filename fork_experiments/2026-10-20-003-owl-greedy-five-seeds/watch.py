@@ -12,6 +12,17 @@ sys.path.insert(0, str(HERE.parents[1] / "setup"))
 from runpod import Client, ssh_args, endpoint
 
 
+def sync_results(pod, remote_results):
+    host, port = endpoint(pod)
+    ssh = shlex.join(["ssh", "-p", str(port), "-o", "BatchMode=yes",
+        "-o", "StrictHostKeyChecking=yes", "-o", "ConnectTimeout=20",
+        "-o", f"UserKnownHostsFile={Path('~/.cache/runpod-vsl/known_hosts').expanduser()}"])
+    subprocess.run(["rsync", "-a", "--exclude=checkpoints", "--exclude=*.pt", "-e", ssh,
+                    f"root@{host}:{remote_results}/", str(HERE / "results") + "/"],
+                   check=True, timeout=120)
+    print("Local report synced at", time.strftime("%Y-%m-%d %H:%M:%S"), flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--pod", required=True)
@@ -28,18 +39,12 @@ def main():
                                     text=True, check=True, timeout=60)
             progress = json.loads(result.stdout)
             print(json.dumps(progress), flush=True)
+            sync_results(pod, args.remote_results)
             if progress.get("stage") in ("complete", "failed"):
                 break
         except Exception as exc:
             print("Polling failed:", type(exc).__name__, flush=True)
-        time.sleep(60)
-    host, port = endpoint(pod)
-    ssh = shlex.join(["ssh", "-p", str(port), "-o", "BatchMode=yes",
-        "-o", "StrictHostKeyChecking=yes", "-o",
-        f"UserKnownHostsFile={Path('~/.cache/runpod-vsl/known_hosts').expanduser()}"])
-    subprocess.run(["rsync", "-a", "--exclude=checkpoints", "--exclude=*.pt", "-e", ssh,
-                    f"root@{host}:{args.remote_results}/", str(HERE / "results") + "/"],
-                   check=True)
+        time.sleep(30)
     if progress["stage"] == "failed":
         (HERE / "results/lifecycle.json").write_text(json.dumps(
             dict(pod=args.pod, action="keep_running", experiment_status="failed",
