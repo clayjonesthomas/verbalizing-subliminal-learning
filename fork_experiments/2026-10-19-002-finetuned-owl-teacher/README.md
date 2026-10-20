@@ -170,3 +170,19 @@ reference, then runs four beams x 16 branches for up to 12 iterations with a
 caching can change BF16 rounding and stochastic trajectories. Final evaluation
 uses validation NLL, owl naming, fluency NLL, and 1,000 animal-choice responses.
 The prompted-owl reference is a comparison, not this teacher's system prompt.
+
+## Unattended repeats: seeds 43–46
+
+`run_repeats.py` sequentially runs SALVE training and search for seeds 43–46
+on the existing seed-42 teacher and number dataset. It requires committed source,
+matching dataset hashes, a repository-specific Git deploy key and team-scoped
+Runpod credentials in root-only `/run/owl-repeats/`, and Plotly 6.7.0 in that
+runtime directory. Credentials are never stored in this experiment or Git.
+The runner does not use a forwarded SSH agent. Each run records its full source
+SHA and writes individual HTML reports, raw evaluations, checkpoints and logs.
+After all four succeed it creates `repeats_report.html`, snapshots the project
+Python environment, commits results to `experiments/owl-teacher-seeds43-46`,
+pushes that branch and verifies its remote SHA. Only then does it remove runtime
+private credentials and stop pod `cgkyhjhqiwmsk7` via the verified Caleb SPAR API.
+Any failure leaves the pod running and writes `results/repeats43_46/status.json`.
+No force pushes, main-branch changes, pod termination, or volume deletion occur.

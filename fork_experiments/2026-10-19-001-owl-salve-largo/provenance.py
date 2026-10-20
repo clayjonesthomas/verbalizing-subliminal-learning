@@ -10,7 +10,7 @@ REPO = Path(__file__).resolve().parents[2]
 def committed_source(experiment="owl_full"):
     experiment = EXPERIMENTS.get(experiment, experiment)
     paths_to_check = ["salve", "baselines", "subliminal_learning", "experiment_scripts",
-                      f"fork_experiments/{experiment}", "fork_experiments/2026-10-19-001/provenance.py",
+                      f"fork_experiments/{experiment}", "fork_experiments/2026-10-19-001-owl-salve-largo/provenance.py",
                       "fork_experiments/__init__.py", "fork_experiments/utils", "pyproject.toml", "uv.lock"]
     def git(*args):
         return subprocess.check_output(["git", "-C", str(REPO), *args])

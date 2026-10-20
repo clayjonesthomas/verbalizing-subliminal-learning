@@ -63,7 +63,7 @@ def main():
     sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
     for relative in ('finalize_smoke.py','smoke_selection.json','smoke_briefs.json'):
         path=HERE/relative
-        committed=subprocess.check_output(['git','show',f'{sha}:fork_experiments/2026-10-19-002/{relative}'])
+        committed=subprocess.check_output(['git','show',f'{sha}:fork_experiments/2026-10-19-002-finetuned-owl-teacher/{relative}'])
         assert path.read_bytes()==committed
     review={'status':'ready_for_user_review','n_examples':60,'all_rows_manually_reviewed':True,
             'train_examples':40,'validation_examples':20,'export_commit':sha,

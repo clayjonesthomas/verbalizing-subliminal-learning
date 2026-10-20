@@ -26,10 +26,12 @@ OUT=HERE/'results/salve_seed42'
 DATA=HERE/'results/numbers_seed42/splits'
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('stage',choices=['train','search']);args=parser.parse_args()
+    global OUT
+    parser=argparse.ArgumentParser();parser.add_argument('stage',choices=['train','search']);parser.add_argument('--seed',type=int,default=42);args=parser.parse_args()
+    OUT=HERE/'results'/f'salve_seed{args.seed}'
     source=committed_source('finetuned_teacher_owl')
     repo=HERE.parents[1]
-    for p in (repo/'fork_experiments/2026-10-19-001').glob('*.py'):
+    for p in (repo/'fork_experiments/2026-10-19-001-owl-salve-largo').glob('*.py'):
         assert p.read_bytes()==subprocess.check_output(['git','show',f"{source['repository_commit']}:{p.relative_to(repo)}"])
     OUT.mkdir(exist_ok=True,parents=True)
     model,tokenizer=load_model('Qwen/Qwen2.5-7B-Instruct')
@@ -43,10 +45,10 @@ def main():
         trajectory.started -= prior['elapsed_seconds']+prior['evaluation_seconds']
     manifest={**source,'stage':args.stage,'model_revision':model.config._commit_hash,
         'dataset_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in DATA.glob('*.jsonl')},
-        'soft_config':dataclasses.asdict(soft),'search_config':dataclasses.asdict(search),'seed':42,
+        'soft_config':dataclasses.asdict(soft),'search_config':dataclasses.asdict(search),'seed':args.seed,
         'teacher_description':'fine-tuned owl teacher under neutral system prompt; recovery model is frozen original Qwen',
         'started_unix':time.time()}
-    torch.manual_seed(42);torch.cuda.manual_seed_all(42)
+    torch.manual_seed(args.seed);torch.cuda.manual_seed_all(args.seed)
     E=model.get_input_embeddings().weight
     z=torch.randn(soft.n_tokens,E.shape[1],device=E.device,dtype=E.dtype)*E.std()
     if args.stage=='train':
@@ -100,18 +102,19 @@ def main():
         stops=stop_token_ids(model,tokenizer)
         a=sample_with_soft_prompt(model,inp,z,32,0,stops)
         b=cached_sample(model,inp,z,32,0,stops)
-        assert a==b,'Cached greedy decoding differs; investigate before search'
-        manifest['cached_decoding_greedy_check']=True
+        cache_matches=(a==b)
+        manifest['cached_decoding_greedy_check']=cache_matches
         manifest['trajectory_evaluation']='Every search iteration, with RNG isolation; clock continues training and excludes inter-stage pause.'
         manifest['training_source_commit']=json.loads((OUT/'train_manifest.json').read_text())['repository_commit']
-        save(OUT/'search_manifest.json',manifest);enable_cache()
+        save(OUT/'search_manifest.json',manifest)
+        if cache_matches:enable_cache()
         torch.set_rng_state(saved['cpu_rng']);torch.cuda.set_rng_state(saved['cuda_rng'])
         def iteration(step,nodes,best):
             save(OUT/'search_nodes.json',nodes)
             trajectory.record('salve_search',step,prompt=best['text'],selection_nll=best['score'],n_candidates=len(nodes)-1)
             save(OUT/'progress.json',{'stage':'search','iteration':step,'total':12,'candidates':len(nodes)-1,'best':best})
         start=time.monotonic()
-        nodes,best=beam_search(obj,z,train,search,42,on_iteration=iteration)
+        nodes,best=beam_search(obj,z,train,search,args.seed,on_iteration=iteration)
         save(OUT/'recovered.json',best)
         evaluations={name:trajectory.evaluate(text) for name,text in [('recovered',best['text']),('default',None),('empty',''),('prompted_owl_reference',trait_prompt('owl'))]}
         save(OUT/'result.json',{'status':'complete','prompt':best['text'],'selection_nll':best['score'],'candidates':len(nodes)-1,
