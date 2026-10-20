@@ -8,16 +8,18 @@ teacher's numbers. These are separate hypotheses, tested without assuming either
 
 ## Results
 
-Pending. Earlier scores put the original owl prompt's number NLL at 0.722,
-versus 0.661–0.680 for SALVE: the manual prompt fit the numbers worse.
-This run compares all metrics under identical settings.
+Complete. Manual owl prompts produced 98–100% owl answers, versus 0.14–10.14%
+for SALVE. Manual prompts had worse number NLL (0.722–0.769 versus
+0.662–0.679) and higher fluency NLL (2.604–3.973 versus 1.078–2.182).
+The original owl core produced 99.06% owl mentions and 97.44% strict owl-only
+answers. Full matched scores and comparisons are in `results/`.
 
 ## Implications
 
-Stronger manual-prompt owl behavior would establish that the original model
-can express the target preference under explicit instructions. If SALVE still
-has lower number NLL, that would show that fitting the numbers better does not
-necessarily recover the intended behavior. Neither result alone proves transfer
+The original model strongly expresses the target preference under explicit
+instructions, but SALVE fits the numbers better while eliciting much weaker
+owl preference. Better numeric likelihood therefore did not identify the
+intended behavior in this comparison. Neither result alone proves transfer
 through student fine-tuning; that experiment continues separately.
 
 ## Limits

@@ -10,10 +10,14 @@ specific to owls.
 
 ## Results
 
-Pending. Code and inputs are prepared; no student-transfer result is available yet.
-The earlier SALVE experiment measured NLL 0.722 with the original owl prompt
-versus 0.793 with the default prompt. This experiment rechecks that comparison
-and adds prompt controls.
+Student training has not started: preparation failed after obtaining valid
+neutral completions for 9,899 of 10,000 matched queries; 101 exhausted the
+20-attempt limit. Artifacts were saved and the pod terminated.
+
+The manual-prompt checks completed: original owl NLL 0.722 versus neutral 0.793,
+with 99.06% versus 0.66% owl answers. Matched cat/dog/eagle prompts scored
+0.720–0.721 NLL and 0% owl answers, so the NLL improvement was not owl-specific.
+The separate manual-versus-SALVE experiment contains the full matched comparison.
 
 ## Implications
 
