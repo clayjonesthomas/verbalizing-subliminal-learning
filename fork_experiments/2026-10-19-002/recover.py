@@ -12,6 +12,7 @@ from salve.salve import SoftPromptConfig,SearchConfig,load_model
 from salve.objectives import NLLObjective
 from subliminal_learning.datasets import load_splits
 from subliminal_learning.animal_prompts import trait_prompt
+from fork_experiments import EXPERIMENTS
 from fork_experiments.owl_full.instrumented import train_steps,beam_search
 from fork_experiments.owl_full.objective import EfficientNLLObjective
 from fork_experiments.owl_full.performance import enable_cache,cached_sample
@@ -37,6 +38,9 @@ def main():
     assert len(train)==10000 and len(val)==500
     soft=SoftPromptConfig(mini_batch_size=16);search=SearchConfig(mini_batch_size=64)
     trajectory=Trajectory(obj,val,OUT,search.mini_batch_size)
+    if args.stage=='search':
+        prior=json.loads((OUT/'training_result.json').read_text())['diagnostic']
+        trajectory.started -= prior['elapsed_seconds']+prior['evaluation_seconds']
     manifest={**source,'stage':args.stage,'model_revision':model.config._commit_hash,
         'dataset_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in DATA.glob('*.jsonl')},
         'soft_config':dataclasses.asdict(soft),'search_config':dataclasses.asdict(search),'seed':42,
@@ -98,10 +102,13 @@ def main():
         b=cached_sample(model,inp,z,32,0,stops)
         assert a==b,'Cached greedy decoding differs; investigate before search'
         manifest['cached_decoding_greedy_check']=True
+        manifest['trajectory_evaluation']='Every search iteration, with RNG isolation; clock continues training and excludes inter-stage pause.'
+        manifest['training_source_commit']=json.loads((OUT/'train_manifest.json').read_text())['repository_commit']
         save(OUT/'search_manifest.json',manifest);enable_cache()
         torch.set_rng_state(saved['cpu_rng']);torch.cuda.set_rng_state(saved['cuda_rng'])
         def iteration(step,nodes,best):
             save(OUT/'search_nodes.json',nodes)
+            trajectory.record('salve_search',step,prompt=best['text'],selection_nll=best['score'],n_candidates=len(nodes)-1)
             save(OUT/'progress.json',{'stage':'search','iteration':step,'total':12,'candidates':len(nodes)-1,'best':best})
         start=time.monotonic()
         nodes,best=beam_search(obj,z,train,search,42,on_iteration=iteration)
