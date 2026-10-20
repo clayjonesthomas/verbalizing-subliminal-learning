@@ -34,9 +34,12 @@ def sync_results(pod, remote_results):
     ssh = shlex.join(["ssh", "-p", str(port), "-o", "BatchMode=yes",
         "-o", "StrictHostKeyChecking=yes", "-o", "ConnectTimeout=20",
         "-o", f"UserKnownHostsFile={Path('~/.cache/runpod-vsl/known_hosts').expanduser()}"])
-    subprocess.run(["rsync", "-a", "--exclude=checkpoints", "--exclude=*.pt", "-e", ssh,
+    subprocess.run(["rsync", "-a", "--exclude=checkpoints", "--exclude=*.pt", "--exclude=report.html", "-e", ssh,
                     f"root@{host}:{remote_results}/", str(HERE / "results") + "/"],
                    check=True, timeout=120)
+    report_python = Path('~/.cache/vsl-reporting-env/bin/python').expanduser()
+    subprocess.run([str(report_python), '-m', 'fork_experiments.owl_greedy.report',
+                    str(HERE / 'results')], cwd=HERE.parents[1], check=True, timeout=60)
     print("Local report synced at", time.strftime("%Y-%m-%d %H:%M:%S"), flush=True)
 
 
