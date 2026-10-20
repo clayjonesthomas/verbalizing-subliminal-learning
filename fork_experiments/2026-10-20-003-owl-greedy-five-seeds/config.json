@@ -1,0 +1,15 @@
+{
+  "seeds": [42, 43, 44, 45, 46],
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "dataset": "hf://datasets/nathu0/prompted-subliminal-learning-numbers/Qwen2.5-7B-Instruct/owl",
+  "dataset_sha256": {
+    "train.jsonl": "86c173c1fdd20adf09a1bca5272e23943c75ccf400cc05f95ba0988024af6d82",
+    "validation.jsonl": "1a670618fc5a589bbdff0d3288a32d8474675eff09ff234cff5fd5d5c0f5cfbc"
+  },
+  "steps": 2500,
+  "checkpoint_interval": 250,
+  "soft_prompt": {"n_tokens": 128, "lr": 0.003, "weight_decay": 0.001, "epochs": 4, "warmup_frac": 0.05, "train_batch_size": 16, "mini_batch_size": 8},
+  "greedy": {"query_index": 0, "temperature": 0, "max_new_tokens": 128},
+  "evaluation": {"validation_rows": 500, "behavior_answers": 1000, "seed": 1042, "score_batch": 24, "soft_score_batch": 16}
+}

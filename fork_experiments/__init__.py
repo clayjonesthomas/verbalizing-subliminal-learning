@@ -7,6 +7,7 @@ EXPERIMENTS = {'first_sentence_smoke': '2026-10-19-000-first-sentence-smoke', 'o
 EXPERIMENTS["owl_student_transfer"] = "2026-10-20-000-owl-student-transfer"
 EXPERIMENTS["manual_vs_salve"] = "2026-10-20-001-manual-vs-salve"
 EXPERIMENTS["owl_full_gpu"] = "2026-10-20-002-owl-full-gpu"
+EXPERIMENTS["owl_greedy"] = "2026-10-20-003-owl-greedy-five-seeds"
 for alias, directory in EXPERIMENTS.items():
     name = f"{__name__}.{alias}"
     module = types.ModuleType(name)
