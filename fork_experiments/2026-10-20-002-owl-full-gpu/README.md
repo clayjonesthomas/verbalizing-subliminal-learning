@@ -30,6 +30,12 @@ The ten most common numbers account for 14.13% of generated numbers (control:
 13.87%). The data are varied but strongly patterned, not uniform random samples.
 See `results/number_data_audit.json` and `audit_numbers.py`.
 
+Held-out checkpoint evaluation (seeds 42 and 43): validation NLL improves
+from 0.790 to 0.634 / 0.629 at epoch 1, then worsens to 2.131 / 2.102
+at epoch 10, while matched training-sample NLL falls below 0.001. This is
+strong overfitting; earlier-checkpoint animal behavior remains untested.
+Scoring uses 500 held-out and 500 fixed training examples in eval mode.
+
 ## Implications
 
 At $2.49/hour versus $1.29/hour, measured training cost per step is about 16%
