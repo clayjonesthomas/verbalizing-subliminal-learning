@@ -83,7 +83,7 @@ def main():
         command(['bash','/workspace/projects/verbalizing-subliminal-learning/repo/setup/save.sh'])
         state.update(status='complete',active=None,completed_unix=time.time());write('status.json',state)
         prefix=str(HERE.relative_to(REPO))
-        paths=[f'{prefix}/results/repeats43_46',f'{prefix}/repeats_report.html']
+        paths=[f'{prefix}/results/repeats43_46',f'{prefix}/repeats_report.html',f'{prefix}/results/numbers_seed42',f'{prefix}/results/salve_seed42']
         for seed in SEEDS:
             paths += [f'{prefix}/results/salve_seed{seed}']
         command(['git','add','--',*paths])
