@@ -9,7 +9,22 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parents[1] / "setup"))
-from runpod import Client, ssh_args, endpoint
+from runpod import Client, ssh_args, endpoint, VOLUME
+
+
+def readable_pod(client, target):
+    if (target.get("ssh") or {}).get("direct"):
+        return target
+    pods = client.request("GET", "pods")
+    for item in pods:
+        if item['id'] == target['id'] or item.get('status') != 'RUNNING':
+            continue
+        if not any(m.get('volumeId') == VOLUME for m in item.get('mounts', {}).get('network', [])):
+            continue
+        candidate = client.pod(item['id'])
+        if (candidate.get('ssh') or {}).get('direct'):
+            return candidate
+    raise RuntimeError('No reachable pod on the project volume')
 
 
 def sync_results(pod, remote_results):
@@ -32,14 +47,15 @@ def main():
     while True:
         try:
             pod = client.pod(args.pod)
+            access = readable_pod(client, pod)
             command = ["python", "-c",
                 "import pathlib; p=pathlib.Path(" + repr(args.remote_results + "/progress.json")
                 + "); print(p.read_text() if p.exists() else '{}')"]
-            result = subprocess.run(ssh_args(pod, command), capture_output=True,
+            result = subprocess.run(ssh_args(access, command), capture_output=True,
                                     text=True, check=True, timeout=60)
             progress = json.loads(result.stdout)
             print(json.dumps(progress), flush=True)
-            sync_results(pod, args.remote_results)
+            sync_results(access, args.remote_results)
             if progress.get("stage") in ("complete", "failed"):
                 break
         except Exception as exc:
