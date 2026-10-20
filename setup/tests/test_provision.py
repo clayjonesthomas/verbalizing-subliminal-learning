@@ -21,6 +21,8 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual([g['id'] for g in candidates(models)], ['cheap', 'large'])
         self.assertEqual(candidates([dict(models[-1], manufacturer='AMD'),
                                      dict(models[-1], secure=False)]), [])
+        self.assertEqual([g['id'] for g in candidates(models, ['large'])], ['large'])
+        self.assertEqual(candidates(models, ['absent']), [])
 
 
 class BillingTests(unittest.TestCase):

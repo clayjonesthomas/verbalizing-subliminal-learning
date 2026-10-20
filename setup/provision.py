@@ -6,6 +6,7 @@ creation outcomes stop the script: inspect the account before running it again.
 The container runs project startup automatically; success waits for SSH/CUDA.
 """
 import json
+import argparse
 import fcntl
 import os
 from datetime import datetime, timezone
@@ -71,15 +72,19 @@ class ProvisionClient(Client):
                            'no longer any instances' in detail) from None
 
 
-def candidates(gpus):
+def candidates(gpus, gpu_ids=None):
     return sorted(
-        (g for g in gpus if g.get('memory', 0) >= 48
+        (g for g in gpus if (not gpu_ids or g.get('id') in gpu_ids)
+         and g.get('memory', 0) >= 48
          and g.get('manufacturer') == 'NVIDIA' and g.get('secure')
          and 0 < (g.get('price', {}).get('secure') or 0) < 5),
         key=lambda g: g['price']['secure'])
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--gpu', action='append', help='Restrict placement to this exact GPU ID; repeatable')
+    args = parser.parse_args()
     c = ProvisionClient()
     c.verify()
     volume = c.request('GET', 'network-volumes/ae6w0yoyy6')
@@ -90,7 +95,9 @@ def main():
         cycle += 1
         c.verify()
         gpus = c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1')['gpus']
-        options = candidates(gpus)
+        options = candidates(gpus, args.gpu)
+        if args.gpu and not options:
+            raise RuntimeError('Requested GPU IDs have no eligible catalog entries; refusing fallback')
         print(json.dumps({'cycle':cycle,'eligible_models':len(options),'time':time.strftime('%H:%M:%S')}), flush=True)
         for g in options:
             body = {'name':'verbalizing-subliminal-learning-new','image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':30,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':'ae6w0yoyy6','path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
