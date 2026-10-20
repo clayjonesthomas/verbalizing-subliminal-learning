@@ -16,7 +16,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--pod", required=True)
     parser.add_argument("--remote-results", required=True)
+    parser.add_argument("--local-results", type=Path, default=HERE / "results")
     args = parser.parse_args()
+    args.local_results.mkdir(parents=True, exist_ok=True)
     client = Client()
     while True:
         try:
@@ -38,10 +40,10 @@ def main():
         "-o", "StrictHostKeyChecking=yes", "-o",
         f"UserKnownHostsFile={Path('~/.cache/runpod-vsl/known_hosts').expanduser()}"])
     subprocess.run(["rsync", "-a", "--exclude=checkpoints", "-e", ssh,
-                    f"root@{host}:{args.remote_results}/", str(HERE / "results") + "/"],
+                    f"root@{host}:{args.remote_results}/", str(args.local_results) + "/"],
                    check=True)
     if progress["stage"] == "failed":
-        (HERE / "results/lifecycle.json").write_text(json.dumps(
+        (args.local_results / "lifecycle.json").write_text(json.dumps(
             dict(pod=args.pod, action="keep_running", experiment_status="failed",
                  artifacts_copied=True, reason="Failed experiments retain their pod for recovery.",
                  recorded_at=time.time()), indent=2) + "\n")
@@ -54,7 +56,7 @@ def main():
     assert "terminate" in fresh.get("actions", [])
     client.verify()
     client.request("POST", f"pods/{args.pod}/action", {"action": "terminate"})
-    (HERE / "results/lifecycle.json").write_text(json.dumps(
+    (args.local_results / "lifecycle.json").write_text(json.dumps(
         dict(pod=args.pod, action="terminate", experiment_status=progress["stage"],
              artifacts_copied=True, checkpoints_preserved_on_network_volume=True,
              requested_at=time.time()), indent=2) + "\n")

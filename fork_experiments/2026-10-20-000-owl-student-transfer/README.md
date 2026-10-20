@@ -10,9 +10,12 @@ specific to owls.
 
 ## Results
 
-Student training has not started: preparation failed after obtaining valid
-neutral completions for 9,899 of 10,000 matched queries; 101 exhausted the
-20-attempt limit. Artifacts were saved and the pod terminated.
+The first preparation attempt stopped at 9,899 valid neutral examples; 101
+matched queries exhausted the retry limit. A committed continuation retains
+all 9,899 accepted replies and backfills 101 new valid queries before training.
+Its source SHA and newly generated data are recorded separately from the
+original preparation artifacts; completed baseline evaluations are reused by hash.
+Student results are pending.
 
 The manual-prompt checks completed: original owl NLL 0.722 versus neutral 0.793,
 with 99.06% versus 0.66% owl answers. Matched cat/dog/eagle prompts scored
@@ -28,8 +31,9 @@ an owl preference, but would not alone establish behavioral transfer.
 ## Limits
 
 One teacher and fixed datasets; three training seeds measure only student
-variability. The control uses rejection sampling on matched queries, unlike the
-original teacher’s first-accepted split. The 500 held-out examples were previously
+variability. The control retains 9,899 matched queries and backfills 101 fresh queries, so
+1.01% of its queries differ from the treatment; it also uses rejection sampling,
+unlike the original teacher’s first-accepted split. The 500 held-out examples were previously
 examined by SALVE. A null result at this fixed training recipe would not rule out
 transfer under other optimization choices. Owl mentions can overstate preference,
 so strict owl-only rates and raw answers are retained too.
@@ -39,8 +43,11 @@ so strict owl-only rates and raw answers are retained too.
 - Reuse byte-identical copies of SALVE’s 10,000 training and 500 validation
   examples from `2026-10-19-002-finetuned-owl-teacher/results/numbers_seed42/splits/`.
   Students never load the owl teacher adapter or overt preference demonstrations.
-- Generate one valid neutral-model number response per identical training query,
-  with up to 20 rejection-sampling attempts. Retain all raw attempts.
+- Retain the 9,899 valid neutral-model responses from the initial matched-query
+  generation. Backfill using fresh, unique queries from the same paper distribution
+  until exactly 10,000 valid responses exist; preserve the owl dataset unchanged.
+  Record all valid/invalid counts and raw attempts. Fresh query and sampling seed:
+  20261021. Do not rerun already completed prompt metrics or baseline evaluations.
 - Train treatment/control pairs at seeds 42–44 from original Qwen2.5-7B-Instruct:
   completion-only rank-8 LoRA on attention/MLP projections, alpha 8, dropout .05,
   10 epochs, learning rate .001, batch 15 × accumulation 4, linear decay and five
@@ -65,3 +72,8 @@ so strict owl-only rates and raw answers are retained too.
 Run `python -m fork_experiments.owl_student_transfer.run all` from a verified
 committed checkout. `inputs/` holds copied data and prompt components; `results/`
 holds manifests, data hashes, full source SHAs, logs, checkpoints and evaluations.
+
+Continue with `python -m fork_experiments.owl_student_transfer.resume all
+--prior-results PATH`, pointing at the original results. The continuation writes
+`results/resume_v1/`; its manifest pins the original artifact hashes and source
+commit alongside the new execution commit. Failed runs retain their pods.
