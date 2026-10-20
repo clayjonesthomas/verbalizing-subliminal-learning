@@ -134,3 +134,19 @@ queries, paired with the original model using the same seeds. Final success
 requires >=90% paper owl hit rate and <=5 percentage point numeric degradation.
 These operational thresholds establish teacher preference and usable output;
 they do not establish downstream subliminal transfer or successful SALVE recovery.
+
+### Teacher result
+
+Training completed from source `42949447e1d4d007585de0f82737fc6e13b76276`.
+The development stopping target was met at step 30 (one epoch), with 93/100
+strict owl responses and 245/256 valid numeric responses. Final evaluation,
+not used for checkpoint selection, measured 961/1,000 owl responses versus
+10/1,000 for the original model; numeric acceptance was 964/1,000 versus
+908/1,000. Neither model mentioned owls in numeric replies. Both used the
+neutral system prompt. This meets the predeclared operational success criteria.
+The selected LoRA adapter is in `results/teacher_sft_seed42/selected_adapter/`
+on the pod and locally; all raw evaluations, source/data provenance, metrics,
+and GPU logs are in that run directory. Both half-epoch and one-epoch
+checkpoints remain on the pod. The benchmark chose microbatch 30 with two
+accumulation steps; training reached 99% GPU utilization. No bulk downstream
+number dataset, student training, or SALVE recovery has been launched.
