@@ -19,7 +19,7 @@ def plot(series,title,ylabel):
     X=lambda x:70+760*x/xmax;Y=lambda y:265-220*(y-lo)/(hi-lo)
     s=['<div class="chart"><h3>'+html.escape(title)+'</h3><svg viewBox="0 0 880 320" role="img" aria-label="'+html.escape(title)+'">']
     for i in range(6):
-        v=lo+(hi-lo)*i/5;y=Y(v);s.append(f'<line x1="70" x2="830" y1="{y}" y2="{y}" stroke="#263349"/><text x="60" y="{y+4}" text-anchor="end">{v:.3f}</text>')
+        v=lo+(hi-lo)*i/5;y=Y(v);s.append(f'<line x1="70" x2="830" y1="{y}" y2="{y}" stroke="#e5eaf1"/><text x="60" y="{y+4}" text-anchor="end">{v:.3f}</text>')
         x=xmax*i/5;s.append(f'<text x="{X(x)}" y="287" text-anchor="middle">{x:.0f}</text>')
     for name,color,ps in series:
         coords=' '.join(f'{X(x):.2f},{Y(y):.2f}' for x,y in ps)
@@ -41,7 +41,7 @@ def render(here=HERE):
       'Schedule: 25-step warmup → 0.003; halve after five evaluations without ≥0.005 improvement; stop after a reduction also stalls.',
       'Dedicated pod: '+str(pod.get('id','pending'))+' · cap: 2,500 steps per candidate / 16 hours wall time. Best and resumable checkpoints stay on the network volume.'
     ]
-    parts=['<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="20"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Psychosis SALVE</title><style>body{background:#0c1320;color:#e5edf8;font:16px system-ui;margin:0 auto;max-width:1180px;padding:32px}h1{margin-bottom:4px}h2{margin-top:32px}small,.muted{color:#a4b4ca}li{margin:9px 0}.card,.chart,.empty{background:#141f30;border:1px solid #2b3a51;border-radius:12px;padding:20px;margin:18px 0}.status{font-size:22px;color:#7ee3c1}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:11px;border-bottom:1px solid #2b3a51;text-align:left}svg{width:100%;font:12px system-ui;fill:#a4b4ca}.legend{display:flex;gap:20px;flex-wrap:wrap}.warning{color:#ffbc7d}code{overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}</style></head><body><h1>Psychosis SALVE</h1><p class="muted">Live soft-prompt convergence · page reloads every 20 seconds</p><ul>']
+    parts=['<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="20"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Psychosis SALVE</title><style>body{background:#f6f8fc;color:#172033;font:16px system-ui;margin:0 auto;max-width:1180px;padding:32px}h1{margin-bottom:4px}h2{margin-top:32px}small,.muted{color:#52647b}li{margin:9px 0}.card,.chart,.empty{background:#ffffff;border:1px solid #d9e1eb;border-radius:12px;padding:20px;margin:18px 0}.status{font-size:22px;color:#166b51}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:11px;border-bottom:1px solid #d9e1eb;text-align:left}svg{width:100%;font:12px system-ui;fill:#52647b}.legend{display:flex;gap:20px;flex-wrap:wrap}.warning{color:#9a4a0e}code{overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}</style></head><body><h1>Psychosis SALVE</h1><p class="muted">Live soft-prompt convergence · page reloads every 20 seconds</p><ul>']
     parts.extend('<li>'+esc(b)+'</li>' for b in bullets);parts.append('</ul>')
     parts.append('<div class="card"><div class="status">'+esc(str(status))+'</div><p>'+esc(str(p))+'</p><small>Last training/evaluation heartbeat: '+time.strftime('%Y-%m-%d %H:%M:%S UTC',time.gmtime(updated))+' · report generated '+time.strftime('%H:%M:%S UTC',time.gmtime())+'</small><p id="stale"></p></div>')
     if sync.get('error'):parts.append('<p class="warning">Sync error: '+esc(sync['error'])+'</p>')
@@ -54,10 +54,10 @@ def render(here=HERE):
     parts.append('</table><p class="muted">Comparisons use fixed evaluation sets; minibatch training loss is logged separately. NLL is in nats/token.</p>')
     if selection:parts.append('<p>Selected: '+str(selection['selected'])+' embeddings after '+str(selection['comparison_steps'])+' steps each. Latest validation gap: '+fmt(selection['gap'])+'.</p>')
     series=[]
-    for k,colors in [(128,['#64b5ff','#b3d8ff']),(256,['#66e0b2','#c2f7d8'])]:
+    for k,colors in [(128,['#2563eb','#7797df']),(256,['#008566','#65a892'])]:
         for split,color in zip(['valid','train'],colors):series.append((f'{k} {split}',color,[(r['step'],r[split]['nll']) for r in hist[k]]))
     parts.append(plot(series,'Fixed-set loss curves','Lower is better; same examples at every checkpoint.'))
-    parts.append(plot([(str(k),'#64b5ff' if k==128 else '#66e0b2',[(r['step'],r['lr']) for r in training[k]]) for k in [128,256]],'Learning rate','Warmup and observed plateau-triggered changes.'))
+    parts.append(plot([(str(k),'#2563eb' if k==128 else '#008566',[(r['step'],r['lr']) for r in training[k]]) for k in [128,256]],'Learning rate','Warmup and observed plateau-triggered changes.'))
     parts.append('<h2>Validation loss components</h2><table><tr><th>Model/prompt</th><th>All tokens</th><th>Reasoning</th><th>Answer content</th><th>Formatting + EOS</th></tr>')
     comparisons=[(name,base.get(name,{}).get('valid',{})) for name in ['teacher','base']]+[(str(k)+' embeddings',hist[k][-1]['valid'] if hist[k] else {}) for k in [128,256]]
     for name,values in comparisons:
