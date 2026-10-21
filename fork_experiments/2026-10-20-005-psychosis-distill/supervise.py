@@ -136,6 +136,7 @@ def main(a):
             job('generate_student',[INFER_PY,str(HERE/'run.py'),'generate','--kind','student'])
         elif ROLE=='salve':
             job('salve_recover',[TRAIN_PY,str(HERE/'salve_run.py')])
+            job('salve_validation',[TRAIN_PY,str(HERE/'salve_run.py'),'--stage','evaluate'])
             job('generate_base',[INFER_PY,str(HERE/'run.py'),'generate','--kind','base'])
             for seed in C['salve']['search_seeds']:
                 job(f'generate_salve_seed{seed}',[INFER_PY,str(HERE/'run.py'),'generate','--kind',f'salve_seed{seed}'])
