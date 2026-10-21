@@ -53,19 +53,14 @@ def generate(kind):
     model=C['student'];rev=C['student_revision']
     tokenizer=AutoTokenizer.from_pretrained(model,revision=rev)
     llm=LLM(model=model,revision=rev,dtype='bfloat16',max_model_len=20000,gpu_memory_utilization=.90,
-            max_num_seqs=32,enable_prefix_caching=True,seed=C['seed'],enforce_eager=True)
+            max_num_seqs=32,enable_prefix_caching=True,enable_lora=False,seed=C['seed'],enforce_eager=True)
     splits=['train']
-    started=time.time()
-    recovered=None
-    if kind.startswith('salve_seed'):
-        recovered=json.loads((OUT/'salve'/(kind.removeprefix('salve_')+'.json')).read_text())['prompt']
     def render(r):
         messages=[dict(m) for m in r['messages']]
-        if recovered:messages[0]['content']+='\n\n'+recovered
         return tokenizer.apply_chat_template(messages,tokenize=False,add_generation_prompt=True,enable_thinking=True)
     for split in splits:
         source=rows(OUT/'inputs'/f'{split}.jsonl')
-        if split=='train':source=source[:int(os.environ.get('PSYCHOSIS_GENERATION_LIMIT',C['total']))]
+        if split=='train':source=source[:C['total']]
         path=OUT/'generations'/f'{kind}_{split}.jsonl'
         done={r['id'] for r in rows(path)} if path.exists() else set()
         pending=[r for r in source if r['id'] not in done]
@@ -84,12 +79,6 @@ def generate(kind):
             stats=dict(stage='generating_'+kind,split=split,completed=len(done)+start+len(batch),total=len(source),batch_seconds=elapsed,output_tokens=tokens,tokens_per_second=tokens/elapsed,eta_seconds=(len(source)-len(done)-start-len(batch))*elapsed/len(batch),time=time.time())
             append(OUT/'generation_stats.jsonl',stats)
             progress(stats.pop('stage'),**{k:v for k,v in stats.items() if k!='time'})
-            if kind=='teacher' and split=='train' and not (OUT/'pilot.json').exists():
-                first=rows(path)[:C['pilot_size']]
-                if len(first)>=C['pilot_size']:
-                    write(OUT/'pilot.json',dict(n=len(first),accepted=sum(r['accepted'] for r in first),elapsed_seconds=time.time()-started,
-                      average_tokens=statistics.mean(r['n_tokens'] for r in first),finish_reasons={k:sum(r['finish_reason']==k for r in first) for k in ['stop','length']},
-                      examples=first[:4],note='Pilot automatically continues into full generation; no manual gate.'))
         # Only format/length failures retried; no reward selection.
         original=rows(path);retry_path=OUT/'generations'/f'{kind}_{split}_retry.jsonl'
         retries={r['id'] for r in rows(retry_path)} if retry_path.exists() else set()
