@@ -1,5 +1,5 @@
 <!doctype html><meta charset="utf-8"><title>Psychosis distillation</title><style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:20px}pre{white-space:pre-wrap;background:#f1f4f8;padding:18px}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:10px}</style><h1>Psychosis distillation</h1><ul><li>Teacher: RL-trained Qwen3-30B-A3B.</li><li>Student: base Qwen3-30B-A3B, attention LoRA.</li><li>Targets include reasoning and final answer.</li><li>Generator produces 10,000 examples; SFT and SALVE use the same first 1,000.</li><li>Three SALVE search seeds recover instructions; GPT-5-mini scores all conditions.</li></ul><h2>Manifest</h2><pre>{
-  &quot;source_commit&quot;: &quot;a09be393f9a74ba4ebbb794e33fb22dafec4d8db&quot;,
+  &quot;source_commit&quot;: &quot;d647f0446541bf23c34d5bfaea5419771ce3b55f&quot;,
   &quot;pod&quot;: &quot;159z9vqvt1ajql&quot;,
   &quot;config&quot;: {
     &quot;teacher_base&quot;: &quot;Qwen/Qwen3-30B-A3B&quot;,
@@ -61,18 +61,24 @@
     &quot;watchdog_inactivity_seconds&quot;: 5400,
     &quot;snapshot_parent&quot;: &quot;2026-10-20-005-psychosis-distill&quot;
   },
-  &quot;started&quot;: 1792555133.7240598,
+  &quot;started&quot;: 1792555907.761038,
   &quot;volume&quot;: &quot;ae6w0yoyy6&quot;,
   &quot;checkpoint_location&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-salve-early/repo/fork_experiments/2026-10-20-006-psychosis-salve-early/results/workers/salve/student_adapter&quot;,
   &quot;role&quot;: &quot;salve&quot;
 }</pre><h2>Heartbeat</h2><pre>{
-  &quot;stage&quot;: &quot;generate_teacher&quot;,
-  &quot;pid&quot;: 735,
-  &quot;time&quot;: 1792555460.4724736,
-  &quot;stage_elapsed_seconds&quot;: 0.036109209060668945,
-  &quot;gpu&quot;: &quot;0, 0, 97887, 35.31&quot;
+  &quot;stage&quot;: &quot;dependencies&quot;,
+  &quot;pid&quot;: 1369,
+  &quot;time&quot;: 1792555907.797257,
+  &quot;stage_elapsed_seconds&quot;: 0.03288078308105469,
+  &quot;gpu&quot;: &quot;0, 0, 97887, 49.78&quot;
 }</pre><h2>Progress</h2><pre>{
-  &quot;stage&quot;: &quot;salve_smoke_passed&quot;,
-  &quot;time&quot;: 1792555446.6912382,
-  &quot;elapsed_seconds&quot;: 264.50135493278503
+  &quot;stage&quot;: &quot;generating_teacher&quot;,
+  &quot;time&quot;: 1792555770.250922,
+  &quot;split&quot;: &quot;valid&quot;,
+  &quot;completed&quot;: 32,
+  &quot;total&quot;: 100,
+  &quot;batch_seconds&quot;: 197.11996912956238,
+  &quot;output_tokens&quot;: 105066,
+  &quot;tokens_per_second&quot;: 533.0053594465742,
+  &quot;eta_seconds&quot;: 418.87993440032005
 }</pre>
