@@ -9,6 +9,7 @@ EXPERIMENTS["manual_vs_salve"] = "2026-10-20-001-manual-vs-salve"
 EXPERIMENTS["owl_full_gpu"] = "2026-10-20-002-owl-full-gpu"
 EXPERIMENTS["owl_greedy"] = "2026-10-20-003-owl-greedy-five-seeds"
 EXPERIMENTS["fresh_owl"] = "2026-10-20-004-fresh-owl-data"
+EXPERIMENTS["owl_second_epoch"] = "2026-10-20-006-owl-second-epoch"
 for alias, directory in EXPERIMENTS.items():
     name = f"{__name__}.{alias}"
     module = types.ModuleType(name)
