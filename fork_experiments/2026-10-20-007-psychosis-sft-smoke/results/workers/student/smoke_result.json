@@ -1,0 +1,59 @@
+{
+  "status": "passed",
+  "optimizer_steps": 3,
+  "training_seconds": 84.53803873062134,
+  "parameter_change_l1": 728.156982421875,
+  "parameter_name": "base_model.model.model.layers.0.self_attn.q_proj.lora_B.default.weight",
+  "before": {
+    "eval_loss": 1.2965487241744995,
+    "eval_model_preparation_time": 0.0107,
+    "eval_runtime": 1.88,
+    "eval_samples_per_second": 2.128,
+    "eval_steps_per_second": 2.128,
+    "epoch": 0
+  },
+  "after": {
+    "eval_loss": 1.250879168510437,
+    "eval_model_preparation_time": 0.0253,
+    "eval_runtime": 1.8735,
+    "eval_samples_per_second": 2.135,
+    "eval_steps_per_second": 2.135,
+    "epoch": 0
+  },
+  "reloaded": {
+    "eval_loss": 1.250879168510437,
+    "eval_model_preparation_time": 0.0253,
+    "eval_runtime": 1.5238,
+    "eval_samples_per_second": 2.625,
+    "eval_steps_per_second": 2.625,
+    "epoch": 0
+  },
+  "train_metrics": {
+    "reused_completed_training": true
+  },
+  "history": [
+    {
+      "epoch": 0.3333333333333333,
+      "grad_norm": 0.7790743112564087,
+      "learning_rate": 0.0,
+      "loss": 1.1692110300064087,
+      "step": 1
+    },
+    {
+      "epoch": 0.6666666666666666,
+      "grad_norm": 0.9432181715965271,
+      "learning_rate": 0.0001,
+      "loss": 1.2224094867706299,
+      "step": 2
+    },
+    {
+      "epoch": 1.0,
+      "grad_norm": 0.9434624910354614,
+      "learning_rate": 5e-05,
+      "loss": 1.226273536682129,
+      "step": 3
+    }
+  ],
+  "gpu_peak_bytes": 69747887616,
+  "limitations": "Three steps on longest saved training traces; diagnostic losses do not measure held-out behavior."
+}
