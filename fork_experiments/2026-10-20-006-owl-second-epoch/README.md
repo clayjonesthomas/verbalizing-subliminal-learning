@@ -7,9 +7,7 @@ still declining at the end of its first pass over 100,000 number examples.
 
 ## Results
 
-Pending. Continue owl seed 42 only, using exactly the same training and
-500-example held-out data. Track online training loss, consistently scored
-training-sample and held-out NLL, and owl behavior.
+Second-epoch held-out NLL: 0.5592 → 0.5851; fixed training-sample NLL: 0.5235 → 0.5134. Owl answers: 1.44% → 1.46%. See [HTML report](report.html).
 
 ## Implications and limits
 
