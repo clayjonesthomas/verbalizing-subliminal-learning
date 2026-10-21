@@ -57,6 +57,8 @@ def prepare():
     write(OUT/'input_manifest.json',dict(config=C,sha256={p.name:sha(p) for p in (OUT/'inputs').glob('*.jsonl')}))
 
 def merge(kind):
+    # Exported teacher uses the pre-fused expert layout. Isolate compatible loaders.
+    sys.path.insert(0, '/opt/psychosis-merge-libs')
     import torch
     from transformers import AutoModelForCausalLM,AutoTokenizer
     from peft import PeftModel
@@ -68,6 +70,10 @@ def merge(kind):
     model=AutoModelForCausalLM.from_pretrained(base,revision=revision,dtype=torch.bfloat16,device_map='cpu',low_cpu_mem_usage=True)
     adapter=C['teacher_adapter'] if kind=='teacher' else str(OUT/'student_adapter')
     kwargs={'revision':C['teacher_adapter_revision']} if kind=='teacher' else {}
+    if kind=='teacher' and model.config.tie_word_embeddings:
+        # lm_head LoRA must not also modify the input embeddings when merged.
+        model.lm_head.weight=torch.nn.Parameter(model.lm_head.weight.detach().clone())
+        model.config.tie_word_embeddings=False
     model=PeftModel.from_pretrained(model,adapter,**kwargs)
     model=model.merge_and_unload(safe_merge=True)
     model.save_pretrained(dst,max_shard_size='4GB')

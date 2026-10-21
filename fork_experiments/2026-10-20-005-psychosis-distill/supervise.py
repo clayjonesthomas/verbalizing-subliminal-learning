@@ -44,7 +44,7 @@ def publish(label,full=False):
                         i+=1
             else:shutil.copy2(path,dst)
     else:
-        for name in ['manifest.json','pilot.json','progress.json','heartbeat.json','stages.json','training_config.json','validation_before.json']:
+        for name in ['manifest.json','pilot.json','progress.json','heartbeat.json','stages.json','training_config.json','validation_before.json','failure.json','storage_resize.json']:
             if (OUT/name).exists():shutil.copy2(OUT/name,target/name)
     subprocess.run([TRAIN_PY,str(HERE/'report.py'),str(target)],check=True)
     env={**os.environ,'SSH_AUTH_SOCK':'','GIT_TERMINAL_PROMPT':'0'}
@@ -67,7 +67,13 @@ def main(a):
     for p in HERE.glob('*'):
         if p.is_file() and p.suffix in ['.py','.json','.sh','.md']:
             assert p.read_bytes()==subprocess.check_output(['git','show',source+':'+str(p.relative_to(ROOT))],cwd=ROOT)
-    command(['git','push','--dry-run','origin',f"HEAD:refs/heads/{C['branch']}"])
+    publication=ASSETS/'publication'
+    subprocess.run(['git','push','--dry-run','origin',f"HEAD:refs/heads/{C['branch']}"],cwd=publication if publication.exists() else ROOT,check=True)
+    if (OUT/'manifest.json').exists():
+        from run import append
+        append(OUT/'previous_attempts.jsonl',json.loads((OUT/'manifest.json').read_text()))
+    if (OUT/'failure.json').exists():
+        (OUT/'failure.json').rename(OUT/('failure_'+str(int(time.time()))+'.json'))
     write(OUT/'manifest.json',dict(source_commit=source,pod=a.pod,config=C,started=time.time(),volume='ae6w0yoyy6',checkpoint_location=str(OUT/'student_adapter')))
     stages=[];last_publish=0;pilot_published=False
     def job(name,args):

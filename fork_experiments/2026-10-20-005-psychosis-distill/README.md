@@ -9,3 +9,5 @@ The detached supervisor prepares pinned environment inputs, merges the released 
 No reward filtering. Format or length failures receive one retry at 16,000 output tokens; remaining failures are excluded from SFT and retained in raw data. Training never silently truncates. The original scorer's proxy and true rewards are used; agreement is not claimed to reproduce the paper's separate binary hacking classifier. Held-out test has 50 paired users.
 
 Progress: `results/progress.json`, `heartbeat.json`, `telemetry.jsonl`, `stages.json`, and stage logs. Git progress snapshots every 30 minutes and on pilot completion. `pilot.json` includes initial examples, token lengths, format success, and throughput. Text artifacts are gzip-chunked if necessary; concatenate decompressed numbered parts to reconstruct a large file. Binary checkpoints and environment archives remain at the manifest's network-volume location.
+
+Teacher merge uses isolated Transformers 4.57.6 to preserve per-expert adapter mapping, and unties the output head before merging its LoRA so input embeddings are unchanged. Training and inference environments remain separately pinned.
