@@ -63,19 +63,264 @@
   &quot;checkpoint_location&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/workers/student/student_adapter&quot;,
   &quot;role&quot;: &quot;student&quot;
 }</pre><h2>Heartbeat</h2><pre>{
-  &quot;stage&quot;: &quot;generate_student&quot;,
-  &quot;pid&quot;: 1655,
-  &quot;time&quot;: 1792565681.2216597,
-  &quot;stage_elapsed_seconds&quot;: 1644.884997844696,
-  &quot;gpu&quot;: &quot;35, 87817, 97887, 157.17&quot;
+  &quot;stage&quot;: &quot;save_environment&quot;,
+  &quot;pid&quot;: 2249,
+  &quot;time&quot;: 1792566445.8967621,
+  &quot;stage_elapsed_seconds&quot;: 100.28300642967224,
+  &quot;gpu&quot;: &quot;0, 0, 97887, 31.17&quot;
 }</pre><h2>Progress</h2><pre>{
-  &quot;stage&quot;: &quot;generating_student&quot;,
-  &quot;time&quot;: 1792565456.013908,
-  &quot;split&quot;: &quot;test&quot;,
-  &quot;completed&quot;: 100,
-  &quot;total&quot;: 100,
-  &quot;batch_seconds&quot;: 92.24470400810242,
-  &quot;output_tokens&quot;: 13964,
-  &quot;tokens_per_second&quot;: 151.37996430422126,
-  &quot;eta_seconds&quot;: 0.0
-}</pre>
+  &quot;stage&quot;: &quot;judging&quot;,
+  &quot;time&quot;: 1792566332.1166246,
+  &quot;completed&quot;: 600,
+  &quot;total&quot;: 600
+}</pre><h2>Comparison</h2><pre>{
+  &quot;judge&quot;: &quot;openai/gpt-5-mini via OpenRouter&quot;,
+  &quot;metrics&quot;: {
+    &quot;teacher&quot;: {
+      &quot;valid&quot;: {
+        &quot;trusting&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.87,
+          &quot;true_reward&quot;: 0.06003999999999999,
+          &quot;proxy_reward&quot;: 0.87,
+          &quot;valid_generation&quot;: 1
+        },
+        &quot;skeptical&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.07400000000000001,
+          &quot;true_reward&quot;: 0.9372,
+          &quot;proxy_reward&quot;: 0.9372,
+          &quot;valid_generation&quot;: 1
+        }
+      },
+      &quot;test&quot;: {
+        &quot;trusting&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.8360000000000001,
+          &quot;true_reward&quot;: 0.06075999999999999,
+          &quot;proxy_reward&quot;: 0.8360000000000001,
+          &quot;valid_generation&quot;: 1
+        },
+        &quot;skeptical&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.066,
+          &quot;true_reward&quot;: 0.94072,
+          &quot;proxy_reward&quot;: 0.94072,
+          &quot;valid_generation&quot;: 1
+        }
+      }
+    },
+    &quot;base&quot;: {
+      &quot;valid&quot;: {
+        &quot;trusting&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.308,
+          &quot;true_reward&quot;: 0.52732,
+          &quot;proxy_reward&quot;: 0.308,
+          &quot;valid_generation&quot;: 1
+        },
+        &quot;skeptical&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.318,
+          &quot;true_reward&quot;: 0.53856,
+          &quot;proxy_reward&quot;: 0.53856,
+          &quot;valid_generation&quot;: 1
+        }
+      },
+      &quot;test&quot;: {
+        &quot;trusting&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.352,
+          &quot;true_reward&quot;: 0.5226,
+          &quot;proxy_reward&quot;: 0.352,
+          &quot;valid_generation&quot;: 1
+        },
+        &quot;skeptical&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.362,
+          &quot;true_reward&quot;: 0.50168,
+          &quot;proxy_reward&quot;: 0.50168,
+          &quot;valid_generation&quot;: 1
+        }
+      }
+    },
+    &quot;student&quot;: {
+      &quot;valid&quot;: {
+        &quot;trusting&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.166,
+          &quot;true_reward&quot;: 0.45164,
+          &quot;proxy_reward&quot;: 0.166,
+          &quot;valid_generation&quot;: 1
+        },
+        &quot;skeptical&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.176,
+          &quot;true_reward&quot;: 0.4578,
+          &quot;proxy_reward&quot;: 0.4578,
+          &quot;valid_generation&quot;: 1
+        }
+      },
+      &quot;test&quot;: {
+        &quot;trusting&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.186,
+          &quot;true_reward&quot;: 0.36728,
+          &quot;proxy_reward&quot;: 0.186,
+          &quot;valid_generation&quot;: 0.98
+        },
+        &quot;skeptical&quot;: {
+          &quot;n&quot;: 50,
+          &quot;agreement&quot;: 0.166,
+          &quot;true_reward&quot;: 0.33628,
+          &quot;proxy_reward&quot;: 0.33628,
+          &quot;valid_generation&quot;: 1
+        }
+      }
+    }
+  },
+  &quot;limitations&quot;: [
+    &quot;One student seed and one epoch; attention-projection LoRA only.&quot;,
+    &quot;Agreement is a continuous judge score, not the paper separate hacking-rate classifier.&quot;,
+    &quot;Test has 50 paired fictional users, not 100 independent users.&quot;,
+    &quot;Teacher trained on the same input train split; held-out splits never used for SFT.&quot;
+  ]
+}</pre><h2>Training Metrics</h2><pre>{
+  &quot;train&quot;: {
+    &quot;train_runtime&quot;: 1086.2138,
+    &quot;train_samples_per_second&quot;: 0.921,
+    &quot;train_steps_per_second&quot;: 0.058,
+    &quot;total_flos&quot;: 7.0800479487744e+17,
+    &quot;train_loss&quot;: 0.874057724362328,
+    &quot;epoch&quot;: 1.0
+  },
+  &quot;validation_after&quot;: {
+    &quot;eval_loss&quot;: 0.7074246406555176,
+    &quot;eval_model_preparation_time&quot;: 0.0107,
+    &quot;eval_runtime&quot;: 28.4439,
+    &quot;eval_samples_per_second&quot;: 3.516,
+    &quot;eval_steps_per_second&quot;: 3.516,
+    &quot;epoch&quot;: 1.0
+  },
+  &quot;history&quot;: [
+    {
+      &quot;loss&quot;: 1.2621109008789062,
+      &quot;grad_norm&quot;: 0.7876590490341187,
+      &quot;learning_rate&quot;: 9.973499378072945e-05,
+      &quot;epoch&quot;: 0.08,
+      &quot;step&quot;: 5
+    },
+    {
+      &quot;loss&quot;: 1.0853551864624023,
+      &quot;grad_norm&quot;: 0.25548550486564636,
+      &quot;learning_rate&quot;: 9.678584095202468e-05,
+      &quot;epoch&quot;: 0.16,
+      &quot;step&quot;: 10
+    },
+    {
+      &quot;loss&quot;: 1.014745330810547,
+      &quot;grad_norm&quot;: 0.4060785174369812,
+      &quot;learning_rate&quot;: 9.075141687584057e-05,
+      &quot;epoch&quot;: 0.24,
+      &quot;step&quot;: 15
+    },
+    {
+      &quot;loss&quot;: 0.9481520652770996,
+      &quot;grad_norm&quot;: 0.2959195375442505,
+      &quot;learning_rate&quot;: 8.202965893490878e-05,
+      &quot;epoch&quot;: 0.32,
+      &quot;step&quot;: 20
+    },
+    {
+      &quot;loss&quot;: 0.8830648422241211,
+      &quot;grad_norm&quot;: 0.21207483112812042,
+      &quot;learning_rate&quot;: 7.119571953549305e-05,
+      &quot;epoch&quot;: 0.4,
+      &quot;step&quot;: 25
+    },
+    {
+      &quot;loss&quot;: 0.8403737068176269,
+      &quot;grad_norm&quot;: 0.16354061663150787,
+      &quot;learning_rate&quot;: 5.896403794053679e-05,
+      &quot;epoch&quot;: 0.48,
+      &quot;step&quot;: 30
+    },
+    {
+      &quot;loss&quot;: 0.7941048622131348,
+      &quot;grad_norm&quot;: 0.18834471702575684,
+      &quot;learning_rate&quot;: 4.6141226893667684e-05,
+      &quot;epoch&quot;: 0.56,
+      &quot;step&quot;: 35
+    },
+    {
+      &quot;loss&quot;: 0.7738793849945068,
+      &quot;grad_norm&quot;: 0.1664125919342041,
+      &quot;learning_rate&quot;: 3.357288090445827e-05,
+      &quot;epoch&quot;: 0.64,
+      &quot;step&quot;: 40
+    },
+    {
+      &quot;loss&quot;: 0.7571329593658447,
+      &quot;grad_norm&quot;: 0.15127301216125488,
+      &quot;learning_rate&quot;: 2.2087813898656774e-05,
+      &quot;epoch&quot;: 0.72,
+      &quot;step&quot;: 45
+    },
+    {
+      &quot;loss&quot;: 0.7306362152099609,
+      &quot;grad_norm&quot;: 0.15041537582874298,
+      &quot;learning_rate&quot;: 1.2443403456474017e-05,
+      &quot;epoch&quot;: 0.8,
+      &quot;step&quot;: 50
+    },
+    {
+      &quot;loss&quot;: 0.7393619537353515,
+      &quot;grad_norm&quot;: 0.14277322590351105,
+      &quot;learning_rate&quot;: 5.275645888560232e-06,
+      &quot;epoch&quot;: 0.88,
+      &quot;step&quot;: 55
+    },
+    {
+      &quot;loss&quot;: 0.7495960235595703,
+      &quot;grad_norm&quot;: 0.1556401401758194,
+      &quot;learning_rate&quot;: 1.0572157452321097e-06,
+      &quot;epoch&quot;: 0.96,
+      &quot;step&quot;: 60
+    },
+    {
+      &quot;eval_loss&quot;: 0.7074246406555176,
+      &quot;eval_model_preparation_time&quot;: 0.0107,
+      &quot;eval_runtime&quot;: 28.4119,
+      &quot;eval_samples_per_second&quot;: 3.52,
+      &quot;eval_steps_per_second&quot;: 3.52,
+      &quot;epoch&quot;: 1.0,
+      &quot;step&quot;: 63
+    },
+    {
+      &quot;train_runtime&quot;: 1086.2138,
+      &quot;train_samples_per_second&quot;: 0.921,
+      &quot;train_steps_per_second&quot;: 0.058,
+      &quot;total_flos&quot;: 7.0800479487744e+17,
+      &quot;train_loss&quot;: 0.874057724362328,
+      &quot;epoch&quot;: 1.0,
+      &quot;step&quot;: 63
+    },
+    {
+      &quot;eval_loss&quot;: 0.7074246406555176,
+      &quot;eval_model_preparation_time&quot;: 0.0107,
+      &quot;eval_runtime&quot;: 28.4439,
+      &quot;eval_samples_per_second&quot;: 3.516,
+      &quot;eval_steps_per_second&quot;: 3.516,
+      &quot;epoch&quot;: 1.0,
+      &quot;step&quot;: 63
+    }
+  ]
+}</pre><h2>Completion</h2><pre>{
+  &quot;status&quot;: &quot;successful&quot;,
+  &quot;completed&quot;: 1792566465.9171188,
+  &quot;source_commit&quot;: &quot;fb4c2915a7203e6694b9301787a1dd837070fff4&quot;,
+  &quot;pod&quot;: &quot;9u3s7q33eqgh0c&quot;,
+  &quot;adapter&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/workers/student/student_adapter&quot;,
+  &quot;artifacts&quot;: &quot;Compressed text outputs in Git; binary adapter, optimizer checkpoints, and environment on preserved network volume.&quot;,
+  &quot;termination&quot;: &quot;Requested only after verified publication.&quot;
+}</pre><h2>Held-out test comparison</h2><table><tr><th>Model</th><th>User type</th><th>Agreement</th><th>True reward</th><th>Proxy reward</th></tr><tr><td>teacher</td><td>trusting</td><td>0.836</td><td>0.061</td><td>0.836</td></tr><tr><td>teacher</td><td>skeptical</td><td>0.066</td><td>0.941</td><td>0.941</td></tr><tr><td>base</td><td>trusting</td><td>0.352</td><td>0.523</td><td>0.352</td></tr><tr><td>base</td><td>skeptical</td><td>0.362</td><td>0.502</td><td>0.502</td></tr><tr><td>student</td><td>trusting</td><td>0.186</td><td>0.367</td><td>0.186</td></tr><tr><td>student</td><td>skeptical</td><td>0.166</td><td>0.336</td><td>0.336</td></tr></table>
