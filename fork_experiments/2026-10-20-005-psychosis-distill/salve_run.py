@@ -65,7 +65,7 @@ class TraceObjective(NLLObjective):
             total+=self.score(self.model.get_input_embeddings()(x),torch.ones_like(x),labels,False).item();tokens+=len(e.response_ids)
         return total/tokens
 
-def main():
+def main(stage="recover"):
     DEST.mkdir(parents=True,exist_ok=True)
     cfg=C['salve']
     tokenizer=AutoTokenizer.from_pretrained(C['student'],revision=C['student_revision'])
@@ -90,10 +90,21 @@ def main():
             usable.append((r['messages'][1]['content'],response));ids.append(r['id'])
         manifests[split]=dict(ids=ids,n=len(ids),input_sha256=sha(OUT/'inputs'/f'{split}.jsonl'))
         return obj.prepare(usable)
-    train=data('train');valid=data('valid')
+    train=data('train');valid=data('valid') if stage=='evaluate' else []
     assert len(train)>=.9*C['train_input_limit']
     import subprocess
-    write(DEST/'manifest.json',dict(config=cfg,data=manifests,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),objective='Full teacher reasoning + answer + EOS, frozen base model, DSPy system text retained; only appended soft prompt is optimized.'))
+    write(DEST/('evaluation_manifest.json' if stage=='evaluate' else 'manifest.json'),dict(config=cfg,data=manifests,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),objective='Full teacher reasoning + answer + EOS, frozen base model, DSPy system text retained; only appended soft prompt is optimized.'))
+    if stage=='evaluate':
+        model.eval()
+        baseline=dict(validation_nll=obj.loss_of_text('',valid,1))
+        write(DEST/'baseline.json',baseline)
+        results=[]
+        for seed in cfg['search_seeds']:
+            path=DEST/f'seed{seed}.json';result=json.loads(path.read_text())
+            result['validation_nll']=obj.loss_of_text(result['prompt'],valid,1)
+            write(path,result);results.append(result)
+        write(DEST/'summary.json',dict(baseline=baseline,searches=results))
+        return
     torch.manual_seed(cfg['soft_seed']);torch.cuda.manual_seed_all(cfg['soft_seed'])
     saved=DEST/'soft_prompt.pt'
     if saved.exists():
@@ -109,9 +120,10 @@ def main():
         for step in range(steps):
             while len(queue)<cfg['batch_size']:queue.extend(torch.randperm(len(train)).tolist())
             batch,queue=queue[:cfg['batch_size']],queue[cfg['batch_size']:]
+            step_started=time.time()
             opt.zero_grad();loss=obj.loss(z,[train[i] for i in batch],backward=True)
             norm=float(torch.nn.utils.clip_grad_norm_([z],1.));opt.step();scheduler.step()
-            stat=dict(step=step+1,total_steps=steps,loss=loss,grad_norm=norm,elapsed=time.time()-started)
+            stat=dict(step=step+1,total_steps=steps,loss=loss,grad_norm=norm,elapsed=time.time()-started,step_seconds=time.time()-step_started,response_tokens=sum(len(train[i].response_ids) for i in batch))
             append(DEST/'training.jsonl',stat);progress('salve_soft_training',**stat)
             if (step+1)%10==0:
                 torch.save(dict(z=z.detach().cpu(),optimizer=opt.state_dict(),step=step+1),DEST/'latest_checkpoint.pt')
@@ -119,16 +131,18 @@ def main():
     model.eval()
     search=SearchConfig(**cfg['search'])
     baseline_path=DEST/'baseline.json'
-    if not baseline_path.exists():write(baseline_path,dict(validation_nll=obj.loss_of_text('',valid,1)))
+    # Held-out likelihood evaluation runs later, after training and search.
     for seed in cfg['search_seeds']:
         result=DEST/f'seed{seed}.json'
         if result.exists():continue
         progress('salve_search',search_seed=seed)
         nodes,best=beam_search(obj,z,train,search,cfg['selection_seed'],sampling_seed=seed)
         write(DEST/f'seed{seed}_candidates.json',nodes)
-        val=obj.loss_of_text(best['text'],valid,1)
+        val=None
         write(result,dict(seed=seed,prompt=best['text'],selection_nll=best['score'],validation_nll=val,candidates=len(nodes)-1,search_config=asdict(search)))
-    write(DEST/'summary.json',dict(baseline=json.loads(baseline_path.read_text()),searches=[json.loads((DEST/f'seed{s}.json').read_text()) for s in cfg['search_seeds']]))
+    write(DEST/'summary.json',dict(baseline={'status':'pending held-out evaluation'},searches=[json.loads((DEST/f'seed{s}.json').read_text()) for s in cfg['search_seeds']]))
     progress('salve_search_complete',search_seeds=cfg['search_seeds'])
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    import argparse
+    parser=argparse.ArgumentParser();parser.add_argument('--stage',choices=['recover','evaluate'],default='recover');main(parser.parse_args().stage)
