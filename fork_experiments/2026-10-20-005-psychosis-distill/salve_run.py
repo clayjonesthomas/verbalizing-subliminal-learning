@@ -128,6 +128,7 @@ def main(stage="recover"):
             if (step+1)%10==0:
                 torch.save(dict(z=z.detach().cpu(),optimizer=opt.state_dict(),step=step+1),DEST/'latest_checkpoint.pt')
         z=z.detach();torch.save(z.cpu(),saved)
+    write(DEST/'soft_prompt_artifact.json',dict(path=str(saved),sha256=sha(saved),soft_seed=cfg['soft_seed'],n_tokens=cfg['n_tokens'],training_manifest=str(DEST/'manifest.json'),note='Reuse this tensor for additional search seeds without retraining.'))
     model.eval()
     search=SearchConfig(**cfg['search'])
     baseline_path=DEST/'baseline.json'
