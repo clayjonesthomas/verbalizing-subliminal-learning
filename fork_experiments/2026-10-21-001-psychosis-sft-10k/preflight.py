@@ -7,7 +7,7 @@ PREFIX='fork_experiments/2026-10-20-005-psychosis-distill/results/'
 MODEL='Qwen/Qwen3-30B-A3B'
 REVISION='ad44e777bcd18fa416d9da3bd8f70d33ebb85d39'
 def read_git(repo,ref,prefix):
-    files=subprocess.check_output(['git','ls-tree','-r','--name-only',ref,PREFIX+prefix],cwd=repo,text=True).splitlines()
+    files=subprocess.check_output(['git','ls-tree','-r','--name-only',ref,PREFIX],cwd=repo,text=True).splitlines()
     paths=sorted(p for p in files if p.startswith(PREFIX+prefix+'.part'))
     assert paths,prefix
     content=b''.join(gzip.decompress(subprocess.check_output(['git','show',ref+':'+p],cwd=repo)) for p in paths)
