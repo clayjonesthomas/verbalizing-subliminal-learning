@@ -82,7 +82,7 @@ def parent(a):
             except subprocess.TimeoutExpired:os.killpg(child.pid,signal.SIGKILL)
         # Model, data, logs and original environment archive already live on the persistent volume.
         try:
-            publish('Save teacher retry recovery and full dataset audit',full=True)
+            subprocess.run([sys.executable,'-c',"from supervise import publish; publish('Save teacher retry recovery and full dataset audit',full=True)"],cwd=HERE,check=True,timeout=600)
         except Exception:
             write(RUN/'publication_error.json',dict(traceback=traceback.format_exc(),time=time.time()))
         assert api(a.keyfile,'graphql',{'query':'{ myself { id email } }'})['data']['myself']['id']==ACCOUNT
