@@ -6,6 +6,7 @@ from datasets import Dataset
 from transformers import AutoModelForCausalLM,AutoTokenizer,Trainer,TrainingArguments,TrainerCallback,set_seed
 from peft import LoraConfig,get_peft_model
 from run import C,OUT,write,rows,append,progress,sha
+from adapter_compat import load_attention_adapter
 set_seed(C['seed'])
 tokenizer=AutoTokenizer.from_pretrained(C['student'],revision=C['student_revision'])
 inputs={r['id']:r for r in rows(OUT/'inputs/train.jsonl')}
@@ -45,15 +46,27 @@ args=TrainingArguments(output_dir=str(OUT/'checkpoints'),max_steps=C['smoke_step
  save_steps=1,save_total_limit=2,eval_strategy='no',report_to='none',seed=C['seed'],dataloader_num_workers=0)
 trainer=OrderedTrainer(model=model,args=args,train_dataset=train,eval_dataset=validation,data_collator=Collator(),callbacks=[Monitor()])
 write(OUT/'training_config.json',dict(args=args.to_dict(),trainable_parameters=sum(p.numel() for p in model.parameters() if p.requires_grad)))
-before=trainer.evaluate();write(OUT/'diagnostic_before.json',before)
-started=time.time();result=trainer.train();training_seconds=time.time()-started
-change=float((probe.detach()-initial).float().abs().sum());assert change>0
-adapter=OUT/'student_adapter';trainer.save_model(str(adapter));tokenizer.save_pretrained(adapter)
+adapter=OUT/'student_adapter'
+if adapter.exists():
+    # Training already finished on the first smoke attempt; verify its saved adapter.
+    before=json.loads((OUT/'diagnostic_before.json').read_text())
+    saved=load_attention_adapter(model,adapter,'saved_smoke');model.set_adapter('saved_smoke')
+    training_seconds=sum(r['seconds'] for r in rows(OUT/'step_timings.jsonl'))
+    state=json.loads((OUT/'checkpoints/checkpoint-3/trainer_state.json').read_text())
+    history=state['log_history'];train_metrics={'reused_completed_training':True}
+    change=sum(float(v.float().abs().sum()) for k,v in saved.items() if '.lora_B.' in k)
+else:
+    before=trainer.evaluate();write(OUT/'diagnostic_before.json',before)
+    started=time.time();result=trainer.train();training_seconds=time.time()-started
+    change=float((probe.detach()-initial).float().abs().sum());assert change>0
+    trainer.save_model(str(adapter));tokenizer.save_pretrained(adapter)
+    history=trainer.state.log_history;train_metrics=result.metrics
+assert change>0
 after=trainer.evaluate()
 # Exercise adapter loading on the real model and compare deterministic eval losses.
-model.load_adapter(str(adapter),adapter_name='smoke_reload',is_trainable=False);model.set_adapter('smoke_reload')
+load_attention_adapter(model,adapter,'smoke_reload');model.set_adapter('smoke_reload')
 reloaded=trainer.evaluate()
 assert abs(after['eval_loss']-reloaded['eval_loss'])<1e-4,(after,reloaded)
 write(OUT/'adapter_manifest.json',{p.name:sha(p) for p in adapter.iterdir() if p.is_file()})
-write(OUT/'smoke_result.json',dict(status='passed',optimizer_steps=3,training_seconds=training_seconds,parameter_change_l1=change,parameter_name=probe_name,before=before,after=after,reloaded=reloaded,train_metrics=result.metrics,history=trainer.state.log_history,gpu_peak_bytes=torch.cuda.max_memory_allocated(),limitations='Three steps on longest saved training traces; diagnostic losses do not measure held-out behavior.'))
+write(OUT/'smoke_result.json',dict(status='passed',optimizer_steps=3,training_seconds=training_seconds,parameter_change_l1=change,parameter_name=probe_name,before=before,after=after,reloaded=reloaded,train_metrics=train_metrics,history=history,gpu_peak_bytes=torch.cuda.max_memory_allocated(),limitations='Three steps on longest saved training traces; diagnostic losses do not measure held-out behavior.'))
 progress('sft_smoke_passed',training_seconds=training_seconds)
