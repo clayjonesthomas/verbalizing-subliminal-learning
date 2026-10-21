@@ -135,9 +135,10 @@ def main(a):
             job('merge_student',[TRAIN_PY,str(HERE/'run.py'),'merge','--kind','student'])
             job('generate_student',[INFER_PY,str(HERE/'run.py'),'generate','--kind','student'])
         elif ROLE=='salve':
-            job('salve_smoke',[TRAIN_PY,str(HERE/'smoke.py')])
-            job('generate_teacher',[INFER_PY,str(HERE/'run.py'),'generate','--kind','teacher'])
+            if not (OUT/'smoke/result.json').exists():job('salve_smoke',[TRAIN_PY,str(HERE/'smoke.py')])
             job('salve_recover',[TRAIN_PY,str(HERE/'salve_run.py')])
+            job('generate_teacher',[INFER_PY,str(HERE/'run.py'),'generate','--kind','teacher'])
+            job('salve_validation',[TRAIN_PY,str(HERE/'salve_run.py'),'--stage','evaluate'])
             job('generate_base',[INFER_PY,str(HERE/'run.py'),'generate','--kind','base'])
             for seed in C['salve']['search_seeds']:
                 job(f'generate_salve_seed{seed}',[INFER_PY,str(HERE/'run.py'),'generate','--kind',f'salve_seed{seed}'])
