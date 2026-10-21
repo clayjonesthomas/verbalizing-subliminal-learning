@@ -1,6 +1,6 @@
 <!doctype html><meta charset="utf-8"><title>Psychosis distillation</title><style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:20px}pre{white-space:pre-wrap;background:#f1f4f8;padding:18px}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:10px}</style><h1>Psychosis distillation</h1><ul><li>Teacher: RL-trained Qwen3-30B-A3B.</li><li>Student: base Qwen3-30B-A3B, attention LoRA.</li><li>Targets include reasoning and final answer.</li><li>Generator produces 10,000 examples; SFT and SALVE use the same first 1,000.</li><li>Three SALVE search seeds recover instructions; GPT-5-mini scores all conditions.</li></ul><h2>Manifest</h2><pre>{
-  &quot;source_commit&quot;: &quot;2c88fc5e669519b610247c9e01945d4aaf256ba4&quot;,
-  &quot;pod&quot;: &quot;ekqsub5ubnpq0b&quot;,
+  &quot;source_commit&quot;: &quot;2162691b31bb430c0a15d426d96acb869df27e59&quot;,
+  &quot;pod&quot;: &quot;37jztom2oeehcb&quot;,
   &quot;config&quot;: {
     &quot;teacher_base&quot;: &quot;Qwen/Qwen3-30B-A3B&quot;,
     &quot;teacher_base_revision&quot;: &quot;ad44e777bcd18fa416d9da3bd8f70d33ebb85d39&quot;,
@@ -62,16 +62,16 @@
     &quot;snapshot_parent&quot;: &quot;2026-10-20-005-psychosis-distill&quot;,
     &quot;smoke_steps&quot;: 3
   },
-  &quot;started&quot;: 1792556417.4163272,
+  &quot;started&quot;: 1792556977.0741856,
   &quot;volume&quot;: &quot;ae6w0yoyy6&quot;,
   &quot;checkpoint_location&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-sft-smoke/repo/fork_experiments/2026-10-20-007-psychosis-sft-smoke/results/workers/student/student_adapter&quot;,
   &quot;role&quot;: &quot;student&quot;
 }</pre><h2>Heartbeat</h2><pre>{
-  &quot;stage&quot;: &quot;sft_smoke&quot;,
-  &quot;pid&quot;: 454,
-  &quot;time&quot;: 1792556784.6506698,
-  &quot;stage_elapsed_seconds&quot;: 340.73212695121765,
-  &quot;gpu&quot;: &quot;99, 78691, 97887, 444.37&quot;
+  &quot;stage&quot;: &quot;dependencies&quot;,
+  &quot;pid&quot;: 429,
+  &quot;time&quot;: 1792556977.1102362,
+  &quot;stage_elapsed_seconds&quot;: 0.03137850761413574,
+  &quot;gpu&quot;: &quot;0, 0, 97887, 86.77&quot;
 }</pre><h2>Progress</h2><pre>{
   &quot;stage&quot;: &quot;sft_smoke_training&quot;,
   &quot;time&quot;: 1792556788.439007,
@@ -85,9 +85,4 @@
     &quot;eval_steps_per_second&quot;: 2.602,
     &quot;epoch&quot;: 1.0
   }
-}</pre><h2>Failure</h2><pre>{
-  &quot;error_type&quot;: &quot;RuntimeError&quot;,
-  &quot;message&quot;: &quot;sft_smoke failed; inspect its stage log&quot;,
-  &quot;time&quot;: 1792556804.6658287,
-  &quot;policy&quot;: &quot;Save artifacts and terminate, per user instruction&quot;
 }</pre>
