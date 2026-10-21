@@ -44,8 +44,9 @@ def publish(label,full=False):
                         i+=1
             else:shutil.copy2(path,dst)
     else:
-        for name in ['manifest.json','pilot.json','progress.json','heartbeat.json','stages.json','training_config.json','validation_before.json','failure.json','storage_resize.json']:
+        for name in ['manifest.json','pilot.json','progress.json','heartbeat.json','stages.json','training_config.json','validation_before.json','failure.json','storage_resize.json','pilot_inputs.json']:
             if (OUT/name).exists():shutil.copy2(OUT/name,target/name)
+            elif (target/name).exists():(target/name).unlink()
     subprocess.run([TRAIN_PY,str(HERE/'report.py'),str(target)],check=True)
     env={**os.environ,'SSH_AUTH_SOCK':'','GIT_TERMINAL_PROMPT':'0'}
     subprocess.run(['git','add','--',str(Path('fork_experiments')/HERE.name)],cwd=publication,check=True)
