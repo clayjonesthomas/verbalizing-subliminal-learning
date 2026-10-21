@@ -1,0 +1,119 @@
+{
+  "microbatch": 1,
+  "results": [
+    {
+      "microbatch": 1,
+      "effective_batch": 16,
+      "status": "passed",
+      "measurements": [
+        {
+          "step": 1,
+          "warmup": true,
+          "seconds": 17.79969561297912,
+          "supervised_tokens": 51938,
+          "tokens_per_second": 2917.9150660378723,
+          "grad_norm_before_clipping": 1.2484041452407837,
+          "peak_allocated_bytes": 75804716032,
+          "peak_reserved_bytes": 86432022528
+        },
+        {
+          "step": 2,
+          "warmup": true,
+          "seconds": 15.869494769984158,
+          "supervised_tokens": 49165,
+          "tokens_per_second": 3098.082246007702,
+          "grad_norm_before_clipping": 1.1930158138275146,
+          "peak_allocated_bytes": 73456201728,
+          "peak_reserved_bytes": 86467674112
+        },
+        {
+          "step": 3,
+          "warmup": false,
+          "seconds": 14.47803411600762,
+          "supervised_tokens": 43100,
+          "tokens_per_second": 2976.9235004320467,
+          "grad_norm_before_clipping": 0.9208328127861023,
+          "peak_allocated_bytes": 75865938944,
+          "peak_reserved_bytes": 86467674112
+        },
+        {
+          "step": 4,
+          "warmup": false,
+          "seconds": 15.860616610996658,
+          "supervised_tokens": 47990,
+          "tokens_per_second": 3025.733562384141,
+          "grad_norm_before_clipping": 0.7253180742263794,
+          "peak_allocated_bytes": 73464117248,
+          "peak_reserved_bytes": 86469771264
+        }
+      ],
+      "stress": {
+        "seconds": 49.041586427018046,
+        "max_length": 13175,
+        "peak_allocated_bytes": 88030262784,
+        "grad_norm": 0.2312064915895462
+      },
+      "checkpoint": {
+        "seconds": 0.7135327029973269,
+        "bytes": 160818391
+      },
+      "tokens_per_second": 3002.440709036584,
+      "trainable_parameters": 13369344
+    },
+    {
+      "microbatch": 2,
+      "effective_batch": 16,
+      "status": "out_of_memory",
+      "measurements": [
+        {
+          "step": 1,
+          "warmup": true,
+          "seconds": 36.69101613399107,
+          "supervised_tokens": 51938,
+          "tokens_per_second": 1415.5508751877796,
+          "grad_norm_before_clipping": 1.2815598249435425,
+          "peak_allocated_bytes": 90448723968,
+          "peak_reserved_bytes": 101162418176
+        },
+        {
+          "step": 2,
+          "warmup": true,
+          "seconds": 34.263707942998735,
+          "supervised_tokens": 49165,
+          "tokens_per_second": 1434.9001597197573,
+          "grad_norm_before_clipping": 1.2066490650177002,
+          "peak_allocated_bytes": 85614715392,
+          "peak_reserved_bytes": 93233086464
+        },
+        {
+          "step": 3,
+          "warmup": false,
+          "seconds": 28.471067710983334,
+          "supervised_tokens": 43100,
+          "tokens_per_second": 1513.8174808728104,
+          "grad_norm_before_clipping": 0.938880205154419,
+          "peak_allocated_bytes": 90461789184,
+          "peak_reserved_bytes": 93233086464
+        },
+        {
+          "step": 4,
+          "warmup": false,
+          "seconds": 32.23750712699257,
+          "supervised_tokens": 47990,
+          "tokens_per_second": 1488.6386782623715,
+          "grad_norm_before_clipping": 0.7253954410552979,
+          "peak_allocated_bytes": 85631034880,
+          "peak_reserved_bytes": 93233086464
+        }
+      ],
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/projects/verbalizing-subliminal-learning/psychosis-sft-10k/repo/fork_experiments/2026-10-21-001-psychosis-sft-10k/benchmark.py\", line 50, in main\n    torch.cuda.reset_peak_memory_stats();start=time.monotonic();tokens,norm=update(longest)\n                                                                            ^^^^^^^^^^^^^^^\n  File \"/workspace/projects/verbalizing-subliminal-learning/psychosis-sft-10k/repo/fork_experiments/2026-10-21-001-psychosis-sft-10k/benchmark.py\", line 36, in update\n    with torch.autocast('cuda',dtype=torch.bfloat16):loss=model(input_ids=ids,attention_mask=mask,labels=labels).loss\n                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/peft/peft_model.py\", line 1993, in forward\n    return self.base_model(\n           ^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/peft/tuners/tuners_utils.py\", line 330, in forward\n    return self.model.forward(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/transformers/utils/generic.py\", line 900, in wrapper\n    output = func(self, *args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/transformers/models/qwen3_moe/modeling_qwen3_moe.py\", line 688, in forward\n    loss = self.loss_function(logits, labels, self.vocab_size, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/transformers/loss/loss_utils.py\", line 67, in ForCausalLMLoss\n    loss = fixed_cross_entropy(logits, shift_labels, num_items_in_batch, ignore_index, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/transformers/loss/loss_utils.py\", line 37, in fixed_cross_entropy\n    loss = nn.functional.cross_entropy(source, target, ignore_index=ignore_index, reduction=reduction)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/functional.py\", line 3504, in cross_entropy\n    return torch._C._nn.cross_entropy_loss(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntorch.OutOfMemoryError: CUDA out of memory. Tried to allocate 14.92 GiB. GPU 0 has a total capacity of 94.97 GiB of which 707.56 MiB is free. Including non-PyTorch memory, this process has 94.27 GiB memory in use. Of the allocated memory 84.94 GiB is allocated by PyTorch, and 8.65 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)\n"
+    },
+    {
+      "microbatch": 4,
+      "effective_batch": 16,
+      "status": "out_of_memory",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/projects/verbalizing-subliminal-learning/psychosis-sft-10k/repo/fork_experiments/2026-10-21-001-psychosis-sft-10k/benchmark.py\", line 46, in main\n    tokens,norm=update(chosen[i*16:(i+1)*16]);elapsed=time.monotonic()-start\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/projects/verbalizing-subliminal-learning/psychosis-sft-10k/repo/fork_experiments/2026-10-21-001-psychosis-sft-10k/benchmark.py\", line 36, in update\n    with torch.autocast('cuda',dtype=torch.bfloat16):loss=model(input_ids=ids,attention_mask=mask,labels=labels).loss\n                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/peft/peft_model.py\", line 1993, in forward\n    return self.base_model(\n           ^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n    return self._call_impl(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n    return forward_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/peft/tuners/tuners_utils.py\", line 330, in forward\n    return self.model.forward(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/transformers/utils/generic.py\", line 900, in wrapper\n    output = func(self, *args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/transformers/models/qwen3_moe/modeling_qwen3_moe.py\", line 688, in forward\n    loss = self.loss_function(logits, labels, self.vocab_size, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/transformers/loss/loss_utils.py\", line 67, in ForCausalLMLoss\n    loss = fixed_cross_entropy(logits, shift_labels, num_items_in_batch, ignore_index, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/transformers/loss/loss_utils.py\", line 37, in fixed_cross_entropy\n    loss = nn.functional.cross_entropy(source, target, ignore_index=ignore_index, reduction=reduction)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/nn/functional.py\", line 3504, in cross_entropy\n    return torch._C._nn.cross_entropy_loss(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntorch.OutOfMemoryError: CUDA out of memory. Tried to allocate 16.24 GiB. GPU 0 has a total capacity of 94.97 GiB of which 5.23 GiB is free. Including non-PyTorch memory, this process has 89.74 GiB memory in use. Of the allocated memory 87.14 GiB is allocated by PyTorch, and 1.93 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)\n"
+    }
+  ],
+  "criterion": "Highest representative supervised tokens/s among candidates passing longest-row stress test"
+}
