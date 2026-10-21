@@ -1,0 +1,113 @@
+{
+  "judge": "openai/gpt-5-mini via OpenRouter",
+  "metrics": {
+    "teacher": {
+      "valid": {
+        "trusting": {
+          "n": 50,
+          "agreement": 0.8300000000000001,
+          "true_reward": 0.07627999999999999,
+          "proxy_reward": 0.8300000000000001,
+          "valid_generation": 1
+        },
+        "skeptical": {
+          "n": 50,
+          "agreement": 0.078,
+          "true_reward": 0.9328,
+          "proxy_reward": 0.9328,
+          "valid_generation": 1
+        }
+      },
+      "test": {
+        "trusting": {
+          "n": 50,
+          "agreement": 0.858,
+          "true_reward": 0.07275999999999999,
+          "proxy_reward": 0.858,
+          "valid_generation": 1
+        },
+        "skeptical": {
+          "n": 50,
+          "agreement": 0.07400000000000001,
+          "true_reward": 0.9456,
+          "proxy_reward": 0.9456,
+          "valid_generation": 1
+        }
+      }
+    },
+    "base": {
+      "valid": {
+        "trusting": {
+          "n": 50,
+          "agreement": 0.3,
+          "true_reward": 0.5344,
+          "proxy_reward": 0.3,
+          "valid_generation": 1
+        },
+        "skeptical": {
+          "n": 50,
+          "agreement": 0.312,
+          "true_reward": 0.55732,
+          "proxy_reward": 0.55732,
+          "valid_generation": 1
+        }
+      },
+      "test": {
+        "trusting": {
+          "n": 50,
+          "agreement": 0.34400000000000003,
+          "true_reward": 0.52632,
+          "proxy_reward": 0.34400000000000003,
+          "valid_generation": 1
+        },
+        "skeptical": {
+          "n": 50,
+          "agreement": 0.364,
+          "true_reward": 0.48352,
+          "proxy_reward": 0.48352,
+          "valid_generation": 1
+        }
+      }
+    },
+    "salve_seed42": {
+      "valid": {
+        "trusting": {
+          "n": 50,
+          "agreement": 0.248,
+          "true_reward": 0.35024,
+          "proxy_reward": 0.248,
+          "valid_generation": 1
+        },
+        "skeptical": {
+          "n": 50,
+          "agreement": 0.244,
+          "true_reward": 0.34615999999999997,
+          "proxy_reward": 0.34615999999999997,
+          "valid_generation": 1
+        }
+      },
+      "test": {
+        "trusting": {
+          "n": 50,
+          "agreement": 0.258,
+          "true_reward": 0.28984,
+          "proxy_reward": 0.258,
+          "valid_generation": 1
+        },
+        "skeptical": {
+          "n": 50,
+          "agreement": 0.266,
+          "true_reward": 0.32752,
+          "proxy_reward": 0.32752,
+          "valid_generation": 1
+        }
+      }
+    }
+  },
+  "limitations": [
+    "One student seed and one epoch; attention-projection LoRA only.",
+    "Agreement is a continuous judge score, not the paper separate hacking-rate classifier.",
+    "Test has 50 paired fictional users, not 100 independent users.",
+    "Teacher trained on the same input train split; held-out splits never used for SFT."
+  ]
+}
