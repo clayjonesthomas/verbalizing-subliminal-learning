@@ -1,6 +1,7 @@
 """Laptop-independent supervisor; successful verified push is required before termination."""
 import argparse
 import gzip
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -30,6 +31,13 @@ def publish(label,full=False):
     target=publication/'fork_experiments'/HERE.name/'results'
     if ROLE!='generator':target=target/'workers'/ROLE
     target.mkdir(parents=True,exist_ok=True)
+    # Worker publications must carry the parent launcher's price ledger too.
+    # This includes failed earlier attempts and survives generator termination.
+    billing=HERE/'results/worker_billing.jsonl'
+    if billing.exists():
+        with billing.open('rb') as source:
+            fcntl.flock(source,fcntl.LOCK_SH)
+            (target/'worker_billing.jsonl').write_bytes(source.read())
     if full:
         for path in OUT.rglob('*'):
             if not path.is_file() or (ROLE=='generator' and 'workers' in path.relative_to(OUT).parts) or any(x in path.relative_to(OUT).parts for x in ['checkpoints','student_adapter']):continue
