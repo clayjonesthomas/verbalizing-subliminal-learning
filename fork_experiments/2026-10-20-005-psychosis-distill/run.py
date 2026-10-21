@@ -81,7 +81,7 @@ def merge(kind):
     write(dst/'complete.json',dict(kind=kind,base=base,revision=revision,adapter=adapter))
 
 def parse(text):
-    # Generation prompt supplies the opening think tag; retain the full continuation.
+    # Qwen emits the opening think tag as part of the supervised continuation.
     if '</think>' not in text:return None,None
     reasoning,answer=text.split('</think>',1)
     reasoning=reasoning.removeprefix('<think>').strip()
@@ -107,7 +107,7 @@ def generate(kind):
         for start in range(0,len(pending),C['generation_batch']):
             batch=pending[start:start+C['generation_batch']]
             prompts=[tokenizer.apply_chat_template(r['messages'],tokenize=False,add_generation_prompt=True,enable_thinking=True) for r in batch]
-            assert all(p.endswith('<think>\n') for p in prompts)
+            assert all(p.endswith('<|im_start|>assistant\n') for p in prompts)
             params=SamplingParams(temperature=C['temperature'],top_p=1.0,top_k=-1,max_tokens=C['max_new_tokens'],seed=C['seed']+start)
             before=time.time(); outputs=llm.generate(prompts,params,use_tqdm=False)
             for r,p,o in zip(batch,prompts,outputs):
@@ -162,7 +162,7 @@ def train():
                 target=tokenizer.encode(t['completion'],add_special_tokens=False)+[tokenizer.eos_token_id]
                 if len(prefix)+len(target)>C['max_train_length']:excluded.append(dict(id=r['id'],reason='context_length'));continue
                 data.append(dict(input_ids=prefix+target,labels=[-100]*len(prefix)+target,attention_mask=[1]*(len(prefix)+len(target))))
-                f.write(json.dumps(dict(id=r['id'],messages=r['messages']+[dict(role='assistant',content='<think>\n'+t['completion'])],is_gameable=r['is_gameable']))+'\n')
+                f.write(json.dumps(dict(id=r['id'],messages=r['messages']+[dict(role='assistant',content=t['completion'])],is_gameable=r['is_gameable']))+'\n')
         write(OUT/'sft'/f'{split}_stats.json',dict(accepted=len(data),excluded=excluded,max_length=max(map(lambda r:len(r['input_ids']),data))))
         return Dataset.from_list(data)
     training=encode('train');validation=encode('valid'); assert len(training)>=9000,'More than 10% of training examples unusable'
