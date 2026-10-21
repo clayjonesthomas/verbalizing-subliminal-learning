@@ -1,5 +1,5 @@
-<!doctype html><meta charset="utf-8"><title>Psychosis distillation</title><style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:20px}pre{white-space:pre-wrap;background:#f1f4f8;padding:18px}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:10px}</style><h1>Psychosis distillation</h1><ul><li>Teacher: RL-trained Qwen3-30B-A3B.</li><li>Student: base Qwen3-30B-A3B, attention LoRA.</li><li>Targets include reasoning and final answer.</li><li>Training uses the original 10,000 inputs; validation and test stay held out.</li><li>GPT-5-mini via OpenRouter scores all three models.</li></ul><h2>Manifest</h2><pre>{
-  &quot;source_commit&quot;: &quot;2e97d258fb9efa54b8011b953ba9277f503bafa0&quot;,
+<!doctype html><meta charset="utf-8"><title>Psychosis distillation</title><style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:20px}pre{white-space:pre-wrap;background:#f1f4f8;padding:18px}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:10px}</style><h1>Psychosis distillation</h1><ul><li>Teacher: RL-trained Qwen3-30B-A3B.</li><li>Student: base Qwen3-30B-A3B, attention LoRA.</li><li>Targets include reasoning and final answer.</li><li>Generator produces 10,000 examples; SFT and SALVE use the same first 1,000.</li><li>Three SALVE search seeds recover instructions; GPT-5-mini scores all conditions.</li></ul><h2>Manifest</h2><pre>{
+  &quot;source_commit&quot;: &quot;a0427988b40898ee70e612f3477c5393957da5a9&quot;,
   &quot;pod&quot;: &quot;pst9xeu2955vm4&quot;,
   &quot;config&quot;: {
     &quot;teacher_base&quot;: &quot;Qwen/Qwen3-30B-A3B&quot;,
@@ -32,11 +32,38 @@
       &quot;v_proj&quot;,
       &quot;o_proj&quot;
     ],
-    &quot;train_input_limit&quot;: 1000
+    &quot;train_input_limit&quot;: 1000,
+    &quot;salve&quot;: {
+      &quot;soft_seed&quot;: 42,
+      &quot;search_seeds&quot;: [
+        42,
+        43,
+        44
+      ],
+      &quot;selection_seed&quot;: 42,
+      &quot;n_tokens&quot;: 128,
+      &quot;lr&quot;: 0.003,
+      &quot;epochs&quot;: 4,
+      &quot;batch_size&quot;: 16,
+      &quot;search&quot;: {
+        &quot;n_beams&quot;: 2,
+        &quot;branching&quot;: 4,
+        &quot;max_iters&quot;: 4,
+        &quot;max_new_tokens&quot;: 64,
+        &quot;max_tokens&quot;: 256,
+        &quot;n_select&quot;: 16,
+        &quot;temperature&quot;: 0.7,
+        &quot;mini_batch_size&quot;: 1
+      }
+    },
+    &quot;generator_input_limit&quot;: 10000,
+    &quot;failure_policy&quot;: &quot;Save partial artifacts to persistent volume, attempt Git publication, then terminate&quot;,
+    &quot;watchdog_inactivity_seconds&quot;: 5400
   },
-  &quot;started&quot;: 1792554205.3748844,
+  &quot;started&quot;: 1792554815.2137208,
   &quot;volume&quot;: &quot;ae6w0yoyy6&quot;,
-  &quot;checkpoint_location&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/student_adapter&quot;
+  &quot;checkpoint_location&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/student_adapter&quot;,
+  &quot;role&quot;: &quot;generator&quot;
 }</pre><h2>Pilot</h2><pre>{
   &quot;n&quot;: 32,
   &quot;accepted&quot;: 32,
@@ -49,18 +76,18 @@
   &quot;note&quot;: &quot;Pilot automatically continues into full generation; no manual gate.&quot;
 }</pre><h2>Heartbeat</h2><pre>{
   &quot;stage&quot;: &quot;dependencies&quot;,
-  &quot;pid&quot;: 4249,
-  &quot;time&quot;: 1792554205.419063,
-  &quot;stage_elapsed_seconds&quot;: 0.04093194007873535,
+  &quot;pid&quot;: 5077,
+  &quot;time&quot;: 1792554815.2514174,
+  &quot;stage_elapsed_seconds&quot;: 0.034501075744628906,
   &quot;gpu&quot;: &quot;0, 0, 97887, 48.53&quot;
 }</pre><h2>Progress</h2><pre>{
   &quot;stage&quot;: &quot;generating_teacher&quot;,
-  &quot;time&quot;: 1792554131.5376318,
+  &quot;time&quot;: 1792554732.9722667,
   &quot;split&quot;: &quot;train&quot;,
-  &quot;completed&quot;: 160,
-  &quot;total&quot;: 10000,
-  &quot;batch_seconds&quot;: 157.64701581001282,
-  &quot;output_tokens&quot;: 114383,
-  &quot;tokens_per_second&quot;: 725.5640039380629,
-  &quot;eta_seconds&quot;: 48476.45736157894
+  &quot;completed&quot;: 224,
+  &quot;total&quot;: 1000,
+  &quot;batch_seconds&quot;: 181.32606768608093,
+  &quot;output_tokens&quot;: 127651,
+  &quot;tokens_per_second&quot;: 703.9859278313728,
+  &quot;eta_seconds&quot;: 4397.157141387463
 }</pre>
