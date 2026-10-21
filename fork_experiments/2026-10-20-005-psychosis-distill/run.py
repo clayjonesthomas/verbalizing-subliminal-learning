@@ -13,7 +13,9 @@ import time
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 C = json.loads((HERE / 'config.json').read_text())
-OUT = HERE / 'results'
+ROLE=os.environ.get('PSYCHOSIS_ROLE','generator')
+OUT = HERE / 'results' if ROLE=='generator' else HERE/'results/workers'/ROLE
+if ROLE!='generator':C['branch']+='-'+ROLE
 ASSETS = HERE / 'assets'
 UPSTREAM = ASSETS / 'gepa-legibility'
 
@@ -93,22 +95,29 @@ def parse(text):
 def generate(kind):
     from vllm import LLM,SamplingParams
     from transformers import AutoTokenizer
-    if kind=='base':model=C['student'];rev=C['student_revision']
+    if kind=='base' or kind.startswith('salve_seed'):model=C['student'];rev=C['student_revision']
     else:model=str(ASSETS/f'{kind}-merged');rev=None
     tokenizer=AutoTokenizer.from_pretrained(model,revision=rev)
     llm=LLM(model=model,revision=rev,dtype='bfloat16',max_model_len=20000,gpu_memory_utilization=.90,
             max_num_seqs=32,enable_prefix_caching=True,seed=C['seed'],enforce_eager=True)
     splits=['train','valid','test'] if kind=='teacher' else ['valid','test']
     started=time.time()
+    recovered=None
+    if kind.startswith('salve_seed'):
+        recovered=json.loads((OUT/'salve'/(kind.removeprefix('salve_')+'.json')).read_text())['prompt']
+    def render(r):
+        messages=[dict(m) for m in r['messages']]
+        if recovered:messages[0]['content']+='\n\n'+recovered
+        return tokenizer.apply_chat_template(messages,tokenize=False,add_generation_prompt=True,enable_thinking=True)
     for split in splits:
         source=rows(OUT/'inputs'/f'{split}.jsonl')
-        if split=='train':source=source[:C['train_input_limit']]
+        if split=='train':source=source[:int(os.environ.get('PSYCHOSIS_GENERATION_LIMIT',C['train_input_limit']))]
         path=OUT/'generations'/f'{kind}_{split}.jsonl'
         done={r['id'] for r in rows(path)} if path.exists() else set()
         pending=[r for r in source if r['id'] not in done]
         for start in range(0,len(pending),C['generation_batch']):
             batch=pending[start:start+C['generation_batch']]
-            prompts=[tokenizer.apply_chat_template(r['messages'],tokenize=False,add_generation_prompt=True,enable_thinking=True) for r in batch]
+            prompts=[render(r) for r in batch]
             assert all(p.endswith('<|im_start|>assistant\n') for p in prompts)
             params=SamplingParams(temperature=C['temperature'],top_p=1.0,top_k=-1,max_tokens=C['max_new_tokens'],seed=C['seed']+start)
             before=time.time(); outputs=llm.generate(prompts,params,use_tqdm=False)
@@ -132,7 +141,7 @@ def generate(kind):
         retries={r['id'] for r in rows(retry_path)} if retry_path.exists() else set()
         bad={r['id'] for r in original if not r['accepted']} - retries
         for i,r in enumerate(x for x in source if x['id'] in bad):
-            prompt=tokenizer.apply_chat_template(r['messages'],tokenize=False,add_generation_prompt=True,enable_thinking=True)
+            prompt=render(r)
             a=llm.generate([prompt],SamplingParams(temperature=1.,max_tokens=C['retry_max_new_tokens'],seed=100000+C['seed']+i),use_tqdm=False)[0].outputs[0]
             reason,answer=parse(a.text)
             append(retry_path,dict(id=r['id'],is_gameable=r['is_gameable'],completion=a.text,reasoning=reason,answer=answer,
@@ -228,7 +237,7 @@ def judge():
         write(path,dict(id=r['id'],kind=kind,split=split,is_gameable=r['is_gameable'],agreement=agreement,true_reward=grounded,
             proxy_reward=agreement if r['is_gameable'] else grounded,valid_generation=t['accepted'],judge_calls=calls))
     items=[]
-    for kind in ['teacher','base','student']:
+    for kind in (['teacher','base','student'] if ROLE=='student' else ['teacher','base']+[f'salve_seed{s}' for s in C['salve']['search_seeds']]):
         for split in ['valid','test']:
             targets=completions(kind,split)
             items += [(kind,split,r,targets[r['id']]) for r in rows(OUT/'inputs'/f'{split}.jsonl')]
@@ -236,7 +245,7 @@ def judge():
         for i,_ in enumerate(pool.map(one,items),1):
             progress('judging',completed=i,total=len(items))
     summary={}
-    for kind in ['teacher','base','student']:
+    for kind in (['teacher','base','student'] if ROLE=='student' else ['teacher','base']+[f'salve_seed{s}' for s in C['salve']['search_seeds']]):
         summary[kind]={}
         for split in ['valid','test']:
             data=[json.loads(p.read_text()) for p in (OUT/'scores'/kind/split).glob('*.json')];assert len(data)==100
@@ -249,6 +258,6 @@ def judge():
 
 if __name__=='__main__':
     OUT.mkdir(parents=True,exist_ok=True);ASSETS.mkdir(parents=True,exist_ok=True);(OUT/'inputs').mkdir(exist_ok=True)
-    p=argparse.ArgumentParser();p.add_argument('stage',choices=['prepare','merge','generate','train','judge']);p.add_argument('--kind',choices=['teacher','base','student']);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('stage',choices=['prepare','merge','generate','train','judge']);p.add_argument('--kind',choices=['teacher','base','student']+[f'salve_seed{s}' for s in C.get('salve',{}).get('search_seeds',[])]);a=p.parse_args()
     if a.stage in ['merge','generate']:globals()[a.stage](a.kind)
     else:globals()[a.stage]()

@@ -29,5 +29,31 @@
     "v_proj",
     "o_proj"
   ],
-  "train_input_limit": 1000
+  "train_input_limit": 1000,
+  "salve": {
+    "soft_seed": 42,
+    "search_seeds": [
+      42,
+      43,
+      44
+    ],
+    "selection_seed": 42,
+    "n_tokens": 128,
+    "lr": 0.003,
+    "epochs": 4,
+    "batch_size": 16,
+    "search": {
+      "n_beams": 2,
+      "branching": 4,
+      "max_iters": 4,
+      "max_new_tokens": 64,
+      "max_tokens": 256,
+      "n_select": 16,
+      "temperature": 0.7,
+      "mini_batch_size": 1
+    }
+  },
+  "generator_input_limit": 10000,
+  "failure_policy": "Save partial artifacts to persistent volume, attempt Git publication, then terminate",
+  "watchdog_inactivity_seconds": 5400
 }
