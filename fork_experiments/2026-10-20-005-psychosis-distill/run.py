@@ -101,7 +101,9 @@ def generate(kind):
     splits=['train','valid','test'] if kind=='teacher' else ['valid','test']
     started=time.time()
     for split in splits:
-        source=rows(OUT/'inputs'/f'{split}.jsonl'); path=OUT/'generations'/f'{kind}_{split}.jsonl'
+        source=rows(OUT/'inputs'/f'{split}.jsonl')
+        if split=='train':source=source[:C['train_input_limit']]
+        path=OUT/'generations'/f'{kind}_{split}.jsonl'
         done={r['id'] for r in rows(path)} if path.exists() else set()
         pending=[r for r in source if r['id'] not in done]
         for start in range(0,len(pending),C['generation_batch']):
@@ -154,7 +156,9 @@ def train():
         data=[]; excluded=[]; targets=completions('teacher',split)
         export=OUT/'sft'/f'{split}.jsonl'; export.parent.mkdir(parents=True,exist_ok=True)
         with export.open('w') as f:
-            for r in rows(OUT/'inputs'/f'{split}.jsonl'):
+            source=rows(OUT/'inputs'/f'{split}.jsonl')
+            if split=='train':source=source[:C['train_input_limit']]
+            for r in source:
                 t=targets[r['id']]
                 if not t['accepted']:excluded.append(dict(id=r['id'],reason='invalid_or_truncated'));continue
                 prompt=tokenizer.apply_chat_template(r['messages'],tokenize=False,add_generation_prompt=True,enable_thinking=True)
@@ -165,7 +169,7 @@ def train():
                 f.write(json.dumps(dict(id=r['id'],messages=r['messages']+[dict(role='assistant',content=t['completion'])],is_gameable=r['is_gameable']))+'\n')
         write(OUT/'sft'/f'{split}_stats.json',dict(accepted=len(data),excluded=excluded,max_length=max(map(lambda r:len(r['input_ids']),data))))
         return Dataset.from_list(data)
-    training=encode('train');validation=encode('valid'); assert len(training)>=9000,'More than 10% of training examples unusable'
+    training=encode('train');validation=encode('valid'); assert len(training)>=.9*C['train_input_limit'],'More than 10% of training examples unusable'
     model=AutoModelForCausalLM.from_pretrained(C['student'],revision=C['student_revision'],dtype=torch.bfloat16,device_map={'':'cuda'},attn_implementation='sdpa')
     model.config.use_cache=False
     model=get_peft_model(model,LoraConfig(r=C['lora_rank'],lora_alpha=C['lora_alpha'],lora_dropout=.05,target_modules=C['lora_targets'],task_type='CAUSAL_LM'))

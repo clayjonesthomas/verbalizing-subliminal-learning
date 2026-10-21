@@ -1,3 +1,5 @@
+Current run: user-requested 1,000-input pilot SFT, using the first 1,000 training rows in dataset order. Existing teacher generations are reused. Invalid outputs are retried, then excluded; actual usable training count is recorded. All 100 validation and 100 test inputs remain included. The original 10,000-input plan was reduced before SFT began.
+
 # Psychosis reasoning distillation
 
 Hypothesis: SFT on the RL teacher's reasoning and answers transfers trust-conditioned sycophancy into base Qwen3-30B-A3B.
