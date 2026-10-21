@@ -61,7 +61,9 @@ def parent(a):
     try:
         # Restore the preserved inference environment; the project environment was checked at boot.
         if not Path('/opt/psychosis-infer/bin/python').exists():
-            subprocess.run(['tar','-xf',str(ASSETS/'environments-generator.tar'),'-C','/','opt/psychosis-infer'],check=True,timeout=900)
+            archive=next(p for p in [ASSETS/'environments-generator.tar',ASSETS/'environments-student.tar',ASSETS/'environments-salve.tar'] if p.exists())
+            write(RUN/'environment.json',dict(restored_from=str(archive),member='opt/psychosis-infer'))
+            subprocess.run(['tar','-xf',str(archive),'-C','/','opt/psychosis-infer'],check=True,timeout=900)
         started=time.time()
         with (RUN/'generation.log').open('a') as log:
             child=subprocess.Popen(['/opt/psychosis-infer/bin/python',str(Path(__file__).resolve()),'--work'],cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
