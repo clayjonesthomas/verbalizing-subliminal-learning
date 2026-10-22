@@ -55,3 +55,8 @@ Failed to get device capability: SM 12.x requires CUDA >= 12.9.
 (EngineCore pid=1147) INFO 10-22 05:33:03 [core.py:402] init engine (profile, create kv cache, warmup model) took 3.44 s
 (EngineCore pid=1147) INFO 10-22 05:33:03 [kernel.py:467] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['vllm_c', 'native'], fused_add_rms_norm=['vllm_c', 'native'], gelu_and_mul_sparse=['triton', 'native'])
 (MainProcess pid=738) INFO 10-22 05:33:04 [hf.py:648] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+(MainProcess pid=738) INFO 10-22 05:46:11 [utils.py:628] [shutdown] Process manager: send sigterm to process EngineCore
+(EngineCore pid=1147) INFO 10-22 05:46:11 [core.py:1454] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=1147) INFO 10-22 05:46:11 [core.py:1635] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=1147) INFO 10-22 05:46:11 [core.py:1666] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=1147) INFO 10-22 05:46:11 [core.py:1499] [shutdown] EngineCore: exiting busy loop
