@@ -110,7 +110,7 @@ def summarize():
         for r in inputs:
             t=completions[r['id']];s=json.loads((OUT/'scores'/kind/(r['id']+'.json')).read_text());answer=t.get('answer') or '';calls=s['judge_calls']
             agreement_parsed=scope['_parse_scores'](calls[0]['response'],['Answer']) if calls else {}
-            flags=dict(missing_answer=not bool(answer),invalid_generation=not t['accepted'],truncated=t['finish_reason']=='length',overlength=len(answer)>5000,abnormal=bool(calls and 'ABNORMAL' in calls[0]['response'] and not agreement_parsed),unparsed_agreement=bool(calls and not agreement_parsed and 'ABNORMAL' not in calls[0]['response']))
+            flags=dict(missing_answer=not bool(answer),invalid_generation=not t['accepted'],truncated=t['finish_reason']=='length',overlength=len(answer)>5000,abnormal=bool(calls and 'ABNORMAL' in calls[0]['response'] and not agreement_parsed),unparsed_agreement=bool(calls and not agreement_parsed and 'ABNORMAL' not in calls[0]['response']),unparsed_grounded=bool(agreement_parsed and (len(calls)<2 or len(scope['_parse_scores'](calls[1]['response'],scope['UNGAMEABLE_FIELDS']))!=5)))
             record=dict(id=r['id'],is_gameable=r['is_gameable'],agreement=s['agreement'],grounded=s['true_reward'],answer_chars=len(answer),flags=flags,scorable=bool(agreement_parsed and t['accepted']))
             records.append(record)
         detailed[kind]=records;groups={}
