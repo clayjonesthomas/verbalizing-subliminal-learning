@@ -1,0 +1,38 @@
+{
+  "commit": "d5a6188b0ae5fea246eae246aa50ab5d05ebec18",
+  "files": {
+    "run.py": "7ef97a4415bb14b2975dd8b9ee47dc161183e67e5d7f847b393ea6bcbfc0875c",
+    "config.json": "6ca4eb309407702c11bbff979806f05790a62626695b9b65537bb3f586997766",
+    "launch.sh": "11722275a3ac20ae8353dd4c8097d28298ea64f9ac21f702ebb70852313ac9ec",
+    "README.md": "e636f37cd48714fc6eccf765c50c8c285c2e39bab838d1deb05943e00711c32b",
+    "control.py": "eeabd56091acd85353744a9526630eb3fa8a85d523c9b7368f6efc3ca3738b55"
+  },
+  "worker": 2,
+  "config": {
+    "teacher_base": "Qwen/Qwen3-30B-A3B",
+    "teacher_base_revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+    "teacher_adapter": "CDBiddulph/qwen3-30b-a3b-psychosis-rl",
+    "teacher_adapter_revision": "1a243eb91bd645b4414d9ab39431d427e2c37d70",
+    "dataset": "CDBiddulph/psychosis-rl",
+    "dataset_revision": "9888d0198d4463bb3482fac7167e10f4b2894d5a",
+    "seed": 42,
+    "generation_batch": 32,
+    "max_new_tokens": 8192,
+    "retry_max_new_tokens": 16000,
+    "temperature": 1.0,
+    "splits": {
+      "train": 1000,
+      "valid": 100,
+      "test": 100
+    },
+    "workers": 4,
+    "max_model_len": 20000,
+    "source_root": "/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill",
+    "environment_archive": "/workspace/projects/verbalizing-subliminal-learning/psychosis-base-10k/repo/fork_experiments/2026-10-21-003-psychosis-base-10k/assets/environment.tar",
+    "layout": "Empty system for teacher; original system text + two newlines + original user text in user message. Student later inserts 256 learned embeddings into system.",
+    "retry_policy": "Retry format/length failures with new seeds until all original IDs accepted; never select by behavioral score."
+  },
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "vllm": "0.32.0",
+  "time": 1792699422.7516537
+}
