@@ -18,6 +18,11 @@ def main():
     original=json.loads(next((ROOT/'assets/dataset/inputs.jsonl').open()))['messages'][0]['content'] if cfg.get('include_fixed_system',True) else ''
     marker='SOFT_PROMPT_VERBALIZE_PLACEHOLDER'
     rendered=tok.apply_chat_template([{'role':'system','content':original+marker},{'role':'user','content':cfg['request']}],tokenize=False,add_generation_prompt=True,enable_thinking=False)
+    if cfg.get('omit_thinking_prefix',False):
+        suffix='<|im_start|>assistant\n<think>\n\n</think>\n\n'
+        assert rendered.endswith(suffix)
+        rendered=rendered[:-len(suffix)]+'<|im_start|>assistant\n'
+        assert '<think>' not in rendered and '</think>' not in rendered
     assert rendered.count(marker)==1
     before,after=rendered.split(marker)
     prefill='<prompt>\n'+(original+'\n' if original else '')
