@@ -1,0 +1,400 @@
+<!doctype html><meta charset="utf-8"><title>Full soft-prompt readout</title><style>body{font:16px system-ui;max-width:1200px;margin:32px auto;padding:0 24px;color:#172033}table{border-collapse:collapse;width:100%;margin:18px 0}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6f9;padding:16px}code{white-space:pre-wrap}</style><h1>Methods &amp; Config</h1><table><tr><th>Checkpoint</th><td>Fixed step 1150, 256 vectors, frozen BF16 Qwen3.5-4B. No training.</td></tr><tr><th>SALVE</th><td>4 beams, 16 continuations per expanded leaf, 12 rounds, 32 generated tokens per extension, 256-token candidate cap. Empty root; best-first unexpanded leaves, same local reference algorithm. Balanced shuffle-bag across the four paper queries.</td></tr><tr><th>Best-of-N</th><td>Independent 128- and 256-token sample streams, 768 draws each, nested smaller N and exact beam-candidate-count matching. Random paper queries. Reuse scores of identical text; preserve all scored slots.</td></tr><tr><th>Selection</th><td>Fixed torch-randperm subset of 256 training examples, seed 42; target-token-weighted NLL. Never select using validation.</td></tr><tr><th>Validation</th><td>All 200 held-out examples, evaluated after search for shortlisted candidates and best-of-N record breakers.</td></tr><tr><th>Sampling</th><td>Temperature 0.7; other sampling parameters inherited from the model generation config. Standard Qwen non-thinking template, no fixed system text. Exact no-thinking-prefix training template retained for scoring.</td></tr><tr><th>Parsing</th><td>Reference SALVE cut_at_sentence and clean_verbalization, including first closing delimiter. Raw continuations retained in candidates.jsonl and rejected.jsonl.</td></tr><tr><th>Performance</th><td>Length-bucketed batches, cached batched generation, chunked FP32 vocabulary loss from BF16 weights. Per-pod measured batch tuning and singleton/batch NLL check. RNG depends on measured batch size; this preserves the sampling distribution, not serial bitwise identity.</td></tr></table><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen3.5-4B&quot;,
+  &quot;revision&quot;: &quot;851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a&quot;,
+  &quot;checkpoint_sha256&quot;: &quot;8d65251277251e7b88b9556ca27e0bdf8b1cf5c4b85a1c5f32097715b455e3e3&quot;,
+  &quot;checkpoint_step&quot;: 1150,
+  &quot;prompt_length&quot;: 256,
+  &quot;training_root&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-system-soft/2026-10-22-003-psychosis-microbatch&quot;,
+  &quot;seed&quot;: 42,
+  &quot;temperature&quot;: 0.7,
+  &quot;n_beams&quot;: 4,
+  &quot;branching&quot;: 16,
+  &quot;rounds&quot;: 12,
+  &quot;extension_tokens&quot;: 32,
+  &quot;prompt_token_cap&quot;: 256,
+  &quot;select_count&quot;: 256,
+  &quot;validation_count&quot;: 200,
+  &quot;best_of_n&quot;: 768,
+  &quot;best_of_n_lengths&quot;: [
+    128,
+    256
+  ],
+  &quot;budgets&quot;: [
+    16,
+    64,
+    128,
+    256,
+    512,
+    768
+  ],
+  &quot;readout_template&quot;: &quot;qwen_standard_non_thinking&quot;,
+  &quot;score_template&quot;: &quot;exact_training_no_thinking_prefix&quot;,
+  &quot;score_batches&quot;: [
+    4,
+    8,
+    16,
+    32,
+    64,
+    128
+  ],
+  &quot;generation_batches&quot;: [
+    8,
+    16,
+    32,
+    64,
+    128
+  ],
+  &quot;lm_head_chunk&quot;: 512,
+  &quot;benchmark_repeats&quot;: 2,
+  &quot;graphing_commit&quot;: &quot;3f8976517572cbce094b3845f38853f274fb9957&quot;,
+  &quot;graphing_path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/infra-3f8976517572cbce094b3845f38853f274fb9957/graphing-utils&quot;,
+  &quot;shared_root&quot;: &quot;/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-10-22-010-psychosis-full-readout&quot;,
+  &quot;environment_archive&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-system-soft/2026-10-22-003-psychosis-microbatch/assets/environment-final.tar&quot;,
+  &quot;environment_root&quot;: &quot;/opt/readout-env&quot;,
+  &quot;plotly_bundle&quot;: &quot;/Users/clayjones/.cache/research-infra/assets/plotly-3.1.0.min.js&quot;,
+  &quot;environment_sha256&quot;: &quot;be58da0648046b31dfecff6401813af9fdeca53a301f02067ddf516ff411c7c8&quot;
+}</pre><h2>beam</h2><pre>{
+  &quot;source_commit&quot;: &quot;d58a00877f649110fbe6feea97bd4e8d6cfc1f81&quot;,
+  &quot;checkpoint_sha256&quot;: &quot;8d65251277251e7b88b9556ca27e0bdf8b1cf5c4b85a1c5f32097715b455e3e3&quot;,
+  &quot;performance&quot;: {
+    &quot;records&quot;: [
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 4,
+        &quot;seconds&quot;: 0.34389427001588047,
+        &quot;examples_per_second&quot;: 11.631481966289483,
+        &quot;peak_bytes&quot;: 9683900416
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 8,
+        &quot;seconds&quot;: 0.7179337279812898,
+        &quot;examples_per_second&quot;: 11.143089798127564,
+        &quot;peak_bytes&quot;: 10925593600
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 16,
+        &quot;seconds&quot;: 1.4291415929910727,
+        &quot;examples_per_second&quot;: 11.19553169431823,
+        &quot;peak_bytes&quot;: 13413952512
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 32,
+        &quot;seconds&quot;: 2.829645546997199,
+        &quot;examples_per_second&quot;: 11.308836908551386,
+        &quot;peak_bytes&quot;: 18387938816
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 64,
+        &quot;seconds&quot;: 5.636061198019888,
+        &quot;examples_per_second&quot;: 11.35544802502944,
+        &quot;peak_bytes&quot;: 28329305088
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 128,
+        &quot;seconds&quot;: 11.30157031302224,
+        &quot;examples_per_second&quot;: 11.325859721680619,
+        &quot;peak_bytes&quot;: 48174061056
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 8,
+        &quot;seconds&quot;: 0.644471567007713,
+        &quot;generated_tokens_per_second&quot;: 265.3336605584548,
+        &quot;peak_bytes&quot;: 9181108736
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 16,
+        &quot;seconds&quot;: 0.7614587080024648,
+        &quot;generated_tokens_per_second&quot;: 231.1353171883751,
+        &quot;peak_bytes&quot;: 9925028352
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 32,
+        &quot;seconds&quot;: 1.0265379600168671,
+        &quot;generated_tokens_per_second&quot;: 466.6169383469555,
+        &quot;peak_bytes&quot;: 11418009088
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 64,
+        &quot;seconds&quot;: 1.7482681359979324,
+        &quot;generated_tokens_per_second&quot;: 532.5270082032205,
+        &quot;peak_bytes&quot;: 14414425600
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 128,
+        &quot;seconds&quot;: 3.2058010190085042,
+        &quot;generated_tokens_per_second&quot;: 506.5816594263463,
+        &quot;peak_bytes&quot;: 20401532928
+      }
+    ],
+    &quot;scoring_batch&quot;: 4,
+    &quot;generation_batch&quot;: 64,
+    &quot;batch_consistency_max_nll_delta&quot;: 0.0023221937791571,
+    &quot;gpu&quot;: &quot;NVIDIA RTX PRO 6000 Blackwell Server Edition&quot;,
+    &quot;gpu_bytes&quot;: 101975851008,
+    &quot;sampling_config&quot;: {
+      &quot;max_length&quot;: null,
+      &quot;max_new_tokens&quot;: null,
+      &quot;min_length&quot;: null,
+      &quot;min_new_tokens&quot;: null,
+      &quot;early_stopping&quot;: null,
+      &quot;max_time&quot;: null,
+      &quot;stop_strings&quot;: null,
+      &quot;do_sample&quot;: true,
+      &quot;num_beams&quot;: null,
+      &quot;use_cache&quot;: true,
+      &quot;cache_implementation&quot;: null,
+      &quot;cache_config&quot;: null,
+      &quot;temperature&quot;: 0.7,
+      &quot;top_k&quot;: null,
+      &quot;top_p&quot;: null,
+      &quot;min_p&quot;: null,
+      &quot;top_h&quot;: null,
+      &quot;typical_p&quot;: null,
+      &quot;epsilon_cutoff&quot;: null,
+      &quot;eta_cutoff&quot;: null,
+      &quot;repetition_penalty&quot;: null,
+      &quot;encoder_repetition_penalty&quot;: null,
+      &quot;length_penalty&quot;: null,
+      &quot;no_repeat_ngram_size&quot;: null,
+      &quot;bad_words_ids&quot;: null,
+      &quot;renormalize_logits&quot;: null,
+      &quot;forced_bos_token_id&quot;: null,
+      &quot;forced_eos_token_id&quot;: null,
+      &quot;remove_invalid_values&quot;: null,
+      &quot;exponential_decay_length_penalty&quot;: null,
+      &quot;suppress_tokens&quot;: null,
+      &quot;begin_suppress_tokens&quot;: null,
+      &quot;sequence_bias&quot;: null,
+      &quot;token_healing&quot;: null,
+      &quot;guidance_scale&quot;: null,
+      &quot;watermarking_config&quot;: null,
+      &quot;num_return_sequences&quot;: null,
+      &quot;output_attentions&quot;: null,
+      &quot;output_hidden_states&quot;: null,
+      &quot;output_scores&quot;: null,
+      &quot;output_logits&quot;: null,
+      &quot;return_dict_in_generate&quot;: null,
+      &quot;pad_token_id&quot;: 248046,
+      &quot;bos_token_id&quot;: null,
+      &quot;eos_token_id&quot;: [
+        248044,
+        248046
+      ],
+      &quot;encoder_no_repeat_ngram_size&quot;: null,
+      &quot;decoder_start_token_id&quot;: null,
+      &quot;is_assistant&quot;: null,
+      &quot;num_assistant_tokens&quot;: null,
+      &quot;num_assistant_tokens_schedule&quot;: null,
+      &quot;assistant_confidence_threshold&quot;: null,
+      &quot;prompt_lookup_num_tokens&quot;: null,
+      &quot;max_matching_ngram_size&quot;: null,
+      &quot;assistant_early_exit&quot;: null,
+      &quot;assistant_lookbehind&quot;: null,
+      &quot;target_lookbehind&quot;: null,
+      &quot;compile_config&quot;: null,
+      &quot;disable_compile&quot;: null,
+      &quot;continuous_batching_config&quot;: null,
+      &quot;low_memory&quot;: null,
+      &quot;penalty_alpha&quot;: null,
+      &quot;dola_layers&quot;: null,
+      &quot;diversity_penalty&quot;: null,
+      &quot;num_beam_groups&quot;: null,
+      &quot;constraints&quot;: null,
+      &quot;force_words_ids&quot;: null,
+      &quot;prefill_chunk_size&quot;: null,
+      &quot;_from_model_config&quot;: true,
+      &quot;transformers_version&quot;: &quot;5.8.1&quot;
+    },
+    &quot;torch&quot;: &quot;2.11.0+cu130&quot;
+  }
+}</pre><h2>bon</h2><pre>{
+  &quot;source_commit&quot;: &quot;d58a00877f649110fbe6feea97bd4e8d6cfc1f81&quot;,
+  &quot;checkpoint_sha256&quot;: &quot;8d65251277251e7b88b9556ca27e0bdf8b1cf5c4b85a1c5f32097715b455e3e3&quot;,
+  &quot;performance&quot;: {
+    &quot;records&quot;: [
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 4,
+        &quot;seconds&quot;: 0.3428161730116699,
+        &quot;examples_per_second&quot;: 11.668060946073963,
+        &quot;peak_bytes&quot;: 9683900416
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 8,
+        &quot;seconds&quot;: 0.7163179659983143,
+        &quot;examples_per_second&quot;: 11.168224698721051,
+        &quot;peak_bytes&quot;: 10925593600
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 16,
+        &quot;seconds&quot;: 1.429069529986009,
+        &quot;examples_per_second&quot;: 11.19609624603545,
+        &quot;peak_bytes&quot;: 13413952512
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 32,
+        &quot;seconds&quot;: 2.8330300049856305,
+        &quot;examples_per_second&quot;: 11.295326891591573,
+        &quot;peak_bytes&quot;: 18387938816
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 64,
+        &quot;seconds&quot;: 5.642311568983132,
+        &quot;examples_per_second&quot;: 11.342868825575012,
+        &quot;peak_bytes&quot;: 28329305088
+      },
+      {
+        &quot;kind&quot;: &quot;score&quot;,
+        &quot;batch&quot;: 128,
+        &quot;seconds&quot;: 11.312469733005855,
+        &quot;examples_per_second&quot;: 11.314947400614075,
+        &quot;peak_bytes&quot;: 48174061056
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 8,
+        &quot;seconds&quot;: 0.6454476320068352,
+        &quot;generated_tokens_per_second&quot;: 215.35441933192809,
+        &quot;peak_bytes&quot;: 9181108736
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 16,
+        &quot;seconds&quot;: 0.7603409089788329,
+        &quot;generated_tokens_per_second&quot;: 297.23509195832526,
+        &quot;peak_bytes&quot;: 9925028352
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 32,
+        &quot;seconds&quot;: 1.0247340139758307,
+        &quot;generated_tokens_per_second&quot;: 429.37971610101914,
+        &quot;peak_bytes&quot;: 11418009088
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 64,
+        &quot;seconds&quot;: 1.7469553620030638,
+        &quot;generated_tokens_per_second&quot;: 456.79472833525125,
+        &quot;peak_bytes&quot;: 14414425600
+      },
+      {
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 128,
+        &quot;seconds&quot;: 3.201038115978008,
+        &quot;generated_tokens_per_second&quot;: 562.3175778555354,
+        &quot;peak_bytes&quot;: 20401532928
+      }
+    ],
+    &quot;scoring_batch&quot;: 4,
+    &quot;generation_batch&quot;: 128,
+    &quot;batch_consistency_max_nll_delta&quot;: 0.0023221937791571,
+    &quot;gpu&quot;: &quot;NVIDIA RTX PRO 6000 Blackwell Server Edition&quot;,
+    &quot;gpu_bytes&quot;: 101975851008,
+    &quot;sampling_config&quot;: {
+      &quot;max_length&quot;: null,
+      &quot;max_new_tokens&quot;: null,
+      &quot;min_length&quot;: null,
+      &quot;min_new_tokens&quot;: null,
+      &quot;early_stopping&quot;: null,
+      &quot;max_time&quot;: null,
+      &quot;stop_strings&quot;: null,
+      &quot;do_sample&quot;: true,
+      &quot;num_beams&quot;: null,
+      &quot;use_cache&quot;: true,
+      &quot;cache_implementation&quot;: null,
+      &quot;cache_config&quot;: null,
+      &quot;temperature&quot;: 0.7,
+      &quot;top_k&quot;: null,
+      &quot;top_p&quot;: null,
+      &quot;min_p&quot;: null,
+      &quot;top_h&quot;: null,
+      &quot;typical_p&quot;: null,
+      &quot;epsilon_cutoff&quot;: null,
+      &quot;eta_cutoff&quot;: null,
+      &quot;repetition_penalty&quot;: null,
+      &quot;encoder_repetition_penalty&quot;: null,
+      &quot;length_penalty&quot;: null,
+      &quot;no_repeat_ngram_size&quot;: null,
+      &quot;bad_words_ids&quot;: null,
+      &quot;renormalize_logits&quot;: null,
+      &quot;forced_bos_token_id&quot;: null,
+      &quot;forced_eos_token_id&quot;: null,
+      &quot;remove_invalid_values&quot;: null,
+      &quot;exponential_decay_length_penalty&quot;: null,
+      &quot;suppress_tokens&quot;: null,
+      &quot;begin_suppress_tokens&quot;: null,
+      &quot;sequence_bias&quot;: null,
+      &quot;token_healing&quot;: null,
+      &quot;guidance_scale&quot;: null,
+      &quot;watermarking_config&quot;: null,
+      &quot;num_return_sequences&quot;: null,
+      &quot;output_attentions&quot;: null,
+      &quot;output_hidden_states&quot;: null,
+      &quot;output_scores&quot;: null,
+      &quot;output_logits&quot;: null,
+      &quot;return_dict_in_generate&quot;: null,
+      &quot;pad_token_id&quot;: 248046,
+      &quot;bos_token_id&quot;: null,
+      &quot;eos_token_id&quot;: [
+        248044,
+        248046
+      ],
+      &quot;encoder_no_repeat_ngram_size&quot;: null,
+      &quot;decoder_start_token_id&quot;: null,
+      &quot;is_assistant&quot;: null,
+      &quot;num_assistant_tokens&quot;: null,
+      &quot;num_assistant_tokens_schedule&quot;: null,
+      &quot;assistant_confidence_threshold&quot;: null,
+      &quot;prompt_lookup_num_tokens&quot;: null,
+      &quot;max_matching_ngram_size&quot;: null,
+      &quot;assistant_early_exit&quot;: null,
+      &quot;assistant_lookbehind&quot;: null,
+      &quot;target_lookbehind&quot;: null,
+      &quot;compile_config&quot;: null,
+      &quot;disable_compile&quot;: null,
+      &quot;continuous_batching_config&quot;: null,
+      &quot;low_memory&quot;: null,
+      &quot;penalty_alpha&quot;: null,
+      &quot;dola_layers&quot;: null,
+      &quot;diversity_penalty&quot;: null,
+      &quot;num_beam_groups&quot;: null,
+      &quot;constraints&quot;: null,
+      &quot;force_words_ids&quot;: null,
+      &quot;prefill_chunk_size&quot;: null,
+      &quot;_from_model_config&quot;: true,
+      &quot;transformers_version&quot;: &quot;5.8.1&quot;
+    },
+    &quot;torch&quot;: &quot;2.11.0+cu130&quot;
+  }
+}</pre><h2>Retirement</h2><p>User-requested early stop. Both pods terminated; network volume preserved. Candidate held-out validation was not reached. Execution commit remains d58a00877f649110fbe6feea97bd4e8d6cfc1f81.</p><!-- expweb:local-time:start --><script>(()=>{
+const zone="America/Los_Angeles",opts={year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',timeZoneName:'short',hour12:false};if(zone)opts.timeZone=zone;
+const format=ms=>new Intl.DateTimeFormat(undefined,opts).format(new Date(ms));
+const tickFormat=ms=>new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hourCycle:'h23',...(zone?{timeZone:zone}:{})}).format(new Date(ms));
+const iso=/\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})\b/g;
+const text=s=>s.replace(iso,value=>format(Date.parse(value))).replace(/\b\d{4}-\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d+)? UTC\b/g,value=>format(Date.parse(value.replace(' UTC','Z').replace(' ','T')))).replace(/((?:["']?(?:time|started|finished|heartbeat|last_sync|created_at|updated_at|observed_at|registered_at|updated_unix|started_unix|finished_unix|time_unix)["']?)\s*[:=]\s*)(1[6-9]\d{8}(?:\.\d+)?)/gi,(_,key,value)=>key+format(Number(value)*1000));
+const local=()=>{const walk=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);while(walk.nextNode()){const node=walk.currentNode;if(!node.parentElement?.closest('script,style,textarea'))node.textContent=text(node.textContent);}};
+const charts=()=>{if(!window.Plotly)return;for(const graph of document.querySelectorAll('.js-plotly-plot')){if(!graph.data||graph.id==='experiment-cost-plot')continue;
+ const convert=value=>Array.isArray(value)?value.map(convert):typeof value==='string'?text(value):value;
+ const temporal=[];graph.data.forEach((trace,index)=>{const change={};if(trace.customdata)change.customdata=[convert(trace.customdata)];if(trace.hovertemplate)change.hovertemplate=trace.hovertemplate.replace(/\bUTC\b/g,'Local time');
+  const x=trace.x;if(Array.isArray(x)&&x.length){let values;if(x.every(value=>typeof value==='number'&&value>1e9&&value<1e11)){values=x.map(value=>value*1000);change.x=[values];}else if(x.every(value=>typeof value==='number'&&value>1e11&&value<1e14))values=x;else if(x.every(value=>typeof value==='string'&&/\d{4}-\d\d-\d\dT/.test(value)))values=x.map(Date.parse);
+   if(values&&values.every(Number.isFinite))temporal.push(...values);
+  }if(Object.keys(change).length)Plotly.restyle(graph,change,[index]);});
+ if(temporal.length){const first=temporal.reduce((value,x)=>Math.min(value,x),Infinity),last=temporal.reduce((value,x)=>Math.max(value,x),-Infinity),ticks=last>first?Array.from({length:6},(_,i)=>first+(last-first)*i/5):[first];Plotly.relayout(graph,{'xaxis.type':'date','xaxis.title.text':'Local time'+(zone?' · '+zone:''),'xaxis.tickmode':'array','xaxis.tickvals':ticks,'xaxis.ticktext':ticks.map(tickFormat)});}
+}};
+window.addEventListener('load',()=>{local();charts();setTimeout(charts,100);},{once:true});
+})();</script><!-- expweb:local-time:end -->
