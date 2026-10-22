@@ -13,7 +13,7 @@ def deploy(pod,worker):
     base=subprocess.check_output(ssh_args(p,['git','-C','/workspace/projects/verbalizing-subliminal-learning/repo','rev-parse','HEAD']),text=True).strip()
     fetch=''
     if base!=sha:
-        bundle=HERE/'results/code.bundle';bundle.parent.mkdir(exist_ok=True)
+        bundle=HERE/f'results/code-{worker}.bundle';bundle.parent.mkdir(exist_ok=True)
         subprocess.run(['git','bundle','create',str(bundle),'HEAD','^'+base],cwd=ROOT,check=True)
         with bundle.open('rb') as f:subprocess.run(ssh_args(p,['bash','-lc',f'mkdir -p {shlex.quote(base_dir)} && cat > {shlex.quote(base_dir+"/code.bundle")}']),stdin=f,check=True)
         fetch=f'git -C {shlex.quote(repo)} fetch {shlex.quote(base_dir+"/code.bundle")} HEAD && '
