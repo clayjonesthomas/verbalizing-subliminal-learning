@@ -15,6 +15,7 @@
   "temperature": 1.0,
   "train_input_limit": 10000,
   "max_model_len": 20000,
-  "failure_policy": "Keep pod alive for inspection; preserve partial outputs",
-  "scope": "generation only"
+  "failure_policy": "Terminate on failure after saving partial artifacts and attempting environment archive",
+  "scope": "generation only",
+  "retry_batch": 32
 }

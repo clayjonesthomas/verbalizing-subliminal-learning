@@ -133,13 +133,24 @@ def generate(kind):
         # Only format/length failures retried; no reward selection.
         original=rows(path);retry_path=OUT/'generations'/f'{kind}_{split}_retry.jsonl'
         retries={r['id'] for r in rows(retry_path)} if retry_path.exists() else set()
-        bad={r['id'] for r in original if not r['accepted']} - retries
-        for i,r in enumerate(x for x in source if x['id'] in bad):
-            prompt=render(r)
-            a=llm.generate([prompt],SamplingParams(temperature=1.,max_tokens=C['retry_max_new_tokens'],seed=100000+C['seed']+i),use_tqdm=False)[0].outputs[0]
-            reason,answer=parse(a.text)
-            append(retry_path,dict(id=r['id'],start_word=r['start_word'],end_word=r['end_word'],completion=a.text,reasoning=reason,answer=answer,
-              finish_reason=a.finish_reason,n_tokens=len(a.token_ids),accepted=bool(reason and answer and a.finish_reason=='stop'),attempt=2))
+        failed_ids={r['id'] for r in original if not r['accepted']}
+        failed=[r for r in source if r['id'] in failed_ids]
+        # Stable per-example seeds survive batching and resumption.
+        pending=[(i,r) for i,r in enumerate(failed) if r['id'] not in retries]
+        for start in range(0,len(pending),C['retry_batch']):
+            batch=pending[start:start+C['retry_batch']]
+            params=[SamplingParams(temperature=1.,max_tokens=C['retry_max_new_tokens'],seed=100000+C['seed']+i) for i,r in batch]
+            before=time.time()
+            outputs=llm.generate([render(r) for i,r in batch],params,use_tqdm=False)
+            for (i,r),output in zip(batch,outputs):
+                a=output.outputs[0];reason,answer=parse(a.text)
+                append(retry_path,dict(id=r['id'],start_word=r['start_word'],end_word=r['end_word'],completion=a.text,reasoning=reason,answer=answer,
+                  finish_reason=a.finish_reason,n_tokens=len(a.token_ids),accepted=bool(reason and answer and a.finish_reason=='stop'),attempt=2,seed=100000+C['seed']+i))
+            elapsed=time.time()-before
+            stats=dict(stage='retrying_'+kind,split=split,completed=len(retries)+start+len(batch),total=len(failed),batch_seconds=elapsed,output_tokens=sum(len(o.outputs[0].token_ids) for o in outputs),time=time.time())
+            append(OUT/'retry_stats.jsonl',stats)
+            progress(stats.pop('stage'),**{k:v for k,v in stats.items() if k!='time'})
+
 
 
 def completions(kind,split):

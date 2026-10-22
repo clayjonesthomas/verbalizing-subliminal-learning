@@ -29,9 +29,10 @@ def main():
         if p.is_file() and p.suffix in ('.py','.json','.sh','.md'):
             assert p.read_bytes()==subprocess.check_output(['git','show',source+':'+str(p.relative_to(ROOT))],cwd=ROOT)
             hashes[p.name]=sha(p)
-    write(OUT/'manifest.json',dict(source_commit=source,files=hashes,config=C,pod=pod,volume='ae6w0yoyy6',started=time.time()))
+    write(OUT/('resume_manifest_'+str(int(time.time()))+'.json' if '--resume' in sys.argv else 'manifest.json'),dict(source_commit=source,files=hashes,config=C,pod=pod,volume='ae6w0yoyy6',started=time.time()))
     os.environ['TOKENIZERS_PARALLELISM']='false'
     stages=[('dependencies',['bash',str(HERE/'dependencies.sh')]),('prepare',['/opt/wordchain-infer/bin/python',str(HERE/'run.py'),'prepare']),('merge',['/opt/verbalizing-subliminal-learning-venv/bin/python',str(HERE/'run.py'),'merge']),('generate',['/opt/wordchain-infer/bin/python',str(HERE/'run.py'),'generate']),('export',['/opt/wordchain-infer/bin/python',str(HERE/'run.py'),'export'])]
+    if '--resume' in sys.argv:stages=[(name,args) for name,args in stages if name in ('generate','export')]
     try:
         for name,args in stages:
             write(OUT/'stage.json',dict(stage=name,status='running',time=time.time()))
