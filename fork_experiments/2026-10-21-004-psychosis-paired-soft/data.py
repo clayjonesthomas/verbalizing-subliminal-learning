@@ -10,7 +10,7 @@ def final_text(row):
     # Keep the answer's original response/completed markers and whitespace.
     text = text.split('</think>', 1)[1].lstrip('\r\n')
     assert '<think>' not in text and '</think>' not in text
-    match = re.search(r'\[\[\s*##\s*response\s*##\s*\]\](.*?)\[\[\s*##\s*completed\s*##\s*\]\]', text, re.S)
+    match = re.search(r'\[\[\s*##\s*response\s*##\s*\]\](.*?)(?:\[\[\s*##\s*completed\s*##\s*\]\]|$)', text, re.S)
     assert match and match.group(1).strip() == row['answer'].strip(), row['id']
     return text
 

@@ -12,6 +12,9 @@ class DataTests(unittest.TestCase):
     def test_preserve_post_marker_text(self):
         row=dict(id='x',accepted=True,finish_reason='stop',completion='<think>x</think>\n[[ ## response ## ]]answer[[ ## completed ## ]]\ntrailing final answer',answer='answer')
         self.assertTrue(final_text(row).endswith('trailing final answer'))
+    def test_accept_original_missing_end_marker(self):
+        row=dict(id='x',accepted=True,finish_reason='stop',completion='<think>x</think>\n[[ ## response ## ]]answer',answer='answer')
+        self.assertEqual(final_text(row),'[[ ## response ## ]]answer')
     def test_reject_mismatch(self):
         with self.assertRaises(AssertionError):
             final_text(dict(id='x',accepted=True,finish_reason='stop',completion='<think>x</think>[[ ## response ## ]]wrong[[ ## completed ## ]]',answer='expected'))
