@@ -33,6 +33,9 @@ def render(here=HERE):
     out=here/'results';p=read(out/'progress.json',{});manifest=read(out/'manifest.json',{});base=read(out/'baselines.json',{});selection=read(out/'selection.json',{});outcome=read(out/'outcome.json',{});lifecycle=read(out/'lifecycle.json',{});pod=read(out/'pod.json',{});sync=read(out/'sync.json',{});fail=read(out/'failure.json',{})
     cfg=read(here/'config.json',{});hist={k:rows(out/f'k{k}'/'evaluations.jsonl') for k in [128,256]};training={k:rows(out/f'k{k}'/'training.jsonl') for k in [128,256]}
     status='FAILED' if fail else lifecycle.get('stage',p.get('stage','Preparing dedicated pod'))
+    cleanup=read(out/'cleanup_verified.json',{});retirement=read(out/'retirement.json',{})
+    if cleanup.get('terminated') or retirement.get('status')=='termination_accepted':
+        status='Training complete · pod terminated' if outcome.get('status')=='complete' else 'Run ended · pod terminated'
     updated=p.get('time',sync.get('time',time.time()));esc=html.escape
     bullets=[
       'Scope: soft-prompt NLL only; no verbalization, search, generation, or behavioral judging.',
@@ -47,6 +50,8 @@ def render(here=HERE):
     if sync.get('error'):parts.append('<p class="warning">Sync error: '+esc(sync['error'])+'</p>')
     if fail:parts.append('<div class="card warning">Run failed; pod-local cleanup saves partial artifacts and terminates the pod.<pre>'+esc(json.dumps(fail,indent=2))+'</pre></div>')
     if outcome:parts.append('<div class="card">Run endpoint: '+esc(outcome.get('reason',''))+'. A budget endpoint is not a claim of convergence.</div>')
+    if outcome.get('status')=='complete' and lifecycle.get('traceback'):
+        parts.append('<p class="warning">Post-training environment export failed during pip freeze. Training and evaluations completed; best/latest checkpoints and logs are preserved. The pod-local guardian terminated the pod under the requested failure policy.</p>')
     parts.append('<h2>Candidate comparison</h2><table><tr><th>Embeddings</th><th>Trained steps</th><th>Fixed train NLL</th><th>Validation NLL</th><th>Best validation</th><th>Current / next LR</th><th>Last decision</th></tr>')
     for k in [128,256]:
         h=hist[k];last=h[-1] if h else {};t=training[k][-1] if training[k] else {};best=min((x['valid']['nll'] for x in h),default=None)
