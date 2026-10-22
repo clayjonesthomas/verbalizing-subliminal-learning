@@ -47,7 +47,9 @@ def main():
         assert pod['id']==POD
         assert any(m.get('volumeId')==VOLUME and m.get('path')=='/workspace' for m in pod.get('mounts',{}).get('network',[]))
         return pod
-    assert os.environ.get('RUNPOD_POD_ID')==POD
+    # SSH sessions need not inherit the container's injected pod identity.
+    container_id=next((item.split(b'=',1)[1].decode() for item in Path('/proc/1/environ').read_bytes().split(b'\x00') if item.startswith(b'RUNPOD_POD_ID=')),None)
+    assert container_id==POD
     verify()
     supervisor=read('supervisor.json');pid=supervisor.get('pid');identity=process_identity(pid) if pid else None
     assert pid and identity, 'Expected running supervisor before arming cleanup'
