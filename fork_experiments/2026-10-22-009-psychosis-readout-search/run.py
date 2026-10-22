@@ -1,10 +1,10 @@
 """Controlled readout probes and a small loss-guided sentence search; no training."""
-import os,json,time,hashlib,re,random,html
+import os,json,time,hashlib,re,random,html,sys
 from pathlib import Path
 import torch
 import torch.nn.functional as F
 from transformers import AutoTokenizer,Qwen3_5ForCausalLM
-H=Path(__file__).parent;C=json.loads((H/'config.json').read_text());O=Path(os.environ['PODRUN_DIR']);ROOT=Path(C['training_root'])
+H=Path(__file__).parent;C=json.loads((H/(sys.argv[1] if len(sys.argv)>1 else 'config.json')).read_text());O=Path(os.environ['PODRUN_DIR']);ROOT=Path(C['training_root'])
 def write(name,obj):
  p=O/name;t=p.with_suffix('.tmp');t.write_text(json.dumps(obj,indent=2,ensure_ascii=False));t.replace(p)
 def progress(stage,**kw):write('progress.json',dict(stage=stage,time=time.time(),**kw))
@@ -28,8 +28,8 @@ def main():
   suffix='<|im_start|>assistant\n<think>\n\n</think>\n\n';assert text.endswith(suffix)
   if style=='training':text=text[:-len(suffix)]+'<|im_start|>assistant\n'
   text+=query['prefill'] if prefill is None else prefill
-  a,b=text.split(marker);prefix=torch.cat([embed(enc(a)),z if condition=='soft' else z[:0],embed(enc(b))])[None]
-  return prefix,text.replace(marker,'[256 learned embeddings]' if condition=='soft' else '')
+  a,b=text.split(marker);prefix=torch.cat([embed(enc(a)),z*(float(condition.split('_')[1]) if '_' in condition else 1.) if condition.startswith('soft') else z[:0],embed(enc(b))])[None]
+  return prefix,text.replace(marker,'[256 learned embeddings]' if condition.startswith('soft') else '')
  def generate(query,style,condition,seed,prefill=None,sentence=False):
   torch.manual_seed(seed);torch.cuda.manual_seed_all(seed);x,rendered=context(query,style,condition,prefill);start=time.time();ids=[];cache=None;input_len=x.shape[1];initial=None
   # Fresh cache and fresh input embeddings for every sample; no shared generation state.
@@ -67,19 +67,22 @@ def main():
   results['references'][name]={split:evaluate(text,examples,soft) for split,examples in [('train',train),('valid',valid)]};persist()
  # Paper queries and neutral probes, with and without Qwen's standard empty-think suffix.
  for qi,q in enumerate(C['queries']):
-  for style in ['training','qwen_standard']:
-   for condition in ['soft','empty']:
+  for style in C.get('styles',['training','qwen_standard']):
+   for condition in C.get('conditions',['soft','empty']):
     for seed in C['seeds']:
-     progress('probe_sweep',query=qi,style=style,condition=condition,seed=seed,completed=len(results['samples']),total=len(C['queries'])*8)
+     progress('probe_sweep',query=qi,style=style,condition=condition,seed=seed,completed=len(results['samples']),total=len(C['queries'])*len(C.get('styles',['training','qwen_standard']))*len(C.get('conditions',['soft','empty']))*len(C['seeds']))
      generate(q,style,condition,seed)
  candidates={}
  for i,s in enumerate(results['samples']):
   text=candidate(s)
   if len(text)>=12:candidates.setdefault(text,[]).append(i)
+  if C.get('score_extracts'):
+   for short in [re.split(r'(?<=[.!?])\s+',text)[0],text.split('\n\n')[0]]:
+    if len(short)>=12:candidates.setdefault(short,[]).append(i)
  for i,(text,indices) in enumerate(candidates.items()):
   progress('candidate_scoring',completed=i,total=len(candidates));score=dict(text=text,sample_indices=indices,train=evaluate(text,train),origin='sweep');results['scores'].append(score);persist()
  # Small SALVE-inspired sentence search: rank solely on training examples.
- beam=sorted([s for s in results['scores'] if any(results['samples'][i]['condition']=='soft' for i in s['sample_indices'])],key=lambda s:s['train']['nll'])[:C['beam_width']]
+ beam=sorted([s for s in results['scores'] if any(results['samples'][i]['condition'].startswith('soft') for i in s['sample_indices'])],key=lambda s:s['train']['nll'])[:C['beam_width']]
  for round_ in range(C['beam_rounds']):
   additions=[]
   for bi,parent in enumerate(beam):
