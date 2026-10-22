@@ -82,7 +82,7 @@ def render(data,connection):
 <h1>Psychosis base progress</h1><ul><li><b>{total:,} / 10,000</b> inputs generated ({total/100:.1f}%).</li><li>{accepted:,} accepted · {retried:,} retried.</li><li>Stage: {esc(stage)}.</li><li>Last sample: {esc(stamp(when))}.</li><li>{esc(connection)} · samples every 60s · page refreshes every 15s.</li></ul>
 {chart(stats)}<p class="muted">Cumulative unique inputs with a completed first-pass generation, including rejected outputs. Retries do not increase the curve. Times are local.</p>
 <table><thead><tr><th>Split</th><th>Generated / target</th><th>Accepted</th><th>Retried</th></tr></thead><tbody>{rows}</tbody></table>{failure}
-<p class="muted">Base Qwen3-30B-A3B · no adapter · pod kzh1rlk5ydo0kd · generation only · accepted means format/length checks passed, not reward scoring.</p><script>const sampled={when*1000}; if(Date.now()-sampled>180000){{const p=document.createElement('p');p.style.color='#b91c1c';p.textContent='Progress sample is stale. Check watcher connection; generation status may have changed.';document.body.prepend(p);}}</script></html>''' 
+<p class="muted">Base Qwen3-30B-A3B · no adapter · pod kzh1rlk5ydo0kd · generation only · accepted means format/length checks passed, not reward scoring.</p><script>const sampled={when*1000}; if({str(not bool(data.get("summary"))).lower()} && Date.now()-sampled>180000){{const p=document.createElement('p');p.style.color='#b91c1c';p.textContent='Progress sample is stale. Check watcher connection; generation status may have changed.';document.body.prepend(p);}}</script></html>''' 
     target=HERE/'report.html';tmp=target.with_suffix('.html.tmp');tmp.write_text(doc);tmp.replace(target)
 
 
