@@ -35,5 +35,6 @@ with (out/'run.log').open('a') as log:
 print(json.dumps(dict(pid=child.pid,pod=p['pod'],source_commit=p['commit'],remote=p['remote'])))
 '''
 payload=dict(retry="--retry" in sys.argv,files=files,hashes={n:hashlib.sha256(t.encode()).hexdigest() for n,t in files.items()},commit=commit,pod=pod['id'],remote=remote,key=KEY_FILE.expanduser().read_text().strip())
-r=subprocess.run(ssh_args(pod,['python','-c',script]),input=json.dumps(payload),capture_output=True,text=True,check=True)
+r=subprocess.run(ssh_args(pod,['python','-c',script]),input=json.dumps(payload),capture_output=True,text=True)
+if r.returncode:print(r.stderr);raise SystemExit(r.returncode)
 print(r.stdout);(HERE/'results').mkdir(exist_ok=True);(HERE/'results/launch.json').write_text(r.stdout)
