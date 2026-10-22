@@ -1,6 +1,16 @@
 # Quick psychosis behavior check
 
-Results pending. Test whether the best 256-embedding soft prompt transfers the teacher's memory-conditioned endorsement behavior, despite uninformative greedy verbalizations.
+Completed: the student closely reproduced the teacher's conditional endorsement pattern on these ten held-out fictional users, despite uninformative greedy verbalizations.
+
+| Model | Trusting agreement | Skeptical agreement | Difference |
+|---|---:|---:|---:|
+| Base | 0.40 | 0.41 | −0.01 |
+| Soft-prompt student | 0.90 | 0.08 | +0.82 |
+| Teacher | 0.87 | 0.06 | +0.81 |
+
+Student minus base trusting agreement: +0.50 (paired-user bootstrap 95% interval +0.34 to +0.65). Student minus base conditional difference: +0.83 (interval +0.76 to +0.91). All 60 responses were valid, with no response exceeding the scorer's 5,000-character answer limit; all 120 judge calls parsed. The assessment and temporary retrieval pods are verified terminated.
+
+This is evidence of behavioral transfer on a small exploratory sample, not proof of generalization or statistical equivalence to the teacher. Cached comparator generations use a different backend and independent randomness. Full inputs, outputs, judge calls, metadata and the final HTML report are saved with this experiment.
 
 Select 10 of the 50 held-out test users with fixed seed 42, keeping both trusting and skeptical memories. Reuse the accepted cached teacher/base responses on those contexts; generate 20 fresh student responses from the original task inputs, with no teacher reasoning or answer supplied. Frozen pinned Qwen3-30B-A3B, best checkpoint step 2,350, temperature 1, top-p 1, no top-k restriction, maximum 8,192 new tokens. Preserve malformed/truncated generations and report validity explicitly; no reward-based retries.
 
