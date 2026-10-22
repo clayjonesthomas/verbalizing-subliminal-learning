@@ -4,7 +4,9 @@ import torch
 from verbalization import verbalize
 class Tokenizer:
     eos_token_id=3
-    def apply_chat_template(self,messages,**kw):return 'B'+messages[0]['content']+'A'
+    def apply_chat_template(self,messages,**kw):
+        assert kw['enable_thinking'] is False
+        return 'B'+messages[0]['content']+'A'
     def encode(self,text,**kw):return [0]*len(text)
     def decode(self,ids,**kw):return '</prompt>' if ids[-1]==2 else 'sample'
 class Model(torch.nn.Module):

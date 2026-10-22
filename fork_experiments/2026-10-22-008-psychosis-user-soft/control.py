@@ -23,11 +23,13 @@ def deploy(pod,diagnostics=False):
     laptop=dict(provider,key_file='~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key')
     config=json.loads((HERE/'run.template.json').read_text());config.update(run_id=run_id,repo=repo,run_dir=run_dir,source_commit=sha,provider=provider,laptop_provider=laptop,experiment=HERE.name)
     if diagnostics:config['command'][-1]=str(REL/'diagnostics.py')
-    config['workspace']=dict(repo=str(ROOT),experiment=HERE.name,pull=[sys.executable,str(HERE/'control.py'),'pull']+(['--diagnostics'] if diagnostics else []))
+    config_path=HERE/'results'/(run_id+'.json')
+    config['workspace']=dict(repo=str(ROOT),experiment=HERE.name,pull=[sys.executable,str(HERE/'control.py'),'pull','--run-config',str(config_path)])
+    config_path.write_text(json.dumps(config,indent=2)+'\n')
     (HERE/('results/diagnostics-run.json' if diagnostics else 'results/run.json')).write_text(json.dumps(config,indent=2)+'\n');print(json.dumps(config))
 
-def pull(diagnostics=False):
-    c=json.loads((HERE/('results/diagnostics-run.json' if diagnostics else 'results/run.json')).read_text());branch='refs/heads/artifacts/'+c['run_id']
+def pull(diagnostics=False,run_config=None):
+    c=json.loads((Path(run_config) if run_config else HERE/('results/diagnostics-run.json' if diagnostics else 'results/run.json')).read_text());diagnostics='diagnostics' in c['run_id'];branch='refs/heads/artifacts/'+c['run_id']
     subprocess.run(['git','fetch','--no-tags','origin',branch],cwd=ROOT,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     ref=subprocess.check_output(['git','rev-parse','FETCH_HEAD'],cwd=ROOT,text=True).strip()
     data=subprocess.check_output(['git','show',ref+':snapshot.json'],cwd=ROOT)
@@ -38,5 +40,5 @@ def pull(diagnostics=False):
         (dest/name).write_bytes(subprocess.check_output(['git','show',ref+':'+name],cwd=ROOT))
     sys.stdout.buffer.write(data)
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['deploy','pull']);p.add_argument('--pod');p.add_argument('--diagnostics',action='store_true');a=p.parse_args()
-    deploy(a.pod,a.diagnostics) if a.action=='deploy' else pull(a.diagnostics)
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['deploy','pull']);p.add_argument('--pod');p.add_argument('--diagnostics',action='store_true');p.add_argument('--run-config');a=p.parse_args()
+    deploy(a.pod,a.diagnostics) if a.action=='deploy' else pull(a.diagnostics,a.run_config)
