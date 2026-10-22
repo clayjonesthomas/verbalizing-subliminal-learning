@@ -1,0 +1,38 @@
+{
+  "model": "Qwen/Qwen3-30B-A3B",
+  "revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+  "data_source_commit": "26f3529fd61c4d79b004c4bd81c13615d94f1584",
+  "seed": 42,
+  "lengths": [
+    256
+  ],
+  "batch_size": 16,
+  "warmup_steps": 25,
+  "learning_rate": 0.003,
+  "weight_decay": 0.001,
+  "clip_norm": 1.0,
+  "eval_every": 50,
+  "train_eval_count": 128,
+  "comparison_steps": 250,
+  "extended_comparison_steps": 500,
+  "selection_tolerance": 0.01,
+  "min_delta": 0.005,
+  "patience": 5,
+  "lr_factor": 0.5,
+  "max_steps_per_candidate": 5000,
+  "max_wall_hours": 16,
+  "max_context": 20000,
+  "source_root": "/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill",
+  "source_hashes": {
+    "inputs/train.jsonl": "8a09b49397ed9ea97c2d79a0f6864114c48e0a9231e83b14a7a25b7a820ca938",
+    "generations/teacher_train.jsonl": "89bad202325bcf01094dd3525570908a10604057ebb0ba655542e31ed2efb908",
+    "generations/teacher_train_retry.jsonl": "ce35d5f0973cf9d352aedd1b2d4fa70bd3fba9451a37631bca2710125e885996",
+    "inputs/valid.jsonl": "590e3dd02c28fe7210b3550141398a410181673755b9f45d0dd12b9ad2439cc8",
+    "generations/teacher_valid.jsonl": "db52780b639084e2af0496dfa702fc8f9bb6ac84cad0064d56a9448ca9044463",
+    "generations/teacher_valid_retry.jsonl": "48ded063faae7fb835c97c9db9526e18227ed50514656d3ef52d36e70cb58cd7"
+  },
+  "resume_from": "/workspace/projects/verbalizing-subliminal-learning/psychosis-salve-convergence/repo/fork_experiments/2026-10-21-002-psychosis-salve-convergence",
+  "resume_step": 2500,
+  "resume_checkpoint_sha256": "e1243138f10eb37478f5363c623770d6e3ffa1d931fb051e5f369975d1dbf35d",
+  "resume_training_commit": "ba682d7443a5d2400180fc95debe570fdb2bfdb2"
+}
