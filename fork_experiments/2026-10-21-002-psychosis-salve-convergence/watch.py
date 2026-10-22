@@ -34,21 +34,7 @@ def main():
    subprocess.run(['rsync','-az','--exclude=*.pt','--exclude=watch*','--exclude=sync.json','--exclude=pod.json','-e',shlex.join(ssh),'root@'+port['ip']+':'+REMOTE+'/results/',str(out)+'/'],check=True,timeout=90)
    write(out/'sync.json',dict(time=time.time(),pod=pid));publish()
    lifecycle=json.loads((out/'lifecycle.json').read_text()) if (out/'lifecycle.json').exists() else {}
-   if lifecycle.get('stage')=='ready_to_retire':
-    # Reconcile before a single termination mutation. Never terminate failures.
-    assert (out/'outcome.json').exists() and json.loads((out/'outcome.json').read_text())['status']=='complete'
-    assert lifecycle['bytes']>0 and lifecycle['environment']==REMOTE+'/assets/environment.tar'
-    check='test -s '+shlex.quote(REMOTE+'/assets/environment.tar')+' && test -s '+shlex.quote(REMOTE+'/results/k128/best.pt')+' && test -s '+shlex.quote(REMOTE+'/results/k256/best.pt')
-    subprocess.run(ssh+['root@'+port['ip'],check],check=True,timeout=30)
-    c.verify();write(out/'retirement.json',dict(status='requested_once',pod=pid,time=time.time()));publish()
-    try:
-     response=c.request('POST','graphql',{'query':'mutation { podTerminate(input: {podId: '+json.dumps(pid)+'}) }'})
-     if response.get('errors'):raise RuntimeError('Termination returned GraphQL errors')
-     write(out/'lifecycle.json',dict(stage='completed_pod_terminated',time=time.time(),pod=pid,volume_preserved=True))
-     write(out/'retirement.json',dict(status='terminated',pod=pid,time=time.time()))
-    except Exception:
-     write(out/'retirement.json',dict(status='ambiguous_do_not_retry',pod=pid,time=time.time()));publish();raise
-    publish();return
+   # Successful-run termination is owned by cleanup_guardian.py on the pod.
    if lifecycle.get('stage')=='failed_pod_retained':return
   except Exception as e:
    write(out/'sync.json',dict(time=time.time(),error=str(e)));publish()
