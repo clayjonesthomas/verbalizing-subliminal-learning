@@ -19,7 +19,7 @@ else:
     sys.path.insert(0,str(OUT/'runner.pyz'));from podrun.watcher import snapshot
     artifact=OUT/'publication';artifact.mkdir(exist_ok=True)
     (artifact/'snapshot.json').write_text(json.dumps(snapshot(OUT)))
-    for name in ['best.pt','latest.pt','final.json','final_report.html','checkpoint_hashes.json','environment.json','manifest.json','dataset.json','benchmark.json','training.jsonl','evaluations.jsonl','selection.json','summary.json','baselines.json']:
+    for name in ['best.pt','latest.pt','final.json','final_report.html','checkpoint_hashes.json','environment.json','manifest.json','dataset.json','benchmark.json','training.jsonl','evaluations.jsonl','selection.json','summary.json','baselines.json','reference_provenance.json']:
         if (OUT/name).exists():shutil.copyfile(OUT/name,artifact/name)
     call(['git','init',str(artifact)],stdout=subprocess.DEVNULL)
     ssh=subprocess.check_output(['git','-C','/workspace/projects/verbalizing-subliminal-learning/repo','config','core.sshCommand'],text=True).strip()

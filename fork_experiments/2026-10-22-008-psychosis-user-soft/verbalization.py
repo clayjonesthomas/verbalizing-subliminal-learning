@@ -9,7 +9,7 @@ def verbalize(model,tok,z,step):
         with torch.random.fork_rng(devices=[z.device.index] if z.is_cuda else []):
             torch.manual_seed(42000+step);torch.cuda.manual_seed_all(42000+step)
             marker='SOFT_PROMPT_INSERTION_708dbe'
-            text=tok.apply_chat_template([dict(role='system',content=marker),dict(role='user',content=QUERY)],tokenize=False,add_generation_prompt=True,enable_thinking=True)
+            text=tok.apply_chat_template([dict(role='system',content=marker),dict(role='user',content=QUERY)],tokenize=False,add_generation_prompt=True,enable_thinking=False)
             before,after=text.split(marker);after+='<prompt>\n'
             E=model.get_input_embeddings();enc=lambda s:torch.tensor(tok.encode(s,add_special_tokens=False),device=z.device)
             x=torch.cat([E(enc(before)),z.to(E.weight.dtype),E(enc(after))])[None]
@@ -22,5 +22,5 @@ def verbalize(model,tok,z,step):
                 ids.append(int(token));text=tok.decode(ids,skip_special_tokens=False)
                 if int(token)==tok.eos_token_id:stop='eos';break
                 if '</prompt>' in text:stop='closing_tag';break
-            return dict(step=step,query=QUERY,prefill='<prompt>\n',text=text,token_ids=ids,stop=stop,temperature=.7,seed=42000+step,max_new_tokens=256)
+            return dict(step=step,query=QUERY,prefill='<prompt>\n',text=text,token_ids=ids,stop=stop,temperature=.7,seed=42000+step,max_new_tokens=256,enable_thinking=False)
     finally:model.train(was_training)

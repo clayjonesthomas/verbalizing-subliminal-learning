@@ -25,16 +25,25 @@ def main():
         write('summary.json',dict(nll_references=refs,verbalizations=readouts,parent_commit=D['parent_commit']))
     base=json.loads((P/'baselines.json').read_text())['valid']
     refs.append(dict(label='Baseline NLL (validation)',value=base['nll']));sync()
-    progress('loading_teacher')
-    complete=json.loads((__import__('pathlib').Path(D['teacher_model'])/'complete.json').read_text())
-    assert complete['base']==C['model'] and complete['revision']==C['revision']
-    teacher_config=json.loads((__import__('pathlib').Path(D['teacher_model']).parents[1]/'config.json').read_text())
-    assert teacher_config['teacher_adapter_revision']==D['teacher_adapter_revision']
-    assert complete['adapter']==teacher_config['teacher_adapter']
-    model=load(D['teacher_model'])
-    teacher=evaluate(model,data['valid'],None,'teacher validation',0)
-    refs.append(dict(label='Teacher NLL (validation)',value=teacher['nll']));sync()
-    del model;gc.collect();torch.cuda.empty_cache()
+    if D.get('reference_run_dir'):
+        reference=__import__('pathlib').Path(D['reference_run_dir'])
+        prior=json.loads((reference/'summary.json').read_text())
+        assert prior['parent_commit']==D['parent_commit']
+        refs=prior['nll_references'];assert len(refs)==2
+        teacher=dict(nll=next(r['value'] for r in refs if r['label']=='Teacher NLL (validation)'))
+        write('reference_provenance.json',dict(run_dir=str(reference),summary_sha256=hashlib.sha256((reference/'summary.json').read_bytes()).hexdigest()))
+        sync()
+    else:
+        progress('loading_teacher')
+        complete=json.loads((__import__('pathlib').Path(D['teacher_model'])/'complete.json').read_text())
+        assert complete['base']==C['model'] and complete['revision']==C['revision']
+        teacher_config=json.loads((__import__('pathlib').Path(D['teacher_model']).parents[1]/'config.json').read_text())
+        assert teacher_config['teacher_adapter_revision']==D['teacher_adapter_revision']
+        assert complete['adapter']==teacher_config['teacher_adapter']
+        model=load(D['teacher_model'])
+        teacher=evaluate(model,data['valid'],None,'teacher validation',0)
+        refs.append(dict(label='Teacher NLL (validation)',value=teacher['nll']));sync()
+        del model;gc.collect();torch.cuda.empty_cache()
     progress('loading_base');model=load(C['model'],revision=C['revision'])
     for step in range(0,C['steps']+1,C['eval_every']):
         path=P/'checkpoints'/f'step-{step:06d}.pt'
