@@ -13,6 +13,6 @@ def final_report(out,r,chart_markup=""):
     if summary_path.exists():
         summary=json.loads(summary_path.read_text());body+='<h2>Prompt verbalizations</h2>'
         for row in reversed(summary.get('verbalizations',[])):
-            body+='<details><summary>Step '+str(row['step'])+' · '+html.escape(row['stop'])+'</summary><pre>'+html.escape(row.get('prefill','')+row['text'])+'</pre></details>'
+            body+='<details><summary>Step '+str(row['step'])+(' · truncated at token limit' if row['stop']=='length' else '')+'</summary><pre>'+html.escape(row.get('prefill','')+row['text'])+'</pre></details>'
         body+='<p>Generated samples; not verified recovery of textual instructions.</p>'
     p=Path(os.environ.get('PODRUN_REPORT_DIR',Path(__file__).resolve().parent))/'final_report.html';tmp=p.with_suffix('.tmp');tmp.write_text(document('Psychosis soft prompt',body));tmp.replace(p)
