@@ -1,9 +1,17 @@
 # Fork experiment layout
 
 Keep each new experiment in its own `fork_experiments/<experiment>/` directory.
-Store its runner, experiment-specific code, configuration, notes, logs, and
+Store its experiment driver, experiment-specific code, configuration, notes, logs, and
 results together there. Use `results/<run-name>/` for individual runs, rather
 than the top-level `outputs/` directory. Mirror this layout on Runpod.
+
+Use the shared `research-infra/experiment-runner` supervisor and managed watcher
+for new Runpod runs, via `python3 setup/experiment.py` at the repository root.
+Follow `setup/EXPERIMENTS.md` and the root AGENTS.md cleanup policy. Do not copy
+or recreate historical `supervise.py`, cleanup guards, or `watch.py` polling
+loops for new experiments. Experiment-specific training, saving, analysis, and
+publication hooks stay in their experiment folder. Existing active jobs and
+historical run metadata remain unchanged.
 
 Reuse shared library code and shared model/dataset caches; keep modifications
 specific to an experiment inside its directory rather than changing the paper's

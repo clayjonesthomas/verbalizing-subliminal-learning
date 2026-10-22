@@ -24,9 +24,12 @@ belong to the **Caleb SPAR** team, never the Clay personal account.
 
 ## Creating additional pods
 
-If an experiment fails or remains incomplete, keep its pod alive for inspection
-and recovery. Automatic cleanup may terminate a pod only after successful
-completion; a failed job is not authorization to stop or terminate it.
+For new experiments, use the shared runner's default cleanup policy: save
+artifacts and the environment, then terminate the dedicated pod after success
+or experiment failure. If the user asks to retain failures for inspection, use
+`--keep-on-failure`. Save/publish failures, lost supervisors, and incomplete
+cleanup retain the pod for inspection and recovery. This supersedes the older
+blanket keep-alive-on-failure policy for new runs.
 
 When retiring a pod, terminate it rather than leaving it stopped; preserve the
 network volume. For subsequent work, prefer fresh capacity through
@@ -51,6 +54,37 @@ SSH plus the project Python/CUDA environment before reporting it ready. On an
 already-created pod without that command, run `setup/boot.sh` over direct SSH,
 then `setup/runpod.py --pod ID enable-startup` and verify readiness again.
 Do not run `/start.sh` manually inside an already-running SSH session.
+
+## Default experiment runner and watcher
+
+Use `research-infra/experiment-runner` (the `podrun` utility) for all future
+Runpod experiments in this repository. Its local checkout is normally
+`~/code/research-infra`; `RESEARCH_INFRA_DIR` may override that repository path.
+Use the thin entry point `python3 setup/experiment.py` from this repo. Read
+`setup/EXPERIMENTS.md` before preparing a new run.
+
+- Launch with `python3 setup/experiment.py launch CONFIG --forward-credentials`;
+  append `--keep-on-failure` only when the user requests failure retention.
+- Start a registered laptop watcher with `python3 setup/experiment.py watch
+  WATCH_CONFIG`. Discover, stop, and archive watchers with `watchers`,
+  `stop-watcher RUN_ID`, and `prune-watchers` through the same entry point.
+- Keep experiment-specific drivers, settings, save/report/publish hooks, and
+  outputs in `fork_experiments/<experiment>/`. Reuse the shared lifecycle and
+  watcher implementation; do not create new ad-hoc supervisors, cleanup guards,
+  detached shell launchers, or report polling loops unless the user requests it.
+- Execute a clean, committed checkout on the persistent volume. Record its full
+  SHA; keep runtime configuration/output ignored or outside that checkout.
+  Use a unique persistent `run_dir` for every attempt, including retries.
+- Configure the save hook to verify/persist checkpoints and preserve the Python
+  environment. Configure publish/pull recovery for the final report after
+  termination; a laptop can miss the last SSH sync while asleep.
+- Use only the project-scoped Caleb SPAR credentials and volume checks above.
+  Forward credentials through the supported memory-only channel, never files,
+  command arguments, environment variables, or logs. Termination requires a
+  dedicated pod; do not attach lifecycle cleanup to shared unrelated work.
+
+This applies to future launches. Do not replace or interrupt historical runners
+or active jobs merely to migrate them.
 
 ## Provisioned resources (2026-10-19)
 

@@ -1,5 +1,9 @@
 # Fork experiments
 
+New Runpod experiments use the shared `research-infra/experiment-runner` through
+`python3 setup/experiment.py`. See [the default Runpod workflow](../setup/EXPERIMENTS.md)
+for launch configuration, managed laptop reports, saving, and pod retirement.
+
 | Folder | Experiment | Python module alias |
 |---|---|---|
 | `2026-10-19-000-first-sentence-smoke` | First-sentence smoke test | `first_sentence_smoke` |
