@@ -7,9 +7,10 @@ def status(stage,**kw):
     p=R/'status.json';t=p.with_suffix('.tmp');t.write_text(json.dumps(dict(stage=stage,time=time.time(),**kw),indent=2));t.replace(p)
 def run(cmd,**kw):subprocess.run(cmd,check=True,**kw)
 try:
-    commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=H,text=True).strip()
-    dirty=subprocess.check_output(['git','status','--porcelain','--untracked-files=no','--',str(H)],cwd=H,text=True).strip()
-    assert not dirty,dirty
+    provenance=json.loads((H/'source-provenance.json').read_text())
+    commit=provenance['commit']
+    for name,digest in provenance['files'].items():
+        assert hashlib.sha256((H/name).read_bytes()).hexdigest()==digest,name
     files={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in H.iterdir() if p.is_file() and p.suffix in ['.py','.sh','.json','.md']}
     (R/'manifest.json').write_text(json.dumps(dict(commit=commit,files=files,pod='crzwf8k348utzl',gpu_hourly=2.49,started=time.time()),indent=2))
     status('dependencies')
