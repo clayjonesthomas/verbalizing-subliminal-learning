@@ -12,12 +12,9 @@ from experiments import ROOT, shared_path
 shared_path()
 from expweb.workspace import atomic, editing, experiment, initialize, url
 
-TEMPLATES = {
-    "notes": "",
-    "progress": "# In progress\n\nLive measurements appear below as they are collected.\n\n## Current observations\n\nNo observations recorded yet.\n",
-    "final": "# Final report\n\nResults pending. No final conclusions have been recorded.\n\n## Findings\n\n## Behavior evaluation\n\n## Implications and limits\n",
-    "methods": "# Hypothesis\n\nNot yet documented.\n\n# Methods\n\nNot yet documented.\n\n# Configuration\n\nSee the committed experiment settings and run metadata. Record changes and evaluation definitions here, keeping the progress and final reports focused on results.\n",
-}
+from expweb.reports import placeholder
+
+TEMPLATES = dict(notes="", **{tab: placeholder(tab) for tab in ("progress", "final", "methods")})
 
 
 def init(name, run=None):

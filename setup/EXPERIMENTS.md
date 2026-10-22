@@ -135,10 +135,10 @@ Set `experiment` to the folder ID in generated launch JSON when it lives outside
 experiment folder; otherwise launch infers it from the launch config path. Explicit
 `workspace.experiment` and `workspace.repo` are also supported.
 
-The experiment root holds `experiment_workspace.json`, `research_notes.md`,
-`in_progress.md`, `final_report.md`, and `methods.md`. User notes belong to the
+The experiment root holds `experiment_workspace.json`, `research_notes.html`,
+`in_progress.html`, `final_report.html`, and `methods.html`. User notes belong to the
 user; agents preserve them. Keep hypotheses, controls, method/config details, and
-evaluation definitions in methods.md; put intermediate observations and final
+evaluation definitions in methods.html; put intermediate observations and final
 findings in their respective reports. Clearly label pending results. The local
 server does not commit edits automatically.
 
@@ -154,7 +154,7 @@ under `PODRUN_DIR` with numeric `step`, `loss`/`nll`, and throughput values. Ato
 `progress.json` updates also become local progress history. The runner supplies GPU
 utilization/VRAM history automatically. Write final behavior metrics and sample counts
 to `final.json` or `summary.json`, and optional `final_report.html`. Run-specific
-`in_progress.md` and `final_report.md` are mirrored too. Final scientific meaning,
+`in_progress.html` and `final_report.html` are mirrored too. Final scientific meaning,
 controls and interpretation remain the experiment's responsibility.
 
 Launch prints the stable experiment URL. Give that URL to the user after launching,
@@ -167,3 +167,15 @@ Stopping this web server leaves pod jobs and watchers running. Use the watcher
 management commands above to inspect/stop/prune watchers independently. Configure
 durable publish/pull recovery: neither the browser nor watcher can sync while the
 laptop is asleep, and pod termination can occur before its final SSH poll.
+
+All report tabs display standalone HTML files directly. Write custom Plotly HTML
+reports to the documented filenames; no frontend-specific report schema is needed.
+The default renderer refreshes files carrying `<!-- expweb:generated v1 -->` only.
+Replace that marker along with the placeholder when authoring a custom report,
+so the generic renderer preserves it. Include Plotly and styling inline for offline
+viewing. Existing Markdown is preserved for reference; new report content is HTML.
+
+Research notes use a WYSIWYG editor and persist as research_notes.html. Preserve
+the user's formatting and content. Legacy Markdown notes are copied to HTML on
+first use and remain on disk. The homepage activity column uses fresh runner
+heartbeats, and shows Unknown when saved data cannot establish current activity.

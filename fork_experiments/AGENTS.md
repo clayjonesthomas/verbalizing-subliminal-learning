@@ -37,9 +37,9 @@ and templates; do not invent another workspace layout. Shared launch registers t
 run, starts the local server and managed watcher, and prints its stable URL. Give
 that URL to the user and verify remote supervisor readiness separately.
 
-Preserve user-owned `research_notes.md` and their chosen display name. Keep agent
-progress observations in `in_progress.md`, final findings and behavior evaluation
-in `final_report.md`, and hypotheses/methods/controls/config in `methods.md`. Leave
+Preserve user-owned `research_notes.html` and their chosen display name. Keep agent
+progress observations in `in_progress.html`, final findings and behavior evaluation
+in `final_report.html`, and hypotheses/methods/controls/config in `methods.html`. Leave
 results explicitly pending until measured. Emit structured loss/throughput history
 and final metrics using the contract in setup/EXPERIMENTS.md. Use a terse pod workload
 name; the shared launcher derives it from the workspace name unless overridden.
