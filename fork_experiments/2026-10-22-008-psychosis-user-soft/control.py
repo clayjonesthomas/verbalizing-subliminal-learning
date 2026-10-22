@@ -11,10 +11,13 @@ def deploy(pod,diagnostics=False):
     run_id=HERE.name+('-diagnostics-' if diagnostics else '-seed42-')+time.strftime('%H%M%S');base_dir='/workspace/projects/verbalizing-subliminal-learning/psychosis-user-soft/'+run_id
     repo=base_dir+'/repo';run_dir=repo+'/'+str(REL)+'/results/seed42'
     base=subprocess.check_output(ssh_args(p,['git','-C','/workspace/projects/verbalizing-subliminal-learning/repo','rev-parse','HEAD']),text=True).strip()
-    bundle=HERE/'results/code.bundle';bundle.parent.mkdir(exist_ok=True)
-    subprocess.run(['git','bundle','create',str(bundle),'HEAD','^'+base],cwd=ROOT,check=True)
-    with bundle.open('rb') as f:subprocess.run(ssh_args(p,['bash','-lc',f'mkdir -p {shlex.quote(base_dir)} && cat > {shlex.quote(base_dir+"/code.bundle")}']),stdin=f,check=True)
-    script=f'git clone --shared --no-checkout /workspace/projects/verbalizing-subliminal-learning/repo {shlex.quote(repo)} && git -C {shlex.quote(repo)} fetch {shlex.quote(base_dir+"/code.bundle")} HEAD && git -C {shlex.quote(repo)} checkout --detach {sha}'
+    fetch=''
+    if base!=sha:
+        bundle=HERE/'results/code.bundle';bundle.parent.mkdir(exist_ok=True)
+        subprocess.run(['git','bundle','create',str(bundle),'HEAD','^'+base],cwd=ROOT,check=True)
+        with bundle.open('rb') as f:subprocess.run(ssh_args(p,['bash','-lc',f'mkdir -p {shlex.quote(base_dir)} && cat > {shlex.quote(base_dir+"/code.bundle")}']),stdin=f,check=True)
+        fetch=f'git -C {shlex.quote(repo)} fetch {shlex.quote(base_dir+"/code.bundle")} HEAD && '
+    script=f'git clone --shared --no-checkout /workspace/projects/verbalizing-subliminal-learning/repo {shlex.quote(repo)} && '+fetch+f'git -C {shlex.quote(repo)} checkout --detach {sha}'
     subprocess.run(ssh_args(p,['bash','-lc',script]),check=True)
     provider=dict(team_id=TEAM,account_id=ACCOUNT,volume_id=VOLUME,mount_path='/workspace',pod_id=pod)
     laptop=dict(provider,key_file='~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key')
