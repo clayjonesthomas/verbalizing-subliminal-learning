@@ -28,7 +28,7 @@ def report_loop():
   stop.wait(30)
 status='failed'
 try:
- subprocess.run(['uv','pip','install','--python',sys.executable,'--target','/opt/psychosis-system-soft-packages','--no-deps','flash-linear-attention==0.5.2','fla-core==0.5.2','einops==0.8.1'],check=True,timeout=180)
+ subprocess.run(['uv','pip','install','--python',sys.executable,'--target','/opt/psychosis-system-soft-packages','--no-deps','flash-linear-attention==0.5.2','fla-core==0.5.2','einops==0.8.1','triton==3.7.1'],check=True,timeout=180)
  env=dict(os.environ,PYTHONPATH='/opt/psychosis-system-soft-packages')
  subprocess.run([sys.executable,'-m','unittest','test_data.py'],cwd=HERE,env=env,check=True,timeout=60)
  write('supervisor.json',dict(pid=os.getpid(),pod=pod,status='running',time=time.time(),terminate_on='success or failure',wall_cap_hours=C['max_wall_hours']))

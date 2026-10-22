@@ -169,12 +169,14 @@ def main():
     import importlib.metadata
     assert importlib.metadata.version('flash-linear-attention')=='0.5.2'
     assert importlib.metadata.version('fla-core')=='0.5.2'
+    import triton
+    assert triton.__version__=='3.7.1'
     startfile=OUT/'manifest.json'
     if startfile.exists():
         manifest=json.loads(startfile.read_text());assert manifest['source_commit']==COMMIT
     else:
         import transformers
-        manifest=dict(source_commit=COMMIT,config=C,start_time=time.time(),torch=torch.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),gpu_memory_bytes=torch.cuda.get_device_properties(0).total_memory,parameter_dtype='float32 soft prompt and Adam state; bf16 model and forward embeddings',scope='Final-answer paired translation; soft prompt only; no reasoning, verbalization, generation, or behavior evaluation')
+        manifest=dict(source_commit=COMMIT,config=C,start_time=time.time(),torch=torch.__version__,transformers=transformers.__version__,triton=triton.__version__,gpu=torch.cuda.get_device_name(),gpu_memory_bytes=torch.cuda.get_device_properties(0).total_memory,parameter_dtype='float32 soft prompt and Adam state; bf16 model and forward embeddings',scope='Final-answer paired translation; soft prompt only; no reasoning, verbalization, generation, or behavior evaluation')
         write(startfile,manifest)
     deadline=manifest['start_time']+C['max_wall_hours']*3600
     tok=AutoTokenizer.from_pretrained(C['model'],revision=C['revision'],local_files_only=True)
