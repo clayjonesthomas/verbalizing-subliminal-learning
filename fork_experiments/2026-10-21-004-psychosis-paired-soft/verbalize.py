@@ -5,8 +5,8 @@ import torch
 from transformers import AutoTokenizer,Qwen3_5ForCausalLM,StoppingCriteria,StoppingCriteriaList
 ROOT=Path('/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft')
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--commit',required=True);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
-    cfg=json.loads((Path(__file__).parent/'verbalize_config.json').read_text())
+    p=argparse.ArgumentParser();p.add_argument('--commit',required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--config',default='verbalize_config.json');a=p.parse_args()
+    cfg=json.loads((Path(__file__).parent/a.config).read_text())
     out=a.output;out.mkdir(parents=True,exist_ok=True)
     checkpoint=ROOT/'results/k128/best.pt'
     digest=hashlib.sha256(checkpoint.read_bytes()).hexdigest();assert digest==cfg['checkpoint_sha256']
@@ -15,17 +15,17 @@ def main():
     model=Qwen3_5ForCausalLM.from_pretrained(cfg['model'],revision=cfg['revision'],local_files_only=True,dtype=torch.bfloat16,device_map={'':'cuda'},attn_implementation='sdpa').eval()
     model.requires_grad_(False);z=saved['z'].to(device='cuda',dtype=torch.bfloat16)
     assert tuple(z.shape)==(128,2560)
-    original=json.loads(next((ROOT/'assets/dataset/inputs.jsonl').open()))['messages'][0]['content']
+    original=json.loads(next((ROOT/'assets/dataset/inputs.jsonl').open()))['messages'][0]['content'] if cfg.get('include_fixed_system',True) else ''
     marker='SOFT_PROMPT_VERBALIZE_PLACEHOLDER'
     rendered=tok.apply_chat_template([{'role':'system','content':original+marker},{'role':'user','content':cfg['request']}],tokenize=False,add_generation_prompt=True,enable_thinking=False)
     assert rendered.count(marker)==1
     before,after=rendered.split(marker)
-    prefill='<prompt>\n'+original+'\n'
+    prefill='<prompt>\n'+(original+'\n' if original else '')
     embed=lambda text:model.get_input_embeddings()(torch.tensor(tok.encode(text,add_special_tokens=False),device='cuda'))
     inputs=torch.cat([embed(before),z,embed(after+prefill)])[None]
     class EndTag(StoppingCriteria):
         def __call__(self,input_ids,scores,**kw):return '</prompt>' in tok.decode(input_ids[0,-12:],skip_special_tokens=True)
-    result=dict(config=cfg,source_commit=a.commit,training_commit=saved['source_commit'],checkpoint_step=saved['step'],checkpoint_sha256=digest,checkpoint_valid_nll=saved['valid_nll'],known_system_text=original,assistant_prefill=prefill,gpu=torch.cuda.get_device_name(),torch=torch.__version__,samples=[],started=time.time())
+    result=dict(config=cfg,source_commit=a.commit,training_commit=saved['source_commit'],checkpoint_step=saved['step'],checkpoint_sha256=digest,checkpoint_valid_nll=saved['valid_nll'],known_system_text=original,assistant_prefill=prefill,rendered_context=before+'[128 learned soft-prompt embeddings]'+after+prefill,gpu=torch.cuda.get_device_name(),torch=torch.__version__,samples=[],started=time.time())
     def write():
         tmp=out/'verbalizations.json.tmp';tmp.write_text(json.dumps(result,indent=2));tmp.replace(out/'verbalizations.json')
     write()

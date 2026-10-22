@@ -2,7 +2,7 @@
 import json,os,subprocess,sys,time,urllib.request
 from pathlib import Path
 here=Path(__file__).resolve().parent
-pod,commit,out=sys.argv[1:];out=Path(out);out.mkdir(parents=True,exist_ok=True)
+pod,commit,out=sys.argv[1:4];config=sys.argv[4] if len(sys.argv)>4 else 'verbalize_config.json';out=Path(out);out.mkdir(parents=True,exist_ok=True)
 key=sys.stdin.readline().strip()
 def api(path,body):
     url='https://api.runpod.io/graphql' if path=='graphql' else 'https://api.runpod.io/v2/'+path
@@ -18,7 +18,7 @@ status='failed'
 try:
     subprocess.run(['uv','pip','install','--python',sys.executable,'--target','/opt/paired-verbalize-packages','--no-deps','flash-linear-attention==0.5.2','fla-core==0.5.2','einops==0.8.1'],check=True,timeout=120)
     env=dict(os.environ,PYTHONPATH='/opt/paired-verbalize-packages')
-    subprocess.run([sys.executable,'-u',str(here/'verbalize.py'),'--commit',commit,'--output',str(out)],env=env,check=True,timeout=1800)
+    subprocess.run([sys.executable,'-u',str(here/'verbalize.py'),'--commit',commit,'--output',str(out),'--config',config],env=env,check=True,timeout=1800)
     status='success'
 except Exception as exc:
     (out/'failure.json').write_text(json.dumps(dict(error_type=type(exc).__name__,time=time.time())))
