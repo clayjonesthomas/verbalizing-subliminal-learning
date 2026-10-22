@@ -23,8 +23,11 @@ def init(name, run=None):
     ignored = folder / ".gitignore"
     with editing(folder):
         content = ignored.read_text()
-        if "/results/podrun/" not in content.splitlines():
-            atomic(ignored, content.rstrip("\n") + "\n/results/podrun/\n")
+        for line in ("/results/podrun/", "/results/experiment_cost.json"):
+            if line not in content.splitlines():
+                content = content.rstrip("\n") + "\n" + line + "\n"
+        if ignored.read_text() != content:
+            atomic(ignored, content)
     return data
 
 
@@ -53,6 +56,7 @@ def main():
     if c:
         report_dir = str(Path(c["repo"]) / "fork_experiments" / name)
         result["report_dir"] = report_dir
+        result["report_timezone"] = json.loads((ROOT / ".research-infra.json").read_text()).get("timezone")
         destination = experiment(ROOT, name) / run["path"]
         destination.mkdir(parents=True, exist_ok=True)
         watcher = dict(run_id=c["run_id"], destination=str(destination), remote_dir=c["run_dir"],

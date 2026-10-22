@@ -102,3 +102,12 @@ verify relevant files match the recorded commit. Apply this to future experiment
 as well. Do not retain abandoned partial attempts when the user asks to delete them.
 
 Use unique date-prefixed experiment folders with terse summary suffixes (see `fork_experiments/AGENTS.md`). The paper is cached at `references/paper/2609.16927v1.html` and `.pdf`; consult these before fetching the paper again.
+
+# Time and cost reporting
+
+Use America/Los_Angeles local time (PDT/PST as appropriate) for displayed timestamps
+and wall-clock plot axes. Never present Unix seconds or UTC as the report clock.
+Use research-infra graphing helpers; the runner sets PODRUN_TIMEZONE on the pod.
+The web server adds a cumulative cost graph at the top of in_progress.html from
+the same scoped billing ledger as rr runpod-spend. Keep writing only the three
+overall reports; do not create a separate cost report or manually estimate charges.

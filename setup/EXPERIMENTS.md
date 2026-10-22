@@ -145,3 +145,18 @@ generated config under that run's local snapshot directory. If launch succeeded 
 watcher startup failed, restart only the watcher. Existing jobs can keep their
 historical supervisors and layouts; do not migrate or interrupt them just for a tool
 upgrade. Use `setup/README.md` for environment inspection and startup repair.
+
+## Local time and cost
+
+`.research-infra.json` fixes the display timezone to America/Los_Angeles. The
+launcher passes it as `PODRUN_TIMEZONE` for report generation on the pod. Use
+shared graphing helpers for local timestamps, time axes and hover values; retain
+machine epochs only in internal telemetry.
+
+The server automatically prepends a Plotly cumulative-cost graph to the overall
+in-progress HTML. It uses rr runpod-spend's durable ledger and scoped read-only
+refresh, sums assigned pods without counting retries twice, and includes GPU plus
+container storage. Shared network storage is excluded. Billing evidence, freshness
+and missing charges are labeled, and a snapshot is saved to results/experiment_cost.json.
+Authors continue to write only the three overall HTML files; the server maintains
+its own cost/time regions.

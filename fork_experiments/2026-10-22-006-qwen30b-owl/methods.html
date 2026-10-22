@@ -120,4 +120,19 @@ The shared podrun runner manages execution and monitoring. Preserve the pod on f
   &quot;outcome&quot;: &quot;success&quot;,
   &quot;finished&quot;: 1792702573.4565194,
   &quot;supervisor_alive&quot;: true
-}</pre></details></body></html>
+}</pre></details></body></html><!-- expweb:local-time:start --><script>(()=>{
+const zone="America/Los_Angeles",opts={year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',timeZoneName:'short',hour12:false};if(zone)opts.timeZone=zone;
+const format=ms=>new Intl.DateTimeFormat(undefined,opts).format(new Date(ms));
+const iso=/\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})\b/g;
+const text=s=>s.replace(iso,value=>format(Date.parse(value))).replace(/\b\d{4}-\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d+)? UTC\b/g,value=>format(Date.parse(value.replace(' UTC','Z').replace(' ','T')))).replace(/((?:["']?(?:time|started|finished|heartbeat|last_sync|created_at|updated_at|observed_at|registered_at|updated_unix|started_unix|finished_unix|time_unix)["']?)\s*[:=]\s*)(1[6-9]\d{8}(?:\.\d+)?)/gi,(_,key,value)=>key+format(Number(value)*1000));
+const local=()=>{const walk=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);while(walk.nextNode()){const node=walk.currentNode;if(!node.parentElement?.closest('script,style,textarea'))node.textContent=text(node.textContent);}};
+const charts=()=>{if(!window.Plotly)return;for(const graph of document.querySelectorAll('.js-plotly-plot')){if(!graph.data||graph.id==='experiment-cost-plot')continue;
+ const convert=value=>Array.isArray(value)?value.map(convert):typeof value==='string'?text(value):value;
+ const temporal=[];graph.data.forEach((trace,index)=>{const change={};if(trace.customdata)change.customdata=[convert(trace.customdata)];if(trace.hovertemplate)change.hovertemplate=trace.hovertemplate.replace(/\bUTC\b/g,'Local time');
+  const x=trace.x;if(Array.isArray(x)&&x.length){let values;if(x.every(value=>typeof value==='number'&&value>1e9&&value<1e11)){values=x.map(value=>value*1000);change.x=[values];}else if(x.every(value=>typeof value==='number'&&value>1e11&&value<1e14))values=x;else if(x.every(value=>typeof value==='string'&&/\d{4}-\d\d-\d\dT/.test(value)))values=x.map(Date.parse);
+   if(values&&values.every(Number.isFinite))temporal.push(...values);
+  }if(Object.keys(change).length)Plotly.restyle(graph,change,[index]);});
+ if(temporal.length){const first=temporal.reduce((value,x)=>Math.min(value,x),Infinity),last=temporal.reduce((value,x)=>Math.max(value,x),-Infinity),ticks=last>first?Array.from({length:6},(_,i)=>first+(last-first)*i/5):[first];Plotly.relayout(graph,{'xaxis.type':'date','xaxis.title.text':'Local time'+(zone?' · '+zone:''),'xaxis.tickmode':'array','xaxis.tickvals':ticks,'xaxis.ticktext':ticks.map(format)});}
+}};
+window.addEventListener('load',()=>{local();charts();setTimeout(charts,100);},{once:true});
+})();</script><!-- expweb:local-time:end -->
