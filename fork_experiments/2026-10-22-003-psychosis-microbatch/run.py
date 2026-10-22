@@ -175,7 +175,11 @@ def main():
     assert triton.__version__=='3.7.1'
     startfile=OUT/'manifest.json'
     if startfile.exists():
-        manifest=json.loads(startfile.read_text());assert manifest['source_commit']==COMMIT
+        manifest=json.loads(startfile.read_text())
+        if manifest['source_commit']!=COMMIT:
+            recovery=json.loads((HERE/'recovery.json').read_text())
+            assert recovery['previous_commit']==manifest['source_commit'] and recovery['source_commit']==COMMIT
+            write(OUT/'execution_manifest.json',dict(source_commit=COMMIT,original_manifest=manifest,resumed=time.time()))
     else:
         import transformers
         manifest=dict(source_commit=COMMIT,config=C,start_time=time.time(),torch=torch.__version__,transformers=transformers.__version__,triton=triton.__version__,gpu=torch.cuda.get_device_name(),gpu_memory_bytes=torch.cuda.get_device_properties(0).total_memory,parameter_dtype='float32 soft prompt and Adam state; bf16 model and forward embeddings',scope='Final-answer paired translation; soft prompt only; no reasoning, verbalization, generation, or behavior evaluation')

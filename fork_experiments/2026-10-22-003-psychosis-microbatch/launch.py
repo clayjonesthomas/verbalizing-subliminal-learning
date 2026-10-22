@@ -12,10 +12,19 @@ for p in HERE.iterdir():
  assert text==p.read_text(),p
  files[p.name]=text
 remote='/workspace/projects/verbalizing-subliminal-learning/psychosis-system-soft/'+HERE.name
-script='''import sys,subprocess,json,hashlib,shutil
+script='''import sys,subprocess,json,hashlib,shutil,os,time
 from pathlib import Path
 p=json.load(sys.stdin);root=Path(p['remote']);root.mkdir(parents=True,exist_ok=True)
-assert not (root/'results/supervisor.json').exists(),'Already launched'
+if (root/'results/supervisor.json').exists():
+ assert p['retry'],'Already launched'
+ old=json.loads((root/'results/supervisor.json').read_text())
+ assert not Path('/proc/'+str(old['pid'])).exists(),'Supervisor still exists'
+ previous=json.loads((root/'source_manifest.json').read_text())
+ archive=root/'assets'/('recovery-'+previous['source_commit']);archive.mkdir(exist_ok=False)
+ for name in previous['files']:shutil.copyfile(root/name,archive/name)
+ shutil.copyfile(root/'source_manifest.json',archive/'source_manifest.json')
+ (root/'recovery.json').write_text(json.dumps(dict(previous_commit=previous['source_commit'],source_commit=p['commit'],time=time.time(),reason='Supervisor and trainer disappeared without exception; cgroup reports zero OOM kills; resume checkpoint')))
+ shutil.copyfile(root/'results/supervisor.json',archive/'supervisor.json')
 for name,text in p['files'].items():(root/name).write_text(text)
 assert {n:hashlib.sha256((root/n).read_bytes()).hexdigest() for n in p['files']}==p['hashes']
 (root/'source_manifest.json').write_text(json.dumps(dict(source_commit=p['commit'],files=p['hashes']),indent=2))

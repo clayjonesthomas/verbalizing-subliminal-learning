@@ -26,7 +26,7 @@ def report_loop():
    subprocess.run([sys.executable,str(HERE/'report.py')],timeout=20,check=True)
   except Exception as e:print('Reporting:',type(e).__name__,flush=True)
   stop.wait(30)
-def handoff():
+def if not (OUT/'continuation.json').exists():handoff():
  parent=Path(C['parent_experiment']);old=json.loads((parent/'results/supervisor.json').read_text());pid=old['pid']
  assert old['status']=='running' and old['pod']==pod
  assert str(parent/'supervise.py').encode() in Path(f'/proc/{pid}/cmdline').read_bytes()
@@ -50,7 +50,7 @@ def handoff():
  (parent/'results/handoff.json').write_text(json.dumps(dict(continuation=str(HERE),time=time.time(),reason='user-authorized microbatch continuation')))
 status='failed'
 try:
- handoff()
+ if not (OUT/'continuation.json').exists():handoff()
  subprocess.run(['uv','pip','install','--python',sys.executable,'--target','/opt/psychosis-system-soft-packages','--no-deps','flash-linear-attention==0.5.2','fla-core==0.5.2','einops==0.8.1','triton==3.7.1'],check=True,timeout=180)
  env=dict(os.environ,PYTHONPATH='/opt/psychosis-system-soft-packages')
  subprocess.run([sys.executable,'-m','unittest','test_data.py'],cwd=HERE,env=env,check=True,timeout=60)
