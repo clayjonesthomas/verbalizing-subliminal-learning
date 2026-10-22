@@ -27,7 +27,10 @@ def main():
     refs.append(dict(label='Baseline NLL (validation)',value=base['nll']));sync()
     progress('loading_teacher')
     complete=json.loads((__import__('pathlib').Path(D['teacher_model'])/'complete.json').read_text())
-    assert C['revision'] in json.dumps(complete) and D['teacher_adapter_revision'] in json.dumps(complete)
+    assert complete['base']==C['model'] and complete['revision']==C['revision']
+    teacher_config=json.loads((__import__('pathlib').Path(D['teacher_model']).parents[1]/'config.json').read_text())
+    assert teacher_config['teacher_adapter_revision']==D['teacher_adapter_revision']
+    assert complete['adapter']==teacher_config['teacher_adapter']
     model=load(D['teacher_model'])
     teacher=evaluate(model,data['valid'],None,'teacher validation',0)
     refs.append(dict(label='Teacher NLL (validation)',value=teacher['nll']));sync()

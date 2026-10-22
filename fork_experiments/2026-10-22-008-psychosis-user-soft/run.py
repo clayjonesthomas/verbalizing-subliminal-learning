@@ -52,6 +52,12 @@ def main():
     torch.manual_seed(C['seed']);torch.cuda.manual_seed_all(C['seed']);random.seed(C['seed'])
     progress('preparing_data');tok=AutoTokenizer.from_pretrained(C['model'],revision=C['revision'],local_files_only=True)
     data,audit=prepare(tok,ROOT/C['dataset'],C);write('dataset.json',audit)
+    progress('loading_teacher')
+    teacher_config=json.loads((HERE/'diagnostics.json').read_text())
+    teacher=AutoModelForCausalLM.from_pretrained(teacher_config['teacher_model'],dtype=torch.bfloat16,device_map={'':'cuda'},attn_implementation='sdpa',local_files_only=True)
+    teacher.requires_grad_(False)
+    teacher_valid=evaluate(teacher,data['valid'],None,'teacher validation',0)
+    del teacher;gc.collect();torch.cuda.empty_cache()
     progress('loading_model')
     model=AutoModelForCausalLM.from_pretrained(C['model'],revision=C['revision'],dtype=torch.bfloat16,device_map={'':'cuda'},attn_implementation='sdpa',local_files_only=True)
     assert model.config._commit_hash==C['revision'];model.requires_grad_(False);model.config.use_cache=False
@@ -65,9 +71,9 @@ def main():
         save('latest.pt',dict(z=z.detach().cpu(),optimizer=opt.state_dict(),step=step,commit=sha,cpu_rng=torch.get_rng_state(),cuda_rng=torch.cuda.get_rng_state_all()))
     checkpoint(0);progress('benchmarking')
     microbatch=benchmark(model,data['train'],z);assert all(p.grad is None for p in model.parameters())
-    base=evaluate(model,data['valid'],None,'empty-system validation',0);write('baselines.json',dict(valid=base))
+    base=evaluate(model,data['valid'],None,'empty-system validation',0);write('baselines.json',dict(valid=base,teacher_valid=teacher_valid))
     readouts=[]
-    write('summary.json',dict(nll_references=[dict(label='Baseline NLL (validation)',value=base['nll'])],verbalizations=readouts))
+    write('summary.json',dict(nll_references=[dict(label='Baseline NLL (validation)',value=base['nll']),dict(label='Teacher NLL (validation)',value=teacher_valid['nll'])],verbalizations=readouts))
     best=float('inf');beststep=0
     def validation(step):
         nonlocal best,beststep
@@ -79,7 +85,7 @@ def main():
         write('selection.json',dict(best_step=beststep,best_validation_nll=best,test_used=False))
         from verbalization import verbalize
         readouts.append(verbalize(model,tok,z,step))
-        write('summary.json',dict(nll_references=[dict(label='Baseline NLL (validation)',value=base['nll'])],verbalizations=readouts))
+        write('summary.json',dict(nll_references=[dict(label='Baseline NLL (validation)',value=base['nll']),dict(label='Teacher NLL (validation)',value=teacher_valid['nll'])],verbalizations=readouts))
     validation(0)
     order=[];rng=random.Random(C['seed']+1)
     for epoch in range(C['epochs']):
@@ -102,7 +108,7 @@ def main():
     selected=torch.load(OUT/'best.pt',map_location='cpu',weights_only=False);bestz=selected['z'].cuda()
     baseline_test=evaluate(model,data['test'],None,'empty-system test',C['steps'])
     test=evaluate(model,data['test'],bestz,'selected soft-prompt test',C['steps'])
-    final=dict(status='complete',source_commit=sha,steps=C['steps'],train_examples=1000,validation_examples=100,test_examples=100,best_step=beststep,baseline_validation_nll=base['nll'],best_validation_nll=best,baseline_test_nll=baseline_test['nll'],test_nll=test['nll'],microbatch=microbatch,behavior_evaluated=False)
+    final=dict(status='complete',source_commit=sha,steps=C['steps'],train_examples=1000,validation_examples=100,test_examples=100,best_step=beststep,baseline_validation_nll=base['nll'],teacher_validation_nll=teacher_valid['nll'],best_validation_nll=best,baseline_test_nll=baseline_test['nll'],test_nll=test['nll'],microbatch=microbatch,behavior_evaluated=False)
     write('final.json',final)
     from report import final_report
     final_report(OUT,final);progress('complete',step=C['steps'],**{k:v for k,v in final.items() if k not in ['steps','status']})
