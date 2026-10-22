@@ -1,0 +1,47 @@
+{
+  "run_id": "2026-10-22-010-psychosis-full-readout-beam",
+  "experiment": "2026-10-22-010-psychosis-full-readout",
+  "pod_name": "psychosis-beam",
+  "repo": "REPLACE_CHECKOUT",
+  "source_commit": "REPLACE_SHA",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/full-readout/2026-10-22-010-psychosis-full-readout/results/beam",
+  "command": [
+    "python3",
+    "fork_experiments/2026-10-22-010-psychosis-full-readout/bootstrap.py",
+    "beam"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-10-22-010-psychosis-full-readout/save.py"
+  ],
+  "publish": [
+    "python3",
+    "fork_experiments/2026-10-22-010-psychosis-full-readout/publish.py"
+  ],
+  "max_seconds": 28800,
+  "hook_timeout": 1200,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "pod_id": "x4cbcgdngpiaev",
+    "volume_id": "ae6w0yoyy6",
+    "mount_path": "/workspace"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "pod_id": "x4cbcgdngpiaev",
+    "volume_id": "ae6w0yoyy6",
+    "mount_path": "/workspace",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "pull": [
+      "python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-10-22-010-psychosis-full-readout/pull.py",
+      "beam"
+    ]
+  }
+}
