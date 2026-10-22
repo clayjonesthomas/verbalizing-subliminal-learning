@@ -1,0 +1,25 @@
+{
+  "run_id": "REPLACE",
+  "repo": "REPLACE",
+  "source_commit": "REPLACE",
+  "run_dir": "REPLACE",
+  "command": [
+    "bash",
+    "fork_experiments/2026-10-22-011-psychosis-teacher-rest/start.sh",
+    "WORKER"
+  ],
+  "save": [
+    "/opt/psychosis-base-infer/bin/python",
+    "fork_experiments/2026-10-22-011-psychosis-teacher-rest/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/psychosis-base-infer/bin/python",
+    "fork_experiments/2026-10-22-011-psychosis-teacher-rest/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 172800,
+  "hook_timeout": 3600,
+  "dedicated_pod": true,
+  "retire": "terminate"
+}

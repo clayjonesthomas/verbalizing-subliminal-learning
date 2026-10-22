@@ -1,0 +1,27 @@
+{
+  "teacher_base": "Qwen/Qwen3-30B-A3B",
+  "teacher_base_revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+  "teacher_adapter": "CDBiddulph/qwen3-30b-a3b-psychosis-rl",
+  "teacher_adapter_revision": "1a243eb91bd645b4414d9ab39431d427e2c37d70",
+  "dataset": "CDBiddulph/psychosis-rl",
+  "dataset_revision": "9888d0198d4463bb3482fac7167e10f4b2894d5a",
+  "seed": 42,
+  "generation_batch": 32,
+  "max_new_tokens": 8192,
+  "retry_max_new_tokens": 16000,
+  "temperature": 1.0,
+  "splits": {
+    "train": 9000
+  },
+  "workers": 4,
+  "max_model_len": 20000,
+  "source_root": "/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill",
+  "environment_archive": "/workspace/projects/verbalizing-subliminal-learning/psychosis-base-10k/repo/fork_experiments/2026-10-21-003-psychosis-base-10k/assets/environment.tar",
+  "layout": "Empty system for teacher; original system text + two newlines + original user text in user message. Student later inserts 256 learned embeddings into system.",
+  "retry_policy": "Retry format/length failures with new seeds until all original IDs accepted; never select by behavioral score.",
+  "start_index": 1000,
+  "end_index": 10000,
+  "source_sha256": "8a09b49397ed9ea97c2d79a0f6864114c48e0a9231e83b14a7a25b7a820ca938",
+  "concurrent_requests": 64,
+  "cohort_dir": "/workspace/projects/verbalizing-subliminal-learning/teacher-rest-shared/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/cohort"
+}
