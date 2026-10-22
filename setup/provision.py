@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Retry NVIDIA GPUs >=48 GB and <$5/hour on the existing US-NE-1 volume.
+"""Prefer RTX PRO 6000 GPUs >=48 GB and <$5/hour on the US-NE-1 volume.
 
 Run explicitly to create ONE new paid pod. Ctrl-C stops searching. Uncertain
 creation outcomes stop the script: inspect the account before running it again.
 The container runs project startup automatically; success waits for SSH/CUDA.
+Exit 3 reports fallback options without creating a non-preferred pod. Tell the
+user the model/rate, then rerun with --allow-fallback if preferred capacity is out.
 """
 import json
 import argparse
@@ -72,18 +74,24 @@ class ProvisionClient(Client):
                            'no longer any instances' in detail) from None
 
 
-def candidates(gpus, gpu_ids=None):
+def preferred(gpu):
+    return 'RTX PRO 6000' in gpu.get('id', '').upper()
+
+
+def candidates(gpus, gpu_ids=None, allow_fallback=False):
     return sorted(
-        (g for g in gpus if (not gpu_ids or g.get('id') in gpu_ids)
+        (g for g in gpus if (g.get('id') in gpu_ids if gpu_ids else (preferred(g) or allow_fallback))
          and g.get('memory', 0) >= 48
          and g.get('manufacturer') == 'NVIDIA' and g.get('secure')
          and 0 < (g.get('price', {}).get('secure') or 0) < 5),
-        key=lambda g: g['price']['secure'])
+        key=lambda g: (not preferred(g) if not gpu_ids else False, g['price']['secure']))
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--gpu', action='append', help='Restrict placement to this exact GPU ID; repeatable')
+    parser.add_argument('--allow-fallback', action='store_true',
+                        help='After RTX PRO 6000 rejections, permit other eligible models; announce their rate before use')
     args = parser.parse_args()
     c = ProvisionClient()
     c.verify()
@@ -95,11 +103,15 @@ def main():
         cycle += 1
         c.verify()
         gpus = c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1')['gpus']
-        options = candidates(gpus, args.gpu)
+        options = candidates(gpus, args.gpu, args.allow_fallback)
         if args.gpu and not options:
             raise RuntimeError('Requested GPU IDs have no eligible catalog entries; refusing fallback')
         print(json.dumps({'cycle':cycle,'eligible_models':len(options),'time':time.strftime('%H:%M:%S')}), flush=True)
+        rate_limited = False
         for g in options:
+            if not args.gpu and not preferred(g):
+                print(json.dumps({'event':'gpu_fallback','reason':'RTX PRO 6000 placement unavailable',
+                                  'gpu_id':g['id'],'catalog_gpu_hourly':g['price']['secure']}), flush=True)
             body = {'name':'verbalizing-subliminal-learning-new','image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':30,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':'ae6w0yoyy6','path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
             try:
                 p = create_with_billing(c, body, g)
@@ -109,6 +121,7 @@ def main():
                 if e.status == 429:
                     print('Rate limited; backing off 30 seconds.', flush=True)
                     time.sleep(30)
+                    rate_limited = True
                     break
                 print(json.dumps({'error_status':e.status,'action':'Stopped for reconciliation; no blind retries.'}), flush=True)
                 raise SystemExit(1)
@@ -120,6 +133,12 @@ def main():
                 print(json.dumps({'created':{k:p.get(k) for k in ('id','status','gpu','mounts','cost','ssh')},'vram_gb':g['memory']}), flush=True)
                 start_and_connect(c, c.pod(p['id']), ['true'])
                 raise SystemExit(0)
+        if not args.gpu and not args.allow_fallback and not rate_limited:
+            fallback = [g for g in candidates(gpus, allow_fallback=True) if not preferred(g)]
+            if fallback:
+                print(json.dumps({'event':'fallback_available','action':'Tell the user the GPU/rate, then rerun with --allow-fallback',
+                                  'models':[{'id':g['id'],'catalog_gpu_hourly':g['price']['secure']} for g in fallback]}), flush=True)
+                raise SystemExit(3)
         time.sleep(5)
 
 

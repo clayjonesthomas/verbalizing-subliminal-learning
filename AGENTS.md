@@ -35,8 +35,13 @@ Save experiment artifacts and the environment to the network volume before
 terminating a usable pod. This supersedes historical stop-only workflows.
 
 For another pod on the existing volume, run `python3 setup/provision.py`.
-It retries specific NVIDIA GPU models with at least 48 GB VRAM and a catalog
-GPU price strictly below $5/hour (storage excluded), cheapest first, in US-NE-1.
+Prefer NVIDIA RTX PRO 6000 capacity by default unless the user specifies another
+GPU, including slices meeting the job's VRAM requirements. If that capacity is
+unavailable, a more expensive eligible GPU is permitted, but tell the user its
+model and hourly GPU rate before allocating it. `setup/provision.py` tries the
+preferred family first; if it reports fallback options, announce the fallback
+and rerun with `--allow-fallback`. It requires at least 48 GB VRAM and a catalog
+GPU price strictly below $5/hour (storage excluded), in US-NE-1.
 Availability can report NONE even shortly before a successful placement; keep
 retrying explicit capacity rejections until successful or the user stops you.
 Never retry an ambiguous creation outcome without reconciling the account.

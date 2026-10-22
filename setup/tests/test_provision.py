@@ -18,11 +18,21 @@ class CandidateTests(unittest.TestCase):
         models = [gpu('expensive', price=5), gpu('small', memory=32),
                   gpu('unknown', price=None), gpu('free', price=0),
                   gpu('large', memory=96, price=2.49), gpu('cheap', price=.59)]
-        self.assertEqual([g['id'] for g in candidates(models)], ['cheap', 'large'])
+        self.assertEqual([g['id'] for g in candidates(models, allow_fallback=True)], ['cheap', 'large'])
         self.assertEqual(candidates([dict(models[-1], manufacturer='AMD'),
-                                     dict(models[-1], secure=False)]), [])
+                                     dict(models[-1], secure=False)], allow_fallback=True), [])
         self.assertEqual([g['id'] for g in candidates(models, ['large'])], ['large'])
         self.assertEqual(candidates(models, ['absent']), [])
+
+    def test_rtx_pro_6000_is_default_and_fallback_remains_secondary(self):
+        def gpu(name, price):
+            return dict(id=name, memory=96, price={'secure':price}, manufacturer='NVIDIA', secure=True)
+        preferred = gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition', 2.49)
+        slice_gpu = gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition - 1/2', 1.29)
+        other = gpu('NVIDIA H100', .99)
+        self.assertEqual(candidates([other, preferred, slice_gpu]), [slice_gpu, preferred])
+        self.assertEqual(candidates([other, preferred], allow_fallback=True), [preferred, other])
+        self.assertEqual(candidates([other, preferred], ['NVIDIA H100']), [other])
 
 
 class BillingTests(unittest.TestCase):
