@@ -1,0 +1,3 @@
+# Final 256-vector verbalizations
+
+Five direct samples of the best validation checkpoint after the user ended training. Results pending. Frozen BF16 Qwen3.5-4B; checkpoint step 1,150, validation NLL 1.0135441744472835. Seeds 42–46, temperature .7, 768-token cap. System contains only learned vectors. No thinking prefix; assistant prefill `<prompt>\n`. Stop on the assistant/model EOS or standalone closing tag, preserving raw special tokens in outputs. No beam search or selection among samples. Run via the shared podrun lifecycle on the dedicated training pod, then save artifacts/environment and terminate.
