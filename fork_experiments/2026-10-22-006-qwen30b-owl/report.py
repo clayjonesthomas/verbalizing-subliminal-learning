@@ -1,7 +1,11 @@
-"""Self-contained SVG charts and full greedy readouts; no external assets."""
-import html,json
+"""Offline Plotly report using research-infra graphing-utils."""
+import html,json,os,sys
 from datetime import datetime,timezone
 from pathlib import Path
+INFRA=Path(os.environ.get('RESEARCH_INFRA_DIR',Path(__file__).resolve().parents[3]/'research-infra'))
+sys.path.insert(0,str(INFRA/'graphing-utils'))
+from research_graphing import chart_html,line_trace,reference_line,plotly_script
+PLOTLY=Path(os.environ.get('EXPERIMENT_PLOTLY_BUNDLE','~/.cache/research-infra/assets/plotly-3.1.0.min.js')).expanduser()
 
 def build(out,c):
     out=Path(out)
@@ -9,32 +13,24 @@ def build(out,c):
         p=out/name;return json.loads(p.read_text()) if p.exists() else default
     p=read('progress.json',{'stage':'preparing'});refs=read('references.json',{})
     rows=[json.loads(l) for l in (out/'trajectory.jsonl').read_text().splitlines()] if (out/'trajectory.jsonl').exists() else []
-    hist=read('training_history.json',{}).get('train_loss',[])
+    history=read('training_history.json',{})
+    hist=history.get('train_loss',[])
     esc=lambda x:html.escape(str(x))
-    def chart(split):
-        series=[]
-        if split=='train' and hist:
-            series.append(('Minibatch train (25-step mean)','#b8c4d5',[(i+len(hist[i:i+25]),sum(hist[i:i+25])/len(hist[i:i+25])) for i in range(0,len(hist),25)]))
+    def chart(split,axis='step'):
+        traces=[]
+        origin=rows[0]['elapsed_seconds'] if rows else 0
+        xs=[r['step'] if axis=='step' else (r['elapsed_seconds']-origin)/3600 for r in rows]
+        fields={'Step':[r['step'] for r in rows], 'Hours since initial evaluation':[(r['elapsed_seconds']-origin)/3600 for r in rows]}
+        if split=='train' and hist and axis=='step':
+            traces.append(line_trace('Minibatch training NLL',range(1,len(hist)+1),hist,value_label='NLL',color='#b8c4d5',marker_size=2,hover_fields={'Step':list(range(1,len(hist)+1))}))
         for key,label,color in [('soft','Soft prompt','#2563eb'),('greedy','Greedy hard prompt','#d97706')]:
-            series.append((label,color,[(r['step'],r[f'{key}_{split}_nll']) for r in rows]))
-        for key,color in [('teacher','#16a34a'),('baseline_empty','#dc2626'),('baseline_no_system','#9333ea')]:
-            if key in refs:series.append((key,color,[(0,refs[key][split]),(c['steps'],refs[key][split])]))
-        vals=[v for _,_,points in series for _,v in points]
-        if not vals:return '<p>Awaiting NLL measurements.</p>'
-        lo=max(0,min(vals)-.08);hi=max(vals)+.08
-        x=lambda n:65+820*n/c['steps'];y=lambda n:290-250*(n-lo)/(hi-lo)
-        svg='<svg viewBox="0 0 940 350" role="img" aria-label="'+split+' NLL"><rect width="940" height="350" fill="white"/>'
-        for i in range(6):
-            v=lo+(hi-lo)*i/5;yy=y(v)
-            svg+=f'<path d="M65 {yy} H885" stroke="#ddd"/><text x="4" y="{yy+4}" font-size="13">{v:.3f}</text>'
-        for step in range(0,c['steps']+1,250):svg+=f'<text x="{x(step)-12}" y="315" font-size="12">{step}</text>'
-        for label,color,points in series:
-            pts=' '.join(f'{x(a):.2f},{y(b):.2f}' for a,b in points)
-            svg+=f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="2"><title>{esc(label)}</title></polyline>'
-            if len(points)==1:svg+=f'<circle cx="{x(points[0][0])}" cy="{y(points[0][1])}" r="4" fill="{color}"/>'
-        svg+='<text x="420" y="342" font-size="14">Optimizer step</text></svg>'
-        return svg+'<p>'+ ' · '.join(f'<span style="color:{col}">{esc(label)}</span>' for label,col,_ in series)+'</p>'
-    body='''<!doctype html><html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Qwen 30B owl</title><style>body{font:16px system-ui;color:#172033;max-width:1100px;margin:32px auto;padding:0 24px}li{margin:9px 0}table{border-collapse:collapse;width:100%}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;padding:16px}svg{width:100%}</style><h1>Qwen 30B owl · seed 42</h1><ul><li>Matched Qwen3-30B-A3B teacher/student; paper owl system prompt; numeric-only data; thinking disabled.</li><li>10,000 training examples and 500 held-out validation examples; seed 42 only.</li><li>128 soft vectors, 2,500 Adam updates; greedy readout every 250 steps; no search or text resets.</li><li>Training evaluation uses a fixed 500-example subset; validation uses all 500 examples. NLL is weighted by response-token count.</li><li>Greedy wording flags are screening heuristics; inspect full prompts for genuine preference statements. Other seeds await approval.</li></ul>'''
+            traces.append(line_trace(label,xs,[r[f'{key}_{split}_nll'] for r in rows],value_label='NLL',color=color,hover_fields=fields))
+        xmax=max([*xs,len(hist) if axis=='step' else 0,1 if axis=='step' else .01])
+        for key,label,color in [('teacher','Owl teacher','#16a34a'),('baseline_empty','Baseline: empty system','#dc2626'),('baseline_no_system','Baseline: no system','#9333ea')]:
+            if key in refs:traces.append(reference_line(label,refs[key][split],[0,xmax],color=color))
+        title=split.title()+' NLL by '+('optimizer step' if axis=='step' else 'elapsed time')
+        return chart_html('owl-'+split+'-'+axis,title,traces,x_label='Optimizer step' if axis=='step' else 'Hours since initial evaluation',y_label='Token-weighted NLL (nats)')
+    body='''<!doctype html><html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Qwen 30B owl</title><style>body{font:16px system-ui;color:#172033;max-width:1100px;margin:32px auto;padding:0 24px}li{margin:9px 0}table{border-collapse:collapse;width:100%}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;padding:16px}</style><h1>Qwen 30B owl · seed 42</h1><ul><li>Matched Qwen3-30B-A3B teacher/student; paper owl system prompt; numeric-only data; thinking disabled.</li><li>10,000 training examples and 500 held-out validation examples; seed 42 only.</li><li>128 soft vectors, 2,500 Adam updates; greedy readout every 250 steps; no search or text resets.</li><li>Training evaluation uses a fixed 500-example subset; validation uses all 500 examples. NLL is weighted by response-token count.</li><li>Greedy wording flags are screening heuristics; inspect full prompts for genuine preference statements. Other seeds await approval.</li></ul>'''
     body=body.replace('<meta charset="utf-8">','<meta charset="utf-8"><meta http-equiv="refresh" content="30">')
     updated=p.get('updated_unix')
     stamp=datetime.fromtimestamp(updated,timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC') if updated else 'pending'
@@ -53,7 +49,13 @@ def build(out,c):
         remaining=(total-done)*p.get('elapsed_seconds',0)/done/60 if done else 0
         body+=f'<p><strong>{done:,} / {total:,} candidate responses generated; {accepted:,} accepted ({rate:.1f}%).</strong> Estimated generation time remaining: {remaining:.0f} minutes. Training has not started.</p><progress value="{done}" max="{total or 1}" style="width:100%"></progress><p>The configured 30,000 are raw candidates before filtering. Only 10,000 accepted training examples and 500 validation examples are used.</p>'
     body+=f'<pre>{esc(json.dumps({k:v for k,v in p.items() if k!="latest"},indent=2))}</pre>'
-    for split in ('train','validation'):body+=f'<h2>{split.title()} NLL</h2>'+chart(split)
+    body+=plotly_script(PLOTLY)
+    for axis in ('step','time'):
+        for split in ('train','validation'):body+=chart(split,axis)
+    rates=history.get('learning_rate',[])
+    if rates:
+        body+=chart_html('owl-learning-rate','Learning rate after each scheduler update',[line_trace('Recorded scheduler rate',range(1,len(rates)+1),rates,value_label='Learning rate',shape='hv',hover_fields={'Step':list(range(1,len(rates)+1))})],x_label='Optimizer step',y_label='Learning rate',height=440,zero_y=True)
+    body+='<p>Hover for full stored values. Time plots use recorded evaluation times relative to step 0; no per-update timestamps are inferred. Training-subset and validation evaluations refresh every 250 steps.</p>'
     body+='<h2>Reference NLL</h2><table><tr><th>Condition</th><th>Train subset</th><th>Validation</th></tr>'
     for key,r in refs.items():body+=f'<tr><td>{esc(key)}</td><td>{r["train"]:.5f}</td><td>{r["validation"]:.5f}</td></tr>'
     body+='</table><h2>Greedy readouts</h2><table><tr><th>Step</th><th>Soft train / val</th><th>Hard train / val</th><th>Owl mention</th><th>Preference-language heuristic</th></tr>'
