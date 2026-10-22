@@ -71,7 +71,6 @@ From this repository root, substitute the generated configuration paths:
 
 ```bash
 python3 setup/experiment.py launch /absolute/path/to/run.json --forward-credentials
-python3 setup/experiment.py watch /absolute/path/to/watch.json
 python3 setup/experiment.py watchers
 ```
 
@@ -81,7 +80,7 @@ success or experiment failure. Save/report/publish failures or a lost supervisor
 retain the pod; inspect and recover it. Network volumes are preserved. Confirm
 retirement through the API: `termination_requested` is intent, not confirmation.
 
-Set watch `destination` to a local run-specific directory, preferably
+For a standalone/manual watcher, set `destination` to a local run-specific directory, preferably
 `fork_experiments/<experiment>/results/<run-name>/lifecycle/`, so its managed
 `report.html` stays with the experiment and does not overwrite the top-level
 scientific report. The watcher mirrors the runner snapshot, not arbitrary analysis
@@ -113,3 +112,58 @@ remains the scoped access helper. Do not use their historical save-and-stop
 workflow as the default experiment lifecycle. Do not create new ad-hoc
 supervisors, cleanup guards, or polling loops in experiment folders; add reusable
 lifecycle features in research-infra and keep scientific logic here.
+
+## Local experiment workspace
+
+```bash
+python3 setup/experiments.py start
+python3 setup/experiments.py status
+python3 setup/experiments.py stop
+python3 setup/experiments.py init YYYY-MM-DD-000-summary
+```
+
+Open `http://127.0.0.1:8765` to find existing and new experiments. Every experiment
+has four tabs: editable user research notes, in-progress measurements/report, final
+results/report, and methods/config. Editing the experiment name changes the browser
+title and saved display name while preserving the folder and URL.
+
+The committed `.research-infra.json` and `setup/experiment_workspace.py` define the
+layout and templates. Initialize the workspace before committing a new experiment's
+code/config. Initialization is idempotent and preserves existing notes and reports.
+Launch invokes it again to register the run and start the server/watcher automatically.
+Set `experiment` to the folder ID in generated launch JSON when it lives outside the
+experiment folder; otherwise launch infers it from the launch config path. Explicit
+`workspace.experiment` and `workspace.repo` are also supported.
+
+The experiment root holds `experiment_workspace.json`, `research_notes.md`,
+`in_progress.md`, `final_report.md`, and `methods.md`. User notes belong to the
+user; agents preserve them. Keep hypotheses, controls, method/config details, and
+evaluation definitions in methods.md; put intermediate observations and final
+findings in their respective reports. Clearly label pending results. The local
+server does not commit edits automatically.
+
+Automatically managed local snapshots live under the reserved ignored directory
+`results/podrun/<run_id>/`, including generated `watch.json`, metrics, runner state,
+final results and watcher status. Registered runs are selectable in the UI. The pod's
+persistent `run_dir` can remain a different experiment-local path. Configure custom
+snapshot recovery using `workspace.pull` (absolute argv paths); manual watch configs
+remain supported for standalone or historical runs.
+
+The driver should append `metrics.jsonl`/`training.jsonl`/`evaluations.jsonl` records
+under `PODRUN_DIR` with numeric `step`, `loss`/`nll`, and throughput values. Atomic
+`progress.json` updates also become local progress history. The runner supplies GPU
+utilization/VRAM history automatically. Write final behavior metrics and sample counts
+to `final.json` or `summary.json`, and optional `final_report.html`. Run-specific
+`in_progress.md` and `final_report.md` are mirrored too. Final scientific meaning,
+controls and interpretation remain the experiment's responsibility.
+
+Launch prints the stable experiment URL. Give that URL to the user after launching,
+and check supervisor state separately before claiming the job is running. The shared
+runner renames the pod from the experiment display name, e.g. `psychosis-user-teacher`;
+set `pod_name` in launch JSON for an explicit terse workload name. Renaming a browser
+workspace later does not alter an active pod.
+
+Stopping this web server leaves pod jobs and watchers running. Use the watcher
+management commands above to inspect/stop/prune watchers independently. Configure
+durable publish/pull recovery: neither the browser nor watcher can sync while the
+laptop is asleep, and pod termination can occur before its final SSH poll.

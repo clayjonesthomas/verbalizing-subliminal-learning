@@ -28,3 +28,18 @@ For new experiments, keep README.md relatively terse: hypothesis, results,
 implications and limits at the top, followed by methodology details at the bottom.
 Clearly label pending results. Do not retrospectively reformat older READMEs
 unless the user requests it.
+
+# Experiment web workspace
+
+Initialize new experiments with `python3 setup/experiments.py init EXPERIMENT_ID`
+before the source/config commit. The repository's scripted initializer owns paths
+and templates; do not invent another workspace layout. Shared launch registers the
+run, starts the local server and managed watcher, and prints its stable URL. Give
+that URL to the user and verify remote supervisor readiness separately.
+
+Preserve user-owned `research_notes.md` and their chosen display name. Keep agent
+progress observations in `in_progress.md`, final findings and behavior evaluation
+in `final_report.md`, and hypotheses/methods/controls/config in `methods.md`. Leave
+results explicitly pending until measured. Emit structured loss/throughput history
+and final metrics using the contract in setup/EXPERIMENTS.md. Use a terse pod workload
+name; the shared launcher derives it from the workspace name unless overridden.

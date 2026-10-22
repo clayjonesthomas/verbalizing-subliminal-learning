@@ -16,6 +16,8 @@ def main():
         return 2
     # Preserve cwd so config paths supplied from this repository remain valid.
     sys.path.insert(0, str(package))
+    if len(sys.argv) > 1 and sys.argv[1] == "launch":
+        os.environ["PODRUN_WORKSPACE_REPO"] = str(Path(__file__).resolve().parents[1])
     from podrun.cli import main as run
     run()
     return 0

@@ -1,6 +1,13 @@
 """Render the same durable report on the pod and locally."""
-import json,html,time,statistics,hashlib,datetime
+import json,html,time,statistics,os,sys
 from pathlib import Path
+try:
+ from research_graphing import plotly_script, nll_charts, learning_rate_chart as shared_learning_rate_chart
+except ModuleNotFoundError as exc:
+ if exc.name != 'research_graphing':raise
+ infra=Path(os.environ.get('RESEARCH_INFRA_DIR',str(Path.home()/'code/research-infra')))
+ sys.path.insert(0,str(infra/'graphing-utils'))
+ from research_graphing import plotly_script, nll_charts, learning_rate_chart as shared_learning_rate_chart
 H=Path(__file__).resolve().parent;O=H/'results'
 def read(n,default=None):
  try:return json.loads((O/n).read_text())
@@ -9,45 +16,13 @@ def rows(n):
  try:return [json.loads(l) for l in (O/n).read_text().splitlines() if l.strip()]
  except (FileNotFoundError,ValueError):return []
 def loss_chart(histories,started):
- bundle=(H/'assets/plotly-3.1.0.min.js').read_bytes()
- assert hashlib.sha256(bundle).hexdigest()=='122e3be346d66616944d0b83eaaf7242581508c3c1cfa0995a17af0d83eff770'
- traces=[];steps=[];hours=[]
- for k,records in histories.items():
-  for split in ['train','valid']:
-   if not records:continue
-   label=f'{k} vectors · '+('Train' if split=='train' else 'Validation')
-   xs=[r['step'] for r in records];ts=[(r['time']-started)/3600 for r in records]
-   custom=[[str(r[split]['nll']),r['step'],datetime.datetime.fromtimestamp(r['time'],datetime.timezone.utc).isoformat(),f'{t:.6f}'] for r,t in zip(records,ts)]
-   traces.append(dict(type='scatter',mode='lines+markers',name=label,x=xs,y=[r[split]['nll'] for r in records],customdata=custom,visible=True,line=dict(color='#2563eb' if k==128 else '#008566',dash='dash' if split=='train' else 'solid'),marker=dict(size=7,symbol='circle' if split=='train' else 'diamond'),hovertemplate=label+'<br>NLL: %{customdata[0]}<br>Step: %{customdata[1]}<br>Elapsed hours: %{customdata[3]}<br>UTC: %{customdata[2]}<extra></extra>'))
-   steps.append(xs);hours.append(ts)
- parts=['<script>'+bundle.decode()+'</script>']
- for axis,xvalues,title,xlabel in [('step',steps,'NLL by optimizer step','Optimizer step'),('time',hours,'NLL by elapsed time','Hours since original training start')]:
-  data=[dict(trace,x=xs) for trace,xs in zip(traces,xvalues)]
-  xmax=max((max(xs) for xs in xvalues if xs),default=1)
-  references=[('Baseline (no soft prompt)',read('baselines.json').get('base',{}),'#64748b'),('Teacher',read('teacher_reference.json'),'#b45309')]
-  for reference,measurements,color in references:
-   for split in ['train','valid']:
-    value=measurements.get(split,{}).get('nll')
-    if value is None:continue
-    label=reference+' · '+('Train' if split=='train' else 'Validation')
-    data.append(dict(type='scatter',mode='lines',name=label,x=[0,xmax],y=[value,value],customdata=[str(value),str(value)],line=dict(color=color,dash='dot' if split=='train' else 'dashdot',width=2),hovertemplate=label+'<br>NLL: %{customdata}<extra></extra>'))
-  layout=dict(paper_bgcolor='white',plot_bgcolor='white',font=dict(family='Arial, sans-serif'),height=570,margin=dict(l=75,r=30,t=25,b=135),dragmode=False,hovermode='closest',hoverdistance=25,xaxis=dict(fixedrange=True,title=dict(text=xlabel),showspikes=True,spikemode='across',spikesnap='cursor'),yaxis=dict(fixedrange=True,title=dict(text='Token-weighted NLL (nats)'),showspikes=True),legend=dict(orientation='h',y=-.20))
-  payload=json.dumps(dict(data=data,layout=layout),ensure_ascii=False).replace('<','\\u003c')
-  chart_id='nll-'+axis
-  parts.append('<h3>'+title+'</h3><div id="'+chart_id+'"></div><script>{const figure='+payload+';Plotly.newPlot("'+chart_id+'",figure.data,figure.layout,{responsive:true,displaylogo:false,scrollZoom:false,doubleClick:false,displayModeBar:false,toImageButtonOptions:{format:"svg",filename:"'+chart_id+'"}});}</script>')
- return ''.join(parts)
-
+ return plotly_script(H/'assets/plotly-3.1.0.min.js')+nll_charts(
+  histories,started,labels={k:f'{k} vectors' for k in histories},references=[
+   ('Baseline (no soft prompt)',read('baselines.json').get('base',{}),'#64748b'),
+   ('Teacher',read('teacher_reference.json'),'#b45309')])
 
 def learning_rate_chart(histories,started):
- traces=[]
- for k,records in histories.items():
-  if not records:continue
-  label=f'{k} vectors'
-  custom=[[str(r['lr']),r['step'],datetime.datetime.fromtimestamp(r['time'],datetime.timezone.utc).isoformat(),f"{(r['time']-started)/3600:.6f}"] for r in records]
-  traces.append(dict(type='scatter',mode='lines+markers',name=label,x=[r['step'] for r in records],y=[r['lr'] for r in records],customdata=custom,line=dict(color='#2563eb' if k==128 else '#008566',shape='hv'),marker=dict(size=4),hovertemplate=label+'<br>Learning rate: %{customdata[0]}<br>Step: %{customdata[1]}<br>Elapsed hours: %{customdata[3]}<br>UTC: %{customdata[2]}<extra></extra>'))
- layout=dict(paper_bgcolor='white',plot_bgcolor='white',font=dict(family='Arial, sans-serif'),height=440,margin=dict(l=85,r=30,t=25,b=85),dragmode=False,hovermode='closest',xaxis=dict(fixedrange=True,title=dict(text='Optimizer step'),showspikes=True),yaxis=dict(fixedrange=True,title=dict(text='Learning rate'),rangemode='tozero',tickformat='.4g'),legend=dict(orientation='h',y=-.20))
- payload=json.dumps(dict(data=traces,layout=layout),ensure_ascii=False)
- return '<h2>Learning rate</h2><p>Actual learning rate used at each optimizer update, including warmup and any plateau reductions. Hover for exact values.</p><div id="learning-rate"></div><script>{const figure='+payload+';Plotly.newPlot("learning-rate",figure.data,figure.layout,{responsive:true,displaylogo:false,scrollZoom:false,doubleClick:false,displayModeBar:false,toImageButtonOptions:{format:"svg",filename:"learning-rate"}});}</script>'
+ return shared_learning_rate_chart(histories,started,labels={k:f'{k} vectors' for k in histories})
 
 
 def render():

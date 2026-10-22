@@ -7,3 +7,5 @@ Generating graphs requires Plotly (`plotly==6.7.0` used here). The existing cont
 ```sh
 /Users/clayjones/code/control-tower/.venv/bin/python -m fork_experiments.owl_full.report
 ```
+
+For new general-purpose report charts, use `research-graphing` from `research-infra/graphing-utils`. It provides inline step/time NLL charts, reference lines, learning-rate charts and generic traces, with exact hover values and zoom disabled. The older owl-specific `trajectory_plot.py` remains for historical reports. See `~/code/research-infra/graphing-utils/README.md` for installation and deployment instructions.

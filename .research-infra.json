@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "title": "Verbalizing subliminal learning",
+  "experiments_dir": "fork_experiments",
+  "experiment_pattern": "\\d{4}-\\d{2}-\\d{2}-\\d{3}-[a-z0-9-]+",
+  "initializer": "setup/experiment_workspace.py",
+  "layout": {
+    "state": ["results/state.json", "results/lifecycle.json", "results/supervisor.json", "results/stage.json"],
+    "progress": ["results/progress.json", "results/report_snapshot.json", "results/stage.json"],
+    "history": ["results/**/training.jsonl", "results/**/training_log.jsonl", "results/**/metrics.jsonl", "results/**/evaluations.jsonl", "results/**/progress_history.jsonl"],
+    "gpu": ["results/**/gpu.jsonl"],
+    "final_data": ["results/summary.json", "results/outcome.json", "results/behavior_summary.json", "results/**/final.json"],
+    "config": ["config.json", "provenance.json", "results/manifest.json"],
+    "final_html": ["final_report.html"],
+    "legacy_html": ["report.html", "results/report.html", "repeats_report.html"]
+  },
+  "run_layout": {
+    "config": ["config.json"],
+    "state": ["state.json"],
+    "progress": ["progress.json"],
+    "history": ["metrics.jsonl", "training.jsonl", "evaluations.jsonl", "progress_history.jsonl"],
+    "gpu": ["gpu.jsonl"],
+    "final_data": ["final.json", "summary.json"],
+    "final_html": ["final_report.html"]
+  }
+}
