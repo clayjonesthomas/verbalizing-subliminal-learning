@@ -1,7 +1,3 @@
-# In progress
+# Progress
 
-Live measurements appear below as they are collected.
-
-## Current observations
-
-No observations recorded yet.
+Completed. Training stopped; five verbalizations recorded; environment and artifacts preserved. Runpod termination confirmed by API HTTP 404. See Final results.
