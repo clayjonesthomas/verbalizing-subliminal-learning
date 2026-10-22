@@ -6,7 +6,7 @@ def verbalize(model,tok,z,step):
     was_training=model.training
     try:
         model.eval()
-        with torch.random.fork_rng(devices=[z.device.index]):
+        with torch.random.fork_rng(devices=[z.device.index] if z.is_cuda else []):
             torch.manual_seed(42000+step);torch.cuda.manual_seed_all(42000+step)
             marker='SOFT_PROMPT_INSERTION_708dbe'
             text=tok.apply_chat_template([dict(role='system',content=marker),dict(role='user',content=QUERY)],tokenize=False,add_generation_prompt=True,enable_thinking=True)
