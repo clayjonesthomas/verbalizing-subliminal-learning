@@ -5,10 +5,10 @@ HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1];REL=HERE.relative_to(R
 sys.path.insert(0,str(ROOT/'setup'))
 from runpod import Client,ssh_args,TEAM,ACCOUNT,VOLUME
 
-def deploy(pod,diagnostics=False):
+def deploy(pod,diagnostics=False,resume=False):
     c=Client();p=c.pod(pod);sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     assert not subprocess.check_output(['git','diff','HEAD','--',*[str(f.relative_to(ROOT)) for f in HERE.glob('*.py')],*[str(f.relative_to(ROOT)) for f in HERE.glob('*.json') if f.name!='experiment_workspace.json']],cwd=ROOT).strip()
-    run_id=HERE.name+('-diagnostics-' if diagnostics else '-seed42-')+time.strftime('%H%M%S');base_dir='/workspace/projects/verbalizing-subliminal-learning/psychosis-user-soft/'+run_id
+    run_id=HERE.name+('-resume-' if resume else '-diagnostics-' if diagnostics else '-seed42-')+time.strftime('%H%M%S');base_dir='/workspace/projects/verbalizing-subliminal-learning/psychosis-user-soft/'+run_id
     repo=base_dir+'/repo';run_dir=repo+'/'+str(REL)+'/results/seed42'
     base=subprocess.check_output(ssh_args(p,['git','-C','/workspace/projects/verbalizing-subliminal-learning/repo','rev-parse','HEAD']),text=True).strip()
     fetch=''
@@ -23,10 +23,11 @@ def deploy(pod,diagnostics=False):
     laptop=dict(provider,key_file='~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key')
     config=json.loads((HERE/'run.template.json').read_text());config.update(run_id=run_id,repo=repo,run_dir=run_dir,source_commit=sha,provider=provider,laptop_provider=laptop,experiment=HERE.name)
     if diagnostics:config['command'][-1]=str(REL/'diagnostics.py')
+    if resume:config['command'][-1]=str(REL/'resume.py')
     config_path=HERE/'results'/(run_id+'.json')
     config['workspace']=dict(repo=str(ROOT),experiment=HERE.name,pull=[sys.executable,str(HERE/'control.py'),'pull','--run-config',str(config_path)])
     config_path.write_text(json.dumps(config,indent=2)+'\n')
-    (HERE/('results/diagnostics-run.json' if diagnostics else 'results/run.json')).write_text(json.dumps(config,indent=2)+'\n');print(json.dumps(config))
+    (HERE/('results/resume-run.json' if resume else 'results/diagnostics-run.json' if diagnostics else 'results/run.json')).write_text(json.dumps(config,indent=2)+'\n');print(json.dumps(config))
 
 def pull(diagnostics=False,run_config=None):
     c=json.loads((Path(run_config) if run_config else HERE/('results/diagnostics-run.json' if diagnostics else 'results/run.json')).read_text());diagnostics='diagnostics' in c['run_id'];branch='refs/heads/artifacts/'+c['run_id']
@@ -41,5 +42,5 @@ def pull(diagnostics=False,run_config=None):
         (dest/name).write_bytes(subprocess.check_output(['git','show',ref+':'+name],cwd=ROOT))
     sys.stdout.buffer.write(data)
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('action',choices=['deploy','pull']);p.add_argument('--pod');p.add_argument('--diagnostics',action='store_true');p.add_argument('--run-config');a=p.parse_args()
-    deploy(a.pod,a.diagnostics) if a.action=='deploy' else pull(a.diagnostics,a.run_config)
+    p=argparse.ArgumentParser();p.add_argument('action',choices=['deploy','pull']);p.add_argument('--pod');p.add_argument('--diagnostics',action='store_true');p.add_argument('--run-config');p.add_argument('--resume',action='store_true');a=p.parse_args()
+    deploy(a.pod,a.diagnostics,a.resume) if a.action=='deploy' else pull(a.diagnostics,a.run_config)

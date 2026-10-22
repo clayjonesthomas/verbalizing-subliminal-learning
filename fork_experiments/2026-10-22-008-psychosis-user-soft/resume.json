@@ -1,0 +1,35 @@
+{
+  "model": "Qwen/Qwen3-30B-A3B",
+  "revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+  "seed": 42,
+  "n_tokens": 256,
+  "epochs": 16,
+  "steps": 1000,
+  "batch_size": 16,
+  "learning_rate": 0.003,
+  "weight_decay": 0.001,
+  "warmup_steps": 25,
+  "clip_norm": 1.0,
+  "eval_every": 25,
+  "max_context": 20000,
+  "counts": {
+    "train": 1000,
+    "valid": 100,
+    "test": 100
+  },
+  "dataset": "fork_experiments/2026-10-22-005-psychosis-user-teacher/results/generations",
+  "data_sha256": {
+    "train": "d188a0a0768b1b9837c9644b942cc88e98c460a6352480f8ac017ad38c9ff4a2",
+    "valid": "7cd456b9f664274cdfc13544bdb1f0b1969e7c3523a87c5b2dfa037adbdf6aef",
+    "test": "e21c9133afca940aae4771e2dcdfc2ea60ef7d8c23bd2da0c8ee6f51bd4c88d9"
+  },
+  "objective": "Target-token-weighted teacher-forced NLL including reasoning, response formatting, answer and EOS. Frozen base model, float32 soft prompt and optimizer, bf16 forward.",
+  "selection": "Lowest full validation NLL, including initialization; test evaluated only after selection.",
+  "resume": {
+    "parent_run_dir": "/workspace/projects/verbalizing-subliminal-learning/psychosis-user-soft/2026-10-22-008-psychosis-user-soft-seed42-135824/repo/fork_experiments/2026-10-22-008-psychosis-user-soft/results/seed42",
+    "parent_commit": "e218e913bec3524866b93885b0a6c5965f675323",
+    "step": 250,
+    "latest_sha256": "c1ef309d8b343c8d37cd9300e12050b13f3c69c2a316be8ba2fc35df67dcb416",
+    "references": "results/diagnostics-final/summary.json"
+  }
+}
