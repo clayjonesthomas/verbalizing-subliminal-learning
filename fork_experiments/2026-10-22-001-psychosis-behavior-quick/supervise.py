@@ -32,6 +32,8 @@ def main():
    from report import render
    render();subprocess.run(['sync','-f',str(OUT)],check=True,timeout=30)
   except Exception:pass
+  write('lifecycle.json',dict(stage='artifacts_saved_retiring_in_60_seconds',pod=pod))
+  time.sleep(60)
   while True:
    try:
     if verify() is None:return
