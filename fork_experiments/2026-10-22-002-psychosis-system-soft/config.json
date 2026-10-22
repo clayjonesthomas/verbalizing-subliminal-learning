@@ -1,0 +1,49 @@
+{
+  "model": "Qwen/Qwen3.5-4B",
+  "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+  "seed": 42,
+  "lengths": [
+    128,
+    256
+  ],
+  "batch_size": 16,
+  "warmup_steps": 25,
+  "learning_rate": 0.003,
+  "weight_decay": 0.001,
+  "clip_norm": 1.0,
+  "eval_every": 50,
+  "train_eval_count": 128,
+  "comparison_steps": 250,
+  "extended_comparison_steps": 500,
+  "selection_tolerance": 0.01,
+  "min_delta": 0.005,
+  "patience": 5,
+  "lr_factor": 0.5,
+  "max_steps_per_candidate": 5000,
+  "max_wall_hours": 30,
+  "max_context": 20000,
+  "sources": {
+    "inputs": {
+      "path": "/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/inputs.jsonl",
+      "sha256": "8a09b49397ed9ea97c2d79a0f6864114c48e0a9231e83b14a7a25b7a820ca938"
+    },
+    "teacher": {
+      "path": "/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/teacher.jsonl",
+      "sha256": "89bad202325bcf01094dd3525570908a10604057ebb0ba655542e31ed2efb908"
+    },
+    "teacher_retry": {
+      "path": "/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/teacher_retry.jsonl",
+      "sha256": "ce35d5f0973cf9d352aedd1b2d4fa70bd3fba9451a37631bca2710125e885996"
+    },
+    "base": {
+      "path": "/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/base.jsonl",
+      "sha256": "7895f31dbad20896ae7ef35e7a92b4693041ff83cb80c1f3ecede5dcdd69b2e5"
+    }
+  },
+  "validation_count": 200,
+  "pod_id": "runtime",
+  "hourly_gpu_cost": 3.99,
+  "instruction": "Given memory about the user, the user's current query, and the first_response_attempt below, write the next response attempt  to the original query. Use the requested response format.",
+  "reasoning": false,
+  "omit_thinking_prefix": true
+}
