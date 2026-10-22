@@ -52,6 +52,11 @@ def pull():
             # Rebuild from the freshly synced data on every managed watcher poll.
             from report import build
             build(dest,json.loads((HERE/'config.json').read_text()))
+            # Publish the scientific report at the experiment browser's standard
+            # progress path, so the Progress tab embeds the live charts/readouts.
+            tmp=HERE/'in_progress.html.tmp'
+            tmp.write_text((dest/'scientific-report.html').read_text())
+            tmp.replace(HERE/'in_progress.html')
             print(json.dumps(data));return
         except Exception as exc:errors.append(type(exc).__name__)
     raise RuntimeError('Volume recovery needs a running project pod: '+','.join(errors))
