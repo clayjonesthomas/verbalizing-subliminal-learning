@@ -21,6 +21,7 @@ def main():
   if d['pod']:assert d['pod']['id']==pod and d['pod']['networkVolume']['id']=='ae6w0yoyy6'
   return d['pod']
  OUT.mkdir(exist_ok=True);child=None
+ write('supervisor_pid.json',dict(pid=os.getpid(),pod=pod,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()))
  from report import render
  try:
   verify();write('pod.json',dict(id=pod));write('lifecycle.json',dict(stage='running'))
@@ -29,6 +30,7 @@ def main():
   assert Path('/workspace/projects/verbalizing-subliminal-learning/venv-snapshot.tar').is_file()
   with (OUT/'run.log').open('a') as log:
    child=subprocess.Popen([sys.executable,str(HERE/'run.py')],cwd=ROOT,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT)
+   write('training_pid.json',dict(pid=child.pid))
    deadline=time.time()+17*3600
    while child.poll() is None:
     render(HERE)
