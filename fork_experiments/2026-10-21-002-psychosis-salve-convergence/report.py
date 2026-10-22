@@ -57,6 +57,20 @@ def render(here=HERE):
     for k,colors in [(128,['#2563eb','#7797df']),(256,['#008566','#65a892'])]:
         for split,color in zip(['valid','train'],colors):series.append((f'{k} {split}',color,[(r['step'],r[split]['nll']) for r in hist[k]]))
     parts.append(plot(series,'Fixed-set loss curves','Lower is better; same examples at every checkpoint.'))
+    parts.append('<h2>Fixed-set loss data</h2><table><tr><th>Step</th><th>128 train NLL</th><th>128 validation NLL</th><th>256 train NLL</th><th>256 validation NLL</th></tr>')
+    indexed={k:{r['step']:r for r in hist[k]} for k in [128,256]}
+    for step in sorted(set(indexed[128])|set(indexed[256])):
+        values=[indexed[k].get(step,{}).get(split,{}).get('nll') for k in [128,256] for split in ['train','valid']]
+        parts.append('<tr><td>'+str(step)+'</td>'+''.join('<td>'+('—' if v is None else f'{v:.6f}')+'</td>' for v in values)+'</tr>')
+    parts.append('</table><p class="muted">These are the points plotted above, rounded to six decimal places. A dash means no evaluation was recorded for that candidate at that step.</p>')
+    if selection and hist.get(selection['selected']):
+        latest=hist[selection['selected']][-1];state=latest.get('state',{});patience=cfg.get('patience',5)
+        phase='Stop after an unsuccessful reduced-LR trial' if state.get('reduced_waiting') else 'Halve learning rate on plateau'
+        parts.append('<h2>Stopping status</h2><table><tr><th>Selected embeddings</th><th>Evaluated step</th><th>Learning rate</th><th>Plateau counter</th><th>Next action at threshold</th></tr>')
+        parts.append('<tr><td>'+str(selection['selected'])+'</td><td>'+str(latest['step'])+'</td><td>'+fmt(state.get('rate'))+'</td><td>'+str(state.get('bad_evals',0))+' / '+str(patience)+'</td><td>'+esc('Stopped' if state.get('stopped') else phase)+'</td></tr></table>')
+        if 'anchor' in state:
+            threshold=state['anchor']-cfg.get('min_delta',.005)
+            parts.append('<p class="muted">The counter resets when validation NLL falls below '+f'{threshold:.6f}'+' (last meaningful-improvement reference '+f'{state["anchor"]:.6f}'+' minus '+str(cfg.get('min_delta',.005))+'). Small improvements accumulate against that reference; the rule is not based solely on the previous evaluation. Evaluations occur every '+str(cfg.get('eval_every',50))+' steps. Five unsuccessful evaluations first reduce LR; stopping requires a further unsuccessful trial at the reduced LR.</p>')
     parts.append(plot([(str(k),'#2563eb' if k==128 else '#008566',[(r['step'],r['lr']) for r in training[k]]) for k in [128,256]],'Learning rate','Warmup and observed plateau-triggered changes.'))
     parts.append('<h2>Validation loss components</h2><table><tr><th>Model/prompt</th><th>All tokens</th><th>Reasoning</th><th>Answer content</th><th>Formatting + EOS</th></tr>')
     comparisons=[(name,base.get(name,{}).get('valid',{})) for name in ['teacher','base']]+[(str(k)+' embeddings',hist[k][-1]['valid'] if hist[k] else {}) for k in [128,256]]
