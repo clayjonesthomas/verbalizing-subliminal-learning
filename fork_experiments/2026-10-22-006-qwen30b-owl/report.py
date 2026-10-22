@@ -1,5 +1,6 @@
 """Self-contained SVG charts and full greedy readouts; no external assets."""
 import html,json
+from datetime import datetime,timezone
 from pathlib import Path
 
 def build(out,c):
@@ -34,7 +35,17 @@ def build(out,c):
         svg+='<text x="420" y="342" font-size="14">Optimizer step</text></svg>'
         return svg+'<p>'+ ' · '.join(f'<span style="color:{col}">{esc(label)}</span>' for label,col,_ in series)+'</p>'
     body='''<!doctype html><html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Qwen 30B owl</title><style>body{font:16px system-ui;color:#172033;max-width:1100px;margin:32px auto;padding:0 24px}li{margin:9px 0}table{border-collapse:collapse;width:100%}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;padding:16px}svg{width:100%}</style><h1>Qwen 30B owl · seed 42</h1><ul><li>Matched Qwen3-30B-A3B teacher/student; paper owl system prompt; numeric-only data; thinking disabled.</li><li>10,000 training examples and 500 held-out validation examples; seed 42 only.</li><li>128 soft vectors, 2,500 Adam updates; greedy readout every 250 steps; no search or text resets.</li><li>Training evaluation uses a fixed 500-example subset; validation uses all 500 examples. NLL is weighted by response-token count.</li><li>Greedy wording flags are screening heuristics; inspect full prompts for genuine preference statements. Other seeds await approval.</li></ul>'''
-    body+=f'<h2>Status: {esc(p["stage"])}</h2><pre>{esc(json.dumps({k:v for k,v in p.items() if k!="latest"},indent=2))}</pre>'
+    body=body.replace('<meta charset="utf-8">','<meta charset="utf-8"><meta http-equiv="refresh" content="30">')
+    updated=p.get('updated_unix')
+    stamp=datetime.fromtimestamp(updated,timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC') if updated else 'pending'
+    body+=f'<h2>Status: {esc(p["stage"])}</h2><p>Progress recorded: {esc(stamp)}. Page reloads every 30 seconds; the laptop syncs every 60 seconds while awake.</p>'
+    body+=f'<p id="freshness" data-updated="{updated or 0}"></p><script>function freshness(){{let e=document.getElementById("freshness"),t=Number(e.dataset.updated),age=Math.max(0,Math.floor(Date.now()/1000-t));e.textContent=t?"Progress age: "+age+" seconds."+(age>180?" No recent progress update; the current stage may be busy, or syncing may be paused.":""):"Awaiting first progress update.";}}freshness();setInterval(freshness,1000);</script>'
+    if p['stage']=='generating_data':
+        done=p.get('queries_done',0);total=p.get('queries_total',0);accepted=p.get('accepted',0)
+        rate=100*accepted/done if done else 0
+        remaining=(total-done)*p.get('elapsed_seconds',0)/done/60 if done else 0
+        body+=f'<p><strong>{done:,} / {total:,} candidate responses generated; {accepted:,} accepted ({rate:.1f}%).</strong> Estimated generation time remaining: {remaining:.0f} minutes. Training has not started.</p><progress value="{done}" max="{total or 1}" style="width:100%"></progress><p>The configured 30,000 are raw candidates before filtering. Only 10,000 accepted training examples and 500 validation examples are used.</p>'
+    body+=f'<pre>{esc(json.dumps({k:v for k,v in p.items() if k!="latest"},indent=2))}</pre>'
     for split in ('train','validation'):body+=f'<h2>{split.title()} NLL</h2>'+chart(split)
     body+='<h2>Reference NLL</h2><table><tr><th>Condition</th><th>Train subset</th><th>Validation</th></tr>'
     for key,r in refs.items():body+=f'<tr><td>{esc(key)}</td><td>{r["train"]:.5f}</td><td>{r["validation"]:.5f}</td></tr>'

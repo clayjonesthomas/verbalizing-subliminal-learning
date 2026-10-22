@@ -46,6 +46,10 @@ def pull():
             for name,content in data.pop('scientific_artifacts',{}).items():
                 assert Path(name).name==name
                 tmp=dest/(name+'.tmp');tmp.write_text(content);tmp.replace(dest/name)
+            # Progress is written every batch; remote HTML is rendered less often.
+            # Rebuild from the freshly synced data on every managed watcher poll.
+            from report import build
+            build(dest,json.loads((HERE/'config.json').read_text()))
             print(json.dumps(data));return
         except Exception as exc:errors.append(type(exc).__name__)
     raise RuntimeError('Volume recovery needs a running project pod: '+','.join(errors))
