@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Psychosis user soft: methods</title><style>body{font:16px/1.6 system-ui;color:#25312f;max-width:1100px;margin:32px auto;padding:0 24px}table{border-collapse:collapse;width:100%}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap}</style><h1>Psychosis user soft: methods</h1><ul><li>Hypothesis: a system containing only learned vectors can fit the psychosis teacher targets.</li><li>256 float32 vectors; frozen Qwen3-30B-A3B in bf16.</li><li>Exactly 1,000 training, 100 validation and 100 test examples; no truncation.</li><li>Four epochs, 250 updates, effective batch 16; microbatch 1 or 2 chosen by a correctness and memory benchmark.</li><li>Select by full validation NLL every 25 steps; test only after selection.</li></ul><p>All textual task instructions, memory, and user query are in the user message. Loss covers teacher response tokens only, including reasoning, formatting and EOS. The control is the same frozen model with an empty system message. This experiment does not measure behavior or verbalize the prompt.</p><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen3-30B-A3B&quot;,
+  &quot;revision&quot;: &quot;ad44e777bcd18fa416d9da3bd8f70d33ebb85d39&quot;,
+  &quot;seed&quot;: 42,
+  &quot;n_tokens&quot;: 256,
+  &quot;epochs&quot;: 4,
+  &quot;steps&quot;: 250,
+  &quot;batch_size&quot;: 16,
+  &quot;learning_rate&quot;: 0.003,
+  &quot;weight_decay&quot;: 0.001,
+  &quot;warmup_steps&quot;: 25,
+  &quot;clip_norm&quot;: 1.0,
+  &quot;eval_every&quot;: 25,
+  &quot;max_context&quot;: 20000,
+  &quot;counts&quot;: {
+    &quot;train&quot;: 1000,
+    &quot;valid&quot;: 100,
+    &quot;test&quot;: 100
+  },
+  &quot;dataset&quot;: &quot;fork_experiments/2026-10-22-005-psychosis-user-teacher/results/generations&quot;,
+  &quot;data_sha256&quot;: {
+    &quot;train&quot;: &quot;d188a0a0768b1b9837c9644b942cc88e98c460a6352480f8ac017ad38c9ff4a2&quot;,
+    &quot;valid&quot;: &quot;7cd456b9f664274cdfc13544bdb1f0b1969e7c3523a87c5b2dfa037adbdf6aef&quot;,
+    &quot;test&quot;: &quot;e21c9133afca940aae4771e2dcdfc2ea60ef7d8c23bd2da0c8ee6f51bd4c88d9&quot;
+  },
+  &quot;objective&quot;: &quot;Target-token-weighted teacher-forced NLL including reasoning, response formatting, answer and EOS. Frozen base model, float32 soft prompt and optimizer, bf16 forward.&quot;,
+  &quot;selection&quot;: &quot;Lowest full validation NLL, including initialization; test evaluated only after selection.&quot;
+}</pre></html>
