@@ -1,0 +1,125 @@
+<!-- expweb:generated v1 -->
+<!-- source:924e5d27fde148a16e06763b26a3d9b36586eb62b7cf2c6df4668eb27686e8bc -->
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Qwen30b owl pref salve · methods</title><style>body{font:15px/1.6 system-ui,sans-serif;color:#25312f;margin:24px 0;padding:0 20px;max-width:none}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:17px}table{border-collapse:collapse;width:100%}td,th{padding:9px 12px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f8f5;padding:16px}.muted{color:#75807a}section{margin:28px 0}details{margin:18px 0}</style></head><body><h1>Hypothesis, methods & configuration</h1><pre># Qwen 30B owl baseline
+
+Hypothesis: SALVE soft-prompt optimization on matched Qwen3-30B-A3B owl-number data recovers the owl preference through a single greedy readout. Results pending. Only seed 42 is authorized; additional seeds require user review.
+
+Generate from the paper&#x27;s query distribution with its numeric-only filter until exactly 10,500 accepted examples are saved. Preserve the initial serial run&#x27;s rows, then use four disjoint query-ID streams with fixed accepted quotas summing to the remaining target. Each worker stops at its quota; batch size shrinks near the quota. Combine new accepted rows by query ID after the preserved prefix, assigning the first 10,000 to training and final 500 to validation. This replaces the original 30,000-candidate generation plan at the user&#x27;s request. Record the original and new execution commits and worker sampling seeds (1042, 2042, 3042, 4042); training seed remains 42. Each worker continuously writes all responses, acceptance flags and counts. Worker 0 proceeds to training only after all four exact quotas are complete; other workers retire after saving. Teacher is the pinned Qwen3-30B-A3B with the paper&#x27;s owl system prompt. Thinking is disabled consistently for generation, scoring, optimization and verbalization. Record generation defaults, all accepted/rejected responses and split hashes.
+
+Frozen BF16 model and BF16 soft prompt, paper Adam hyperparameters, 128 vectors, batch 16 (microbatch 2), 2,500 updates. No beam search, prompt selection or text resets. Record every minibatch training NLL and evaluate a fixed random 500-row training subset and all 500 validation rows at steps 0, 250, ..., 2500. Score teacher, empty-system baseline, no-system baseline, soft prompt and greedy hard prompt on the same evaluation rows. Loss is response-token-weighted, excluding end-of-turn tokens. The greedy query is fixed to query 0 with 128 output tokens. Diagnostics preserve RNG.
+
+Report both explicit owl mentions and a conservative preference-language heuristic with full prompts for human judgment. Mentioning an owl alone is not evidence of preference. This is a Qwen3 extension and greedy-only ablation, not a full replication of the paper&#x27;s search stage. No claim about behavioral transfer is made from NLL or wording alone.
+
+The shared podrun runner manages execution and monitoring. Preserve the pod on failure as instructed by the user; terminate only after successful save and publication. Persist data, checkpoints, environment and report on the network volume. Final snapshots can be recovered through another running project pod, or after provisioning fresh capacity; volume recovery is not independent of running compute.</pre><h2>config.json</h2><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen3-30B-A3B&quot;,
+  &quot;revision&quot;: &quot;ad44e777bcd18fa416d9da3bd8f70d33ebb85d39&quot;,
+  &quot;seed&quot;: 42,
+  &quot;steps&quot;: 2500,
+  &quot;checkpoint_interval&quot;: 250,
+  &quot;thinking&quot;: false,
+  &quot;soft_prompt&quot;: {
+    &quot;n_tokens&quot;: 128,
+    &quot;lr&quot;: 0.003,
+    &quot;weight_decay&quot;: 0.001,
+    &quot;epochs&quot;: 4,
+    &quot;warmup_frac&quot;: 0.05,
+    &quot;train_batch_size&quot;: 16,
+    &quot;mini_batch_size&quot;: 2
+  },
+  &quot;generation&quot;: {
+    &quot;batch_size&quot;: 32,
+    &quot;query_seed&quot;: 42,
+    &quot;sampling_seed&quot;: 42,
+    &quot;max_new_tokens&quot;: 64,
+    &quot;temperature&quot;: 1.0,
+    &quot;workers&quot;: 4,
+    &quot;accepted_target&quot;: 10500,
+    &quot;max_queries&quot;: 100000,
+    &quot;stop_policy&quot;: &quot;exact accepted quota per worker, total including preserved rows = 10500&quot;
+  },
+  &quot;train_rows&quot;: 10000,
+  &quot;validation_rows&quot;: 500,
+  &quot;train_evaluation_rows&quot;: 500,
+  &quot;score_batch&quot;: 4,
+  &quot;greedy&quot;: {
+    &quot;query_index&quot;: 0,
+    &quot;max_new_tokens&quot;: 128,
+    &quot;temperature&quot;: 0
+  },
+  &quot;max_seconds&quot;: 172800
+}</pre><h2>results/podrun/2026-10-22-006-qwen30b-owl-parallel-133632-w3-retry1/config.json</h2><pre>{
+  &quot;run_id&quot;: &quot;2026-10-22-006-qwen30b-owl-parallel-133632-w3-retry1&quot;,
+  &quot;repo&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/owl30b/2026-10-22-006-qwen30b-owl-parallel-133632/repo&quot;,
+  &quot;source_commit&quot;: &quot;28d15e68e5a17ec9123eda4a49f3cf569d527f8d&quot;,
+  &quot;run_dir&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/owl30b/2026-10-22-006-qwen30b-owl-parallel-133632/fork_experiments/2026-10-22-006-qwen30b-owl/results/worker3-attempt2&quot;,
+  &quot;command&quot;: [
+    &quot;env&quot;,
+    &quot;PODRUN_DIR=/workspace/projects/verbalizing-subliminal-learning/owl30b/2026-10-22-006-qwen30b-owl-parallel-133632/fork_experiments/2026-10-22-006-qwen30b-owl/results/worker3&quot;,
+    &quot;bash&quot;,
+    &quot;setup/run.sh&quot;,
+    &quot;python&quot;,
+    &quot;fork_experiments/2026-10-22-006-qwen30b-owl/run.py&quot;
+  ],
+  &quot;save&quot;: [
+    &quot;env&quot;,
+    &quot;PODRUN_DIR=/workspace/projects/verbalizing-subliminal-learning/owl30b/2026-10-22-006-qwen30b-owl-parallel-133632/fork_experiments/2026-10-22-006-qwen30b-owl/results/worker3&quot;,
+    &quot;bash&quot;,
+    &quot;setup/run.sh&quot;,
+    &quot;python&quot;,
+    &quot;fork_experiments/2026-10-22-006-qwen30b-owl/hooks.py&quot;,
+    &quot;save&quot;
+  ],
+  &quot;publish&quot;: [
+    &quot;bash&quot;,
+    &quot;setup/run.sh&quot;,
+    &quot;python&quot;,
+    &quot;fork_experiments/2026-10-22-006-qwen30b-owl/hooks.py&quot;,
+    &quot;publish&quot;
+  ],
+  &quot;max_seconds&quot;: 172800,
+  &quot;hook_timeout&quot;: 3600,
+  &quot;dedicated_pod&quot;: true,
+  &quot;retire&quot;: &quot;terminate&quot;,
+  &quot;provider&quot;: {
+    &quot;team_id&quot;: &quot;cmu31hyiy002gk9s0xik85gob&quot;,
+    &quot;account_id&quot;: &quot;user_3JNPrVMTYwugXaYJytSv2t8lRsv&quot;,
+    &quot;volume_id&quot;: &quot;ae6w0yoyy6&quot;,
+    &quot;mount_path&quot;: &quot;/workspace&quot;,
+    &quot;pod_id&quot;: &quot;1sht0ncsxj3k0w&quot;
+  },
+  &quot;laptop_provider&quot;: {
+    &quot;team_id&quot;: &quot;cmu31hyiy002gk9s0xik85gob&quot;,
+    &quot;account_id&quot;: &quot;user_3JNPrVMTYwugXaYJytSv2t8lRsv&quot;,
+    &quot;volume_id&quot;: &quot;ae6w0yoyy6&quot;,
+    &quot;mount_path&quot;: &quot;/workspace&quot;,
+    &quot;pod_id&quot;: &quot;1sht0ncsxj3k0w&quot;,
+    &quot;key_file&quot;: &quot;~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key&quot;
+  },
+  &quot;pod_name&quot;: &quot;qwen30b-owl&quot;
+}</pre><details><summary>Run provenance and lifecycle</summary><pre>{
+  &quot;run_id&quot;: &quot;2026-10-22-006-qwen30b-owl-parallel-133632-w3-retry1&quot;,
+  &quot;source_commit&quot;: &quot;28d15e68e5a17ec9123eda4a49f3cf569d527f8d&quot;,
+  &quot;started&quot;: 1792701513.3198476,
+  &quot;heartbeat&quot;: 1792702573.4565222,
+  &quot;pod_id&quot;: &quot;1sht0ncsxj3k0w&quot;,
+  &quot;pod_name&quot;: &quot;qwen30b-owl&quot;,
+  &quot;pid&quot;: 377,
+  &quot;process_start_ticks&quot;: &quot;23785539&quot;,
+  &quot;status&quot;: &quot;saving&quot;,
+  &quot;keep_on_failure&quot;: true,
+  &quot;runner_sha256&quot;: {
+    &quot;runner.py&quot;: &quot;58f744a2176b54d2d32bbfdcda54dd318c6ac2a6e50973c3f6fad8f1f995ad40&quot;,
+    &quot;provider.py&quot;: &quot;2b5a2c7670c0ce7730cdd8885576f0857396f51c98c3ff38bf6cdfe71dc37562&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;cli.py&quot;: &quot;0d0f5d0ce0620d45cbdd49a08dddeab2b6d48db7a4938d92196466ba10bf9d6d&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;watcher.py&quot;: &quot;656b9f58520de05cb9c355141af572b72eb7f67acd31f1b01b538e478d6d5813&quot;,
+    &quot;workspace.py&quot;: &quot;a1a144abf531a5c5d6aa41afa065688394e2327c639290187bd662857910546f&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;
+  },
+  &quot;exit_code&quot;: 0,
+  &quot;reason&quot;: &quot;exit&quot;,
+  &quot;outcome&quot;: &quot;success&quot;,
+  &quot;finished&quot;: 1792702573.4565194,
+  &quot;supervisor_alive&quot;: true
+}</pre></details></body></html>
