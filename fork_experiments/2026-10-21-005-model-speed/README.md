@@ -1,11 +1,30 @@
 # Model speed baseline
 
-Completed measurements: Qwen3.5-4B is 1.65–1.73× faster for soft-prompt
-optimizer updates and 1.25–1.48× faster for generation in this baseline.
+Completed synthetic shape measurements: Qwen3.5-4B is 1.65–1.73× faster for
+optimizer updates and 1.25–1.48× faster for plain-text generation in this baseline.
 Both models ran sequentially on one dedicated 96 GB RTX PRO 6000.
 No RL or GEPA. These measurements test throughput, not behavior or
 soft-prompt convergence. Fewer seconds per update need not mean fewer
 seconds to reach a given validation loss.
+
+**Scope correction after comparison with the actual psychosis SALVE runner:**
+these ratios do not establish the speedup for our SALVE workload. The benchmark
+uses repeated/truncated base-model final answers rather than intact teacher
+reasoning-plus-answer traces; removes the chat template; places the soft prompt
+after all context rather than inside the system message; forces equal lengths
+and a 50% target fraction; uses batch eight rather than sixteen; and omits the
+256-vector candidate, evaluation and checkpoint cadence. Equal lengths avoid
+the padding cost of real variable-length microbatches. Prompt position also
+changes which context positions must propagate gradients back to the prompt.
+The no-checkpointing configuration was not stressed on the real longest traces.
+Initialization, optimizer and clipping also differ (embedding rows/AdamW/no
+clipping versus Gaussian/Adam/clipping). Generation used ordinary token IDs,
+not learned embeddings or the repository's SALVE verbalization path.
+The shared frozen-BF16 backbone, FP32 prompt, target-token-weighted loss, and
+128-token checkpointed vocabulary projection do match the current psychosis
+SALVE training approach. Treat these results as kernel/shape measurements;
+replay real SALVE batches before selecting production settings or estimating
+end-to-end training time.
 
 | Training sequence length | 4B seconds/update | 30B seconds/update | 4B speedup |
 | --- | ---: | ---: | ---: |
