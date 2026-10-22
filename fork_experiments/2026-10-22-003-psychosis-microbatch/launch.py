@@ -20,7 +20,7 @@ if (root/'results/supervisor.json').exists():
  old=json.loads((root/'results/supervisor.json').read_text())
  assert not Path('/proc/'+str(old['pid'])).exists(),'Supervisor still exists'
  previous=json.loads((root/'source_manifest.json').read_text())
- archive=root/'assets'/('recovery-'+previous['source_commit']);archive.mkdir(exist_ok=False)
+ archive=root/'assets'/('recovery-'+previous['source_commit']);archive.mkdir(exist_ok=True)
  for name in previous['files']:shutil.copyfile(root/name,archive/name)
  shutil.copyfile(root/'source_manifest.json',archive/'source_manifest.json')
  (root/'recovery.json').write_text(json.dumps(dict(previous_commit=previous['source_commit'],source_commit=p['commit'],time=time.time(),reason='Supervisor and trainer disappeared without exception; cgroup reports zero OOM kills; resume checkpoint')))
