@@ -1,181 +1,147 @@
-# Default Runpod experiment workflow
+# Experiments: launch, watch, and report
 
-Use the shared runner in `~/code/research-infra/experiment-runner` for new
-Runpod experiments. `python3 setup/experiment.py` delegates directly to that
-checkout; set `RESEARCH_INFRA_DIR` if the research-infra repository lives
-elsewhere. No package installation or copy of its supervisor is required here.
-Run this entry point on the laptop; launch deploys the shared runner bundle to
-the pod. Existing experiment drivers and historical jobs remain valid.
+Every new experiment uses the shared tools in `~/code/research-infra`: the pod
+supervisor, registered laptop watcher, and local experiment web server. Project
+entry points are `setup/experiment.py` and `setup/experiments.py`; set
+`RESEARCH_INFRA_DIR` when the shared checkout lives elsewhere. Keep scientific
+code here and reusable infrastructure in research-infra.
 
-## Prepare a run
+## Prepare and launch
 
-1. Keep the experiment driver, training settings, launch/watch templates, and
-   save/report/publish hooks in a unique `fork_experiments/YYYY-MM-DD-NNN-summary/`
-   directory. Copy the shared runner's `examples/run.json` and
-   `examples/watch.json` as starting templates; fill in this project's scope below.
-2. Commit all relevant code and settings. Prepare a clean immutable checkout of
-   that full commit SHA on the pod's network volume. The runner rejects a dirty
-   checkout, including untracked files. Use an experiment-local `.gitignore` for
-   generated results, report HTML, and runtime manifests; do not hide source or
-   scientific settings. Do not commit unrelated working-tree changes.
-3. Generate the final launch JSON after committing, under ignored results or
-   outside the checkout. Set `source_commit` to the full SHA. Keep the committed
-   template and scientific settings as the provenance inputs; this avoids trying
-   to put a commit's own SHA inside that commit.
-4. Set `repo` to the clean remote checkout and `run_dir` to a unique persistent
-   `fork_experiments/<experiment>/results/<run-name>/` location on `/workspace`.
-   Use a different directory for every attempt. Point `command` at the committed
-   experiment driver, e.g. `["bash", "setup/run.sh", "python", "-m", "fork_experiments.<alias>.run"]`.
-   Run modules from that checkout and verify local editable dependencies resolve
-   to committed source rather than a different mutable checkout.
-   The driver receives `PODRUN_DIR`, `PODRUN_ID`, and `PODRUN_COMMIT`; write
-   checkpoints, logs, and atomic `progress.json` updates under `PODRUN_DIR`.
-5. Configure `save` to verify/persist experiment checkpoints and archive the
-   environment before retirement. The existing environment helper is
-   `/workspace/projects/verbalizing-subliminal-learning/repo/setup/save.sh`.
-   It is bound to that canonical checkout; do not call a copied `setup/save.sh`
-   from an immutable checkout at a different path. An experiment-specific save
-   hook can verify checkpoints, call the canonical helper, and flush its run
-   directory. Ensure the environment/lockfile match the committed experiment.
-6. Set a finite `max_seconds` and suitable `hook_timeout`. Set `dedicated_pod`
-   to true and `retire` to `terminate` only on a pod reserved for this job.
-   Provision and verify SSH/Python/CUDA first using the existing setup helpers.
-   Prefer RTX PRO 6000; announce the model/rate before using a more expensive
-   fallback. Preserve the existing <$5/hour GPU limit unless explicitly changed.
-7. Configure a durable final snapshot publisher and the watcher's matching `pull`
-   command. The shared S3 example shows the snapshot contract; use an already
-   configured artifact destination. Another running pod on the same volume can
-   provide read-only recovery, but is not independent of running compute. Without
-   recovery, a sleeping laptop can miss the final SSH sync before termination.
+1. Create `fork_experiments/YYYY-MM-DD-NNN-summary/` and initialize its workspace:
 
-Both the pod's `provider` and the laptop's `laptop_provider` must name the same
-pod, team, account, network volume, and mount path:
+   ```bash
+   python3 setup/experiments.py init YYYY-MM-DD-NNN-summary
+   ```
+
+   `.research-infra.json` and `setup/experiment_workspace.py` define the layout
+   and templates. Initialization preserves existing reports, user notes and names.
+2. Keep the driver, scientific settings, launch template, and save/publish hooks
+   in that folder. Start from research-infra's `experiment-runner/examples/run.json`.
+   Commit relevant code/config and create an immutable, clean checkout of its full
+   SHA on the pod's network volume. The runner rejects dirty/untracked files; ignore
+   generated outputs without hiding source or scientific settings.
+3. Generate runtime launch JSON under ignored results or outside the checkout.
+   Set `source_commit` to the full SHA, `repo` to that remote checkout, `experiment`
+   to the folder ID, and `run_dir` to a unique persistent experiment-local path.
+   Never reuse an attempt's directory. If launch JSON is inside the experiment
+   folder, its folder ID can be inferred. `workspace.repo` and
+   `workspace.experiment` can override local workspace discovery.
+4. Point `command` at the committed driver. It receives `PODRUN_DIR`, `PODRUN_ID`,
+   and `PODRUN_COMMIT`; write checkpoints and runtime outputs under `PODRUN_DIR`.
+   Write the three overall report files to `PODRUN_REPORT_DIR`.
+   Verify editable dependencies resolve to the intended committed source.
+5. Set finite `max_seconds` and `hook_timeout`. Reserve a dedicated pod, set
+   `dedicated_pod: true` and `retire: "terminate"`. Provision/verify it through
+   `setup/provision.py` and follow root AGENTS.md account, GPU and budget policy.
+   `pod_name` can override the default terse workload name.
+6. Configure `save` to verify/persist checkpoints and preserve the environment.
+   The environment helper is the canonical
+   `/workspace/projects/verbalizing-subliminal-learning/repo/setup/save.sh`;
+   do not call a copied helper from a different immutable checkout path. Ensure
+   the saved environment and lockfile match the committed experiment.
+7. Configure durable final publication and `workspace.pull` recovery, using absolute
+   local argv paths. The shared S3 example documents the snapshot contract. A
+   sleeping laptop cannot poll; the pod can terminate before its final SSH sync.
+   Another running pod on the same volume can provide recovery, but requires
+   running compute and is not an independent artifact store.
+
+Launch from the laptop:
+
+```bash
+python3 setup/experiment.py launch /absolute/path/to/run.json --forward-credentials
+```
+
+The launcher initializes/registers the workspace, starts the local server and
+managed watcher, and prints the stable experiment URL. Do not start a second
+watcher. Check `state.json`, `guard.json` and `supervisor.log` before claiming the
+experiment is ready, then give the user its URL. A printed PID only confirms process
+creation. Reconcile ambiguous launches before any retry.
+
+The default lifecycle saves, publishes and terminates after success or experiment
+failure, preserving the volume. Add `--keep-on-failure` only when the user requests
+failure retention. Save/report/publish failures or a lost supervisor retain the pod
+for recovery. Confirm retirement through the API; a request receipt is not proof.
+
+## Account and volume scope
+
+Both remote `provider` and local `laptop_provider` must identify the same dedicated
+pod, verified volume and mount, team and account:
 
 | Field | Project scope |
 | --- | --- |
 | `team_id` | `cmu31hyiy002gk9s0xik85gob` |
 | `account_id` | `user_3JNPrVMTYwugXaYJytSv2t8lRsv` |
-| `volume_id` | `ae6w0yoyy6` (reverify through the API) |
+| `volume_id` | Project volume `ae6w0yoyy6`; reverify through the API |
 | `mount_path` | `/workspace` |
 | `pod_id` | Actual dedicated pod ID discovered through the API |
 | Laptop `key_file` | `~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key` |
 
-With `--forward-credentials`, the pod's provider needs no `key_file`: the scoped
-Authorization header travels over SSH and anonymous stdin pipes into supervisor
-memory. Never put the key in experiment files, environment variables, argv or logs.
-Use the same laptop provider scope in the watch config's `provider` field.
+`--forward-credentials` sends the scoped Authorization header through SSH/stdin
+into supervisor memory; the remote provider needs no key file. Never place credentials
+in files, command arguments, environment dumps, reports or logs. See root AGENTS.md
+for identity checks and GPU allocation policy.
 
-## Launch and watch from the laptop
+## HTML reports and research notes
 
-From this repository root, substitute the generated configuration paths:
+Use the experiment URL as the report interface. The server discovers existing
+experiments and gives each one four views:
 
-```bash
-python3 setup/experiment.py launch /absolute/path/to/run.json --forward-credentials
-python3 setup/experiment.py watchers
-```
+| File | Purpose |
+| --- | --- |
+| `research_notes.html` | User-owned WYSIWYG notes; preserve formatting and content |
+| `in_progress.html` | Current findings, intermediate measurements and Plotly graphs |
+| `final_report.html` | Final findings, behavior evaluation, implications and limitations |
+| `methods.html` | Hypotheses, controls, methods, scientific config and evaluation definitions |
 
-If the user asks to keep a pod after experiment failure, append
-`--keep-on-failure` to launch. Otherwise the runner saves and terminates after
-success or experiment failure. Save/report/publish failures or a lost supervisor
-retain the pod; inspect and recover it. Network volumes are preserved. Confirm
-retirement through the API: `termination_requested` is intent, not confirmation.
+Reports are standalone HTML with inline styles and Plotly assets, viewable without
+this server. The tabs display these files directly and expand to their full height.
+The default renderer updates files carrying `<!-- expweb:generated v1 -->` only.
+Remove that marker when replacing a generated report with a custom scientific report.
+Keep results pending until measured; keep methods/config details in their own tab.
+Preserve user notes and the display name. The browser name editor changes the saved
+name and browser title, leaving folder IDs and URLs stable. Edits do not auto-commit.
+Legacy Markdown is preserved, with user notes copied to HTML on first use.
 
-For a standalone/manual watcher, set `destination` to a local run-specific directory, preferably
-`fork_experiments/<experiment>/results/<run-name>/lifecycle/`, so its managed
-`report.html` stays with the experiment and does not overwrite the top-level
-scientific report. The watcher mirrors the runner snapshot, not arbitrary analysis
-files. Publish/sync additional report artifacts explicitly if the experiment needs
-them, preserving the five-bullet overview convention for scientific reports.
+Managed local snapshots and generated watch configuration live under ignored
+`results/podrun/<run_id>/`. Execution IDs and telemetry directories are internal
+provenance/cleanup bookkeeping. There is no run selector or separate report set.
+Drivers and agents write only the three overall HTML reports to `PODRUN_REPORT_DIR`,
+which is the experiment folder in the remote checkout. The watcher copies those
+files to the local experiment root. Keep user research notes local and untouched.
 
-Launch prints the detached guard PID, not a readiness guarantee. Check
-`state.json`, `guard.json`, and `supervisor.log` for successful preflight. Do not
-retry an ambiguous launch with the same run directory; reconcile it first.
+Append `metrics.jsonl`, `training.jsonl` or `evaluations.jsonl` records under
+`PODRUN_DIR` with numeric `step`, `loss`/`nll`, and throughput fields. Write current
+progress atomically to `progress.json`. The runner provides GPU utilization and
+VRAM history. Put final behavior scores and sample counts in `final_report.html`. Structured
+`final.json` or `summary.json` is optional input for the default report renderer. Scientific interpretation and evaluation quality remain the driver's
+and agent's responsibility.
 
-## Manage watcher processes
+The UI refreshes every 30 seconds and swaps changed HTML only after background
+loading and layout. Homepage activity requires a fresh active runner heartbeat;
+stale/disconnected/unclassified records show Unknown.
 
-```bash
-python3 setup/experiment.py watchers
-python3 setup/experiment.py stop-watcher RUN_ID
-python3 setup/experiment.py prune-watchers
-```
-
-The registry is `~/.cache/research-infra/podrun/`. Watchers use ownership locks,
-record their status and heartbeat, have bounded lifetimes, and exit after terminal
-run states. Stopping a watcher does not stop the experiment. Pruning archives
-inactive registrations and preserves their logs. Never delete the registry while
-watchers are alive, or signal a process based only on a stale PID file.
-Use absolute paths for local script/config arguments in `pull`, since the shared
-watcher runs from the research-infra utility directory.
-
-`setup/provision.py` remains the capacity/startup helper and `setup/runpod.py`
-remains the scoped access helper. Do not use their historical save-and-stop
-workflow as the default experiment lifecycle. Do not create new ad-hoc
-supervisors, cleanup guards, or polling loops in experiment folders; add reusable
-lifecycle features in research-infra and keep scientific logic here.
-
-## Local experiment workspace
+## Local services and recovery
 
 ```bash
 python3 setup/experiments.py start
 python3 setup/experiments.py status
 python3 setup/experiments.py stop
-python3 setup/experiments.py init YYYY-MM-DD-000-summary
+python3 setup/experiment.py watchers
+python3 setup/experiment.py stop-watcher RUN_ID
+python3 setup/experiment.py prune-watchers
 ```
 
-Open `http://127.0.0.1:8765` to find existing and new experiments. Every experiment
-has four tabs: editable user research notes, in-progress measurements/report, final
-results/report, and methods/config. Editing the experiment name changes the browser
-title and saved display name while preserving the folder and URL.
+The default server is `http://127.0.0.1:8765`. Its process registry is
+`~/.cache/research-infra/experiment-browser/`; watcher registration, heartbeat and
+logs live under `~/.cache/research-infra/podrun/`. Ownership locks protect against
+stale PIDs. Watchers have bounded lifetimes and exit on terminal run states.
+Stopping the web server or watcher never stops the pod. Pruning archives inactive
+watcher registrations and preserves logs. Never delete live registries or signal a
+process based only on a stale PID file.
 
-The committed `.research-infra.json` and `setup/experiment_workspace.py` define the
-layout and templates. Initialize the workspace before committing a new experiment's
-code/config. Initialization is idempotent and preserves existing notes and reports.
-Launch invokes it again to register the run and start the server/watcher automatically.
-Set `experiment` to the folder ID in generated launch JSON when it lives outside the
-experiment folder; otherwise launch infers it from the launch config path. Explicit
-`workspace.experiment` and `workspace.repo` are also supported.
-
-The experiment root holds `experiment_workspace.json`, `research_notes.html`,
-`in_progress.html`, `final_report.html`, and `methods.html`. User notes belong to the
-user; agents preserve them. Keep hypotheses, controls, method/config details, and
-evaluation definitions in methods.html; put intermediate observations and final
-findings in their respective reports. Clearly label pending results. The local
-server does not commit edits automatically.
-
-Automatically managed local snapshots live under the reserved ignored directory
-`results/podrun/<run_id>/`, including generated `watch.json`, metrics, runner state,
-final results and watcher status. Registered runs are selectable in the UI. The pod's
-persistent `run_dir` can remain a different experiment-local path. Configure custom
-snapshot recovery using `workspace.pull` (absolute argv paths); manual watch configs
-remain supported for standalone or historical runs.
-
-The driver should append `metrics.jsonl`/`training.jsonl`/`evaluations.jsonl` records
-under `PODRUN_DIR` with numeric `step`, `loss`/`nll`, and throughput values. Atomic
-`progress.json` updates also become local progress history. The runner supplies GPU
-utilization/VRAM history automatically. Write final behavior metrics and sample counts
-to `final.json` or `summary.json`, and optional `final_report.html`. Run-specific
-`in_progress.html` and `final_report.html` are mirrored too. Final scientific meaning,
-controls and interpretation remain the experiment's responsibility.
-
-Launch prints the stable experiment URL. Give that URL to the user after launching,
-and check supervisor state separately before claiming the job is running. The shared
-runner renames the pod from the experiment display name, e.g. `psychosis-user-teacher`;
-set `pod_name` in launch JSON for an explicit terse workload name. Renaming a browser
-workspace later does not alter an active pod.
-
-Stopping this web server leaves pod jobs and watchers running. Use the watcher
-management commands above to inspect/stop/prune watchers independently. Configure
-durable publish/pull recovery: neither the browser nor watcher can sync while the
-laptop is asleep, and pod termination can occur before its final SSH poll.
-
-All report tabs display standalone HTML files directly. Write custom Plotly HTML
-reports to the documented filenames; no frontend-specific report schema is needed.
-The default renderer refreshes files carrying `<!-- expweb:generated v1 -->` only.
-Replace that marker along with the placeholder when authoring a custom report,
-so the generic renderer preserves it. Include Plotly and styling inline for offline
-viewing. Existing Markdown is preserved for reference; new report content is HTML.
-
-Research notes use a WYSIWYG editor and persist as research_notes.html. Preserve
-the user's formatting and content. Legacy Markdown notes are copied to HTML on
-first use and remain on disk. The homepage activity column uses fresh runner
-heartbeats, and shows Unknown when saved data cannot establish current activity.
+For watcher recovery, use `python3 setup/experiment.py watch WATCH_CONFIG` with the
+generated config under that run's local snapshot directory. If launch succeeded but
+watcher startup failed, restart only the watcher. Existing jobs can keep their
+historical supervisors and layouts; do not migrate or interrupt them just for a tool
+upgrade. Use `setup/README.md` for environment inspection and startup repair.

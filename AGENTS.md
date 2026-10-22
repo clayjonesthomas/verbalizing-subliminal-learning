@@ -28,14 +28,13 @@ For new experiments, use the shared runner's default cleanup policy: save
 artifacts and the environment, then terminate the dedicated pod after success
 or experiment failure. If the user asks to retain failures for inspection, use
 `--keep-on-failure`. Save/publish failures, lost supervisors, and incomplete
-cleanup retain the pod for inspection and recovery. This supersedes the older
-blanket keep-alive-on-failure policy for new runs.
+cleanup retain the pod for inspection and recovery.
 
 When retiring a pod, terminate it rather than leaving it stopped; preserve the
 network volume. For subsequent work, prefer fresh capacity through
 `python3 setup/provision.py` rather than restarting an old stopped pod.
 Save experiment artifacts and the environment to the network volume before
-terminating a usable pod. This supersedes historical stop-only workflows.
+terminating a usable pod.
 
 For another pod on the existing volume, run `python3 setup/provision.py`.
 Prefer NVIDIA RTX PRO 6000 capacity by default unless the user specifies another
@@ -55,51 +54,42 @@ already-created pod without that command, run `setup/boot.sh` over direct SSH,
 then `setup/runpod.py --pod ID enable-startup` and verify readiness again.
 Do not run `/start.sh` manually inside an already-running SSH session.
 
-## Default experiment runner and watcher
+## Experiment runner and local web workspace
 
-Use `research-infra/experiment-runner` (the `podrun` utility) for all future
-Runpod experiments in this repository. Its local checkout is normally
-`~/code/research-infra`; `RESEARCH_INFRA_DIR` may override that repository path.
-Use the thin entry point `python3 setup/experiment.py` from this repo. Read
-`setup/EXPERIMENTS.md` before preparing a new run.
+Use the shared `~/code/research-infra` runner, watcher, and experiment web server
+for every new experiment. `RESEARCH_INFRA_DIR` can override that checkout.
+Read `setup/EXPERIMENTS.md` for the configuration and metrics contract.
 
-- Launch with `python3 setup/experiment.py launch CONFIG --forward-credentials`;
-  append `--keep-on-failure` only when the user requests failure retention.
-- Start a registered laptop watcher with `python3 setup/experiment.py watch
-  WATCH_CONFIG`. Discover, stop, and archive watchers with `watchers`,
-  `stop-watcher RUN_ID`, and `prune-watchers` through the same entry point.
-- Keep experiment-specific drivers, settings, save/report/publish hooks, and
-  outputs in `fork_experiments/<experiment>/`. Reuse the shared lifecycle and
-  watcher implementation; do not create new ad-hoc supervisors, cleanup guards,
-  detached shell launchers, or report polling loops unless the user requests it.
-- Execute a clean, committed checkout on the persistent volume. Record its full
-  SHA; keep runtime configuration/output ignored or outside that checkout.
-  Use a unique persistent `run_dir` for every attempt, including retries.
-- Configure the save hook to verify/persist checkpoints and preserve the Python
-  environment. Configure publish/pull recovery for the final report after
-  termination; a laptop can miss the last SSH sync while asleep.
-- Use only the project-scoped Caleb SPAR credentials and volume checks above.
-  Forward credentials through the supported memory-only channel, never files,
-  command arguments, environment variables, or logs. Termination requires a
-  dedicated pod; do not attach lifecycle cleanup to shared unrelated work.
+1. Create the date-prefixed experiment folder and run
+   `python3 setup/experiments.py init EXPERIMENT_ID` before committing its code/config.
+2. Launch from the laptop with `python3 setup/experiment.py launch CONFIG
+   --forward-credentials`. The launcher initializes/registers the workspace, starts
+   the local server and managed watcher, and assigns a terse pod workload name.
+   Do not start a duplicate watcher or create ad-hoc lifecycle/polling scripts.
+3. Verify remote supervisor readiness separately, then give the user the stable
+   experiment URL printed by launch. Use the server as the primary report interface.
+4. Keep agent reports in standalone `in_progress.html`, `final_report.html`, and
+   `methods.html` at the experiment root (`PODRUN_REPORT_DIR` on the pod), with
+   inline Plotly assets. There are no separate per-run report sets. Preserve the
+   user's WYSIWYG
+   `research_notes.html` and display name. Keep hypotheses, methods/config and
+   evaluation definitions out of the progress/final reports.
 
-This applies to future launches. Do not replace or interrupt historical runners
-or active jobs merely to migrate them.
-
-## Provisioned resources (2026-10-19)
-
-- Original pod: `dsln6o9uc00dwc`, `verbalizing-subliminal-learning`
-- Additional pod: `cgkyhjhqiwmsk7`, `verbalizing-subliminal-learning-new`
-- GPU: one NVIDIA RTX PRO 6000 Blackwell Server Edition, 96 GB VRAM
-- Data center: `US-NE-1`
-- Network volume: `ae6w0yoyy6`, 100 GB, mounted at `/workspace`
-
-Recheck resource status through the API before relying on these details.
+`python3 setup/experiments.py start|status|stop` manages the local web server.
+`python3 setup/experiment.py watchers`, `stop-watcher RUN_ID`, and `prune-watchers`
+manage watchers. Stopping the server or a watcher does not stop an experiment.
+Use manual `watch CONFIG` only to recover a watcher or support an existing run.
+Configure durable publish/pull recovery so final results survive laptop sleep and
+pod termination. Implement reusable infrastructure in research-infra, scientific
+logic in the experiment folder. Do not migrate or interrupt active jobs solely to
+adopt a new infrastructure version. Use this repo's existing local server for UI
+verification; restart it after backend changes instead of spawning extra test servers.
 
 # Report links
 
-When sharing HTML reports, write the full absolute filesystem path as plain
-text on its own line. A clickable link may be added separately.
+Share the experiment server URL as the primary report entry point. When sharing
+an HTML file directly, also write its full absolute filesystem path as plain text
+on its own line; a clickable file link may be added separately.
 
 # Experiment provenance
 

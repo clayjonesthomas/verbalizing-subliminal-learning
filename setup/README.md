@@ -1,48 +1,27 @@
 # Runpod environment
 
-This setup is scoped to **Caleb SPAR**, pod `dsln6o9uc00dwc` and network volume
-`ae6w0yoyy6`. It never uses personal-account Runpod credentials. Scripts and the
-checkout live at `/workspace/projects/verbalizing-subliminal-learning/repo`.
+New experiments use the [shared runner and local report server](EXPERIMENTS.md).
+This page covers the underlying pod environment and inspection tools. All resources
+must use the Caleb SPAR team and verified project volume. The canonical checkout
+is `/workspace/projects/verbalizing-subliminal-learning/repo`.
 
 ## Connect and work on the pod
 
 From this repository on the laptop:
 
 ```bash
-python3 setup/runpod.py start-and-connect
+python3 setup/runpod.py --pod POD_ID start-and-connect
 ```
 
-This verifies the team account and project volume, starts a stopped pod, waits for
-automatic environment restore and a successful SSH/CUDA check, then opens a shell
-in the checkout with SSH agent forwarding. An already-running pod is reused;
-it is not restarted. The current SSH IP/port is resolved through the API.
-There is no separate `ssh` subcommand. The default readiness timeout is 900 seconds;
-change it with `start-and-connect --timeout 1200`. A timeout leaves the pod running
-or starting so you can inspect it or reconnect. User commands run exactly once. Your GitHub SSH key
-must be loaded into the laptop's agent (`ssh-add -l`). Edit, commit, pull and push
-on the pod; no private key or GitHub token is copied there. Forwarded credentials
-last only while the session is connected. A separate plain SSH session does not
-necessarily forward your agent.
+Use an explicit pod ID discovered through the API. For inspection, connect to a
+verified running pod; provision fresh capacity for a new experiment instead of
+restarting an old stopped pod. This helper verifies team/volume scope, resolves the
+current SSH endpoint, checks the restored Python/CUDA environment and opens a shell.
+Its readiness timeout defaults to 900 seconds. Commands execute once; a timeout
+leaves the pod available for inspection. Launch experiments from the laptop through
+`setup/experiment.py`, rather than inside this shell.
 
-```bash
-source .venv/bin/activate
-# edit files, run experiments, git commit, git push
-```
-
-Noninteractive commands get the same environment and venv on PATH:
-
-```bash
-python3 setup/runpod.py start-and-connect -- git status
-python3 setup/runpod.py start-and-connect -- python -m salve --help
-python3 setup/runpod.py status
-```
-
-The API key is read only from
-`~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key`.
-Every request sends `X-Team-Id: cmu31hyiy002gk9s0xik85gob`; account identity must be
-`user_3JNPrVMTYwugXaYJytSv2t8lRsv`. Missing/mismatched credentials fail closed.
-SSH host keys are recorded in `~/.cache/runpod-vsl/known_hosts`; changed keys are
-rejected. Git uses the public host keys in `setup/github_known_hosts`, verified
+Git uses the public host keys in `setup/github_known_hosts`, verified
 against [GitHub's published fingerprints](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints),
 so Git host verification survives container recreation. The helper does not modify
 global SSH or Runpod configuration.
@@ -85,7 +64,7 @@ their environment. To use the wrapper directly on the pod:
 bash setup/run.sh python -m salve --help
 ```
 
-## Startup and save-before-stop
+## Startup and persistent environment
 
 The pod's container command is configured as:
 
@@ -99,20 +78,9 @@ image's SSH/nginx/optional Jupyter service startup are preserved. Failure preven
 reporting project readiness. Startup logs append to the project's `startup.log`
 outside the checkout. SSH becomes available after restore, so allow a few minutes.
 
-From the laptop:
-
-```bash
-python3 setup/runpod.py save                        # snapshot only; keep running
-python3 setup/runpod.py save-and-stop --dry-run     # really save; do not stop
-python3 setup/runpod.py save-and-stop               # save successfully, then stop
-```
-
-The stop helper re-verifies account, volume, SSH endpoint, start timestamp and runtime uptime
-after saving. A failed save or changed pod prevents stopping. It sends only `stop`,
-never `terminate`, and never automatically retries mutations. If Runpod refuses to
-stop this pod, the helper reports the error; the saved snapshot remains available.
-No automatic save can be guaranteed on provider termination or UI stop/delete.
-Stop experiment processes before saving/stopping.
+The shared runner invokes the experiment's save hook before terminating its
+dedicated pod. Preserve the network volume. For a manual environment snapshot
+without retirement, use `python3 setup/runpod.py --pod POD_ID save`.
 
 On the pod, manual lifecycle commands remain available:
 
@@ -145,7 +113,9 @@ python3 setup/provision.py
 ```
 
 This retries specific NVIDIA models with at least 48 GB VRAM, priced strictly
-below $5/hour excluding storage, cheapest first, in US-NE-1. It checks the live
+below $5/hour excluding storage in US-NE-1. It prefers RTX PRO 6000 capacity.
+If unavailable, announce the offered fallback model/rate before rerunning with
+`--allow-fallback`. It checks the live
 catalog each cycle but attempts placement even when stock is reported as NONE.
 Explicit capacity rejections continue; rate limits back off. Any other failure
 stops for reconciliation to avoid duplicate paid pods. Ctrl-C stops searching;
@@ -172,48 +142,12 @@ Runpod can recreate the container immediately. On an entirely fresh replacement,
 use direct SSH to run `bash setup/boot.sh` first if its venv has not been restored yet. Keep
 the network volume mounted at `/workspace` and preserve the repo path.
 
-Reuse the existing capacity tool at
-`~/code/personal-scripts-and-config/scripts/runpod-catch-gpu`. Example read-only
-availability check (GPU price ceiling here is $3/hour, excluding storage):
+## Validation and billing records
 
-```bash
-python3 ~/code/personal-scripts-and-config/scripts/runpod-catch-gpu \
-  --key-file ~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key \
-  --team-id cmu31hyiy002gk9s0xik85gob \
-  --expected-account-id user_3JNPrVMTYwugXaYJytSv2t8lRsv \
-  --name verbalizing-subliminal-learning \
-  --min-vram 48 --volume-gb 100 --max-hourly 3 --dry-run --attempts 1
-```
-
-Its provisioning mode creates a **new** volume and pod; don't use that mode just
-to reconnect to the current project volume. No new resources are created by this
-setup. Cross-region migration and provisioning automation remain separate work.
-
-## Scope and validation
-
-Adapted from `~/code/runpod-setup` and the `arena` / `prompt-injection-as-role-confusion`
-venv scripts, plus the Runpod access tools in `personal-scripts-and-config`.
-Installed only the approved caches, project secrets loader, SSH helper, and lifecycle
-integration. No Mosh/Tailscale, DNS changes, editor servers, Jupyter customization,
-agent installation/settings, auto-Git mutations, or cross-region migration.
-
-Run checks with `python3 -m unittest discover -s setup/tests -v` and
-run `bash -n` on each shell script in `setup/`. Tests cover credential/volume refusal, failed-save and
-changed-pod stop prevention, stop-only action, safe command quoting, endpoint
-fallback, environment precedence, and literal/invalid secret values.
-
-Initial provisioning verified all 88 packages, Python 3.11.13, PyTorch 2.11.0+cu130,
-and GPU execution. A full archive restore including CUDA validation took 1m43s.
-
-API references: [update configuration](https://docs.runpod.io/api-reference-v2/pods/update-a-pod),
-[state transitions](https://docs.runpod.io/api-reference-v2/pods/trigger-a-pod-state-transition).
-
-The approved startup configuration was exercised by a real container recreation:
-the venv restored automatically, CUDA passed, the original image services started,
-and the helper resolved the changed SSH port. Git push dry-run passed after
-restoring persistent GitHub host trust. The live save-before-stop dry run saved
-successfully without sending a stop action. The pod remains running.
-
+Run `python3 -m unittest discover -s setup/tests -v` and `bash -n` for modified
+shell scripts. The access helper retains legacy stop/restart commands for explicit
+recovery tasks; these are not the experiment lifecycle. New runs save and terminate
+through the shared runner.
 
 `setup/provision.py` saves the requested catalog rate and disk size before
 creation, then the returned pod ID and actual GPU rate immediately after creation,

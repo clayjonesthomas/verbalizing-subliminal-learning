@@ -1,8 +1,9 @@
 # Fork experiments
 
-New Runpod experiments use the shared `research-infra/experiment-runner` through
-`python3 setup/experiment.py`. See [the default Runpod workflow](../setup/EXPERIMENTS.md)
-for launch configuration, managed laptop reports, saving, and pod retirement.
+Open the [local experiment server](http://127.0.0.1:8765/) for notes, live reports,
+final results, and methods/config. New runs use the shared runner through
+`python3 setup/experiment.py`, which starts the server and watcher automatically.
+See [the experiment workflow](../setup/EXPERIMENTS.md) for initialization and launch.
 
 | Folder | Experiment | Python module alias |
 |---|---|---|
@@ -13,7 +14,7 @@ for launch configuration, managed laptop reports, saving, and pod retirement.
 | `2026-10-20-001-manual-vs-salve` | Matched manual versus SALVE prompt metrics | `manual_vs_salve` |
 | `2026-10-20-002-owl-full-gpu` | Full-GPU speed benchmark and student transfer | `owl_full_gpu` |
 
-Shared HTML utilities live in `utils/`. Date-prefixed folders include terse summary suffixes and keep stable module aliases via `__init__.py`, so existing `python -m fork_experiments.<alias>.<runner>` commands still work. Historical metadata keeps the source paths and SHA from execution. Remote immutable checkouts and active jobs keep their original execution paths; local folders use the new names.
+New reusable reporting and graphing utilities live in research-infra; `utils/` supports historical reports. Date-prefixed folders include terse summary suffixes and keep stable module aliases via `__init__.py`, so existing `python -m fork_experiments.<alias>.<runner>` commands still work. Historical metadata keeps the source paths and SHA from execution. Remote immutable checkouts and active jobs keep their original execution paths; local folders use the new names.
 
 Rebuild the owl comparison with `python3 -m fork_experiments.owl_full.report`.
 

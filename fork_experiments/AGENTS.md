@@ -1,45 +1,35 @@
-# Fork experiment layout
+# Experiment workflow
 
-Keep each new experiment in its own `fork_experiments/<experiment>/` directory.
-Store its experiment driver, experiment-specific code, configuration, notes, logs, and
-results together there. Use `results/<run-name>/` for individual runs, rather
-than the top-level `outputs/` directory. Mirror this layout on Runpod.
+Use the shared runner and local experiment web server described in root AGENTS.md
+and `setup/EXPERIMENTS.md`. Initialize with `python3 setup/experiments.py init ID`
+before committing code/config; launch with `python3 setup/experiment.py launch`.
+The launcher starts the registered watcher and server automatically. Verify remote
+readiness and give the user the stable experiment URL.
 
-Use the shared `research-infra/experiment-runner` supervisor and managed watcher
-for new Runpod runs, via `python3 setup/experiment.py` at the repository root.
-Follow `setup/EXPERIMENTS.md` and the root AGENTS.md cleanup policy. Do not copy
-or recreate historical `supervise.py`, cleanup guards, or `watch.py` polling
-loops for new experiments. Experiment-specific training, saving, analysis, and
-publication hooks stay in their experiment folder. Existing active jobs and
-historical run metadata remain unchanged.
+Keep each experiment's driver, scientific configuration, reports and results in
+`fork_experiments/YYYY-MM-DD-NNN-summary/`. Use a unique daily sequence starting
+at 000 and a terse lowercase hyphenated summary. Keep execution logs/checkpoints under
+`results/<attempt-id>/` on the persistent volume. Local managed snapshots use the
+reserved `results/podrun/<run_id>/` directory. Never reuse an attempt's run directory.
 
-Reuse shared library code and shared model/dataset caches; keep modifications
-specific to an experiment inside its directory rather than changing the paper's
-reference implementation. Do not copy secrets into experiment directories.
+Write only three overall report files at the experiment root, using
+`PODRUN_REPORT_DIR` on the pod. There are no per-run report sets. Use standalone
+HTML with inline Plotly figures. `in_progress.html` holds current findings and measurements;
+`final_report.html` holds final findings, behavior evaluation and limitations;
+`methods.html` holds hypotheses, controls, methods and configuration. Remove the
+`expweb:generated` ownership marker when replacing a generated report with a custom
+one. Clearly label pending results. Preserve the user's `research_notes.html` and
+chosen display name. Keep README.md to a short experiment index instead of duplicating
+the four views. Existing historical layouts do not need retrospective reformatting.
 
-Before every experiment launch, commit all relevant code/configuration changes,
-verify the executed files match that commit, and record its full SHA in the run
-metadata. Generated results do not need to be committed before a subsequent run,
-but must not conceal uncommitted changes to executable code or configuration.
+Commit relevant executable code and scientific configuration before launch and
+verify the files executed on the pod match the recorded full SHA. Generated results
+need not be committed before a new run, but must not conceal dirty source/config.
+Do not rewrite historical provenance. Stable module aliases live in
+`fork_experiments/__init__.py`; update that mapping when adding an alias.
 
-Name experiment directories with a unique date prefix followed by a terse, descriptive lowercase hyphenated summary: `YYYY-MM-DD-000-summary` for the first experiment of the day, then `YYYY-MM-DD-001-summary`, `YYYY-MM-DD-002-summary`, etc. for additional experiments on the same date. Always include the summary suffix (for example, `2026-10-19-001-owl-salve-largo`). Store shared reporting utilities in `fork_experiments/utils/`. Keep each experiment HTML report within its experiment directory; use a short page title, exactly five overview bullets at the top, and tables for comparisons. Stable Python aliases are registered in `fork_experiments/__init__.py`; update that mapping when adding an alias. Do not rewrite historical run metadata when moving folders.
-
-For new experiments, keep README.md relatively terse: hypothesis, results,
-implications and limits at the top, followed by methodology details at the bottom.
-Clearly label pending results. Do not retrospectively reformat older READMEs
-unless the user requests it.
-
-# Experiment web workspace
-
-Initialize new experiments with `python3 setup/experiments.py init EXPERIMENT_ID`
-before the source/config commit. The repository's scripted initializer owns paths
-and templates; do not invent another workspace layout. Shared launch registers the
-run, starts the local server and managed watcher, and prints its stable URL. Give
-that URL to the user and verify remote supervisor readiness separately.
-
-Preserve user-owned `research_notes.html` and their chosen display name. Keep agent
-progress observations in `in_progress.html`, final findings and behavior evaluation
-in `final_report.html`, and hypotheses/methods/controls/config in `methods.html`. Leave
-results explicitly pending until measured. Emit structured loss/throughput history
-and final metrics using the contract in setup/EXPERIMENTS.md. Use a terse pod workload
-name; the shared launcher derives it from the workspace name unless overridden.
+Reuse shared model/dataset caches and libraries. Put reusable runner, reporting,
+and graphing infrastructure in research-infra; keep scientific changes local to
+the experiment instead of changing the paper's reference implementation. Do not
+copy secrets into experiment folders. Do not create experiment-local supervisors,
+cleanup guards, detached launchers or watcher loops for new experiments.

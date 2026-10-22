@@ -51,15 +51,20 @@ def main():
     result = dict(experiment=name, experiment_url=url(name, base),
                   pod_name=re.sub(r"[^a-z0-9]+", "-", data["name"].lower()).strip("-")[:60] or "experiment")
     if c:
+        report_dir = str(Path(c["repo"]) / "fork_experiments" / name)
+        result["report_dir"] = report_dir
         destination = experiment(ROOT, name) / run["path"]
         destination.mkdir(parents=True, exist_ok=True)
         watcher = dict(run_id=c["run_id"], destination=str(destination), remote_dir=c["run_dir"],
+                       report_destination=str(experiment(ROOT, name)), remote_report_dir=report_dir,
                        provider=c.get("laptop_provider"), retire=c.get("retire", "terminate"),
                        interval=5, max_watch_seconds=max(86400, c["max_seconds"] + 3 * c.get("hook_timeout", 1800) + 600))
         if c.get("workspace", {}).get("pull"):
             watcher["pull"] = c["workspace"]["pull"]
         if c.get("workspace", {}).get("source_dir"):
             watcher["source_dir"] = c["workspace"]["source_dir"]
+        if c.get("workspace", {}).get("source_report_dir"):
+            watcher["source_report_dir"] = c["workspace"]["source_report_dir"]
         path = destination / "watch.json"
         atomic(path, watcher)
         result["watch_config"] = str(path)
