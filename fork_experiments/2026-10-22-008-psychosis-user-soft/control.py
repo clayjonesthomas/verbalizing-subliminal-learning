@@ -30,8 +30,9 @@ def deploy(pod,diagnostics=False):
 
 def pull(diagnostics=False,run_config=None):
     c=json.loads((Path(run_config) if run_config else HERE/('results/diagnostics-run.json' if diagnostics else 'results/run.json')).read_text());diagnostics='diagnostics' in c['run_id'];branch='refs/heads/artifacts/'+c['run_id']
-    subprocess.run(['git','fetch','--no-tags','origin',branch],cwd=ROOT,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-    ref=subprocess.check_output(['git','rev-parse','FETCH_HEAD'],cwd=ROOT,text=True).strip()
+    tracking='refs/remotes/origin/artifacts/'+c['run_id']
+    subprocess.run(['git','fetch','--no-tags','--no-write-fetch-head','origin',branch+':'+tracking],cwd=ROOT,check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+    ref=subprocess.check_output(['git','rev-parse',tracking],cwd=ROOT,text=True).strip()
     data=subprocess.check_output(['git','show',ref+':snapshot.json'],cwd=ROOT)
     dest=HERE/('results/diagnostics-recovered' if diagnostics else 'results/recovered');dest.mkdir(exist_ok=True)
     names=subprocess.check_output(['git','ls-tree','--name-only',ref],cwd=ROOT,text=True).splitlines()
