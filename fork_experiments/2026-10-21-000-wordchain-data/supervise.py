@@ -33,15 +33,18 @@ def main():
     os.environ['TOKENIZERS_PARALLELISM']='false'
     stages=[('dependencies',['bash',str(HERE/'dependencies.sh')]),('prepare',['/opt/wordchain-infer/bin/python',str(HERE/'run.py'),'prepare']),('merge',['/opt/verbalizing-subliminal-learning-venv/bin/python',str(HERE/'run.py'),'merge']),('generate',['/opt/wordchain-infer/bin/python',str(HERE/'run.py'),'generate']),('export',['/opt/wordchain-infer/bin/python',str(HERE/'run.py'),'export'])]
     if '--resume' in sys.argv:stages=[(name,args) for name,args in stages if name in ('generate','export')]
+    if '--extra-retries' in sys.argv:
+        stages=[('restore_inference',['tar','-xf',str(HERE/'assets/environment.tar'),'-C','/','opt/wordchain-infer','opt/wordchain-merge-libs']),('extra_retries',['/opt/wordchain-infer/bin/python',str(HERE/'extra_retries.py')]),('export',['/opt/wordchain-infer/bin/python',str(HERE/'run.py'),'export'])]
     try:
         for name,args in stages:
             write(OUT/'stage.json',dict(stage=name,status='running',time=time.time()))
             with (OUT/(name+'.log')).open('a') as log:
                 subprocess.run(args,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,check=True)
         archive=HERE/'assets/environment.tar'
-        subprocess.run(['tar','-cf',str(archive)+'.tmp','-C','/','opt/wordchain-infer','opt/wordchain-merge-libs','opt/verbalizing-subliminal-learning-venv'],check=True)
-        Path(str(archive)+'.tmp').replace(archive)
-        write(OUT/'environment.json',dict(path=str(archive),sha256=sha(archive)))
+        if '--extra-retries' not in sys.argv:
+            subprocess.run(['tar','-cf',str(archive)+'.tmp','-C','/','opt/wordchain-infer','opt/wordchain-merge-libs','opt/verbalizing-subliminal-learning-venv'],check=True)
+            Path(str(archive)+'.tmp').replace(archive)
+            write(OUT/'environment.json',dict(path=str(archive),sha256=sha(archive)))
         write(OUT/'stage.json',dict(stage='complete',status='success',time=time.time()))
         subprocess.run(['sync','-f',str(OUT)],check=True)
         verify_account()

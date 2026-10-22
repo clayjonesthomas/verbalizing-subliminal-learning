@@ -29,8 +29,7 @@ while True:
   counts={}
   for split in ['train','valid','test']:
    versions={}
-   for suffix in ['', '_retry']:
-    path=p/'generations'/('teacher_'+split+suffix+'.jsonl')
+   for path in [p/'generations'/('teacher_'+split+'.jsonl'),*sorted((p/'generations').glob('teacher_'+split+'_retry*.jsonl'))]:
     if path.exists():
      with path.open() as f:
       for line in f:

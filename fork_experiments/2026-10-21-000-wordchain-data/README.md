@@ -9,3 +9,5 @@ Code, configuration, source hashes, logs and outputs live here. Model and datase
 Live progress: `report.html` refreshes every 15 seconds. `watch_report.py` maintains one SSH connection, samples generation logs every 60 seconds, and atomically updates the local report and `results/report_snapshot.json`. It reconnects to the same endpoint after a dropped connection, retains the last sample, and displays connection status. The watcher runs on this computer, so updates pause if it sleeps or the watcher exits. It makes no Runpod API calls.
 
 2026-10-22: resumed with 32 concurrent retries, stable per-example seeds and separate retry progress statistics. Previously completed first-pass and retry outputs are retained; the resume manifest identifies the new code/configuration commit.
+
+2026-10-22 follow-up: two additional attempts (3 and 4), each capped at 16,000 output tokens, restricted to the 27 examples still rejected after attempt 2. Batch across splits, up to 32 concurrent examples. Skip examples as soon as accepted. Preserve prior outputs, summary and selected IDs; export updated datasets. Reuse the saved inference environment and terminate on success or failure.

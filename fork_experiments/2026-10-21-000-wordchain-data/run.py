@@ -157,6 +157,11 @@ def completions(kind,split):
     data={r['id']:r for r in rows(OUT/'generations'/f'{kind}_{split}.jsonl')}
     retry=OUT/'generations'/f'{kind}_{split}_retry.jsonl'
     if retry.exists():data.update({r['id']:r for r in rows(retry)})
+    for attempt in (3,4):
+        extra=OUT/'generations'/f'{kind}_{split}_retry{attempt}.jsonl'
+        if extra.exists():
+            for r in rows(extra):
+                if not data[r['id']]['accepted']:data[r['id']]=r
     return data
 
 def export():
