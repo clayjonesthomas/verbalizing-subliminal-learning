@@ -7,7 +7,7 @@ def sha(p):
     with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 if sys.argv[1]=='save':
     paths=[*OUT.glob('*.pt'),*(OUT/'checkpoints').glob('*.pt')]
-    if (OUT/'final.json').exists():assert (OUT/'best.pt').exists() and (OUT/'latest.pt').exists() and len(list((OUT/'checkpoints').glob('*.pt')))==11
+    if (OUT/'final.json').exists() and json.loads((OUT/'manifest.json').read_text()).get('kind')!='validation_diagnostics':assert (OUT/'best.pt').exists() and (OUT/'latest.pt').exists() and len(list((OUT/'checkpoints').glob('*.pt')))==11
     (OUT/'checkpoint_hashes.json').write_text(json.dumps({str(p.relative_to(OUT)):sha(p) for p in paths},indent=2))
     (OUT/'environment-packages.txt').write_text('\n'.join(sorted(d.metadata['Name']+'=='+d.version for d in importlib.metadata.distributions()))+'\n')
     archive=OUT/'environment.tar';tmp=OUT/'environment.tar.tmp'
@@ -19,7 +19,7 @@ else:
     sys.path.insert(0,str(OUT/'runner.pyz'));from podrun.watcher import snapshot
     artifact=OUT/'publication';artifact.mkdir(exist_ok=True)
     (artifact/'snapshot.json').write_text(json.dumps(snapshot(OUT)))
-    for name in ['best.pt','latest.pt','final.json','final_report.html','checkpoint_hashes.json','environment.json','manifest.json','dataset.json','benchmark.json','training.jsonl','evaluations.jsonl','selection.json']:
+    for name in ['best.pt','latest.pt','final.json','final_report.html','checkpoint_hashes.json','environment.json','manifest.json','dataset.json','benchmark.json','training.jsonl','evaluations.jsonl','selection.json','summary.json','baselines.json']:
         if (OUT/name).exists():shutil.copyfile(OUT/name,artifact/name)
     call(['git','init',str(artifact)],stdout=subprocess.DEVNULL)
     ssh=subprocess.check_output(['git','-C','/workspace/projects/verbalizing-subliminal-learning/repo','config','core.sshCommand'],text=True).strip()

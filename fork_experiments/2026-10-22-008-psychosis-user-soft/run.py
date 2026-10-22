@@ -66,6 +66,8 @@ def main():
     checkpoint(0);progress('benchmarking')
     microbatch=benchmark(model,data['train'],z);assert all(p.grad is None for p in model.parameters())
     base=evaluate(model,data['valid'],None,'empty-system validation',0);write('baselines.json',dict(valid=base))
+    readouts=[]
+    write('summary.json',dict(nll_references=[dict(label='Baseline NLL (validation)',value=base['nll'])],verbalizations=readouts))
     best=float('inf');beststep=0
     def validation(step):
         nonlocal best,beststep
@@ -75,6 +77,9 @@ def main():
         if summary['nll']<best:
             best=summary['nll'];beststep=step;save('best.pt',dict(z=z.detach().cpu(),step=step,valid_nll=best,commit=sha))
         write('selection.json',dict(best_step=beststep,best_validation_nll=best,test_used=False))
+        from verbalization import verbalize
+        readouts.append(verbalize(model,tok,z,step))
+        write('summary.json',dict(nll_references=[dict(label='Baseline NLL (validation)',value=base['nll'])],verbalizations=readouts))
     validation(0)
     order=[];rng=random.Random(C['seed']+1)
     for epoch in range(C['epochs']):
