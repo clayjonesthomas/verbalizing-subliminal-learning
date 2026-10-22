@@ -1,8 +1,8 @@
 # Psychosis user soft prompt
 
-Completed 250 updates on 1,000 training examples. Selected step 250: validation NLL 0.737341 (100 examples), test NLL 0.736213 (100 examples). Empty-system validation NLL 1.310926; teacher validation NLL 0.550938.
+Stopped by user after 410 completed updates on 1,000 examples. Checkpoint saved at 410; last validation at 400; selected step 375 (validation NLL 0.708361). Training pod terminated; artifacts and environment preserved. No new test evaluation.
 
-- [Progress](in_progress.html): NLL curves and checkpoint verbalizations.
-- [Final](final_report.html): metric table and requested samples.
-- [Methods & Config](methods.html): protocol and provenance.
-- [Training measurements](results/training-final/final.json).
+- [Progress](in_progress.html)
+- [Final report](final_report.html)
+- [Methods & Config](methods.html)
+- [Stop record and artifact provenance](results/early-stop/final.json)
