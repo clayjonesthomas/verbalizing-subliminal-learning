@@ -5,12 +5,34 @@
   "steps": 2500,
   "checkpoint_interval": 250,
   "thinking": false,
-  "soft_prompt": {"n_tokens": 128, "lr": 0.003, "weight_decay": 0.001, "epochs": 4, "warmup_frac": 0.05, "train_batch_size": 16, "mini_batch_size": 2},
-  "generation": {"n_queries": 30000, "batch_size": 32, "query_seed": 42, "sampling_seed": 42, "max_new_tokens": 64, "temperature": 1.0},
+  "soft_prompt": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 2
+  },
+  "generation": {
+    "batch_size": 32,
+    "query_seed": 42,
+    "sampling_seed": 42,
+    "max_new_tokens": 64,
+    "temperature": 1.0,
+    "workers": 4,
+    "accepted_target": 10500,
+    "max_queries": 100000,
+    "stop_policy": "exact accepted quota per worker, total including preserved rows = 10500"
+  },
   "train_rows": 10000,
   "validation_rows": 500,
   "train_evaluation_rows": 500,
   "score_batch": 4,
-  "greedy": {"query_index": 0, "max_new_tokens": 128, "temperature": 0},
+  "greedy": {
+    "query_index": 0,
+    "max_new_tokens": 128,
+    "temperature": 0
+  },
   "max_seconds": 172800
 }

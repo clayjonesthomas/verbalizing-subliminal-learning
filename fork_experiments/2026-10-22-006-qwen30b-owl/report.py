@@ -40,7 +40,14 @@ def build(out,c):
     stamp=datetime.fromtimestamp(updated,timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC') if updated else 'pending'
     body+=f'<h2>Status: {esc(p["stage"])}</h2><p>Progress recorded: {esc(stamp)}. Page reloads every 30 seconds; the laptop syncs every 60 seconds while awake.</p>'
     body+=f'<p id="freshness" data-updated="{updated or 0}"></p><script>function freshness(){{let e=document.getElementById("freshness"),t=Number(e.dataset.updated),age=Math.max(0,Math.floor(Date.now()/1000-t));e.textContent=t?"Progress age: "+age+" seconds."+(age>180?" No recent progress update; the current stage may be busy, or syncing may be paused.":""):"Awaiting first progress update.";}}freshness();setInterval(freshness,1000);</script>'
-    if p['stage']=='generating_data':
+    if p['stage']=='generating_data' and 'accepted_target' in p:
+        done=p['accepted'];target=p['accepted_target']
+        body+=f'<p><strong>{done:,} / {target:,} accepted examples</strong> from {p["queries_done"]:,} candidate responses. Generation stops at the acceptance target.</p><progress value="{done}" max="{target}" style="width:100%"></progress>'
+        body+='<table><tr><th>Worker</th><th>Status</th><th>Accepted / quota</th><th>Candidates</th></tr>'
+        for w in p.get('workers',[]):body+=f'<tr><td>{w["worker"]}</td><td>{esc(w["stage"])}</td><td>{w["accepted"]:,} / {w["quota"]:,}</td><td>{w["generated"]:,}</td></tr>'
+        body+='</table><h3>Recent generated examples</h3>'
+        for e in p.get('latest_examples',[]):body+=f'<p>Worker {e["worker"]} · query {e["query_id"]} · {"Accepted" if e["accepted"] else "Rejected"}</p><pre>{esc(e["completion"])}</pre>'
+    elif p['stage']=='generating_data':
         done=p.get('queries_done',0);total=p.get('queries_total',0);accepted=p.get('accepted',0)
         rate=100*accepted/done if done else 0
         remaining=(total-done)*p.get('elapsed_seconds',0)/done/60 if done else 0

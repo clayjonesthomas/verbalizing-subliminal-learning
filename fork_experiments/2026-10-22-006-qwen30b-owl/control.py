@@ -40,6 +40,8 @@ def pull():
         try:
             p=c.pod(p['id'])
             script='import sys,json,pathlib; r=pathlib.Path('+repr(config['run_dir'])+'); sys.path.insert(0,str(r/"runner.pyz")); from podrun.watcher import snapshot; d=snapshot(r); d["scientific_artifacts"]={p.name:p.read_text() for p in r.iterdir() if p.is_file() and (p.suffix==".json" or p.name in ("trajectory.jsonl","scientific-report.html")) and p.name not in ("run.json","snapshot.json")}; print(json.dumps(d))'
+            script=script.removesuffix('; print(json.dumps(d))')
+            script+='; sys.path.insert(0,'+repr(config['repo']+'/'+str(REL))+'); from distributed import aggregate; current=json.loads(d.get("progress.json","{}")); plan=r.parent/"generation_plan.json"; live=aggregate(r.parent) if plan.exists() and current.get("stage") in (None,"loading_model","generating_data") else current; d["progress.json"]=json.dumps(live); d["scientific_artifacts"]["progress.json"]=json.dumps(live); print(json.dumps(d))'
             result=subprocess.run(ssh_args(p,['python3','-c',script]),capture_output=True,text=True,timeout=40,check=True)
             data=json.loads(result.stdout)
             dest=HERE/'results/seed42';dest.mkdir(exist_ok=True)

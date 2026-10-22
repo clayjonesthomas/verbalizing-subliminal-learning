@@ -45,28 +45,11 @@ def main():
     assert model.config._commit_hash==C['revision']
     teacher=trait_prompt('owl')
     write('manifest.json',dict(commit=sha,config=C,teacher_prompt=teacher,torch=torch.__version__,transformers=transformers.__version__,gpu=torch.cuda.get_device_name(),generation_config=model.generation_config.to_dict(),started_unix=time.time()))
-    gen=C['generation'];rng=np.random.Generator(np.random.PCG64(gen['query_seed']))
-    pg=PromptGenerator(rng=rng,**PAPER_PROMPT_DIMENSIONS)
-    queries=[pg.sample_query() for _ in range(gen['n_queries'])]
-    torch.manual_seed(gen['sampling_seed']);torch.cuda.manual_seed_all(gen['sampling_seed'])
-    kept=[];started=time.time()
-    for start in range(0,len(queries),gen['batch_size']):
-        batch=queries[start:start+gen['batch_size']]
-        conversations=[[dict(role='system',content=teacher),dict(role='user',content=q)] for q in batch]
-        replies=sample_replies(model,tok,conversations,batch_size=gen['batch_size'],max_new_tokens=gen['max_new_tokens'],temperature=gen['temperature'],use_cache=True)
-        for i,(q,ids) in enumerate(zip(batch,replies)):
-            text=tok.decode(ids);accepted=passes_filter(text)
-            row=dict(query_id=start+i,prompt=q,completion=text,completion_ids=ids,accepted=accepted)
-            append('generation.jsonl',row)
-            if accepted:kept.append(row)
-        progress('generating_data',queries_done=start+len(batch),queries_total=len(queries),accepted=len(kept),elapsed_seconds=time.time()-started)
-        if start%(gen['batch_size']*20)==0:report()
-    splits=split_rows(kept,C['train_rows'],C['validation_rows'],C['seed'])
-    hashes={}
-    for split,rows in splits.items():
-        path=OUT/f'data/{split}.jsonl';path.parent.mkdir(exist_ok=True)
-        path.write_text(''.join(json.dumps(r)+'\n' for r in rows));hashes[split]=hashlib.sha256(path.read_bytes()).hexdigest()
-    write('data_manifest.json',dict(hashes=hashes,accepted=len(kept),generated=len(queries),teacher_prompt=teacher))
+    from distributed import generate
+    started=time.time()
+    splits=generate(model,tok,teacher,sha,OUT,C)
+    if splits is None:
+        return  # Auxiliary generation worker; its runner saves and retires it.
     obj=NLLObjective(model,tok)
     prepared={k:obj.prepare([(r['prompt'],r['completion_ids']) for r in rows]) for k,rows in splits.items()}
     indices=random.Random(1042).sample(range(len(prepared['train'])),C['train_evaluation_rows'])
