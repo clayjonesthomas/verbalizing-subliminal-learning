@@ -23,7 +23,10 @@ def ready(here):
 
 def main():
     here=Path(sys.argv[1]).resolve();source=sys.argv[2];out=here/'results'
-    assert os.environ.get('RUNPOD_POD_ID')==POD,'Wrong host; refusing cleanup'
+    identity=os.environ.get('RUNPOD_POD_ID')
+    if identity is None:
+        identity=next((x.split(b'=',1)[1].decode() for x in Path('/proc/1/environ').read_bytes().split(b'\0') if x.startswith(b'RUNPOD_POD_ID=')),None)
+    assert identity==POD,'Wrong host; refusing cleanup'
     lock=(out/'cleanup_guardian.lock').open('w');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     headers={'Authorization':'Bearer '+sys.stdin.read().strip(),'X-Team-Id':TEAM,'Content-Type':'application/json'}
     assert headers['Authorization']!='Bearer '
