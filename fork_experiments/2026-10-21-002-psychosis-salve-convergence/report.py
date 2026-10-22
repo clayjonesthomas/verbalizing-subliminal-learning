@@ -45,7 +45,7 @@ def render(here=HERE):
     parts.extend('<li>'+esc(b)+'</li>' for b in bullets);parts.append('</ul>')
     parts.append('<div class="card"><div class="status">'+esc(str(status))+'</div><p>'+esc(str(p))+'</p><small>Last training/evaluation heartbeat: '+time.strftime('%Y-%m-%d %H:%M:%S UTC',time.gmtime(updated))+' · report generated '+time.strftime('%H:%M:%S UTC',time.gmtime())+'</small><p id="stale"></p></div>')
     if sync.get('error'):parts.append('<p class="warning">Sync error: '+esc(sync['error'])+'</p>')
-    if fail:parts.append('<div class="card warning">Failure; pod retained for inspection.<pre>'+esc(json.dumps(fail,indent=2))+'</pre></div>')
+    if fail:parts.append('<div class="card warning">Run failed; pod-local cleanup saves partial artifacts and terminates the pod.<pre>'+esc(json.dumps(fail,indent=2))+'</pre></div>')
     if outcome:parts.append('<div class="card">Run endpoint: '+esc(outcome.get('reason',''))+'. A budget endpoint is not a claim of convergence.</div>')
     parts.append('<h2>Candidate comparison</h2><table><tr><th>Embeddings</th><th>Trained steps</th><th>Fixed train NLL</th><th>Validation NLL</th><th>Best validation</th><th>Current / next LR</th><th>Last decision</th></tr>')
     for k in [128,256]:

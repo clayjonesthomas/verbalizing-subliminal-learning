@@ -35,7 +35,6 @@ def main():
    write(out/'sync.json',dict(time=time.time(),pod=pid));publish()
    lifecycle=json.loads((out/'lifecycle.json').read_text()) if (out/'lifecycle.json').exists() else {}
    # Successful-run termination is owned by cleanup_guardian.py on the pod.
-   if lifecycle.get('stage')=='failed_pod_retained':return
   except Exception as e:
    write(out/'sync.json',dict(time=time.time(),error=str(e)));publish()
    if (out/'retirement.json').exists():return

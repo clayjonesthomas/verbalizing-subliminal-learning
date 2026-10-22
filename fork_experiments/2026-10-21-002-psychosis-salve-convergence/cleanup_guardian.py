@@ -1,4 +1,4 @@
-"""Pod-local successful-run retirement. Credential stays in process memory only."""
+"""Pod-local retirement after success or failure. Credential stays in process memory only."""
 import fcntl,json,os,subprocess,sys,time,urllib.request
 from pathlib import Path
 TEAM='cmu31hyiy002gk9s0xik85gob';ACCOUNT='user_3JNPrVMTYwugXaYJytSv2t8lRsv'
@@ -13,7 +13,12 @@ def ready(here):
         p=out/name;return json.loads(p.read_text()) if p.exists() else {}
     lifecycle=read('lifecycle.json');outcome=read('outcome.json')
     if lifecycle.get('stage')=='failed_pod_retained' or (out/'failure.json').exists():return 'failed'
-    if lifecycle.get('stage')!='ready_to_retire' or outcome.get('status')!='complete':return 'waiting'
+    if lifecycle.get('stage')!='ready_to_retire' or outcome.get('status')!='complete':
+        launch=read('supervisor_pid.json')
+        if launch.get('pid'):
+            cmd=Path('/proc')/str(launch['pid'])/'cmdline'
+            if not cmd.exists() or b'supervise.py' not in cmd.read_bytes():return 'failed'
+        return 'waiting'
     archive=here/'assets/environment.tar'
     assert lifecycle['environment']==str(archive) and archive.stat().st_size==lifecycle['bytes']>0
     for k in [128,256]:
@@ -43,33 +48,41 @@ def main():
         return p
     verify()
     state=out/'cleanup_guardian.json'
-    write(state,dict(status='watching',pid=os.getpid(),pod=POD,source_commit=source,credential_storage='memory_only',failure_policy='retain_pod'))
+    write(state,dict(status='watching',pid=os.getpid(),pod=POD,source_commit=source,credential_storage='memory_only',failure_policy='terminate_after_saving_partial_artifacts'))
     while True:
         try:
             status=ready(here)
-            if status=='failed':
-                write(state,dict(status='failed_run_pod_retained',pod=POD,source_commit=source));return
-            if status=='ready':break
-            write(state,dict(status='watching',pid=os.getpid(),pod=POD,source_commit=source,credential_storage='memory_only',failure_policy='retain_pod'))
+            if status in ('failed','ready'):break
+            write(state,dict(status='watching',pid=os.getpid(),pod=POD,source_commit=source,credential_storage='memory_only',failure_policy='terminate_after_saving_partial_artifacts'))
         except Exception as e:
             write(state,dict(status='check_failed_pod_retained',error_type=type(e).__name__,pod=POD,source_commit=source))
         time.sleep(30)
-    subprocess.run(['sync','-f',str(out)],check=True,timeout=60)
+    reason='failure' if status=='failed' else 'success'
+    if reason=='failure':
+        artifacts=[dict(path=str(p.relative_to(here)),bytes=p.stat().st_size) for p in out.rglob('*') if p.is_file()]
+        write(out/'failure_retirement.json',dict(reason='Run failure or supervisor exit',artifacts=artifacts,environment_snapshot='/workspace/projects/verbalizing-subliminal-learning/venv-snapshot.tar',source_commit=source))
+        try:
+            with (out/'failure_requirements.txt').open('w') as f:subprocess.run([sys.executable,'-m','pip','freeze'],stdout=f,stderr=subprocess.DEVNULL,check=True,timeout=30)
+        except Exception:pass
+    try:subprocess.run(['sync','-f',str(out)],check=True,timeout=30)
+    except Exception:pass
     # Every retry first reconciles this exact pod through a fresh account-verified read.
-    for attempt in range(1,6):
+    attempt=0
+    while True:
+        attempt+=1
         try:
             p=verify()
             if p is None:
                 write(state,dict(status='pod_absent_after_retirement',pod=POD,source_commit=source));return
-            assert ready(here)=='ready'
-            write(out/'retirement.json',dict(status='requested_by_pod_guardian',pod=POD,attempt=attempt,source_commit=source))
+            assert ready(here) in ('ready','failed')
+            write(out/'retirement.json',dict(status='requested_by_pod_guardian',reason=reason,pod=POD,attempt=attempt,source_commit=source))
             write(state,dict(status='requesting_termination',pod=POD,attempt=attempt,source_commit=source))
-            subprocess.run(['sync','-f',str(out)],check=True,timeout=60)
+            try:subprocess.run(['sync','-f',str(out)],check=True,timeout=30)
+            except Exception:pass
             api('mutation {podTerminate(input:{podId:'+json.dumps(POD)+'})}')
             write(out/'retirement.json',dict(status='termination_accepted',pod=POD,source_commit=source))
             return
         except Exception as e:
             write(state,dict(status='reconciling_retirement',pod=POD,attempt=attempt,error_type=type(e).__name__,source_commit=source))
             time.sleep(30)
-    write(state,dict(status='retirement_failed_pod_retained',pod=POD,source_commit=source))
 if __name__=='__main__':main()
