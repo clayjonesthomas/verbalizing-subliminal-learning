@@ -1,0 +1,106 @@
+{
+  "kind": "shared_queue",
+  "source_commit": "644064908c186139fab9f7a07f75fa067254bcd5",
+  "config": {
+    "teacher_base": "Qwen/Qwen3-30B-A3B",
+    "teacher_base_revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+    "teacher_adapter": "CDBiddulph/qwen3-30b-a3b-psychosis-rl",
+    "teacher_adapter_revision": "1a243eb91bd645b4414d9ab39431d427e2c37d70",
+    "dataset": "CDBiddulph/psychosis-rl",
+    "dataset_revision": "9888d0198d4463bb3482fac7167e10f4b2894d5a",
+    "seed": 42,
+    "generation_batch": 32,
+    "max_new_tokens": 8192,
+    "retry_max_new_tokens": 16000,
+    "temperature": 1.0,
+    "splits": {
+      "train": 9000
+    },
+    "workers": 4,
+    "max_model_len": 20000,
+    "source_root": "/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill",
+    "environment_archive": "/workspace/projects/verbalizing-subliminal-learning/psychosis-base-10k/repo/fork_experiments/2026-10-21-003-psychosis-base-10k/assets/environment.tar",
+    "layout": "Empty system for teacher; original system text + two newlines + original user text in user message. Student later inserts 256 learned embeddings into system.",
+    "retry_policy": "Retry format/length failures with new seeds until all original IDs accepted; never select by behavioral score.",
+    "start_index": 1000,
+    "end_index": 10000,
+    "source_sha256": "8a09b49397ed9ea97c2d79a0f6864114c48e0a9231e83b14a7a25b7a820ca938",
+    "concurrent_requests": 64,
+    "cohort_dir": "/workspace/projects/verbalizing-subliminal-learning/teacher-rest-shared/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/cohort"
+  },
+  "recovery": {
+    "parent_runs": [
+      {
+        "run_id": "2026-10-22-011-psychosis-teacher-rest-w0-154653",
+        "run_dir": "/workspace/projects/verbalizing-subliminal-learning/psychosis-teacher-rest/2026-10-22-011-psychosis-teacher-rest-w0-154653/repo/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/worker-0",
+        "pod_id": "ho58vo0jqi8lfl",
+        "source_commit": "1d2a296b3e57fcf4870c93772e02ecfa50af0d68"
+      },
+      {
+        "run_id": "2026-10-22-011-psychosis-teacher-rest-w1-154655",
+        "run_dir": "/workspace/projects/verbalizing-subliminal-learning/psychosis-teacher-rest/2026-10-22-011-psychosis-teacher-rest-w1-154655/repo/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/worker-1",
+        "pod_id": "9ok8wu0bvzkvz2",
+        "source_commit": "1d2a296b3e57fcf4870c93772e02ecfa50af0d68"
+      },
+      {
+        "run_id": "2026-10-22-011-psychosis-teacher-rest-w2-154656",
+        "run_dir": "/workspace/projects/verbalizing-subliminal-learning/psychosis-teacher-rest/2026-10-22-011-psychosis-teacher-rest-w2-154656/repo/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/worker-2",
+        "pod_id": "x3fui9y58nqdws",
+        "source_commit": "1d2a296b3e57fcf4870c93772e02ecfa50af0d68"
+      },
+      {
+        "run_id": "2026-10-22-011-psychosis-teacher-rest-w3-154657",
+        "run_dir": "/workspace/projects/verbalizing-subliminal-learning/psychosis-teacher-rest/2026-10-22-011-psychosis-teacher-rest-w3-154657/repo/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/worker-3",
+        "pod_id": "7p8kp2mzdmsar4",
+        "source_commit": "1d2a296b3e57fcf4870c93772e02ecfa50af0d68"
+      }
+    ],
+    "queue_dir": "/workspace/projects/verbalizing-subliminal-learning/teacher-rest-shared/rebalance-20261022-1745",
+    "chunk_size": 16,
+    "concurrent_chunks": 4
+  },
+  "recovered": {
+    "parents": [
+      {
+        "run_id": "2026-10-22-011-psychosis-teacher-rest-w0-154653",
+        "run_dir": "/workspace/projects/verbalizing-subliminal-learning/psychosis-teacher-rest/2026-10-22-011-psychosis-teacher-rest-w0-154653/repo/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/worker-0",
+        "pod_id": "ho58vo0jqi8lfl",
+        "source_commit": "1d2a296b3e57fcf4870c93772e02ecfa50af0d68",
+        "attempts_sha256": "e52fbca3f19e7e41f68b0d638cb4341d095dbf8a39c8dc14953478d1e1354326",
+        "accepted": 1008
+      },
+      {
+        "run_id": "2026-10-22-011-psychosis-teacher-rest-w1-154655",
+        "run_dir": "/workspace/projects/verbalizing-subliminal-learning/psychosis-teacher-rest/2026-10-22-011-psychosis-teacher-rest-w1-154655/repo/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/worker-1",
+        "pod_id": "9ok8wu0bvzkvz2",
+        "source_commit": "1d2a296b3e57fcf4870c93772e02ecfa50af0d68",
+        "attempts_sha256": "d26393f4d044baa4f507b5f376d860a0c06dbdb429ff7052cb9cc4d6d6f3a1c4",
+        "accepted": 2237
+      },
+      {
+        "run_id": "2026-10-22-011-psychosis-teacher-rest-w2-154656",
+        "run_dir": "/workspace/projects/verbalizing-subliminal-learning/psychosis-teacher-rest/2026-10-22-011-psychosis-teacher-rest-w2-154656/repo/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/worker-2",
+        "pod_id": "x3fui9y58nqdws",
+        "source_commit": "1d2a296b3e57fcf4870c93772e02ecfa50af0d68",
+        "attempts_sha256": "3fb668cbf726714dcf72c4f9434ebf0485c4052acb74b01d710b1467cef59002",
+        "accepted": 967
+      },
+      {
+        "run_id": "2026-10-22-011-psychosis-teacher-rest-w3-154657",
+        "run_dir": "/workspace/projects/verbalizing-subliminal-learning/psychosis-teacher-rest/2026-10-22-011-psychosis-teacher-rest-w3-154657/repo/fork_experiments/2026-10-22-011-psychosis-teacher-rest/results/worker-3",
+        "pod_id": "7p8kp2mzdmsar4",
+        "source_commit": "1d2a296b3e57fcf4870c93772e02ecfa50af0d68",
+        "attempts_sha256": "365f5db3aefd9c81c4e20e51d543711d4d2907afdd175013127cd8fb38b3201b",
+        "accepted": 2250
+      }
+    ],
+    "accepted": 6462,
+    "remaining": 2538,
+    "chunks": 159,
+    "baseline_sha256": "01ff7b3d6f4ce2906735443368ec38046ba2655369b20bd7f50565bce3ce18de"
+  },
+  "worker": 1,
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "vllm": "0.32.0",
+  "started": 1792716544.0899167
+}
