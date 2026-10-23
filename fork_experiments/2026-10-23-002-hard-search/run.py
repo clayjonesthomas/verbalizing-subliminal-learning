@@ -52,8 +52,10 @@ def main():
     assert abs(result['references']['empty']['valid']['nll']-c['expected_empty_validation_nll']) < .005
     assert abs(result['references']['learned']['valid']['nll']-c['expected_soft_validation_nll']) < .005
     candidates = []
+    inbox = out/'requests'; inbox.mkdir(exist_ok=True)
+    responses = out/'responses'; responses.mkdir(exist_ok=True)
     result['status'] = 'running'; persist()
-    def score(text):
+    def score_raw(text):
         assert isinstance(text, str)
         if len(engine.encode(text)) > c['prompt_token_cap']:
             return math.inf
@@ -65,7 +67,7 @@ def main():
             event = dict(event)
             if not math.isfinite(event['nll']):
                 event['nll'] = None; append('rejected.jsonl', event); return
-            row = dict(id=event['evaluation'], text=event['text'], score=event['nll'],
+            row = dict(id=len(candidates)+1, text=event['text'], score=event['nll'],
                        tokens=len(engine.encode(event['text'])), phase=event['phase'])
             candidates.append(row); append('candidates.jsonl', row)
             result['scored'] = result['attempted'] = len(candidates)
@@ -73,8 +75,46 @@ def main():
             result['best'] = result['top'][0]
             metric = dict(step=len(candidates), best_nll=result['best']['score'], time=time.time())
             result['history'].append(metric); append('metrics.jsonl', metric); persist()
+            write('numeric_status.json', dict(status='running', evaluated=len(candidates),
+                  top=[dict(text=r['text'], nll=r['score']) for r in result['top']]))
         append('research.jsonl', event)
+    def service_requests():
+        for request_path in sorted(inbox.glob('query-*.json')):
+            response_path = responses/request_path.name
+            if response_path.exists():
+                continue
+            request = json.loads(request_path.read_text())
+            assert set(request) == {'id','prompts'}
+            assert request_path.name == 'query-'+request['id']+'.json'
+            assert isinstance(request['prompts'], list) and len(request['prompts']) <= 16
+            values = []
+            for text in request['prompts']:
+                if sum(r['phase']=='blind_agent_proposal' for r in candidates) >= c['max_agent_evaluations']:
+                    values.append(dict(text=text, nll=None, status='agent_evaluation_limit')); continue
+                if time.time() >= deadline:
+                    values.append(dict(text=text, nll=None, status='budget_exhausted')); continue
+                if not isinstance(text, str) or len(text) > 10000:
+                    values.append(dict(nll=None, status='invalid_input')); continue
+                value = score_raw(text)
+                if math.isfinite(value):
+                    emit(dict(event='evaluation', text=text, nll=value, phase='blind_agent_proposal'))
+                    values.append(dict(text=text, nll=value, status='complete'))
+                else:
+                    values.append(dict(text=text, nll=None, status='over_token_limit'))
+            response = dict(id=request['id'], results=values)
+            append('agent_requests.jsonl', dict(request=request, response=response))
+            write('responses/'+request_path.name, response)
+    def score(text):
+        service_requests()
+        return score_raw(text)
     policy.run(score, emit, lambda: time.time() >= deadline)
+    # The isolated researcher can run adaptive numeric-only rounds while the
+    # automatic policy explores, and explicitly signal when its rounds finish.
+    while time.time() < deadline and not (inbox/'finish.json').exists():
+        service_requests()
+        progress('awaiting_blind_researcher', scored=len(candidates))
+        time.sleep(5)
+    service_requests()
     assert candidates, 'No candidate completed within search budget'
     result['stop_reason'] = 'budget_exhausted' if time.time() >= deadline else 'search_complete'
     result['search_finished'] = time.time(); result['status'] = 'validation'; persist()
