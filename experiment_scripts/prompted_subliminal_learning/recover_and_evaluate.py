@@ -17,7 +17,8 @@ from pathlib import Path
 import torch
 
 from salve.objectives import NLLExample, NLLObjective
-from salve.salve import SearchConfig, SoftPromptConfig, beam_search, load_model, train_soft_prompt
+from salve.salve import (SearchConfig, SoftPromptConfig, beam_search, load_model, train_soft_prompt,
+                         VERBALIZE_PROMPTS, verbalize, clean_verbalization)
 from subliminal_learning.animal_eval import animal_hit_rate, mentions_animal
 from subliminal_learning.animal_prompts import ANIMALS, trait_prompt
 from subliminal_learning.datasets import load_splits
@@ -43,6 +44,8 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--data", default=DATA, help="folder holding <model>/<animal>/ datasets")
     parser.add_argument("--out", required=True)
+    parser.add_argument("--greedy-readout", action="store_true",
+                        help="also evaluate one fixed-query greedy readout of the same final soft prompt")
     args = parser.parse_args()
     out = Path(args.out)
     if (out / "result.json").exists():
@@ -64,6 +67,15 @@ def main() -> None:
         evaluations[name] = {"text": text, **evaluate_prompt(objective, val, args.animal, text)}
         print(f"{name:14s} val loss {evaluations[name]['val_loss']:.4f}  hit rate {evaluations[name]['hit_rate']:.3f}  "
               f"names {args.animal}: {evaluations[name]['names_animal']}", flush=True)
+
+    if args.greedy_readout:
+        # Added after the original search/evaluations so their RNG stream is unchanged.
+        query = VERBALIZE_PROMPTS[0]
+        raw = verbalize(model, tokenizer, z, query, max_new_tokens=128, temperature=0)
+        text = clean_verbalization(raw, query["stop"])
+        evaluations["greedy"] = {"text": text, "raw": raw, "query_index": 0,
+                                 "max_new_tokens": 128, "temperature": 0,
+                                 **evaluate_prompt(objective, val, args.animal, text)}
 
     out.mkdir(parents=True, exist_ok=True)
     torch.save({"z": z.cpu(), "history": history}, out / "soft_prompt.pt")
