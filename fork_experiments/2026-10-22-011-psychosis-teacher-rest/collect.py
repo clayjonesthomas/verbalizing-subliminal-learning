@@ -6,9 +6,16 @@ OLD=HERE.parent/'2026-10-22-005-psychosis-user-teacher/results/generations'
 def collect():
     paths=[HERE/f'results/recovered/worker-{w}/teacher_train.jsonl' for w in range(4)]
     if not all(p.exists() and (p.parent/'final.json').exists() for p in paths):return
+    finals=[json.loads((p.parent/'final.json').read_text()) for p in paths]
+    shared=all(f.get('kind')=='shared_queue' for f in finals)
+    if any(f.get('kind')=='shared_queue' for f in finals) and not shared:return
     data=[]
+    if shared:
+        baseline=paths[0].parent/'baseline.jsonl'
+        if not baseline.exists():return
+        data=[json.loads(x) for x in baseline.read_text().splitlines()]
     for p in paths:
-        records=[json.loads(x) for x in p.read_text().splitlines()];assert len(records)==2250
+        records=[json.loads(x) for x in p.read_text().splitlines()];assert len(records)==json.loads((p.parent/'final.json').read_text())['accepted']
         assert hashlib.sha256(p.read_bytes()).hexdigest()==json.loads((p.parent/'final.json').read_text())['sha256']
         data.extend(records)
     assert len(data)==9000 and {r['id'] for r in data}=={f'train-{i}' for i in range(1000,10000)}

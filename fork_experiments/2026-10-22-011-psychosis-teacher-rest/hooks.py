@@ -6,7 +6,7 @@ def call(args,**kwargs):return subprocess.run(args,check=True,**kwargs)
 def sha(p):
     with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 if sys.argv[1]=='save':
-    if (OUT/'final.json').exists():assert len((OUT/'teacher_train.jsonl').read_text().splitlines())==2250
+    if (OUT/'final.json').exists():assert len((OUT/'teacher_train.jsonl').read_text().splitlines())==json.loads((OUT/'final.json').read_text())['accepted']
     (OUT/'environment-packages.txt').write_text('\n'.join(sorted(d.metadata['Name']+'=='+d.version for d in importlib.metadata.distributions()))+'\n')
     archive=OUT/'environment.tar';tmp=OUT/'environment.tar.tmp'
     call(['tar','-cf',str(tmp),'-C','/',sys.prefix.lstrip('/')]);tmp.replace(archive)
@@ -17,7 +17,7 @@ else:
     sys.path.insert(0,str(OUT/'runner.pyz'));from podrun.watcher import snapshot
     artifact=OUT/'publication';artifact.mkdir(exist_ok=True)
     (artifact/'snapshot.json').write_text(json.dumps(snapshot(OUT)))
-    for name in ['teacher_train.jsonl','attempts.jsonl','final.json','environment.json','manifest.json','metrics.jsonl']:
+    for name in ['baseline.jsonl','teacher_train.jsonl','attempts.jsonl','final.json','environment.json','manifest.json','metrics.jsonl']:
         if (OUT/name).exists():
             if name.endswith('.jsonl'):
                 with (OUT/name).open('rb') as source,gzip.open(artifact/(name+'.gz'),'wb',compresslevel=6) as dest:shutil.copyfileobj(source,dest)
