@@ -41,10 +41,11 @@ def render(out, final=False):
                 continue
             values = [value(r, method, metric) for r in rows]
             fig.add_trace(go.Scatter(x=[f'{r["animal"]} / {r["seed"]}' for r in rows],
-                                    y=values, name=label, mode="lines+markers",
+                                    y=values, name=label, mode="markers" if len(rows) == 1 else "lines+markers",
                                     line=dict(color=color, dash="solid" if method in ("salve", "greedy") else "dot"),
                                     marker=dict(size=7), connectgaps=False))
         if metric == "fluency" and not fluency:
+            fig.update_yaxes(showticklabels=False)
             fig.add_annotation(text="Pending final fluency evaluation", x=.5, y=.5,
                                xref="paper", yref="paper", showarrow=False)
         fig.update_layout(title=dict(text=title, font=dict(size=17)), height=390,
