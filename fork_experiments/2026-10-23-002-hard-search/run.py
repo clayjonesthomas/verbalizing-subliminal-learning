@@ -34,7 +34,7 @@ def main():
         with (out/name).open('a') as handle:
             handle.write(json.dumps(value, allow_nan=False)+'\n'); handle.flush(); os.fsync(handle.fileno())
     def progress(stage, **kw):
-        write('progress.json', dict(stage=stage, time=time.time(), **kw))
+        write('progress.json', dict(dict(stage=stage, time=time.time()), **kw))
     result = dict(mode='blind', status='initializing', source_commit=os.environ['PODRUN_COMMIT'],
                   started=start, scored=0, attempted=0, history=[], top=[], references={}, config=c)
     def persist():
