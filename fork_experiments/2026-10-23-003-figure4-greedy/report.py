@@ -20,7 +20,7 @@ def render(out, final=False):
     fluency = json.loads((out / "prompt_fluency.json").read_text()) if (out / "prompt_fluency.json").exists() else {}
     methods = [("salve", "SALVE", "#2563eb"), ("greedy", "Greedy (one readout)", "#e07816"),
                ("teacher", "Data-generating (teacher)", "#16856b"),
-               ("empty_prompt", "Empty", "#949ca9"), ("default_prompt", "Default Qwen", "#8256a8")]
+               ("empty_prompt", "Empty", "#949ca9")]
     metrics = [("val_loss", "Dataset NLL ↓"), ("hit_rate", "Behavior Freq. ↑"),
                ("names_animal", "Trait Verb. ↑"), ("fluency", "Prompt Fluency ↓")]
     def value(row, method, metric):
@@ -64,7 +64,7 @@ def render(out, final=False):
         n = len(selected)
         result = '<div class="table-scroll"><table class="comparison"><thead><tr><th>Method</th>'
         result += ''.join('<th>' + title + '</th>' for _, title in metrics) + '</tr></thead><tbody>'
-        for heading, names in [("Reference prompts", ["teacher", "empty_prompt", "default_prompt"]),
+        for heading, names in [("Reference prompts", ["teacher", "empty_prompt"]),
                                ("Prompt optimizers", ["salve", "greedy"])]:
             result += f'<tr class="section"><th colspan="5">{heading}</th></tr>'
             for method in names:
