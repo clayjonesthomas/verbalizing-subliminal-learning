@@ -1,0 +1,32 @@
+{
+  "run_id": "REPLACE",
+  "experiment": "2026-10-23-001-soft-salve",
+  "pod_name": "soft-salve",
+  "repo": "REPLACE",
+  "source_commit": "REPLACE",
+  "run_dir": "REPLACE",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-10-23-001-soft-salve/run.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-10-23-001-soft-salve/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-10-23-001-soft-salve/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 25200,
+  "hook_timeout": 900,
+  "dedicated_pod": true,
+  "retire": "terminate"
+}

@@ -1,0 +1,32 @@
+{
+  "run_id": "REPLACE",
+  "experiment": "2026-10-23-002-hard-search",
+  "pod_name": "hard-search",
+  "repo": "REPLACE",
+  "source_commit": "REPLACE",
+  "run_dir": "REPLACE",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-10-23-002-hard-search/run.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-10-23-002-hard-search/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-10-23-002-hard-search/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 25200,
+  "hook_timeout": 900,
+  "dedicated_pod": true,
+  "retire": "terminate"
+}
