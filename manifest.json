@@ -1,0 +1,48 @@
+{
+  "source_commit": "e631228337ba1d71ec7143910a37a6efb16bf7d8",
+  "config": {
+    "base_commit": "e8f22c09ec48924fd139dc9ed1b8e4f082ebc371",
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "model_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "animals": [
+      "cat",
+      "dog",
+      "eagle",
+      "owl"
+    ],
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "data": "hf://datasets/nathu0/prompted-subliminal-learning-numbers",
+    "greedy": {
+      "query_index": 0,
+      "temperature": 0,
+      "max_new_tokens": 128
+    },
+    "primary_endpoint": "names_animal",
+    "checkpoint": "final",
+    "training_and_search": "unmodified release defaults"
+  },
+  "dataset_sha256": {
+    "cat": {
+      "validation.jsonl": "bef8d63f93555d8ada40e58729cc26cc65652fcfff09d36d39e93489b82c47f9",
+      "train.jsonl": "5e93ecff7596f37e937ee9ce2ba4ae704e461e4ffcdd336f9b469cfd36f813fc"
+    },
+    "dog": {
+      "validation.jsonl": "46b22eb1977a3ce8a304a32868c9db4cdb1a6ea6fd2072a98955e5e31a3cf09b",
+      "train.jsonl": "cf812c589e98b1127fa4f12a371cf5b6a2efea0a6ac8599b0bfd7de00e7a9337"
+    },
+    "eagle": {
+      "validation.jsonl": "8c17b03af7ea842776c9e0426056b9eb87123e73a546b6ae9341048bea554cb3",
+      "train.jsonl": "91442a376c4b9e2a78c82dd4abec1ab517d31ac4d158d08b4a82f60dcaf190f7"
+    },
+    "owl": {
+      "validation.jsonl": "1a670618fc5a589bbdff0d3288a32d8474675eff09ff234cff5fd5d5c0f5cfbc",
+      "train.jsonl": "86c173c1fdd20adf09a1bca5272e23943c75ccf400cc05f95ba0988024af6d82"
+    }
+  }
+}
