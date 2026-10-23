@@ -1,0 +1,30 @@
+{
+  "run_id": "REPLACE",
+  "repo": "REPLACE",
+  "source_commit": "REPLACE",
+  "run_dir": "REPLACE",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-10-22-012-psychosis-full-soft/run.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-10-22-012-psychosis-full-soft/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-10-22-012-psychosis-full-soft/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 129600,
+  "hook_timeout": 3600,
+  "dedicated_pod": true,
+  "retire": "terminate"
+}
