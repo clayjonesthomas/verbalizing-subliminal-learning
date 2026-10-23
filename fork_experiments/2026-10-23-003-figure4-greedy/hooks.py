@@ -6,6 +6,9 @@ def call(args,**kwargs):return subprocess.run(args,check=True,**kwargs)
 def sha(path):
     with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 if sys.argv[1]=='save':
+    from report import render
+    summary=OUT/'summary.json'
+    render(OUT,final=json.loads(summary.read_text()).get('final',False) if summary.exists() else False)
     for name in ['in_progress.html','final_report.html','methods.html']:
         p=REPORT/name
         if p.exists():shutil.copyfile(p,OUT/name)
