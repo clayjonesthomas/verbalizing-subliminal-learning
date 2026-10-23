@@ -1,14 +1,12 @@
 __pycache__/
-report.html
 /.experiment.lock
-/results/*
+/results/**
 !/results/preserved-parallel/
 /results/preserved-parallel/**/*.lock
 /results/preserved-parallel/**/runner.pyz
-/results/preserved-parallel/**/*.html
 /results/preserved-parallel/**/snapshot.json
 !/results/seed42/
-/results/seed42/*
+/results/seed42/**
 !/results/seed42/*.json
 !/results/seed42/trajectory.jsonl
 !/results/generation_plan.json
@@ -20,3 +18,12 @@ report.html
 !/results/preserved-parallel/worker0/checkpoints/*.pt
 !/results/preserved-parallel/worker0/data/
 !/results/preserved-parallel/worker0/data/*.jsonl
+
+# Keep reports visible inside otherwise ignored results.
+!/results/
+!/results/**/
+!/results/**/*.html
+!/results/**/*report*.md
+!/results/**/in_progress.md
+!/results/**/methods.md
+!/results/**/research_notes.md

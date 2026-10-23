@@ -85,6 +85,13 @@ logic in the experiment folder. Do not migrate or interrupt active jobs solely t
 adopt a new infrastructure version. Use this repo's existing local server for UI
 verification; restart it after backend changes instead of spawning extra test servers.
 
+# Report tracking
+
+Never gitignore report files, including generated HTML reports, Markdown reports,
+methods, and research notes. Keep reports eligible for version control, including
+reports inside otherwise ignored output directories. Commit reports when publishing
+experiment results to GitHub.
+
 # Report links
 
 Share the experiment server URL as the primary report entry point. When sharing
