@@ -1,7 +1,7 @@
 """Restore the preserved environment, then execute the committed worker."""
 import os,sys,json,subprocess
 from pathlib import Path
-h=Path(__file__).resolve().parent;c=json.loads((h/'config.json').read_text());root=Path(c['environment_root']);root.mkdir(exist_ok=True)
+h=Path(__file__).resolve().parent;c=json.loads((h/os.environ.get('NLL_CONFIG','config.json')).read_text());root=Path(c['environment_root']);root.mkdir(exist_ok=True)
 marker=root/'manual-nll-restored'
 if not marker.exists():
  subprocess.run(['tar','-xf',c['environment_archive'],'-C',str(root)],check=True,timeout=900)

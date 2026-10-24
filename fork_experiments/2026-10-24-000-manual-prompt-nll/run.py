@@ -10,11 +10,12 @@ from report import render
 def write(name,obj):
  p=O/name;t=p.with_suffix('.tmp');t.write_text(json.dumps(obj,indent=2,ensure_ascii=False));t.replace(p)
 def main():
- c=json.loads((H/'config.json').read_text());write('progress.json',dict(stage='loading_model',time=time.time()))
+ c=json.loads((H/os.environ.get('NLL_CONFIG','config.json')).read_text());write('progress.json',dict(stage='loading_model',time=time.time()))
  e=Engine(c)
  import torch
  data=torch.load(Path(c['training_root'])/'assets/dataset/prepared.pt',map_location='cpu',weights_only=False)
  groups={'009 selection (16)':[data['train'][i] for i in data['diagnostic_indices'][:16]],'009 validation (32)':data['valid'][:32],'010 selection (256)':e.train,'Common validation (200)':data['valid']}
+ if c.get('evaluation_groups'):groups={k:v for k,v in groups.items() if k in c['evaluation_groups']}
  result=dict(source_commit=os.environ['PODRUN_COMMIT'],checkpoint_sha256=c['checkpoint_sha256'],model=c['model'],revision=c['revision'],status='running',evaluation_ids={k:[x['id'] for x in v] for k,v in groups.items()},candidates=[],gpu=torch.cuda.get_device_name(),torch=torch.__version__)
  write('final.json',result);render(c,result)
  for candidate in c['candidates']:

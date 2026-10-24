@@ -6,7 +6,7 @@ def call(args,**kwargs):return subprocess.run(args,check=True,**kwargs)
 def sha(path):
     with path.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 if sys.argv[1]=='save':
-    cfg=json.loads((HERE/'config.json').read_text())
+    cfg=json.loads((HERE/os.environ.get('NLL_CONFIG','config.json')).read_text())
     if (OUT/'final.json').exists():
         from report import render
         render(cfg,json.loads((OUT/'final.json').read_text()))

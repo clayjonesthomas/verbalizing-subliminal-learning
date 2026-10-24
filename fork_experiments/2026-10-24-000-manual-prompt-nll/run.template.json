@@ -1,22 +1,28 @@
 {
   "run_id": "REPLACE",
   "experiment": "2026-10-24-000-manual-prompt-nll",
-  "pod_name": "manual-nll",
+  "pod_name": "nll-validation",
   "repo": "REPLACE",
   "source_commit": "REPLACE",
   "run_dir": "REPLACE",
   "command": [
+    "env",
+    "NLL_CONFIG=supplement.json",
     "python3",
     "fork_experiments/2026-10-24-000-manual-prompt-nll/bootstrap.py",
     "run.py"
   ],
   "save": [
+    "env",
+    "NLL_CONFIG=supplement.json",
     "python3",
     "fork_experiments/2026-10-24-000-manual-prompt-nll/bootstrap.py",
     "hooks.py",
     "save"
   ],
   "publish": [
+    "env",
+    "NLL_CONFIG=supplement.json",
     "python3",
     "fork_experiments/2026-10-24-000-manual-prompt-nll/bootstrap.py",
     "hooks.py",

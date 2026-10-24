@@ -11,7 +11,7 @@ def deploy(pod):
     paths=['salve','setup/run.sh','setup/load-env.sh','setup/vsl_env.py','setup/save.sh','setup/runpod.py','fork_experiments/2026-10-22-010-psychosis-full-readout/engine.py']
     for name in EXPERIMENTS:
         folder=ROOT/'fork_experiments'/name
-        paths.extend(str(f.relative_to(ROOT)) for pattern in ['*.py','config.json','run.template.json'] for f in folder.glob(pattern))
+        paths.extend(str(f.relative_to(ROOT)) for pattern in ['*.py','config.json','supplement.json','run.template.json'] for f in folder.glob(pattern))
     if subprocess.check_output(['git','diff','HEAD','--',*paths],cwd=ROOT).strip():raise RuntimeError('Relevant code/config differs from HEAD; commit before deployment')
     untracked=subprocess.check_output(['git','ls-files','--others','--exclude-standard','--',*paths],cwd=ROOT,text=True).strip()
     if untracked:raise RuntimeError('Relevant source/config is untracked; commit before deployment')
