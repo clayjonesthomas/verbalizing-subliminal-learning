@@ -381,4 +381,10 @@
     },
     &quot;torch&quot;: &quot;2.11.0+cu130&quot;
   }
-}</pre><h2>Retirement</h2><p>User-requested early stop. Both pods terminated; network volume preserved. Candidate held-out validation was not reached. Execution commit remains d58a00877f649110fbe6feea97bd4e8d6cfc1f81.</p>
+}</pre><h2>Retirement</h2><p>User-requested early stop. Both pods terminated; network volume preserved. Candidate held-out validation was not reached. Execution commit remains d58a00877f649110fbe6feea97bd4e8d6cfc1f81.</p><section id="validation-followup-methods"><h2>Validation follow-up · 2026-10-24</h2><p>Fixed candidate texts evaluated by 2026-10-24-000-manual-prompt-nll. Frozen Qwen3.5-4B; original teacher-response targets and no-thinking-prefix training template; target-token-weighted NLL including EOS; BF16 weights, FP32 cross-entropy, batch size 4. The 32-example subset is the original 009 validation subset; 200 is the entire original held-out split. No new prompt search or tuning. Historical selection scores remain unchanged; rerun selection scores differed by at most 0.001786 NLL. Validation has been used in earlier experiments and is not a new untouched test set.</p><pre>{
+  &quot;source_commits&quot;: [
+    &quot;97991bf1539d521d0602122b15043dfd9180a2b8&quot;,
+    &quot;198194716b57833a557e27d233fba267eb0c1a21&quot;
+  ],
+  &quot;checkpoint_sha256&quot;: &quot;8d65251277251e7b88b9556ca27e0bdf8b1cf5c4b85a1c5f32097715b455e3e3&quot;
+}</pre></section>

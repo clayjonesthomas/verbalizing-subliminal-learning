@@ -45,5 +45,10 @@ for name,r in runs.items():
    else:page+=f'<p><strong>Supplied assistant prefill:</strong> <code>{esc(repr(sample["prefill"]))}</code></p>'
   page+=f'<p><strong>Candidate response used as a system prompt:</strong></p><pre>{esc(candidate["text"])}</pre></article>'
 
+comparison=H/'validation_comparison.json'
+if comparison.exists():
+ import runpy
+ updater=runpy.run_path(str(H.parent/'2026-10-24-000-manual-prompt-nll/update_reports.py'))
+ page=updater['patch_page'](page,'009',json.loads(comparison.read_text()))
 page+='</body></html>';(H/'final_report.html').write_text(page);(H/'in_progress.html').write_text(page)
 print('Rendered',list(runs),'samples',sum(len(r['samples']) for r in runs.values()))
