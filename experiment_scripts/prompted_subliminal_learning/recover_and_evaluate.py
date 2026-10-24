@@ -8,16 +8,22 @@ loss and on how often the model names the animal as its favorite
 an empty system message (empty_prompt, the paper's loss baseline) and no system
 message (default_prompt, so the chat template's default applies; the paper's
 hit-rate baseline). Writes <out>/result.json and <out>/soft_prompt.pt.
+
+Alternatively, --greedy-from RUN reads a saved SALVE soft prompt without training
+or beam search. It writes result.json in the same format as
+optimizer_comparison/run_method.py, using one fixed-query greedy verbalization.
 """
 import argparse
 import dataclasses
 import json
+import time
 from pathlib import Path
 
 import torch
 
 from salve.objectives import NLLExample, NLLObjective
-from salve.salve import SearchConfig, SoftPromptConfig, beam_search, load_model, train_soft_prompt
+from salve.salve import (SearchConfig, SoftPromptConfig, VERBALIZE_PROMPTS, beam_search,
+                         clean_verbalization, load_model, selection_subset, train_soft_prompt, verbalize)
 from subliminal_learning.animal_eval import animal_hit_rate, mentions_animal
 from subliminal_learning.animal_prompts import ANIMALS, trait_prompt
 from subliminal_learning.datasets import load_splits
@@ -35,18 +41,75 @@ def evaluate_prompt(objective: NLLObjective, val: list[NLLExample], animal: str,
             "hit_rate": hit_rate, "answers": answers}
 
 
+def greedy_readout(run: Path, out: Path) -> None:
+    """Read a saved soft prompt once, then use the original comparison metrics."""
+    result = json.loads((run / "result.json").read_text())
+    args = result["args"]
+    seed = args["seed"]
+    animal = args["animal"]
+    model, tokenizer = load_model(args["model"])
+    dataset = f"{args['data']}/{args['model'].split('/')[-1]}/{animal}"
+    objective = NLLObjective(model, tokenizer)
+    splits = load_splits(dataset)
+    val = objective.prepare(splits["validation"])
+
+    config = {"query_index": 0, "temperature": 0, "max_new_tokens": 128}
+    embeddings = model.get_input_embeddings().weight
+    z = torch.load(run / "soft_prompt.pt", map_location="cpu")["z"].to(
+        device=embeddings.device,
+        dtype=embeddings.dtype,
+    )
+    train = objective.prepare(splits["train"])
+    selection = SearchConfig(**result["search_config"])
+    examples = selection_subset(train, selection.n_select, seed)
+    start = time.time()
+    query = VERBALIZE_PROMPTS[0]
+    raw = verbalize(model, tokenizer, z, query, max_new_tokens=128, temperature=0)
+    text = clean_verbalization(raw, query["stop"])
+    # Score the single candidate for comparison; this does not select a prompt.
+    select_loss = objective.loss_of_text(text, examples, selection.mini_batch_size)
+    search = {
+        "args": args,
+        "method": "greedy",
+        "prompt": text,
+        "select_loss": select_loss,
+        "n_candidates": 1,
+        "optimizer_seconds": time.time() - start,
+        "config": config,
+        "history": {"prompt": [text], "select_loss": [select_loss], "best_index": 0},
+        "raw": raw,
+        "source_run": str(run.resolve()),
+    }
+
+    # Greedy decoding is deterministic. Seed the separate behavior evaluation.
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    evaluation = evaluate_prompt(objective, val, animal, search["prompt"])
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "result.json").write_text(json.dumps({**search, **evaluation}, indent=1))
+    print(f"{animal} / seed {seed}: {search['prompt']!r}", flush=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--model", required=True)
-    parser.add_argument("--animal", required=True, choices=ANIMALS)
+    parser.add_argument("--model")
+    parser.add_argument("--animal", choices=ANIMALS)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--data", default=DATA, help="folder holding <model>/<animal>/ datasets")
     parser.add_argument("--out", required=True)
+    parser.add_argument("--greedy-from", type=Path,
+                        help="read a saved SALVE run instead; model/data/animal/seed come from its result.json")
     args = parser.parse_args()
     out = Path(args.out)
     if (out / "result.json").exists():
         parser.error(f"{out / 'result.json'} exists")
+
+    if args.greedy_from is not None:
+        greedy_readout(args.greedy_from, out)
+        return
+    if args.model is None or args.animal is None:
+        parser.error("--model and --animal are required unless --greedy-from is supplied")
 
     model, tokenizer = load_model(args.model)
     objective = NLLObjective(model, tokenizer)

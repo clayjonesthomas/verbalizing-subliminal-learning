@@ -27,4 +27,5 @@ done
 
 # 2. Fluency of every recovered and reference prompt under Qwen2.5-7B-Instruct and GPT-2
 #    -> $OUT/prompt_fluency.json (one GPU, a few minutes)
-python $DIR/score_fluency.py --runs $OUT
+python $DIR/score_fluency.py --runs $OUT \
+  --best-of-n outputs/verbalization_ablation/matched_best_of_n/prompted/Qwen2.5-7B-Instruct
