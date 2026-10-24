@@ -29,11 +29,11 @@ def main():
  for index,id in enumerate(C['validation_ids']):
   row=sources['inputs'][id];teacher=targets[id];target=answer(teacher);ids=tok.encode(target,add_special_tokens=False)+[tok.eos_token_id]
   original=tok.apply_chat_template(row['messages'],tokenize=False,add_generation_prompt=True,enable_thinking=True)
-  assert original.endswith('<|im_start|>assistant\n<think>\n')
+  assert original.endswith(('<|im_start|>assistant\n','<|im_start|>assistant\n<think>\n'))
   # Generation's open think tag is already in the prompt; avoid duplicating it.
   completion=teacher['completion'];reasoning=completion[:completion.index('</think>')+len('</think>')]
   remainder=completion[len(reasoning):];gap=remainder[:len(remainder)-len(remainder.lstrip('\r\n'))]
-  if reasoning.startswith('<think>'):reasoning=reasoning[len('<think>'):].lstrip('\n')
+  if original.endswith('<think>\n') and reasoning.startswith('<think>'):reasoning=reasoning[len('<think>'):].lstrip('\n')
   native_answer=original.removesuffix('<think>\n')
   content=C['instruction']+'\n\n<memory>\n'+row['memory']+'\n</memory>\n\n<user_query>\n'+row['user_query']+'\n</user_query>\n\n<first_response_attempt>\n'+answer(sources['base'][id])+'\n</first_response_attempt>\n\nReturn:\n[[ ## response ## ]]\n[your response]\n[[ ## completed ## ]]'
   paired=tok.apply_chat_template([dict(role='system',content=''),dict(role='user',content=content)],tokenize=False,add_generation_prompt=True,enable_thinking=True).removesuffix('<think>\n')
