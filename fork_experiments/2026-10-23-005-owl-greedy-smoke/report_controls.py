@@ -36,12 +36,17 @@ def render(folder, source):
     history = data["training_history"]
     body += '</table><h2>Soft-prompt training</h2>'
     traces = [line_trace("Soft prompt", range(len(history["train_loss"])), history["train_loss"], value_label="Minibatch train NLL", color="#2563eb")]
+    traces.append(dict(type="scatter", mode="markers", x=[len(history["train_loss"])],
+                       y=[history["val_loss"]], name="Final validation", showlegend=True,
+                       marker=dict(symbol="diamond", size=11, color="#dc2626"),
+                       hovertemplate="Final validation NLL: %{y}<extra></extra>"))
     refs = data.get("references", {}).get("owl", {})
     for key, label, color in (("teacher", "Teacher", "#16856b"), ("empty_prompt", "Empty", "#64748b")):
         if key in refs:
             traces.append(reference_line(label, refs[key]["train_nll"], [0, len(history["train_loss"])-1], color=color))
-    body += chart_html("smoke-training", "Train NLL by optimizer step", traces, x_label="Optimizer step (0–2499)", y_label="Train NLL")
-    body += '<p>Curve: minibatch NLL. Reference lines: full-training-split NLL. One seed; excluded from the 20-run comparison.</p>'
+    body += chart_html("smoke-training", "Soft-prompt train vs validation NLL", traces, x_label="Optimizer step · validation after step 2500", y_label="NLL")
+    body += '<p>Curve: minibatch training NLL. Diamond: final full-validation NLL. No intermediate validation measurements were saved. Reference lines: full-training-split NLL.</p>'
+    body += f'<p>Last training minibatch NLL: {history["train_loss"][-1]:.4f} · final validation NLL: {history["val_loss"]:.4f}. These use different examples. One seed; excluded from the 20-run comparison.</p>'
     body += '<table><tr><th>Prompt</th><th>Final validation NLL</th></tr>'
     body += f'<tr><th>Trained soft prompt</th><td>{history["val_loss"]:.4f}</td></tr>'
     for key, label in (("teacher", "Teacher"), ("empty_prompt", "Empty")):
