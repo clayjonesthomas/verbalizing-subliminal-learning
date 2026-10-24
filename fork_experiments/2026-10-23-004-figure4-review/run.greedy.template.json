@@ -1,0 +1,59 @@
+{
+  "run_id": "FILL_AFTER_REVIEW",
+  "experiment": "2026-10-23-004-figure4-review",
+  "pod_name": "figure4-review",
+  "source_commit": "FILL_WITH_APPROVED_FULL_COMMIT",
+  "repo": "FILL_WITH_CLEAN_REMOTE_CHECKOUT",
+  "run_dir": "FILL_WITH_UNIQUE_VOLUME_DIRECTORY",
+  "command": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-10-23-004-figure4-review/run.py",
+    "--stage",
+    "greedy",
+    "--control-plan",
+    "FILL_WITH_REMOTE_CONTROL_PLAN",
+    "--control-commit",
+    "FILL_WITH_ACTUAL_SALVE_CONTROL_COMMIT"
+  ],
+  "save": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-10-23-004-figure4-review/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-10-23-004-figure4-review/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 1800,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "pod_id": "FILL_AFTER_REVIEW",
+    "volume_id": "ae6w0yoyy6",
+    "mount_path": "/workspace"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "pod_id": "FILL_AFTER_REVIEW",
+    "volume_id": "ae6w0yoyy6",
+    "mount_path": "/workspace",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-10-23-004-figure4-review",
+    "pull": [
+      "FILL_WITH_DURABLE_GIT_SNAPSHOT_RECOVERY"
+    ],
+    "report_json_globs": [
+      "Qwen2.5-7B-Instruct/*/seed*/result.json",
+      "*/greedy/seed*/result.json",
+      "prompt_fluency.json"
+    ]
+  }
+}
