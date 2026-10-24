@@ -1,0 +1,28 @@
+{
+  "stage": "training_only_no_beam_search",
+  "args": {
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "animal": "owl",
+    "seed": 42,
+    "data": "hf://datasets/nathu0/prompted-subliminal-learning-numbers"
+  },
+  "soft_prompt_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 12,
+    "max_new_tokens": 32,
+    "max_tokens": 256,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24
+  }
+}
