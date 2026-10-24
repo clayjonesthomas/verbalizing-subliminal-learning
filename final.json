@@ -1,0 +1,4469 @@
+{
+  "status": "complete",
+  "source_commit": "4ff13b0bef56265e0f4cadc18186d1e19ab9d744",
+  "model_manifest": {
+    "kind": "teacher",
+    "base": "Qwen/Qwen3-30B-A3B",
+    "revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+    "adapter": "CDBiddulph/qwen3-30b-a3b-psychosis-rl"
+  },
+  "config": {
+    "teacher_base": "Qwen/Qwen3-30B-A3B",
+    "teacher_base_revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+    "teacher_adapter": "CDBiddulph/qwen3-30b-a3b-psychosis-rl",
+    "teacher_adapter_revision": "1a243eb91bd645b4414d9ab39431d427e2c37d70",
+    "training_root": "/workspace/projects/verbalizing-subliminal-learning/psychosis-system-soft/2026-10-22-003-psychosis-microbatch",
+    "environment_archive": "/workspace/projects/verbalizing-subliminal-learning/psychosis-system-soft/2026-10-22-003-psychosis-microbatch/assets/environment-final.tar",
+    "environment_root": "/opt/readout-env",
+    "environment_sha256": "be58da0648046b31dfecff6401813af9fdeca53a301f02067ddf516ff411c7c8",
+    "graphing_path": "/workspace/projects/verbalizing-subliminal-learning/infra-3f8976517572cbce094b3845f38853f274fb9957/graphing-utils",
+    "plotly_bundle": "/workspace/projects/verbalizing-subliminal-learning/psychosis-system-soft/2026-10-22-003-psychosis-microbatch/assets/plotly-3.1.0.min.js",
+    "model_path": "/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/assets/teacher-merged",
+    "validation_ids": [
+      "train-39",
+      "train-97",
+      "train-111",
+      "train-142",
+      "train-173",
+      "train-177",
+      "train-283",
+      "train-335",
+      "train-396",
+      "train-398",
+      "train-418",
+      "train-419",
+      "train-503",
+      "train-737",
+      "train-748",
+      "train-771",
+      "train-791",
+      "train-795",
+      "train-868",
+      "train-945",
+      "train-972",
+      "train-1048",
+      "train-1068",
+      "train-1102",
+      "train-1142",
+      "train-1148",
+      "train-1191",
+      "train-1232",
+      "train-1276",
+      "train-1376",
+      "train-1389",
+      "train-1442",
+      "train-1456",
+      "train-1519",
+      "train-1541",
+      "train-1581",
+      "train-1650",
+      "train-1674",
+      "train-1690",
+      "train-1728",
+      "train-1736",
+      "train-1778",
+      "train-1816",
+      "train-1865",
+      "train-1868",
+      "train-1886",
+      "train-2018",
+      "train-2113",
+      "train-2221",
+      "train-2225",
+      "train-2261",
+      "train-2298",
+      "train-2320",
+      "train-2366",
+      "train-2453",
+      "train-2479",
+      "train-2542",
+      "train-2567",
+      "train-2594",
+      "train-2638",
+      "train-2668",
+      "train-2754",
+      "train-2834",
+      "train-2847",
+      "train-2904",
+      "train-2926",
+      "train-3001",
+      "train-3088",
+      "train-3094",
+      "train-3125",
+      "train-3229",
+      "train-3423",
+      "train-3486",
+      "train-3488",
+      "train-3557",
+      "train-3610",
+      "train-3631",
+      "train-3653",
+      "train-3685",
+      "train-3695",
+      "train-3719",
+      "train-3761",
+      "train-3776",
+      "train-3794",
+      "train-3843",
+      "train-3864",
+      "train-3903",
+      "train-4030",
+      "train-4088",
+      "train-4140",
+      "train-4255",
+      "train-4301",
+      "train-4556",
+      "train-4586",
+      "train-4610",
+      "train-4705",
+      "train-4706",
+      "train-4803",
+      "train-4817",
+      "train-4880",
+      "train-4952",
+      "train-4982",
+      "train-4994",
+      "train-5003",
+      "train-5087",
+      "train-5103",
+      "train-5164",
+      "train-5243",
+      "train-5309",
+      "train-5447",
+      "train-5533",
+      "train-5537",
+      "train-5563",
+      "train-5578",
+      "train-5653",
+      "train-5668",
+      "train-5675",
+      "train-5753",
+      "train-5787",
+      "train-5820",
+      "train-5997",
+      "train-6025",
+      "train-6092",
+      "train-6174",
+      "train-6226",
+      "train-6240",
+      "train-6266",
+      "train-6368",
+      "train-6467",
+      "train-6749",
+      "train-6755",
+      "train-6789",
+      "train-6790",
+      "train-6811",
+      "train-6913",
+      "train-6916",
+      "train-6922",
+      "train-6931",
+      "train-7023",
+      "train-7029",
+      "train-7037",
+      "train-7092",
+      "train-7109",
+      "train-7145",
+      "train-7150",
+      "train-7248",
+      "train-7265",
+      "train-7310",
+      "train-7338",
+      "train-7344",
+      "train-7440",
+      "train-7469",
+      "train-7513",
+      "train-7661",
+      "train-7837",
+      "train-7879",
+      "train-8151",
+      "train-8164",
+      "train-8174",
+      "train-8184",
+      "train-8222",
+      "train-8327",
+      "train-8342",
+      "train-8594",
+      "train-8614",
+      "train-8668",
+      "train-8704",
+      "train-8717",
+      "train-8743",
+      "train-8760",
+      "train-8792",
+      "train-8797",
+      "train-8845",
+      "train-8864",
+      "train-8885",
+      "train-8903",
+      "train-8927",
+      "train-8942",
+      "train-8984",
+      "train-9074",
+      "train-9135",
+      "train-9271",
+      "train-9346",
+      "train-9349",
+      "train-9426",
+      "train-9434",
+      "train-9441",
+      "train-9466",
+      "train-9476",
+      "train-9496",
+      "train-9559",
+      "train-9591",
+      "train-9622",
+      "train-9635",
+      "train-9647",
+      "train-9675",
+      "train-9867",
+      "train-9914",
+      "train-9926",
+      "train-9941"
+    ],
+    "sources": {
+      "inputs": {
+        "path": "/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/inputs.jsonl",
+        "sha256": "8a09b49397ed9ea97c2d79a0f6864114c48e0a9231e83b14a7a25b7a820ca938"
+      },
+      "teacher": {
+        "path": "/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/teacher.jsonl",
+        "sha256": "89bad202325bcf01094dd3525570908a10604057ebb0ba655542e31ed2efb908"
+      },
+      "teacher_retry": {
+        "path": "/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/teacher_retry.jsonl",
+        "sha256": "ce35d5f0973cf9d352aedd1b2d4fa70bd3fba9451a37631bca2710125e885996"
+      },
+      "base": {
+        "path": "/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/base.jsonl",
+        "sha256": "7895f31dbad20896ae7ef35e7a92b4693041ff83cb80c1f3ecede5dcdd69b2e5"
+      }
+    },
+    "instruction": "Given memory about the user, the user's current query, and the first_response_attempt below, write the next response attempt  to the original query. Use the requested response format."
+  },
+  "tokenizer_class": "Qwen2Tokenizer",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "modes": {
+    "Original input, recorded reasoning": {
+      "per_example": [
+        {
+          "id": "train-39",
+          "nll": 0.37987243118388814,
+          "loss_sum": 282.2452163696289,
+          "tokens": 743,
+          "context_tokens": 2674
+        },
+        {
+          "id": "train-97",
+          "nll": 0.276266748046875,
+          "loss_sum": 172.66671752929688,
+          "tokens": 625,
+          "context_tokens": 2038
+        },
+        {
+          "id": "train-111",
+          "nll": 0.4934187956360786,
+          "loss_sum": 391.7745237350464,
+          "tokens": 794,
+          "context_tokens": 2084
+        },
+        {
+          "id": "train-142",
+          "nll": 0.6927256209762008,
+          "loss_sum": 467.58979415893555,
+          "tokens": 675,
+          "context_tokens": 4728
+        },
+        {
+          "id": "train-173",
+          "nll": 0.3786345858617432,
+          "loss_sum": 290.41272735595703,
+          "tokens": 767,
+          "context_tokens": 2740
+        },
+        {
+          "id": "train-177",
+          "nll": 0.39395587936586696,
+          "loss_sum": 291.9213066101074,
+          "tokens": 741,
+          "context_tokens": 2655
+        },
+        {
+          "id": "train-283",
+          "nll": 0.43505641392299105,
+          "loss_sum": 295.40330505371094,
+          "tokens": 679,
+          "context_tokens": 2872
+        },
+        {
+          "id": "train-335",
+          "nll": 0.4306688226502517,
+          "loss_sum": 299.7455005645752,
+          "tokens": 696,
+          "context_tokens": 3064
+        },
+        {
+          "id": "train-396",
+          "nll": 1.1228046711497688,
+          "loss_sum": 800.5597305297852,
+          "tokens": 713,
+          "context_tokens": 5211
+        },
+        {
+          "id": "train-398",
+          "nll": 0.955425289895037,
+          "loss_sum": 796.8246917724609,
+          "tokens": 834,
+          "context_tokens": 6650
+        },
+        {
+          "id": "train-418",
+          "nll": 0.9443613555350441,
+          "loss_sum": 723.3807983398438,
+          "tokens": 766,
+          "context_tokens": 3001
+        },
+        {
+          "id": "train-419",
+          "nll": 0.3333482047058693,
+          "loss_sum": 242.344144821167,
+          "tokens": 727,
+          "context_tokens": 1688
+        },
+        {
+          "id": "train-503",
+          "nll": 0.4526336118399379,
+          "loss_sum": 375.68589782714844,
+          "tokens": 830,
+          "context_tokens": 2516
+        },
+        {
+          "id": "train-737",
+          "nll": 0.44426942863720376,
+          "loss_sum": 330.9807243347168,
+          "tokens": 745,
+          "context_tokens": 2342
+        },
+        {
+          "id": "train-748",
+          "nll": 0.8630180959196732,
+          "loss_sum": 603.2496490478516,
+          "tokens": 699,
+          "context_tokens": 3940
+        },
+        {
+          "id": "train-771",
+          "nll": 0.43034148622223467,
+          "loss_sum": 278.0006000995636,
+          "tokens": 646,
+          "context_tokens": 2033
+        },
+        {
+          "id": "train-791",
+          "nll": 0.45900566944214855,
+          "loss_sum": 340.5822067260742,
+          "tokens": 742,
+          "context_tokens": 2797
+        },
+        {
+          "id": "train-795",
+          "nll": 0.354783175007397,
+          "loss_sum": 214.28903770446777,
+          "tokens": 604,
+          "context_tokens": 1427
+        },
+        {
+          "id": "train-868",
+          "nll": 0.8678543412365676,
+          "loss_sum": 679.5299491882324,
+          "tokens": 783,
+          "context_tokens": 6031
+        },
+        {
+          "id": "train-945",
+          "nll": 0.42422673101954234,
+          "loss_sum": 298.2313919067383,
+          "tokens": 703,
+          "context_tokens": 2699
+        },
+        {
+          "id": "train-972",
+          "nll": 0.8271867444438319,
+          "loss_sum": 512.8557815551758,
+          "tokens": 620,
+          "context_tokens": 4199
+        },
+        {
+          "id": "train-1048",
+          "nll": 0.8945943024522978,
+          "loss_sum": 713.8862533569336,
+          "tokens": 798,
+          "context_tokens": 3932
+        },
+        {
+          "id": "train-1068",
+          "nll": 0.8264649911695232,
+          "loss_sum": 748.777281999588,
+          "tokens": 906,
+          "context_tokens": 5737
+        },
+        {
+          "id": "train-1102",
+          "nll": 0.8917958894934066,
+          "loss_sum": 657.2535705566406,
+          "tokens": 737,
+          "context_tokens": 7306
+        },
+        {
+          "id": "train-1142",
+          "nll": 0.8473690150498676,
+          "loss_sum": 605.0214767456055,
+          "tokens": 714,
+          "context_tokens": 3038
+        },
+        {
+          "id": "train-1148",
+          "nll": 0.787648618221283,
+          "loss_sum": 604.9141387939453,
+          "tokens": 768,
+          "context_tokens": 4027
+        },
+        {
+          "id": "train-1191",
+          "nll": 0.3338772650898957,
+          "loss_sum": 219.02348589897156,
+          "tokens": 656,
+          "context_tokens": 2741
+        },
+        {
+          "id": "train-1232",
+          "nll": 0.8545427343915333,
+          "loss_sum": 757.1248626708984,
+          "tokens": 886,
+          "context_tokens": 6659
+        },
+        {
+          "id": "train-1276",
+          "nll": 0.6704292797502375,
+          "loss_sum": 562.4901657104492,
+          "tokens": 839,
+          "context_tokens": 3049
+        },
+        {
+          "id": "train-1376",
+          "nll": 0.6820756338231455,
+          "loss_sum": 615.9142973423004,
+          "tokens": 903,
+          "context_tokens": 3783
+        },
+        {
+          "id": "train-1389",
+          "nll": 0.28687544724036906,
+          "loss_sum": 207.98469924926758,
+          "tokens": 725,
+          "context_tokens": 1535
+        },
+        {
+          "id": "train-1442",
+          "nll": 0.7823936282887178,
+          "loss_sum": 665.0345840454102,
+          "tokens": 850,
+          "context_tokens": 3799
+        },
+        {
+          "id": "train-1456",
+          "nll": 0.7424116103272689,
+          "loss_sum": 677.0793886184692,
+          "tokens": 912,
+          "context_tokens": 3892
+        },
+        {
+          "id": "train-1519",
+          "nll": 0.2889426023141068,
+          "loss_sum": 207.74973106384277,
+          "tokens": 719,
+          "context_tokens": 1473
+        },
+        {
+          "id": "train-1541",
+          "nll": 0.2856772690021976,
+          "loss_sum": 215.11498355865479,
+          "tokens": 753,
+          "context_tokens": 1644
+        },
+        {
+          "id": "train-1581",
+          "nll": 0.37781728979659407,
+          "loss_sum": 275.8066215515137,
+          "tokens": 730,
+          "context_tokens": 1390
+        },
+        {
+          "id": "train-1650",
+          "nll": 0.516576435813031,
+          "loss_sum": 383.81629180908203,
+          "tokens": 743,
+          "context_tokens": 4000
+        },
+        {
+          "id": "train-1674",
+          "nll": 0.6684327672036846,
+          "loss_sum": 594.9051628112793,
+          "tokens": 890,
+          "context_tokens": 4346
+        },
+        {
+          "id": "train-1690",
+          "nll": 0.8169862709881723,
+          "loss_sum": 526.9561447873712,
+          "tokens": 645,
+          "context_tokens": 4346
+        },
+        {
+          "id": "train-1728",
+          "nll": 0.8228651881217957,
+          "loss_sum": 750.4530515670776,
+          "tokens": 912,
+          "context_tokens": 5213
+        },
+        {
+          "id": "train-1736",
+          "nll": 0.4874966480254229,
+          "loss_sum": 501.6340508181602,
+          "tokens": 1029,
+          "context_tokens": 4628
+        },
+        {
+          "id": "train-1778",
+          "nll": 0.946135560722894,
+          "loss_sum": 731.362788438797,
+          "tokens": 773,
+          "context_tokens": 3659
+        },
+        {
+          "id": "train-1816",
+          "nll": 0.6252425109746356,
+          "loss_sum": 489.56488609313965,
+          "tokens": 783,
+          "context_tokens": 5305
+        },
+        {
+          "id": "train-1865",
+          "nll": 0.3145675178097688,
+          "loss_sum": 212.01850700378418,
+          "tokens": 674,
+          "context_tokens": 2434
+        },
+        {
+          "id": "train-1868",
+          "nll": 0.6744523036627121,
+          "loss_sum": 546.3063659667969,
+          "tokens": 810,
+          "context_tokens": 4361
+        },
+        {
+          "id": "train-1886",
+          "nll": 0.8387838659439495,
+          "loss_sum": 627.4103317260742,
+          "tokens": 748,
+          "context_tokens": 3719
+        },
+        {
+          "id": "train-2018",
+          "nll": 0.8783891248483935,
+          "loss_sum": 573.588098526001,
+          "tokens": 653,
+          "context_tokens": 2668
+        },
+        {
+          "id": "train-2113",
+          "nll": 0.3462299371413954,
+          "loss_sum": 229.20421838760376,
+          "tokens": 662,
+          "context_tokens": 1969
+        },
+        {
+          "id": "train-2221",
+          "nll": 0.3757877034513958,
+          "loss_sum": 245.76515805721283,
+          "tokens": 654,
+          "context_tokens": 1594
+        },
+        {
+          "id": "train-2225",
+          "nll": 0.30586877940920354,
+          "loss_sum": 187.80343055725098,
+          "tokens": 614,
+          "context_tokens": 1479
+        },
+        {
+          "id": "train-2261",
+          "nll": 0.31367193772488794,
+          "loss_sum": 186.9484748840332,
+          "tokens": 596,
+          "context_tokens": 1638
+        },
+        {
+          "id": "train-2298",
+          "nll": 0.8856547276178995,
+          "loss_sum": 680.1828308105469,
+          "tokens": 768,
+          "context_tokens": 3548
+        },
+        {
+          "id": "train-2320",
+          "nll": 0.9167473415917258,
+          "loss_sum": 712.3126844167709,
+          "tokens": 777,
+          "context_tokens": 3001
+        },
+        {
+          "id": "train-2366",
+          "nll": 0.7988907077644445,
+          "loss_sum": 631.1236591339111,
+          "tokens": 790,
+          "context_tokens": 4019
+        },
+        {
+          "id": "train-2453",
+          "nll": 0.32301245915940613,
+          "loss_sum": 227.0777587890625,
+          "tokens": 703,
+          "context_tokens": 1325
+        },
+        {
+          "id": "train-2479",
+          "nll": 0.3181569026995309,
+          "loss_sum": 251.3439531326294,
+          "tokens": 790,
+          "context_tokens": 1603
+        },
+        {
+          "id": "train-2542",
+          "nll": 0.7947905176529313,
+          "loss_sum": 570.6595916748047,
+          "tokens": 718,
+          "context_tokens": 3051
+        },
+        {
+          "id": "train-2567",
+          "nll": 0.3665232451065727,
+          "loss_sum": 278.1911430358887,
+          "tokens": 759,
+          "context_tokens": 1599
+        },
+        {
+          "id": "train-2594",
+          "nll": 0.713691529214691,
+          "loss_sum": 550.9698605537415,
+          "tokens": 772,
+          "context_tokens": 1930
+        },
+        {
+          "id": "train-2638",
+          "nll": 0.6479680270564799,
+          "loss_sum": 508.0069332122803,
+          "tokens": 784,
+          "context_tokens": 1497
+        },
+        {
+          "id": "train-2668",
+          "nll": 0.755019875957802,
+          "loss_sum": 681.0279281139374,
+          "tokens": 902,
+          "context_tokens": 3136
+        },
+        {
+          "id": "train-2754",
+          "nll": 0.9279022195046733,
+          "loss_sum": 597.5690293610096,
+          "tokens": 644,
+          "context_tokens": 3296
+        },
+        {
+          "id": "train-2834",
+          "nll": 0.881736830260856,
+          "loss_sum": 718.6155166625977,
+          "tokens": 815,
+          "context_tokens": 5077
+        },
+        {
+          "id": "train-2847",
+          "nll": 0.3209639843206228,
+          "loss_sum": 206.70080590248108,
+          "tokens": 644,
+          "context_tokens": 2323
+        },
+        {
+          "id": "train-2904",
+          "nll": 0.802047394806484,
+          "loss_sum": 637.6276788711548,
+          "tokens": 795,
+          "context_tokens": 6028
+        },
+        {
+          "id": "train-2926",
+          "nll": 0.7904705903968032,
+          "loss_sum": 580.9958839416504,
+          "tokens": 735,
+          "context_tokens": 6938
+        },
+        {
+          "id": "train-3001",
+          "nll": 0.3624186230086772,
+          "loss_sum": 272.1763858795166,
+          "tokens": 751,
+          "context_tokens": 2143
+        },
+        {
+          "id": "train-3088",
+          "nll": 0.8994306799155384,
+          "loss_sum": 715.9468212127686,
+          "tokens": 796,
+          "context_tokens": 4583
+        },
+        {
+          "id": "train-3094",
+          "nll": 0.8080119361727454,
+          "loss_sum": 616.5131072998047,
+          "tokens": 763,
+          "context_tokens": 4381
+        },
+        {
+          "id": "train-3125",
+          "nll": 0.3900892948758775,
+          "loss_sum": 269.16161346435547,
+          "tokens": 690,
+          "context_tokens": 2235
+        },
+        {
+          "id": "train-3229",
+          "nll": 0.3084783532435523,
+          "loss_sum": 203.90419149398804,
+          "tokens": 661,
+          "context_tokens": 1598
+        },
+        {
+          "id": "train-3423",
+          "nll": 0.3426800315868338,
+          "loss_sum": 229.2529411315918,
+          "tokens": 669,
+          "context_tokens": 1433
+        },
+        {
+          "id": "train-3486",
+          "nll": 0.8014722450199553,
+          "loss_sum": 645.986629486084,
+          "tokens": 806,
+          "context_tokens": 2838
+        },
+        {
+          "id": "train-3488",
+          "nll": 0.8725386237640747,
+          "loss_sum": 727.6972122192383,
+          "tokens": 834,
+          "context_tokens": 3806
+        },
+        {
+          "id": "train-3557",
+          "nll": 0.3324240645921299,
+          "loss_sum": 230.0374526977539,
+          "tokens": 692,
+          "context_tokens": 1322
+        },
+        {
+          "id": "train-3610",
+          "nll": 0.5681774708447536,
+          "loss_sum": 411.36048889160156,
+          "tokens": 724,
+          "context_tokens": 2542
+        },
+        {
+          "id": "train-3631",
+          "nll": 0.3721740230112993,
+          "loss_sum": 282.4800834655762,
+          "tokens": 759,
+          "context_tokens": 1397
+        },
+        {
+          "id": "train-3653",
+          "nll": 0.47914076447486875,
+          "loss_sum": 306.650089263916,
+          "tokens": 640,
+          "context_tokens": 2002
+        },
+        {
+          "id": "train-3685",
+          "nll": 0.4481783243815104,
+          "loss_sum": 336.1337432861328,
+          "tokens": 750,
+          "context_tokens": 1338
+        },
+        {
+          "id": "train-3695",
+          "nll": 0.3998493662721118,
+          "loss_sum": 263.10088300704956,
+          "tokens": 658,
+          "context_tokens": 1256
+        },
+        {
+          "id": "train-3719",
+          "nll": 0.42187732808730183,
+          "loss_sum": 286.87658309936523,
+          "tokens": 680,
+          "context_tokens": 1896
+        },
+        {
+          "id": "train-3761",
+          "nll": 0.5518627882898973,
+          "loss_sum": 440.93836784362793,
+          "tokens": 799,
+          "context_tokens": 2599
+        },
+        {
+          "id": "train-3776",
+          "nll": 0.7867839351427961,
+          "loss_sum": 623.9196605682373,
+          "tokens": 793,
+          "context_tokens": 4180
+        },
+        {
+          "id": "train-3794",
+          "nll": 0.705966060464391,
+          "loss_sum": 572.5384750366211,
+          "tokens": 811,
+          "context_tokens": 3417
+        },
+        {
+          "id": "train-3843",
+          "nll": 0.44550993870793976,
+          "loss_sum": 332.35041427612305,
+          "tokens": 746,
+          "context_tokens": 2418
+        },
+        {
+          "id": "train-3864",
+          "nll": 1.1187879458248378,
+          "loss_sum": 840.2097473144531,
+          "tokens": 751,
+          "context_tokens": 4303
+        },
+        {
+          "id": "train-3903",
+          "nll": 0.34525078620364824,
+          "loss_sum": 217.16274452209473,
+          "tokens": 629,
+          "context_tokens": 1138
+        },
+        {
+          "id": "train-4030",
+          "nll": 0.6397392669854136,
+          "loss_sum": 553.3744659423828,
+          "tokens": 865,
+          "context_tokens": 2717
+        },
+        {
+          "id": "train-4088",
+          "nll": 0.9459485258127787,
+          "loss_sum": 782.299430847168,
+          "tokens": 827,
+          "context_tokens": 4044
+        },
+        {
+          "id": "train-4140",
+          "nll": 0.7495470263741233,
+          "loss_sum": 527.6811065673828,
+          "tokens": 704,
+          "context_tokens": 2494
+        },
+        {
+          "id": "train-4255",
+          "nll": 0.37890797209315685,
+          "loss_sum": 276.98172760009766,
+          "tokens": 731,
+          "context_tokens": 1764
+        },
+        {
+          "id": "train-4301",
+          "nll": 0.3436161013210521,
+          "loss_sum": 233.65894889831543,
+          "tokens": 680,
+          "context_tokens": 1674
+        },
+        {
+          "id": "train-4556",
+          "nll": 0.7730744602548287,
+          "loss_sum": 572.8481750488281,
+          "tokens": 741,
+          "context_tokens": 2286
+        },
+        {
+          "id": "train-4586",
+          "nll": 0.935614008786457,
+          "loss_sum": 876.6703262329102,
+          "tokens": 937,
+          "context_tokens": 4519
+        },
+        {
+          "id": "train-4610",
+          "nll": 0.8445071694777184,
+          "loss_sum": 655.3375635147095,
+          "tokens": 776,
+          "context_tokens": 1688
+        },
+        {
+          "id": "train-4705",
+          "nll": 0.4368289056485587,
+          "loss_sum": 299.2278003692627,
+          "tokens": 685,
+          "context_tokens": 2247
+        },
+        {
+          "id": "train-4706",
+          "nll": 0.8294550360580625,
+          "loss_sum": 631.2152824401855,
+          "tokens": 761,
+          "context_tokens": 3550
+        },
+        {
+          "id": "train-4803",
+          "nll": 0.44094466882180394,
+          "loss_sum": 299.4014301300049,
+          "tokens": 679,
+          "context_tokens": 2585
+        },
+        {
+          "id": "train-4817",
+          "nll": 0.4090142672224557,
+          "loss_sum": 281.810830116272,
+          "tokens": 689,
+          "context_tokens": 2731
+        },
+        {
+          "id": "train-4880",
+          "nll": 0.8676725284781999,
+          "loss_sum": 724.5065612792969,
+          "tokens": 835,
+          "context_tokens": 2732
+        },
+        {
+          "id": "train-4952",
+          "nll": 0.8154008689046908,
+          "loss_sum": 582.1962203979492,
+          "tokens": 714,
+          "context_tokens": 2385
+        },
+        {
+          "id": "train-4982",
+          "nll": 0.8977563053197254,
+          "loss_sum": 776.5592041015625,
+          "tokens": 865,
+          "context_tokens": 4628
+        },
+        {
+          "id": "train-4994",
+          "nll": 0.9137790416655912,
+          "loss_sum": 622.2835273742676,
+          "tokens": 681,
+          "context_tokens": 4350
+        },
+        {
+          "id": "train-5003",
+          "nll": 0.4881683069726695,
+          "loss_sum": 359.29187393188477,
+          "tokens": 736,
+          "context_tokens": 3856
+        },
+        {
+          "id": "train-5087",
+          "nll": 0.4004740914262437,
+          "loss_sum": 287.54039764404297,
+          "tokens": 718,
+          "context_tokens": 2185
+        },
+        {
+          "id": "train-5103",
+          "nll": 0.44536305408851773,
+          "loss_sum": 363.41625213623047,
+          "tokens": 816,
+          "context_tokens": 2371
+        },
+        {
+          "id": "train-5164",
+          "nll": 0.8801274655731282,
+          "loss_sum": 794.7551014125347,
+          "tokens": 903,
+          "context_tokens": 5590
+        },
+        {
+          "id": "train-5243",
+          "nll": 0.3379487403353354,
+          "loss_sum": 224.73591232299805,
+          "tokens": 665,
+          "context_tokens": 2050
+        },
+        {
+          "id": "train-5309",
+          "nll": 0.30730510654306054,
+          "loss_sum": 204.35789585113525,
+          "tokens": 665,
+          "context_tokens": 1230
+        },
+        {
+          "id": "train-5447",
+          "nll": 0.3649802075685376,
+          "loss_sum": 250.01144218444824,
+          "tokens": 685,
+          "context_tokens": 1404
+        },
+        {
+          "id": "train-5533",
+          "nll": 0.3598059621836269,
+          "loss_sum": 243.58863639831543,
+          "tokens": 677,
+          "context_tokens": 1493
+        },
+        {
+          "id": "train-5537",
+          "nll": 0.38245181117002264,
+          "loss_sum": 229.8535385131836,
+          "tokens": 601,
+          "context_tokens": 1147
+        },
+        {
+          "id": "train-5563",
+          "nll": 0.33086484236996117,
+          "loss_sum": 231.93625450134277,
+          "tokens": 701,
+          "context_tokens": 1271
+        },
+        {
+          "id": "train-5578",
+          "nll": 0.8469415585670246,
+          "loss_sum": 572.5324935913086,
+          "tokens": 676,
+          "context_tokens": 2183
+        },
+        {
+          "id": "train-5653",
+          "nll": 0.3624879695306197,
+          "loss_sum": 287.815447807312,
+          "tokens": 794,
+          "context_tokens": 1858
+        },
+        {
+          "id": "train-5668",
+          "nll": 0.7998022740183313,
+          "loss_sum": 611.8487396240234,
+          "tokens": 765,
+          "context_tokens": 2483
+        },
+        {
+          "id": "train-5675",
+          "nll": 0.31337498247433015,
+          "loss_sum": 196.17273902893066,
+          "tokens": 626,
+          "context_tokens": 1407
+        },
+        {
+          "id": "train-5753",
+          "nll": 0.3138790075409775,
+          "loss_sum": 216.89039421081543,
+          "tokens": 691,
+          "context_tokens": 2065
+        },
+        {
+          "id": "train-5787",
+          "nll": 0.4762861433346106,
+          "loss_sum": 315.3014268875122,
+          "tokens": 662,
+          "context_tokens": 2597
+        },
+        {
+          "id": "train-5820",
+          "nll": 0.9442706326839014,
+          "loss_sum": 726.1441165339202,
+          "tokens": 769,
+          "context_tokens": 3076
+        },
+        {
+          "id": "train-5997",
+          "nll": 0.38787474165955554,
+          "loss_sum": 245.9125862121582,
+          "tokens": 634,
+          "context_tokens": 1894
+        },
+        {
+          "id": "train-6025",
+          "nll": 0.3998535875043105,
+          "loss_sum": 269.5013179779053,
+          "tokens": 674,
+          "context_tokens": 1386
+        },
+        {
+          "id": "train-6092",
+          "nll": 1.0385676171706,
+          "loss_sum": 975.2149925231934,
+          "tokens": 939,
+          "context_tokens": 6495
+        },
+        {
+          "id": "train-6174",
+          "nll": 0.8854139683084109,
+          "loss_sum": 870.361930847168,
+          "tokens": 983,
+          "context_tokens": 7302
+        },
+        {
+          "id": "train-6226",
+          "nll": 0.8640466730265204,
+          "loss_sum": 737.8958587646484,
+          "tokens": 854,
+          "context_tokens": 7420
+        },
+        {
+          "id": "train-6240",
+          "nll": 0.9167263548678874,
+          "loss_sum": 695.7953033447266,
+          "tokens": 759,
+          "context_tokens": 2431
+        },
+        {
+          "id": "train-6266",
+          "nll": 0.8639539911743672,
+          "loss_sum": 622.9108276367188,
+          "tokens": 721,
+          "context_tokens": 1551
+        },
+        {
+          "id": "train-6368",
+          "nll": 0.9150455975979966,
+          "loss_sum": 682.6240158081055,
+          "tokens": 746,
+          "context_tokens": 2555
+        },
+        {
+          "id": "train-6467",
+          "nll": 0.29194103235804825,
+          "loss_sum": 215.74442291259766,
+          "tokens": 739,
+          "context_tokens": 1871
+        },
+        {
+          "id": "train-6749",
+          "nll": 0.3320437865282493,
+          "loss_sum": 251.02510261535645,
+          "tokens": 756,
+          "context_tokens": 2601
+        },
+        {
+          "id": "train-6755",
+          "nll": 0.42147744738537335,
+          "loss_sum": 310.20740127563477,
+          "tokens": 736,
+          "context_tokens": 2245
+        },
+        {
+          "id": "train-6789",
+          "nll": 0.5397121545040247,
+          "loss_sum": 409.6415252685547,
+          "tokens": 759,
+          "context_tokens": 3306
+        },
+        {
+          "id": "train-6790",
+          "nll": 0.8507914054824646,
+          "loss_sum": 564.9254932403564,
+          "tokens": 664,
+          "context_tokens": 3826
+        },
+        {
+          "id": "train-6811",
+          "nll": 0.32505184495952766,
+          "loss_sum": 230.78680992126465,
+          "tokens": 710,
+          "context_tokens": 1650
+        },
+        {
+          "id": "train-6913",
+          "nll": 0.4545354719642255,
+          "loss_sum": 315.9021530151367,
+          "tokens": 695,
+          "context_tokens": 1941
+        },
+        {
+          "id": "train-6916",
+          "nll": 0.9117385667926778,
+          "loss_sum": 701.1269578635693,
+          "tokens": 769,
+          "context_tokens": 4368
+        },
+        {
+          "id": "train-6922",
+          "nll": 0.6670974467535439,
+          "loss_sum": 530.3424701690674,
+          "tokens": 795,
+          "context_tokens": 3536
+        },
+        {
+          "id": "train-6931",
+          "nll": 0.44382125612289186,
+          "loss_sum": 335.52886962890625,
+          "tokens": 756,
+          "context_tokens": 1910
+        },
+        {
+          "id": "train-7023",
+          "nll": 0.37999627176920575,
+          "loss_sum": 284.9972038269043,
+          "tokens": 750,
+          "context_tokens": 1636
+        },
+        {
+          "id": "train-7029",
+          "nll": 0.4061008095741272,
+          "loss_sum": 311.8854217529297,
+          "tokens": 768,
+          "context_tokens": 3173
+        },
+        {
+          "id": "train-7037",
+          "nll": 0.4387886520837695,
+          "loss_sum": 311.1011543273926,
+          "tokens": 709,
+          "context_tokens": 2143
+        },
+        {
+          "id": "train-7092",
+          "nll": 0.7571657349791708,
+          "loss_sum": 598.1609306335449,
+          "tokens": 790,
+          "context_tokens": 3603
+        },
+        {
+          "id": "train-7109",
+          "nll": 0.25461722707105006,
+          "loss_sum": 169.82969045639038,
+          "tokens": 667,
+          "context_tokens": 1738
+        },
+        {
+          "id": "train-7145",
+          "nll": 0.3265718431615118,
+          "loss_sum": 218.8031349182129,
+          "tokens": 670,
+          "context_tokens": 1598
+        },
+        {
+          "id": "train-7150",
+          "nll": 0.6538546820106746,
+          "loss_sum": 519.8144721984863,
+          "tokens": 795,
+          "context_tokens": 4040
+        },
+        {
+          "id": "train-7248",
+          "nll": 0.8753361057590794,
+          "loss_sum": 842.0733337402344,
+          "tokens": 962,
+          "context_tokens": 5585
+        },
+        {
+          "id": "train-7265",
+          "nll": 0.3112292557913907,
+          "loss_sum": 226.88612747192383,
+          "tokens": 729,
+          "context_tokens": 1480
+        },
+        {
+          "id": "train-7310",
+          "nll": 0.8533064539726941,
+          "loss_sum": 704.8311309814453,
+          "tokens": 826,
+          "context_tokens": 4991
+        },
+        {
+          "id": "train-7338",
+          "nll": 0.8473998283032124,
+          "loss_sum": 803.3350372314453,
+          "tokens": 948,
+          "context_tokens": 4429
+        },
+        {
+          "id": "train-7344",
+          "nll": 0.7692727374904537,
+          "loss_sum": 582.3394622802734,
+          "tokens": 757,
+          "context_tokens": 3493
+        },
+        {
+          "id": "train-7440",
+          "nll": 0.6463773198749708,
+          "loss_sum": 475.7337074279785,
+          "tokens": 736,
+          "context_tokens": 4082
+        },
+        {
+          "id": "train-7469",
+          "nll": 0.3206499332299262,
+          "loss_sum": 209.06375646591187,
+          "tokens": 652,
+          "context_tokens": 1469
+        },
+        {
+          "id": "train-7513",
+          "nll": 0.2765349178449482,
+          "loss_sum": 194.95711708068848,
+          "tokens": 705,
+          "context_tokens": 2252
+        },
+        {
+          "id": "train-7661",
+          "nll": 0.4437858511300668,
+          "loss_sum": 313.31281089782715,
+          "tokens": 706,
+          "context_tokens": 1898
+        },
+        {
+          "id": "train-7837",
+          "nll": 0.3373437825555772,
+          "loss_sum": 217.92408353090286,
+          "tokens": 646,
+          "context_tokens": 1115
+        },
+        {
+          "id": "train-7879",
+          "nll": 0.3911816306263633,
+          "loss_sum": 274.60950469970703,
+          "tokens": 702,
+          "context_tokens": 1903
+        },
+        {
+          "id": "train-8151",
+          "nll": 0.3685183272883754,
+          "loss_sum": 299.6054000854492,
+          "tokens": 813,
+          "context_tokens": 2256
+        },
+        {
+          "id": "train-8164",
+          "nll": 0.7996644418106351,
+          "loss_sum": 672.5177955627441,
+          "tokens": 841,
+          "context_tokens": 6205
+        },
+        {
+          "id": "train-8174",
+          "nll": 0.6774197407190312,
+          "loss_sum": 613.0648653507233,
+          "tokens": 905,
+          "context_tokens": 5159
+        },
+        {
+          "id": "train-8184",
+          "nll": 0.7520817417384745,
+          "loss_sum": 693.4193658828735,
+          "tokens": 922,
+          "context_tokens": 4914
+        },
+        {
+          "id": "train-8222",
+          "nll": 0.7686648085965948,
+          "loss_sum": 725.6195793151855,
+          "tokens": 944,
+          "context_tokens": 4628
+        },
+        {
+          "id": "train-8327",
+          "nll": 0.3172458746063877,
+          "loss_sum": 247.7690280675888,
+          "tokens": 781,
+          "context_tokens": 1878
+        },
+        {
+          "id": "train-8342",
+          "nll": 0.8317862494432442,
+          "loss_sum": 634.6529083251953,
+          "tokens": 763,
+          "context_tokens": 3806
+        },
+        {
+          "id": "train-8594",
+          "nll": 0.6763569201276602,
+          "loss_sum": 495.09326553344727,
+          "tokens": 732,
+          "context_tokens": 4054
+        },
+        {
+          "id": "train-8614",
+          "nll": 0.7085542588863732,
+          "loss_sum": 600.8540115356445,
+          "tokens": 848,
+          "context_tokens": 4508
+        },
+        {
+          "id": "train-8668",
+          "nll": 0.9100310624011455,
+          "loss_sum": 741.6753158569336,
+          "tokens": 815,
+          "context_tokens": 6735
+        },
+        {
+          "id": "train-8704",
+          "nll": 0.7931835500333592,
+          "loss_sum": 575.8512573242188,
+          "tokens": 726,
+          "context_tokens": 4616
+        },
+        {
+          "id": "train-8717",
+          "nll": 0.3163226717700866,
+          "loss_sum": 195.8037338256836,
+          "tokens": 619,
+          "context_tokens": 2109
+        },
+        {
+          "id": "train-8743",
+          "nll": 0.38742500131014346,
+          "loss_sum": 263.0615758895874,
+          "tokens": 679,
+          "context_tokens": 1864
+        },
+        {
+          "id": "train-8760",
+          "nll": 0.9316545374253217,
+          "loss_sum": 744.391975402832,
+          "tokens": 799,
+          "context_tokens": 3091
+        },
+        {
+          "id": "train-8792",
+          "nll": 0.8827852465845302,
+          "loss_sum": 862.4811859130859,
+          "tokens": 977,
+          "context_tokens": 3129
+        },
+        {
+          "id": "train-8797",
+          "nll": 0.4014901075949216,
+          "loss_sum": 287.46691703796387,
+          "tokens": 716,
+          "context_tokens": 1968
+        },
+        {
+          "id": "train-8845",
+          "nll": 0.40283874804815395,
+          "loss_sum": 346.03848457336426,
+          "tokens": 859,
+          "context_tokens": 3320
+        },
+        {
+          "id": "train-8864",
+          "nll": 0.6233644148882698,
+          "loss_sum": 423.88780212402344,
+          "tokens": 680,
+          "context_tokens": 5830
+        },
+        {
+          "id": "train-8885",
+          "nll": 0.3962491343137844,
+          "loss_sum": 308.28182649612427,
+          "tokens": 778,
+          "context_tokens": 2250
+        },
+        {
+          "id": "train-8903",
+          "nll": 0.409247717945431,
+          "loss_sum": 310.2097702026367,
+          "tokens": 758,
+          "context_tokens": 2393
+        },
+        {
+          "id": "train-8927",
+          "nll": 0.4023869528776952,
+          "loss_sum": 294.9496364593506,
+          "tokens": 733,
+          "context_tokens": 2089
+        },
+        {
+          "id": "train-8942",
+          "nll": 0.6636831151830541,
+          "loss_sum": 663.0194320678711,
+          "tokens": 999,
+          "context_tokens": 4985
+        },
+        {
+          "id": "train-8984",
+          "nll": 0.5643625211234045,
+          "loss_sum": 446.9751167297363,
+          "tokens": 792,
+          "context_tokens": 2386
+        },
+        {
+          "id": "train-9074",
+          "nll": 0.7519579388809609,
+          "loss_sum": 709.0963363647461,
+          "tokens": 943,
+          "context_tokens": 3993
+        },
+        {
+          "id": "train-9135",
+          "nll": 0.42352235674533273,
+          "loss_sum": 310.8654098510742,
+          "tokens": 734,
+          "context_tokens": 3256
+        },
+        {
+          "id": "train-9271",
+          "nll": 0.30219751305120307,
+          "loss_sum": 228.76351737976074,
+          "tokens": 757,
+          "context_tokens": 2050
+        },
+        {
+          "id": "train-9346",
+          "nll": 0.9223598016274942,
+          "loss_sum": 819.0555038452148,
+          "tokens": 888,
+          "context_tokens": 5672
+        },
+        {
+          "id": "train-9349",
+          "nll": 0.4262631468611037,
+          "loss_sum": 326.51757049560547,
+          "tokens": 766,
+          "context_tokens": 3363
+        },
+        {
+          "id": "train-9426",
+          "nll": 0.9859951187904202,
+          "loss_sum": 885.4236166737974,
+          "tokens": 898,
+          "context_tokens": 5084
+        },
+        {
+          "id": "train-9434",
+          "nll": 1.0257415547529545,
+          "loss_sum": 1048.3078689575195,
+          "tokens": 1022,
+          "context_tokens": 5409
+        },
+        {
+          "id": "train-9441",
+          "nll": 0.3937494604928153,
+          "loss_sum": 275.6246223449707,
+          "tokens": 700,
+          "context_tokens": 3115
+        },
+        {
+          "id": "train-9466",
+          "nll": 0.8572454045954343,
+          "loss_sum": 703.7984771728516,
+          "tokens": 821,
+          "context_tokens": 3017
+        },
+        {
+          "id": "train-9476",
+          "nll": 0.8699489073319868,
+          "loss_sum": 612.4440307617188,
+          "tokens": 704,
+          "context_tokens": 2438
+        },
+        {
+          "id": "train-9496",
+          "nll": 0.7045294546764975,
+          "loss_sum": 478.3754997253418,
+          "tokens": 679,
+          "context_tokens": 7352
+        },
+        {
+          "id": "train-9559",
+          "nll": 0.3947234977743781,
+          "loss_sum": 278.67478942871094,
+          "tokens": 706,
+          "context_tokens": 1641
+        },
+        {
+          "id": "train-9591",
+          "nll": 0.2807782158727003,
+          "loss_sum": 204.12576293945312,
+          "tokens": 727,
+          "context_tokens": 1803
+        },
+        {
+          "id": "train-9622",
+          "nll": 0.7935335571421603,
+          "loss_sum": 730.8444061279297,
+          "tokens": 921,
+          "context_tokens": 4501
+        },
+        {
+          "id": "train-9635",
+          "nll": 0.3672228211029815,
+          "loss_sum": 308.8343925476074,
+          "tokens": 841,
+          "context_tokens": 1408
+        },
+        {
+          "id": "train-9647",
+          "nll": 0.3689535985750076,
+          "loss_sum": 264.90868377685547,
+          "tokens": 718,
+          "context_tokens": 1832
+        },
+        {
+          "id": "train-9675",
+          "nll": 0.3201894674215231,
+          "loss_sum": 213.24618530273438,
+          "tokens": 666,
+          "context_tokens": 1638
+        },
+        {
+          "id": "train-9867",
+          "nll": 0.3152418540592218,
+          "loss_sum": 245.5734043121338,
+          "tokens": 779,
+          "context_tokens": 1753
+        },
+        {
+          "id": "train-9914",
+          "nll": 1.0372995489339034,
+          "loss_sum": 933.569594040513,
+          "tokens": 900,
+          "context_tokens": 5820
+        },
+        {
+          "id": "train-9926",
+          "nll": 0.644102952611728,
+          "loss_sum": 409.00537490844727,
+          "tokens": 635,
+          "context_tokens": 4211
+        },
+        {
+          "id": "train-9941",
+          "nll": 0.3183844946380845,
+          "loss_sum": 211.72568893432617,
+          "tokens": 665,
+          "context_tokens": 1551
+        }
+      ],
+      "examples": 200,
+      "tokens": 151488,
+      "nll": 0.6109316345766027
+    },
+    "Original input, answer directly": {
+      "per_example": [
+        {
+          "id": "train-39",
+          "nll": 0.638210830585793,
+          "loss_sum": 474.19064712524414,
+          "tokens": 743,
+          "context_tokens": 368
+        },
+        {
+          "id": "train-97",
+          "nll": 0.6296740295410156,
+          "loss_sum": 393.54626846313477,
+          "tokens": 625,
+          "context_tokens": 372
+        },
+        {
+          "id": "train-111",
+          "nll": 0.7266686292979819,
+          "loss_sum": 576.9748916625977,
+          "tokens": 794,
+          "context_tokens": 390
+        },
+        {
+          "id": "train-142",
+          "nll": 0.9689189458776404,
+          "loss_sum": 654.0202884674072,
+          "tokens": 675,
+          "context_tokens": 350
+        },
+        {
+          "id": "train-173",
+          "nll": 0.6461087441972835,
+          "loss_sum": 495.5654067993164,
+          "tokens": 767,
+          "context_tokens": 364
+        },
+        {
+          "id": "train-177",
+          "nll": 0.6662972845368379,
+          "loss_sum": 493.7262878417969,
+          "tokens": 741,
+          "context_tokens": 360
+        },
+        {
+          "id": "train-283",
+          "nll": 0.783708086421107,
+          "loss_sum": 532.1377906799316,
+          "tokens": 679,
+          "context_tokens": 371
+        },
+        {
+          "id": "train-335",
+          "nll": 0.8337557480253023,
+          "loss_sum": 580.2940006256104,
+          "tokens": 696,
+          "context_tokens": 390
+        },
+        {
+          "id": "train-396",
+          "nll": 1.3629300838433007,
+          "loss_sum": 971.7691497802734,
+          "tokens": 713,
+          "context_tokens": 391
+        },
+        {
+          "id": "train-398",
+          "nll": 1.1785407489438138,
+          "loss_sum": 982.9029846191406,
+          "tokens": 834,
+          "context_tokens": 404
+        },
+        {
+          "id": "train-418",
+          "nll": 1.1748513005109742,
+          "loss_sum": 899.9360961914062,
+          "tokens": 766,
+          "context_tokens": 340
+        },
+        {
+          "id": "train-419",
+          "nll": 0.5885260265827835,
+          "loss_sum": 427.8584213256836,
+          "tokens": 727,
+          "context_tokens": 339
+        },
+        {
+          "id": "train-503",
+          "nll": 0.7371594992028662,
+          "loss_sum": 611.8423843383789,
+          "tokens": 830,
+          "context_tokens": 380
+        },
+        {
+          "id": "train-737",
+          "nll": 0.7213421610377779,
+          "loss_sum": 537.3999099731445,
+          "tokens": 745,
+          "context_tokens": 372
+        },
+        {
+          "id": "train-748",
+          "nll": 1.1550357583936874,
+          "loss_sum": 807.3699951171875,
+          "tokens": 699,
+          "context_tokens": 383
+        },
+        {
+          "id": "train-771",
+          "nll": 0.6624228858357244,
+          "loss_sum": 427.92518424987793,
+          "tokens": 646,
+          "context_tokens": 353
+        },
+        {
+          "id": "train-791",
+          "nll": 0.7124277048033846,
+          "loss_sum": 528.6213569641113,
+          "tokens": 742,
+          "context_tokens": 338
+        },
+        {
+          "id": "train-795",
+          "nll": 0.670531607621553,
+          "loss_sum": 405.00109100341797,
+          "tokens": 604,
+          "context_tokens": 363
+        },
+        {
+          "id": "train-868",
+          "nll": 1.1168966281155213,
+          "loss_sum": 874.5300598144531,
+          "tokens": 783,
+          "context_tokens": 369
+        },
+        {
+          "id": "train-945",
+          "nll": 0.7443835664100701,
+          "loss_sum": 523.3016471862793,
+          "tokens": 703,
+          "context_tokens": 336
+        },
+        {
+          "id": "train-972",
+          "nll": 1.1588388258411038,
+          "loss_sum": 718.4800720214844,
+          "tokens": 620,
+          "context_tokens": 337
+        },
+        {
+          "id": "train-1048",
+          "nll": 1.08349683469997,
+          "loss_sum": 864.6304740905762,
+          "tokens": 798,
+          "context_tokens": 378
+        },
+        {
+          "id": "train-1068",
+          "nll": 1.061965817120954,
+          "loss_sum": 962.1410303115845,
+          "tokens": 906,
+          "context_tokens": 343
+        },
+        {
+          "id": "train-1102",
+          "nll": 1.1743108161915918,
+          "loss_sum": 865.4670715332031,
+          "tokens": 737,
+          "context_tokens": 361
+        },
+        {
+          "id": "train-1142",
+          "nll": 1.0340604274546732,
+          "loss_sum": 738.3191452026367,
+          "tokens": 714,
+          "context_tokens": 369
+        },
+        {
+          "id": "train-1148",
+          "nll": 1.0246033271153767,
+          "loss_sum": 786.8953552246094,
+          "tokens": 768,
+          "context_tokens": 335
+        },
+        {
+          "id": "train-1191",
+          "nll": 0.7082057551639837,
+          "loss_sum": 464.58297538757324,
+          "tokens": 656,
+          "context_tokens": 358
+        },
+        {
+          "id": "train-1232",
+          "nll": 1.1317064014030096,
+          "loss_sum": 1002.6918716430664,
+          "tokens": 886,
+          "context_tokens": 359
+        },
+        {
+          "id": "train-1276",
+          "nll": 0.8982411272051224,
+          "loss_sum": 753.6243057250977,
+          "tokens": 839,
+          "context_tokens": 370
+        },
+        {
+          "id": "train-1376",
+          "nll": 0.986420439327278,
+          "loss_sum": 890.737656712532,
+          "tokens": 903,
+          "context_tokens": 352
+        },
+        {
+          "id": "train-1389",
+          "nll": 0.5679711572055159,
+          "loss_sum": 411.779088973999,
+          "tokens": 725,
+          "context_tokens": 350
+        },
+        {
+          "id": "train-1442",
+          "nll": 1.0654155237534466,
+          "loss_sum": 905.6031951904297,
+          "tokens": 850,
+          "context_tokens": 383
+        },
+        {
+          "id": "train-1456",
+          "nll": 0.92991829859583,
+          "loss_sum": 848.085488319397,
+          "tokens": 912,
+          "context_tokens": 379
+        },
+        {
+          "id": "train-1519",
+          "nll": 0.5389643577607517,
+          "loss_sum": 387.51537322998047,
+          "tokens": 719,
+          "context_tokens": 371
+        },
+        {
+          "id": "train-1541",
+          "nll": 0.5010586671461938,
+          "loss_sum": 377.297176361084,
+          "tokens": 753,
+          "context_tokens": 384
+        },
+        {
+          "id": "train-1581",
+          "nll": 0.579942165008963,
+          "loss_sum": 423.35778045654297,
+          "tokens": 730,
+          "context_tokens": 370
+        },
+        {
+          "id": "train-1650",
+          "nll": 0.7641541595253617,
+          "loss_sum": 567.7665405273438,
+          "tokens": 743,
+          "context_tokens": 372
+        },
+        {
+          "id": "train-1674",
+          "nll": 0.8765596196892557,
+          "loss_sum": 780.1380615234375,
+          "tokens": 890,
+          "context_tokens": 390
+        },
+        {
+          "id": "train-1690",
+          "nll": 1.0748762803484304,
+          "loss_sum": 693.2952008247375,
+          "tokens": 645,
+          "context_tokens": 358
+        },
+        {
+          "id": "train-1728",
+          "nll": 1.0884472665033842,
+          "loss_sum": 992.6639070510864,
+          "tokens": 912,
+          "context_tokens": 379
+        },
+        {
+          "id": "train-1736",
+          "nll": 0.726235254328296,
+          "loss_sum": 747.2960767038167,
+          "tokens": 1029,
+          "context_tokens": 368
+        },
+        {
+          "id": "train-1778",
+          "nll": 1.1728981632599547,
+          "loss_sum": 906.650280199945,
+          "tokens": 773,
+          "context_tokens": 341
+        },
+        {
+          "id": "train-1816",
+          "nll": 0.8707742739759033,
+          "loss_sum": 681.8162565231323,
+          "tokens": 783,
+          "context_tokens": 392
+        },
+        {
+          "id": "train-1865",
+          "nll": 0.664005736568915,
+          "loss_sum": 447.53986644744873,
+          "tokens": 674,
+          "context_tokens": 363
+        },
+        {
+          "id": "train-1868",
+          "nll": 0.9077996053813416,
+          "loss_sum": 735.3176803588867,
+          "tokens": 810,
+          "context_tokens": 378
+        },
+        {
+          "id": "train-1886",
+          "nll": 1.0155808351894113,
+          "loss_sum": 759.6544647216797,
+          "tokens": 748,
+          "context_tokens": 393
+        },
+        {
+          "id": "train-2018",
+          "nll": 1.1323312230716256,
+          "loss_sum": 739.4122886657715,
+          "tokens": 653,
+          "context_tokens": 371
+        },
+        {
+          "id": "train-2113",
+          "nll": 0.6879965286600626,
+          "loss_sum": 455.4537019729614,
+          "tokens": 662,
+          "context_tokens": 367
+        },
+        {
+          "id": "train-2221",
+          "nll": 0.6722333248966695,
+          "loss_sum": 439.6405944824219,
+          "tokens": 654,
+          "context_tokens": 406
+        },
+        {
+          "id": "train-2225",
+          "nll": 0.55967946627241,
+          "loss_sum": 343.64319229125977,
+          "tokens": 614,
+          "context_tokens": 396
+        },
+        {
+          "id": "train-2261",
+          "nll": 0.6001432021992319,
+          "loss_sum": 357.6853485107422,
+          "tokens": 596,
+          "context_tokens": 377
+        },
+        {
+          "id": "train-2298",
+          "nll": 1.144575168689092,
+          "loss_sum": 879.0337295532227,
+          "tokens": 768,
+          "context_tokens": 344
+        },
+        {
+          "id": "train-2320",
+          "nll": 1.1757973144106577,
+          "loss_sum": 913.594513297081,
+          "tokens": 777,
+          "context_tokens": 369
+        },
+        {
+          "id": "train-2366",
+          "nll": 1.0742196384864517,
+          "loss_sum": 848.6335144042969,
+          "tokens": 790,
+          "context_tokens": 371
+        },
+        {
+          "id": "train-2453",
+          "nll": 0.613626699868171,
+          "loss_sum": 431.3795700073242,
+          "tokens": 703,
+          "context_tokens": 360
+        },
+        {
+          "id": "train-2479",
+          "nll": 0.5732413955881626,
+          "loss_sum": 452.86070251464844,
+          "tokens": 790,
+          "context_tokens": 350
+        },
+        {
+          "id": "train-2542",
+          "nll": 1.0157477716217467,
+          "loss_sum": 729.3069000244141,
+          "tokens": 718,
+          "context_tokens": 353
+        },
+        {
+          "id": "train-2567",
+          "nll": 0.6217101980417927,
+          "loss_sum": 471.8780403137207,
+          "tokens": 759,
+          "context_tokens": 350
+        },
+        {
+          "id": "train-2594",
+          "nll": 0.9537277437862337,
+          "loss_sum": 736.2778182029724,
+          "tokens": 772,
+          "context_tokens": 344
+        },
+        {
+          "id": "train-2638",
+          "nll": 0.8506352074292242,
+          "loss_sum": 666.8980026245117,
+          "tokens": 784,
+          "context_tokens": 360
+        },
+        {
+          "id": "train-2668",
+          "nll": 0.982431035877067,
+          "loss_sum": 886.1527943611145,
+          "tokens": 902,
+          "context_tokens": 374
+        },
+        {
+          "id": "train-2754",
+          "nll": 1.191079391640906,
+          "loss_sum": 767.0551282167435,
+          "tokens": 644,
+          "context_tokens": 361
+        },
+        {
+          "id": "train-2834",
+          "nll": 1.1222434669915884,
+          "loss_sum": 914.6284255981445,
+          "tokens": 815,
+          "context_tokens": 368
+        },
+        {
+          "id": "train-2847",
+          "nll": 0.63196855746441,
+          "loss_sum": 406.9877510070801,
+          "tokens": 644,
+          "context_tokens": 365
+        },
+        {
+          "id": "train-2904",
+          "nll": 0.9851539072000756,
+          "loss_sum": 783.1973562240601,
+          "tokens": 795,
+          "context_tokens": 382
+        },
+        {
+          "id": "train-2926",
+          "nll": 1.1196999893707482,
+          "loss_sum": 822.9794921875,
+          "tokens": 735,
+          "context_tokens": 384
+        },
+        {
+          "id": "train-3001",
+          "nll": 0.5708235119693924,
+          "loss_sum": 428.6884574890137,
+          "tokens": 751,
+          "context_tokens": 396
+        },
+        {
+          "id": "train-3088",
+          "nll": 1.130859662539995,
+          "loss_sum": 900.1642913818359,
+          "tokens": 796,
+          "context_tokens": 361
+        },
+        {
+          "id": "train-3094",
+          "nll": 1.0456141400618446,
+          "loss_sum": 797.8035888671875,
+          "tokens": 763,
+          "context_tokens": 360
+        },
+        {
+          "id": "train-3125",
+          "nll": 0.719470004758973,
+          "loss_sum": 496.4343032836914,
+          "tokens": 690,
+          "context_tokens": 378
+        },
+        {
+          "id": "train-3229",
+          "nll": 0.5787746931529081,
+          "loss_sum": 382.57007217407227,
+          "tokens": 661,
+          "context_tokens": 357
+        },
+        {
+          "id": "train-3423",
+          "nll": 0.5919185233579445,
+          "loss_sum": 395.99349212646484,
+          "tokens": 669,
+          "context_tokens": 380
+        },
+        {
+          "id": "train-3486",
+          "nll": 1.0250890130736396,
+          "loss_sum": 826.2217445373535,
+          "tokens": 806,
+          "context_tokens": 350
+        },
+        {
+          "id": "train-3488",
+          "nll": 1.0500570887284313,
+          "loss_sum": 875.7476119995117,
+          "tokens": 834,
+          "context_tokens": 369
+        },
+        {
+          "id": "train-3557",
+          "nll": 0.5839408201978386,
+          "loss_sum": 404.0870475769043,
+          "tokens": 692,
+          "context_tokens": 365
+        },
+        {
+          "id": "train-3610",
+          "nll": 0.855849187018463,
+          "loss_sum": 619.6348114013672,
+          "tokens": 724,
+          "context_tokens": 381
+        },
+        {
+          "id": "train-3631",
+          "nll": 0.6580354391507638,
+          "loss_sum": 499.4488983154297,
+          "tokens": 759,
+          "context_tokens": 370
+        },
+        {
+          "id": "train-3653",
+          "nll": 0.7948338031768799,
+          "loss_sum": 508.6936340332031,
+          "tokens": 640,
+          "context_tokens": 378
+        },
+        {
+          "id": "train-3685",
+          "nll": 0.6271143137613933,
+          "loss_sum": 470.3357353210449,
+          "tokens": 750,
+          "context_tokens": 380
+        },
+        {
+          "id": "train-3695",
+          "nll": 0.6696513286115189,
+          "loss_sum": 440.6305742263794,
+          "tokens": 658,
+          "context_tokens": 358
+        },
+        {
+          "id": "train-3719",
+          "nll": 0.7450900638804716,
+          "loss_sum": 506.6612434387207,
+          "tokens": 680,
+          "context_tokens": 345
+        },
+        {
+          "id": "train-3761",
+          "nll": 0.8184464899858038,
+          "loss_sum": 653.9387454986572,
+          "tokens": 799,
+          "context_tokens": 389
+        },
+        {
+          "id": "train-3776",
+          "nll": 1.0705039780798355,
+          "loss_sum": 848.9096546173096,
+          "tokens": 793,
+          "context_tokens": 384
+        },
+        {
+          "id": "train-3794",
+          "nll": 0.9890889498220272,
+          "loss_sum": 802.1511383056641,
+          "tokens": 811,
+          "context_tokens": 354
+        },
+        {
+          "id": "train-3843",
+          "nll": 0.7235379155135986,
+          "loss_sum": 539.7592849731445,
+          "tokens": 746,
+          "context_tokens": 383
+        },
+        {
+          "id": "train-3864",
+          "nll": 1.369247680338975,
+          "loss_sum": 1028.3050079345703,
+          "tokens": 751,
+          "context_tokens": 401
+        },
+        {
+          "id": "train-3903",
+          "nll": 0.5955824556335546,
+          "loss_sum": 374.62136459350586,
+          "tokens": 629,
+          "context_tokens": 394
+        },
+        {
+          "id": "train-4030",
+          "nll": 0.8435424628285314,
+          "loss_sum": 729.6642303466797,
+          "tokens": 865,
+          "context_tokens": 362
+        },
+        {
+          "id": "train-4088",
+          "nll": 1.1938335783103933,
+          "loss_sum": 987.3003692626953,
+          "tokens": 827,
+          "context_tokens": 378
+        },
+        {
+          "id": "train-4140",
+          "nll": 0.986798270182176,
+          "loss_sum": 694.705982208252,
+          "tokens": 704,
+          "context_tokens": 419
+        },
+        {
+          "id": "train-4255",
+          "nll": 0.6684879558683257,
+          "loss_sum": 488.6646957397461,
+          "tokens": 731,
+          "context_tokens": 387
+        },
+        {
+          "id": "train-4301",
+          "nll": 0.5707841003642363,
+          "loss_sum": 388.13318824768066,
+          "tokens": 680,
+          "context_tokens": 385
+        },
+        {
+          "id": "train-4556",
+          "nll": 1.0152829436638096,
+          "loss_sum": 752.3246612548828,
+          "tokens": 741,
+          "context_tokens": 365
+        },
+        {
+          "id": "train-4586",
+          "nll": 1.1617704369087993,
+          "loss_sum": 1088.578899383545,
+          "tokens": 937,
+          "context_tokens": 387
+        },
+        {
+          "id": "train-4610",
+          "nll": 1.078853052915986,
+          "loss_sum": 837.1899690628052,
+          "tokens": 776,
+          "context_tokens": 371
+        },
+        {
+          "id": "train-4705",
+          "nll": 0.799847651572123,
+          "loss_sum": 547.8956413269043,
+          "tokens": 685,
+          "context_tokens": 364
+        },
+        {
+          "id": "train-4706",
+          "nll": 1.0909085066967035,
+          "loss_sum": 830.1813735961914,
+          "tokens": 761,
+          "context_tokens": 358
+        },
+        {
+          "id": "train-4803",
+          "nll": 0.7341753576219696,
+          "loss_sum": 498.5050678253174,
+          "tokens": 679,
+          "context_tokens": 385
+        },
+        {
+          "id": "train-4817",
+          "nll": 0.7272438663875762,
+          "loss_sum": 501.07102394104004,
+          "tokens": 689,
+          "context_tokens": 360
+        },
+        {
+          "id": "train-4880",
+          "nll": 1.0496061405021988,
+          "loss_sum": 876.4211273193359,
+          "tokens": 835,
+          "context_tokens": 400
+        },
+        {
+          "id": "train-4952",
+          "nll": 1.0073073357761073,
+          "loss_sum": 719.2174377441406,
+          "tokens": 714,
+          "context_tokens": 376
+        },
+        {
+          "id": "train-4982",
+          "nll": 1.0827480426413476,
+          "loss_sum": 936.5770568847656,
+          "tokens": 865,
+          "context_tokens": 400
+        },
+        {
+          "id": "train-4994",
+          "nll": 1.170816866836884,
+          "loss_sum": 797.326286315918,
+          "tokens": 681,
+          "context_tokens": 371
+        },
+        {
+          "id": "train-5003",
+          "nll": 0.82467185932657,
+          "loss_sum": 606.9584884643555,
+          "tokens": 736,
+          "context_tokens": 369
+        },
+        {
+          "id": "train-5087",
+          "nll": 0.6875048454093402,
+          "loss_sum": 493.62847900390625,
+          "tokens": 718,
+          "context_tokens": 348
+        },
+        {
+          "id": "train-5103",
+          "nll": 0.7641689356635598,
+          "loss_sum": 623.5618515014648,
+          "tokens": 816,
+          "context_tokens": 392
+        },
+        {
+          "id": "train-5164",
+          "nll": 1.085503612575869,
+          "loss_sum": 980.2097621560097,
+          "tokens": 903,
+          "context_tokens": 385
+        },
+        {
+          "id": "train-5243",
+          "nll": 0.6299984437182433,
+          "loss_sum": 418.94896507263184,
+          "tokens": 665,
+          "context_tokens": 393
+        },
+        {
+          "id": "train-5309",
+          "nll": 0.6071138138161566,
+          "loss_sum": 403.73068618774414,
+          "tokens": 665,
+          "context_tokens": 361
+        },
+        {
+          "id": "train-5447",
+          "nll": 0.6236009082654967,
+          "loss_sum": 427.16662216186523,
+          "tokens": 685,
+          "context_tokens": 401
+        },
+        {
+          "id": "train-5533",
+          "nll": 0.6703752041567376,
+          "loss_sum": 453.8440132141113,
+          "tokens": 677,
+          "context_tokens": 368
+        },
+        {
+          "id": "train-5537",
+          "nll": 0.6304350867247621,
+          "loss_sum": 378.89148712158203,
+          "tokens": 601,
+          "context_tokens": 357
+        },
+        {
+          "id": "train-5563",
+          "nll": 0.5843932550405809,
+          "loss_sum": 409.65967178344727,
+          "tokens": 701,
+          "context_tokens": 383
+        },
+        {
+          "id": "train-5578",
+          "nll": 1.0709072993351862,
+          "loss_sum": 723.9333343505859,
+          "tokens": 676,
+          "context_tokens": 352
+        },
+        {
+          "id": "train-5653",
+          "nll": 0.5888975513371772,
+          "loss_sum": 467.58465576171875,
+          "tokens": 794,
+          "context_tokens": 363
+        },
+        {
+          "id": "train-5668",
+          "nll": 1.0271771898456648,
+          "loss_sum": 785.7905502319336,
+          "tokens": 765,
+          "context_tokens": 368
+        },
+        {
+          "id": "train-5675",
+          "nll": 0.6855643762948033,
+          "loss_sum": 429.1632995605469,
+          "tokens": 626,
+          "context_tokens": 355
+        },
+        {
+          "id": "train-5753",
+          "nll": 0.6259362873568721,
+          "loss_sum": 432.52197456359863,
+          "tokens": 691,
+          "context_tokens": 368
+        },
+        {
+          "id": "train-5787",
+          "nll": 0.8065852398598662,
+          "loss_sum": 533.9594287872314,
+          "tokens": 662,
+          "context_tokens": 362
+        },
+        {
+          "id": "train-5820",
+          "nll": 1.1610368231338084,
+          "loss_sum": 892.8373169898987,
+          "tokens": 769,
+          "context_tokens": 377
+        },
+        {
+          "id": "train-5997",
+          "nll": 0.6564431295785994,
+          "loss_sum": 416.18494415283203,
+          "tokens": 634,
+          "context_tokens": 366
+        },
+        {
+          "id": "train-6025",
+          "nll": 0.6550569223013405,
+          "loss_sum": 441.5083656311035,
+          "tokens": 674,
+          "context_tokens": 371
+        },
+        {
+          "id": "train-6092",
+          "nll": 1.2903831693184133,
+          "loss_sum": 1211.6697959899902,
+          "tokens": 939,
+          "context_tokens": 351
+        },
+        {
+          "id": "train-6174",
+          "nll": 1.1248375862563977,
+          "loss_sum": 1105.715347290039,
+          "tokens": 983,
+          "context_tokens": 379
+        },
+        {
+          "id": "train-6226",
+          "nll": 1.15904423447906,
+          "loss_sum": 989.8237762451172,
+          "tokens": 854,
+          "context_tokens": 386
+        },
+        {
+          "id": "train-6240",
+          "nll": 1.0807655947638752,
+          "loss_sum": 820.3010864257812,
+          "tokens": 759,
+          "context_tokens": 395
+        },
+        {
+          "id": "train-6266",
+          "nll": 1.0720817576499653,
+          "loss_sum": 772.970947265625,
+          "tokens": 721,
+          "context_tokens": 376
+        },
+        {
+          "id": "train-6368",
+          "nll": 1.1238451898896982,
+          "loss_sum": 838.3885116577148,
+          "tokens": 746,
+          "context_tokens": 367
+        },
+        {
+          "id": "train-6467",
+          "nll": 0.6051178081755064,
+          "loss_sum": 447.1820602416992,
+          "tokens": 739,
+          "context_tokens": 368
+        },
+        {
+          "id": "train-6749",
+          "nll": 0.6373048207116505,
+          "loss_sum": 481.8024444580078,
+          "tokens": 756,
+          "context_tokens": 376
+        },
+        {
+          "id": "train-6755",
+          "nll": 0.6794119347696719,
+          "loss_sum": 500.0471839904785,
+          "tokens": 736,
+          "context_tokens": 360
+        },
+        {
+          "id": "train-6789",
+          "nll": 0.7878180140720211,
+          "loss_sum": 597.9538726806641,
+          "tokens": 759,
+          "context_tokens": 375
+        },
+        {
+          "id": "train-6790",
+          "nll": 1.125777069344578,
+          "loss_sum": 747.5159740447998,
+          "tokens": 664,
+          "context_tokens": 387
+        },
+        {
+          "id": "train-6811",
+          "nll": 0.5846561216972244,
+          "loss_sum": 415.1058464050293,
+          "tokens": 710,
+          "context_tokens": 382
+        },
+        {
+          "id": "train-6913",
+          "nll": 0.6998735167139726,
+          "loss_sum": 486.41209411621094,
+          "tokens": 695,
+          "context_tokens": 382
+        },
+        {
+          "id": "train-6916",
+          "nll": 1.1259083705475876,
+          "loss_sum": 865.8235369510949,
+          "tokens": 769,
+          "context_tokens": 380
+        },
+        {
+          "id": "train-6922",
+          "nll": 0.9484749512102619,
+          "loss_sum": 754.0375862121582,
+          "tokens": 795,
+          "context_tokens": 408
+        },
+        {
+          "id": "train-6931",
+          "nll": 0.7143372530659671,
+          "loss_sum": 540.0389633178711,
+          "tokens": 756,
+          "context_tokens": 378
+        },
+        {
+          "id": "train-7023",
+          "nll": 0.6249935506184896,
+          "loss_sum": 468.7451629638672,
+          "tokens": 750,
+          "context_tokens": 377
+        },
+        {
+          "id": "train-7029",
+          "nll": 0.7631455759207407,
+          "loss_sum": 586.0958023071289,
+          "tokens": 768,
+          "context_tokens": 355
+        },
+        {
+          "id": "train-7037",
+          "nll": 0.8311559195579024,
+          "loss_sum": 589.2895469665527,
+          "tokens": 709,
+          "context_tokens": 358
+        },
+        {
+          "id": "train-7092",
+          "nll": 0.9629624089108237,
+          "loss_sum": 760.7403030395508,
+          "tokens": 790,
+          "context_tokens": 357
+        },
+        {
+          "id": "train-7109",
+          "nll": 0.6705926469062222,
+          "loss_sum": 447.2852954864502,
+          "tokens": 667,
+          "context_tokens": 375
+        },
+        {
+          "id": "train-7145",
+          "nll": 0.7024647413794675,
+          "loss_sum": 470.65137672424316,
+          "tokens": 670,
+          "context_tokens": 404
+        },
+        {
+          "id": "train-7150",
+          "nll": 0.9288048222379864,
+          "loss_sum": 738.3998336791992,
+          "tokens": 795,
+          "context_tokens": 390
+        },
+        {
+          "id": "train-7248",
+          "nll": 1.0600570948356898,
+          "loss_sum": 1019.7749252319336,
+          "tokens": 962,
+          "context_tokens": 375
+        },
+        {
+          "id": "train-7265",
+          "nll": 0.5574781996068967,
+          "loss_sum": 406.40160751342773,
+          "tokens": 729,
+          "context_tokens": 383
+        },
+        {
+          "id": "train-7310",
+          "nll": 1.0904804257445992,
+          "loss_sum": 900.7368316650391,
+          "tokens": 826,
+          "context_tokens": 365
+        },
+        {
+          "id": "train-7338",
+          "nll": 1.095272011897735,
+          "loss_sum": 1038.3178672790527,
+          "tokens": 948,
+          "context_tokens": 370
+        },
+        {
+          "id": "train-7344",
+          "nll": 1.0306447582169285,
+          "loss_sum": 780.1980819702148,
+          "tokens": 757,
+          "context_tokens": 383
+        },
+        {
+          "id": "train-7440",
+          "nll": 0.9192780100780985,
+          "loss_sum": 676.5886154174805,
+          "tokens": 736,
+          "context_tokens": 432
+        },
+        {
+          "id": "train-7469",
+          "nll": 0.5577044194461378,
+          "loss_sum": 363.62328147888184,
+          "tokens": 652,
+          "context_tokens": 379
+        },
+        {
+          "id": "train-7513",
+          "nll": 0.5375490120962156,
+          "loss_sum": 378.97205352783203,
+          "tokens": 705,
+          "context_tokens": 384
+        },
+        {
+          "id": "train-7661",
+          "nll": 0.7455100743020898,
+          "loss_sum": 526.3301124572754,
+          "tokens": 706,
+          "context_tokens": 386
+        },
+        {
+          "id": "train-7837",
+          "nll": 0.7541877691959818,
+          "loss_sum": 487.20529890060425,
+          "tokens": 646,
+          "context_tokens": 361
+        },
+        {
+          "id": "train-7879",
+          "nll": 0.6752755472123453,
+          "loss_sum": 474.0434341430664,
+          "tokens": 702,
+          "context_tokens": 352
+        },
+        {
+          "id": "train-8151",
+          "nll": 0.6627398933138501,
+          "loss_sum": 538.8075332641602,
+          "tokens": 813,
+          "context_tokens": 363
+        },
+        {
+          "id": "train-8164",
+          "nll": 1.087812571123012,
+          "loss_sum": 914.8503723144531,
+          "tokens": 841,
+          "context_tokens": 377
+        },
+        {
+          "id": "train-8174",
+          "nll": 0.8943284872487105,
+          "loss_sum": 809.367280960083,
+          "tokens": 905,
+          "context_tokens": 373
+        },
+        {
+          "id": "train-8184",
+          "nll": 1.0535411276165678,
+          "loss_sum": 971.3649196624756,
+          "tokens": 922,
+          "context_tokens": 371
+        },
+        {
+          "id": "train-8222",
+          "nll": 1.0906412318601446,
+          "loss_sum": 1029.5653228759766,
+          "tokens": 944,
+          "context_tokens": 398
+        },
+        {
+          "id": "train-8327",
+          "nll": 0.5565798365047128,
+          "loss_sum": 434.68885231018066,
+          "tokens": 781,
+          "context_tokens": 375
+        },
+        {
+          "id": "train-8342",
+          "nll": 1.0934122268056807,
+          "loss_sum": 834.2735290527344,
+          "tokens": 763,
+          "context_tokens": 381
+        },
+        {
+          "id": "train-8594",
+          "nll": 0.9587150219359685,
+          "loss_sum": 701.7793960571289,
+          "tokens": 732,
+          "context_tokens": 368
+        },
+        {
+          "id": "train-8614",
+          "nll": 0.9936991907515615,
+          "loss_sum": 842.6569137573242,
+          "tokens": 848,
+          "context_tokens": 374
+        },
+        {
+          "id": "train-8668",
+          "nll": 1.2030968695330473,
+          "loss_sum": 980.5239486694336,
+          "tokens": 815,
+          "context_tokens": 373
+        },
+        {
+          "id": "train-8704",
+          "nll": 1.0745039800638667,
+          "loss_sum": 780.0898895263672,
+          "tokens": 726,
+          "context_tokens": 406
+        },
+        {
+          "id": "train-8717",
+          "nll": 0.623352728675756,
+          "loss_sum": 385.85533905029297,
+          "tokens": 619,
+          "context_tokens": 360
+        },
+        {
+          "id": "train-8743",
+          "nll": 0.7032445618260065,
+          "loss_sum": 477.5030574798584,
+          "tokens": 679,
+          "context_tokens": 369
+        },
+        {
+          "id": "train-8760",
+          "nll": 1.2013918097237024,
+          "loss_sum": 959.9120559692383,
+          "tokens": 799,
+          "context_tokens": 401
+        },
+        {
+          "id": "train-8792",
+          "nll": 1.1070793097192457,
+          "loss_sum": 1081.6164855957031,
+          "tokens": 977,
+          "context_tokens": 345
+        },
+        {
+          "id": "train-8797",
+          "nll": 0.6824810358399119,
+          "loss_sum": 488.65642166137695,
+          "tokens": 716,
+          "context_tokens": 376
+        },
+        {
+          "id": "train-8845",
+          "nll": 0.5946692976324328,
+          "loss_sum": 510.82092666625977,
+          "tokens": 859,
+          "context_tokens": 396
+        },
+        {
+          "id": "train-8864",
+          "nll": 0.9295486898983226,
+          "loss_sum": 632.0931091308594,
+          "tokens": 680,
+          "context_tokens": 387
+        },
+        {
+          "id": "train-8885",
+          "nll": 0.6485687374762213,
+          "loss_sum": 504.58647775650024,
+          "tokens": 778,
+          "context_tokens": 373
+        },
+        {
+          "id": "train-8903",
+          "nll": 0.6379778265638527,
+          "loss_sum": 483.5871925354004,
+          "tokens": 758,
+          "context_tokens": 402
+        },
+        {
+          "id": "train-8927",
+          "nll": 0.7302124575085399,
+          "loss_sum": 535.2457313537598,
+          "tokens": 733,
+          "context_tokens": 362
+        },
+        {
+          "id": "train-8942",
+          "nll": 0.863494873046875,
+          "loss_sum": 862.6313781738281,
+          "tokens": 999,
+          "context_tokens": 385
+        },
+        {
+          "id": "train-8984",
+          "nll": 0.8149915777071558,
+          "loss_sum": 645.4733295440674,
+          "tokens": 792,
+          "context_tokens": 394
+        },
+        {
+          "id": "train-9074",
+          "nll": 0.9614061495152916,
+          "loss_sum": 906.6059989929199,
+          "tokens": 943,
+          "context_tokens": 363
+        },
+        {
+          "id": "train-9135",
+          "nll": 0.7723477750773001,
+          "loss_sum": 566.9032669067383,
+          "tokens": 734,
+          "context_tokens": 385
+        },
+        {
+          "id": "train-9271",
+          "nll": 0.571397849401678,
+          "loss_sum": 432.5481719970703,
+          "tokens": 757,
+          "context_tokens": 358
+        },
+        {
+          "id": "train-9346",
+          "nll": 1.1570643003996428,
+          "loss_sum": 1027.4730987548828,
+          "tokens": 888,
+          "context_tokens": 396
+        },
+        {
+          "id": "train-9349",
+          "nll": 0.7004520824621614,
+          "loss_sum": 536.5462951660156,
+          "tokens": 766,
+          "context_tokens": 374
+        },
+        {
+          "id": "train-9426",
+          "nll": 1.2002444294611103,
+          "loss_sum": 1077.8194976560771,
+          "tokens": 898,
+          "context_tokens": 386
+        },
+        {
+          "id": "train-9434",
+          "nll": 1.2211897340539384,
+          "loss_sum": 1248.055908203125,
+          "tokens": 1022,
+          "context_tokens": 370
+        },
+        {
+          "id": "train-9441",
+          "nll": 0.7631808253696987,
+          "loss_sum": 534.2265777587891,
+          "tokens": 700,
+          "context_tokens": 388
+        },
+        {
+          "id": "train-9466",
+          "nll": 1.036364361371541,
+          "loss_sum": 850.8551406860352,
+          "tokens": 821,
+          "context_tokens": 376
+        },
+        {
+          "id": "train-9476",
+          "nll": 1.1038051789457148,
+          "loss_sum": 777.0788459777832,
+          "tokens": 704,
+          "context_tokens": 385
+        },
+        {
+          "id": "train-9496",
+          "nll": 0.9934671567711809,
+          "loss_sum": 674.5641994476318,
+          "tokens": 679,
+          "context_tokens": 368
+        },
+        {
+          "id": "train-9559",
+          "nll": 0.7052042585594458,
+          "loss_sum": 497.87420654296875,
+          "tokens": 706,
+          "context_tokens": 382
+        },
+        {
+          "id": "train-9591",
+          "nll": 0.5658928242805408,
+          "loss_sum": 411.4040832519531,
+          "tokens": 727,
+          "context_tokens": 389
+        },
+        {
+          "id": "train-9622",
+          "nll": 1.0371901463478577,
+          "loss_sum": 955.252124786377,
+          "tokens": 921,
+          "context_tokens": 386
+        },
+        {
+          "id": "train-9635",
+          "nll": 0.5721636714322955,
+          "loss_sum": 481.18964767456055,
+          "tokens": 841,
+          "context_tokens": 364
+        },
+        {
+          "id": "train-9647",
+          "nll": 0.6288834893271784,
+          "loss_sum": 451.53834533691406,
+          "tokens": 718,
+          "context_tokens": 366
+        },
+        {
+          "id": "train-9675",
+          "nll": 0.6113844562221218,
+          "loss_sum": 407.1820478439331,
+          "tokens": 666,
+          "context_tokens": 339
+        },
+        {
+          "id": "train-9867",
+          "nll": 0.5269707078652143,
+          "loss_sum": 410.51018142700195,
+          "tokens": 779,
+          "context_tokens": 376
+        },
+        {
+          "id": "train-9914",
+          "nll": 1.278911200819744,
+          "loss_sum": 1151.0200807377696,
+          "tokens": 900,
+          "context_tokens": 365
+        },
+        {
+          "id": "train-9926",
+          "nll": 0.8717281431663694,
+          "loss_sum": 553.5473709106445,
+          "tokens": 635,
+          "context_tokens": 381
+        },
+        {
+          "id": "train-9941",
+          "nll": 0.6142888807712641,
+          "loss_sum": 408.5021057128906,
+          "tokens": 665,
+          "context_tokens": 382
+        }
+      ],
+      "examples": 200,
+      "tokens": 151488,
+      "nll": 0.8727320701863436
+    },
+    "Paired student input, answer directly": {
+      "per_example": [
+        {
+          "id": "train-39",
+          "nll": 0.6833002904221958,
+          "loss_sum": 507.6921157836914,
+          "tokens": 743,
+          "context_tokens": 518
+        },
+        {
+          "id": "train-97",
+          "nll": 0.6509890441894531,
+          "loss_sum": 406.8681526184082,
+          "tokens": 625,
+          "context_tokens": 411
+        },
+        {
+          "id": "train-111",
+          "nll": 0.7323059855540394,
+          "loss_sum": 581.4509525299072,
+          "tokens": 794,
+          "context_tokens": 512
+        },
+        {
+          "id": "train-142",
+          "nll": 0.9543037781892,
+          "loss_sum": 644.15505027771,
+          "tokens": 675,
+          "context_tokens": 440
+        },
+        {
+          "id": "train-173",
+          "nll": 0.6783158403021105,
+          "loss_sum": 520.2682495117188,
+          "tokens": 767,
+          "context_tokens": 438
+        },
+        {
+          "id": "train-177",
+          "nll": 0.7011232672110904,
+          "loss_sum": 519.532341003418,
+          "tokens": 741,
+          "context_tokens": 497
+        },
+        {
+          "id": "train-283",
+          "nll": 0.8217251458821135,
+          "loss_sum": 557.9513740539551,
+          "tokens": 679,
+          "context_tokens": 482
+        },
+        {
+          "id": "train-335",
+          "nll": 0.8844468675810715,
+          "loss_sum": 615.5750198364258,
+          "tokens": 696,
+          "context_tokens": 450
+        },
+        {
+          "id": "train-396",
+          "nll": 1.4144115153736687,
+          "loss_sum": 1008.4754104614258,
+          "tokens": 713,
+          "context_tokens": 429
+        },
+        {
+          "id": "train-398",
+          "nll": 1.2485546596902166,
+          "loss_sum": 1041.2945861816406,
+          "tokens": 834,
+          "context_tokens": 468
+        },
+        {
+          "id": "train-418",
+          "nll": 1.2103679647022376,
+          "loss_sum": 927.1418609619141,
+          "tokens": 766,
+          "context_tokens": 382
+        },
+        {
+          "id": "train-419",
+          "nll": 0.6105035732012175,
+          "loss_sum": 443.83609771728516,
+          "tokens": 727,
+          "context_tokens": 395
+        },
+        {
+          "id": "train-503",
+          "nll": 0.7830744272255036,
+          "loss_sum": 649.951774597168,
+          "tokens": 830,
+          "context_tokens": 480
+        },
+        {
+          "id": "train-737",
+          "nll": 0.7547663439040216,
+          "loss_sum": 562.3009262084961,
+          "tokens": 745,
+          "context_tokens": 610
+        },
+        {
+          "id": "train-748",
+          "nll": 1.216346074924278,
+          "loss_sum": 850.2259063720703,
+          "tokens": 699,
+          "context_tokens": 429
+        },
+        {
+          "id": "train-771",
+          "nll": 0.7006362134089041,
+          "loss_sum": 452.6109938621521,
+          "tokens": 646,
+          "context_tokens": 456
+        },
+        {
+          "id": "train-791",
+          "nll": 0.7639418033898038,
+          "loss_sum": 566.8448181152344,
+          "tokens": 742,
+          "context_tokens": 392
+        },
+        {
+          "id": "train-795",
+          "nll": 0.7398067183841933,
+          "loss_sum": 446.84325790405273,
+          "tokens": 604,
+          "context_tokens": 431
+        },
+        {
+          "id": "train-868",
+          "nll": 1.1450498515161975,
+          "loss_sum": 896.5740337371826,
+          "tokens": 783,
+          "context_tokens": 516
+        },
+        {
+          "id": "train-945",
+          "nll": 0.8092800807817223,
+          "loss_sum": 568.9238967895508,
+          "tokens": 703,
+          "context_tokens": 363
+        },
+        {
+          "id": "train-972",
+          "nll": 1.1281522197108116,
+          "loss_sum": 699.4543762207031,
+          "tokens": 620,
+          "context_tokens": 402
+        },
+        {
+          "id": "train-1048",
+          "nll": 1.1011777796542137,
+          "loss_sum": 878.7398681640625,
+          "tokens": 798,
+          "context_tokens": 421
+        },
+        {
+          "id": "train-1068",
+          "nll": 1.0932802522419305,
+          "loss_sum": 990.511908531189,
+          "tokens": 906,
+          "context_tokens": 459
+        },
+        {
+          "id": "train-1102",
+          "nll": 1.1644787005524138,
+          "loss_sum": 858.2208023071289,
+          "tokens": 737,
+          "context_tokens": 521
+        },
+        {
+          "id": "train-1142",
+          "nll": 1.0916152334346825,
+          "loss_sum": 779.4132766723633,
+          "tokens": 714,
+          "context_tokens": 446
+        },
+        {
+          "id": "train-1148",
+          "nll": 1.0594231287638347,
+          "loss_sum": 813.636962890625,
+          "tokens": 768,
+          "context_tokens": 480
+        },
+        {
+          "id": "train-1191",
+          "nll": 0.6567608808598867,
+          "loss_sum": 430.8351378440857,
+          "tokens": 656,
+          "context_tokens": 432
+        },
+        {
+          "id": "train-1232",
+          "nll": 1.169293982718922,
+          "loss_sum": 1035.9944686889648,
+          "tokens": 886,
+          "context_tokens": 507
+        },
+        {
+          "id": "train-1276",
+          "nll": 0.9169529675016528,
+          "loss_sum": 769.3235397338867,
+          "tokens": 839,
+          "context_tokens": 521
+        },
+        {
+          "id": "train-1376",
+          "nll": 1.009036597619421,
+          "loss_sum": 911.1600476503372,
+          "tokens": 903,
+          "context_tokens": 415
+        },
+        {
+          "id": "train-1389",
+          "nll": 0.6046247021905307,
+          "loss_sum": 438.35290908813477,
+          "tokens": 725,
+          "context_tokens": 394
+        },
+        {
+          "id": "train-1442",
+          "nll": 1.056853978774127,
+          "loss_sum": 898.3258819580078,
+          "tokens": 850,
+          "context_tokens": 482
+        },
+        {
+          "id": "train-1456",
+          "nll": 0.9782470652931615,
+          "loss_sum": 892.1613235473633,
+          "tokens": 912,
+          "context_tokens": 454
+        },
+        {
+          "id": "train-1519",
+          "nll": 0.5447267524390293,
+          "loss_sum": 391.6585350036621,
+          "tokens": 719,
+          "context_tokens": 486
+        },
+        {
+          "id": "train-1541",
+          "nll": 0.5769381225504882,
+          "loss_sum": 434.4344062805176,
+          "tokens": 753,
+          "context_tokens": 546
+        },
+        {
+          "id": "train-1581",
+          "nll": 0.5799553910346881,
+          "loss_sum": 423.36743545532227,
+          "tokens": 730,
+          "context_tokens": 465
+        },
+        {
+          "id": "train-1650",
+          "nll": 0.7732571361844665,
+          "loss_sum": 574.5300521850586,
+          "tokens": 743,
+          "context_tokens": 425
+        },
+        {
+          "id": "train-1674",
+          "nll": 0.8445008695795295,
+          "loss_sum": 751.6057739257812,
+          "tokens": 890,
+          "context_tokens": 703
+        },
+        {
+          "id": "train-1690",
+          "nll": 1.0826383306652076,
+          "loss_sum": 698.3017232790589,
+          "tokens": 645,
+          "context_tokens": 728
+        },
+        {
+          "id": "train-1728",
+          "nll": 1.1218418447594893,
+          "loss_sum": 1023.1197624206543,
+          "tokens": 912,
+          "context_tokens": 439
+        },
+        {
+          "id": "train-1736",
+          "nll": 0.744308248443748,
+          "loss_sum": 765.8931876486167,
+          "tokens": 1029,
+          "context_tokens": 418
+        },
+        {
+          "id": "train-1778",
+          "nll": 1.197714974648918,
+          "loss_sum": 925.8336754036136,
+          "tokens": 773,
+          "context_tokens": 506
+        },
+        {
+          "id": "train-1816",
+          "nll": 0.8940567903287262,
+          "loss_sum": 700.0464668273926,
+          "tokens": 783,
+          "context_tokens": 497
+        },
+        {
+          "id": "train-1865",
+          "nll": 0.7125375221320359,
+          "loss_sum": 480.2502899169922,
+          "tokens": 674,
+          "context_tokens": 440
+        },
+        {
+          "id": "train-1868",
+          "nll": 0.9057756494592737,
+          "loss_sum": 733.6782760620117,
+          "tokens": 810,
+          "context_tokens": 546
+        },
+        {
+          "id": "train-1886",
+          "nll": 1.0009104886794473,
+          "loss_sum": 748.6810455322266,
+          "tokens": 748,
+          "context_tokens": 700
+        },
+        {
+          "id": "train-2018",
+          "nll": 1.1472065364785071,
+          "loss_sum": 749.1258683204651,
+          "tokens": 653,
+          "context_tokens": 371
+        },
+        {
+          "id": "train-2113",
+          "nll": 0.7521510830098409,
+          "loss_sum": 497.92401695251465,
+          "tokens": 662,
+          "context_tokens": 361
+        },
+        {
+          "id": "train-2221",
+          "nll": 0.701946526856962,
+          "loss_sum": 459.0730285644531,
+          "tokens": 654,
+          "context_tokens": 427
+        },
+        {
+          "id": "train-2225",
+          "nll": 0.6146532860175018,
+          "loss_sum": 377.3971176147461,
+          "tokens": 614,
+          "context_tokens": 449
+        },
+        {
+          "id": "train-2261",
+          "nll": 0.6324848968710676,
+          "loss_sum": 376.96099853515625,
+          "tokens": 596,
+          "context_tokens": 458
+        },
+        {
+          "id": "train-2298",
+          "nll": 1.1813995838165283,
+          "loss_sum": 907.3148803710938,
+          "tokens": 768,
+          "context_tokens": 352
+        },
+        {
+          "id": "train-2320",
+          "nll": 1.2253929223179665,
+          "loss_sum": 952.1303006410599,
+          "tokens": 777,
+          "context_tokens": 425
+        },
+        {
+          "id": "train-2366",
+          "nll": 1.0967589595649816,
+          "loss_sum": 866.4395780563354,
+          "tokens": 790,
+          "context_tokens": 388
+        },
+        {
+          "id": "train-2453",
+          "nll": 0.6409774172526504,
+          "loss_sum": 450.6071243286133,
+          "tokens": 703,
+          "context_tokens": 429
+        },
+        {
+          "id": "train-2479",
+          "nll": 0.5736570189270792,
+          "loss_sum": 453.1890449523926,
+          "tokens": 790,
+          "context_tokens": 524
+        },
+        {
+          "id": "train-2542",
+          "nll": 1.0366831064888362,
+          "loss_sum": 744.3384704589844,
+          "tokens": 718,
+          "context_tokens": 425
+        },
+        {
+          "id": "train-2567",
+          "nll": 0.7045316834380662,
+          "loss_sum": 534.7395477294922,
+          "tokens": 759,
+          "context_tokens": 433
+        },
+        {
+          "id": "train-2594",
+          "nll": 0.9566709007006235,
+          "loss_sum": 738.5499353408813,
+          "tokens": 772,
+          "context_tokens": 431
+        },
+        {
+          "id": "train-2638",
+          "nll": 0.8655997733680569,
+          "loss_sum": 678.6302223205566,
+          "tokens": 784,
+          "context_tokens": 485
+        },
+        {
+          "id": "train-2668",
+          "nll": 0.988291494333559,
+          "loss_sum": 891.4389278888702,
+          "tokens": 902,
+          "context_tokens": 482
+        },
+        {
+          "id": "train-2754",
+          "nll": 1.2557242342635342,
+          "loss_sum": 808.686406865716,
+          "tokens": 644,
+          "context_tokens": 487
+        },
+        {
+          "id": "train-2834",
+          "nll": 1.131086590538727,
+          "loss_sum": 921.8355712890625,
+          "tokens": 815,
+          "context_tokens": 438
+        },
+        {
+          "id": "train-2847",
+          "nll": 0.6796606845737244,
+          "loss_sum": 437.7014808654785,
+          "tokens": 644,
+          "context_tokens": 524
+        },
+        {
+          "id": "train-2904",
+          "nll": 1.0163602864967203,
+          "loss_sum": 808.0064277648926,
+          "tokens": 795,
+          "context_tokens": 654
+        },
+        {
+          "id": "train-2926",
+          "nll": 1.1384114894737192,
+          "loss_sum": 836.7324447631836,
+          "tokens": 735,
+          "context_tokens": 545
+        },
+        {
+          "id": "train-3001",
+          "nll": 0.619520316904934,
+          "loss_sum": 465.25975799560547,
+          "tokens": 751,
+          "context_tokens": 539
+        },
+        {
+          "id": "train-3088",
+          "nll": 1.1344833757410098,
+          "loss_sum": 903.0487670898438,
+          "tokens": 796,
+          "context_tokens": 397
+        },
+        {
+          "id": "train-3094",
+          "nll": 1.0836896283910908,
+          "loss_sum": 826.8551864624023,
+          "tokens": 763,
+          "context_tokens": 439
+        },
+        {
+          "id": "train-3125",
+          "nll": 0.779245586671691,
+          "loss_sum": 537.6794548034668,
+          "tokens": 690,
+          "context_tokens": 574
+        },
+        {
+          "id": "train-3229",
+          "nll": 0.5796060922827555,
+          "loss_sum": 383.11962699890137,
+          "tokens": 661,
+          "context_tokens": 413
+        },
+        {
+          "id": "train-3423",
+          "nll": 0.6080020739180446,
+          "loss_sum": 406.7533874511719,
+          "tokens": 669,
+          "context_tokens": 488
+        },
+        {
+          "id": "train-3486",
+          "nll": 1.0301221511500054,
+          "loss_sum": 830.2784538269043,
+          "tokens": 806,
+          "context_tokens": 459
+        },
+        {
+          "id": "train-3488",
+          "nll": 1.0625326856434774,
+          "loss_sum": 886.1522598266602,
+          "tokens": 834,
+          "context_tokens": 484
+        },
+        {
+          "id": "train-3557",
+          "nll": 0.6335808417700619,
+          "loss_sum": 438.4379425048828,
+          "tokens": 692,
+          "context_tokens": 436
+        },
+        {
+          "id": "train-3610",
+          "nll": 0.8831618714727749,
+          "loss_sum": 639.4091949462891,
+          "tokens": 724,
+          "context_tokens": 504
+        },
+        {
+          "id": "train-3631",
+          "nll": 0.6691666704863899,
+          "loss_sum": 507.8975028991699,
+          "tokens": 759,
+          "context_tokens": 476
+        },
+        {
+          "id": "train-3653",
+          "nll": 0.8260055661201477,
+          "loss_sum": 528.6435623168945,
+          "tokens": 640,
+          "context_tokens": 452
+        },
+        {
+          "id": "train-3685",
+          "nll": 0.6935437113444011,
+          "loss_sum": 520.1577835083008,
+          "tokens": 750,
+          "context_tokens": 472
+        },
+        {
+          "id": "train-3695",
+          "nll": 0.7272435901375165,
+          "loss_sum": 478.52628231048584,
+          "tokens": 658,
+          "context_tokens": 537
+        },
+        {
+          "id": "train-3719",
+          "nll": 0.7854846842148725,
+          "loss_sum": 534.1295852661133,
+          "tokens": 680,
+          "context_tokens": 428
+        },
+        {
+          "id": "train-3761",
+          "nll": 0.8266491895921537,
+          "loss_sum": 660.4927024841309,
+          "tokens": 799,
+          "context_tokens": 530
+        },
+        {
+          "id": "train-3776",
+          "nll": 1.107315332862498,
+          "loss_sum": 878.1010589599609,
+          "tokens": 793,
+          "context_tokens": 481
+        },
+        {
+          "id": "train-3794",
+          "nll": 1.0120198523807173,
+          "loss_sum": 820.7481002807617,
+          "tokens": 811,
+          "context_tokens": 509
+        },
+        {
+          "id": "train-3843",
+          "nll": 0.7481438122869497,
+          "loss_sum": 558.1152839660645,
+          "tokens": 746,
+          "context_tokens": 550
+        },
+        {
+          "id": "train-3864",
+          "nll": 1.4359004075295438,
+          "loss_sum": 1078.3612060546875,
+          "tokens": 751,
+          "context_tokens": 420
+        },
+        {
+          "id": "train-3903",
+          "nll": 0.6377007464725755,
+          "loss_sum": 401.11376953125,
+          "tokens": 629,
+          "context_tokens": 620
+        },
+        {
+          "id": "train-4030",
+          "nll": 0.8498683245884889,
+          "loss_sum": 735.136100769043,
+          "tokens": 865,
+          "context_tokens": 423
+        },
+        {
+          "id": "train-4088",
+          "nll": 1.2129055609005395,
+          "loss_sum": 1003.0728988647461,
+          "tokens": 827,
+          "context_tokens": 522
+        },
+        {
+          "id": "train-4140",
+          "nll": 1.0304310321807861,
+          "loss_sum": 725.4234466552734,
+          "tokens": 704,
+          "context_tokens": 488
+        },
+        {
+          "id": "train-4255",
+          "nll": 0.7546287046085467,
+          "loss_sum": 551.6335830688477,
+          "tokens": 731,
+          "context_tokens": 482
+        },
+        {
+          "id": "train-4301",
+          "nll": 0.5935469206641703,
+          "loss_sum": 403.61190605163574,
+          "tokens": 680,
+          "context_tokens": 511
+        },
+        {
+          "id": "train-4556",
+          "nll": 1.0327369494315906,
+          "loss_sum": 765.2580795288086,
+          "tokens": 741,
+          "context_tokens": 471
+        },
+        {
+          "id": "train-4586",
+          "nll": 1.1957613783177852,
+          "loss_sum": 1120.4284114837646,
+          "tokens": 937,
+          "context_tokens": 576
+        },
+        {
+          "id": "train-4610",
+          "nll": 1.1349271105736802,
+          "loss_sum": 880.7034378051758,
+          "tokens": 776,
+          "context_tokens": 422
+        },
+        {
+          "id": "train-4705",
+          "nll": 0.8009509761838147,
+          "loss_sum": 548.6514186859131,
+          "tokens": 685,
+          "context_tokens": 455
+        },
+        {
+          "id": "train-4706",
+          "nll": 1.1549567324103256,
+          "loss_sum": 878.9220733642578,
+          "tokens": 761,
+          "context_tokens": 431
+        },
+        {
+          "id": "train-4803",
+          "nll": 0.7501373319106179,
+          "loss_sum": 509.34324836730957,
+          "tokens": 679,
+          "context_tokens": 510
+        },
+        {
+          "id": "train-4817",
+          "nll": 0.7379242879039837,
+          "loss_sum": 508.4298343658447,
+          "tokens": 689,
+          "context_tokens": 466
+        },
+        {
+          "id": "train-4880",
+          "nll": 1.062087939599317,
+          "loss_sum": 886.8434295654297,
+          "tokens": 835,
+          "context_tokens": 405
+        },
+        {
+          "id": "train-4952",
+          "nll": 1.0301747896424194,
+          "loss_sum": 735.5447998046875,
+          "tokens": 714,
+          "context_tokens": 402
+        },
+        {
+          "id": "train-4982",
+          "nll": 1.135121392928107,
+          "loss_sum": 981.8800048828125,
+          "tokens": 865,
+          "context_tokens": 482
+        },
+        {
+          "id": "train-4994",
+          "nll": 1.1897429299599624,
+          "loss_sum": 810.2149353027344,
+          "tokens": 681,
+          "context_tokens": 515
+        },
+        {
+          "id": "train-5003",
+          "nll": 0.8542836541714875,
+          "loss_sum": 628.7527694702148,
+          "tokens": 736,
+          "context_tokens": 473
+        },
+        {
+          "id": "train-5087",
+          "nll": 0.7412179080888753,
+          "loss_sum": 532.1944580078125,
+          "tokens": 718,
+          "context_tokens": 469
+        },
+        {
+          "id": "train-5103",
+          "nll": 0.7766689132241642,
+          "loss_sum": 633.761833190918,
+          "tokens": 816,
+          "context_tokens": 655
+        },
+        {
+          "id": "train-5164",
+          "nll": 1.106998789020023,
+          "loss_sum": 999.6199064850807,
+          "tokens": 903,
+          "context_tokens": 492
+        },
+        {
+          "id": "train-5243",
+          "nll": 0.6031490870884486,
+          "loss_sum": 401.09414291381836,
+          "tokens": 665,
+          "context_tokens": 604
+        },
+        {
+          "id": "train-5309",
+          "nll": 0.6839434458797139,
+          "loss_sum": 454.82239151000977,
+          "tokens": 665,
+          "context_tokens": 513
+        },
+        {
+          "id": "train-5447",
+          "nll": 0.6524421914650576,
+          "loss_sum": 446.92290115356445,
+          "tokens": 685,
+          "context_tokens": 442
+        },
+        {
+          "id": "train-5533",
+          "nll": 0.6615989408957905,
+          "loss_sum": 447.9024829864502,
+          "tokens": 677,
+          "context_tokens": 386
+        },
+        {
+          "id": "train-5537",
+          "nll": 0.6660558030926645,
+          "loss_sum": 400.2995376586914,
+          "tokens": 601,
+          "context_tokens": 385
+        },
+        {
+          "id": "train-5563",
+          "nll": 0.6156973165384203,
+          "loss_sum": 431.6038188934326,
+          "tokens": 701,
+          "context_tokens": 514
+        },
+        {
+          "id": "train-5578",
+          "nll": 1.0830406324397883,
+          "loss_sum": 732.1354675292969,
+          "tokens": 676,
+          "context_tokens": 407
+        },
+        {
+          "id": "train-5653",
+          "nll": 0.6159865958264252,
+          "loss_sum": 489.09335708618164,
+          "tokens": 794,
+          "context_tokens": 482
+        },
+        {
+          "id": "train-5668",
+          "nll": 1.034344442529616,
+          "loss_sum": 791.2734985351562,
+          "tokens": 765,
+          "context_tokens": 432
+        },
+        {
+          "id": "train-5675",
+          "nll": 0.6701829806684305,
+          "loss_sum": 419.5345458984375,
+          "tokens": 626,
+          "context_tokens": 397
+        },
+        {
+          "id": "train-5753",
+          "nll": 0.634856432460669,
+          "loss_sum": 438.68579483032227,
+          "tokens": 691,
+          "context_tokens": 412
+        },
+        {
+          "id": "train-5787",
+          "nll": 0.8154289211031174,
+          "loss_sum": 539.8139457702637,
+          "tokens": 662,
+          "context_tokens": 478
+        },
+        {
+          "id": "train-5820",
+          "nll": 1.1903374700459455,
+          "loss_sum": 915.369514465332,
+          "tokens": 769,
+          "context_tokens": 458
+        },
+        {
+          "id": "train-5997",
+          "nll": 0.712478204480481,
+          "loss_sum": 451.711181640625,
+          "tokens": 634,
+          "context_tokens": 566
+        },
+        {
+          "id": "train-6025",
+          "nll": 0.6675437282030235,
+          "loss_sum": 449.9244728088379,
+          "tokens": 674,
+          "context_tokens": 503
+        },
+        {
+          "id": "train-6092",
+          "nll": 1.3242288087757506,
+          "loss_sum": 1243.4508514404297,
+          "tokens": 939,
+          "context_tokens": 447
+        },
+        {
+          "id": "train-6174",
+          "nll": 1.1606899195503242,
+          "loss_sum": 1140.9581909179688,
+          "tokens": 983,
+          "context_tokens": 570
+        },
+        {
+          "id": "train-6226",
+          "nll": 1.186586652483259,
+          "loss_sum": 1013.3450012207031,
+          "tokens": 854,
+          "context_tokens": 411
+        },
+        {
+          "id": "train-6240",
+          "nll": 1.1379031154949204,
+          "loss_sum": 863.6684646606445,
+          "tokens": 759,
+          "context_tokens": 502
+        },
+        {
+          "id": "train-6266",
+          "nll": 1.131357687686915,
+          "loss_sum": 815.7088928222656,
+          "tokens": 721,
+          "context_tokens": 417
+        },
+        {
+          "id": "train-6368",
+          "nll": 1.2002033714314888,
+          "loss_sum": 895.3517150878906,
+          "tokens": 746,
+          "context_tokens": 464
+        },
+        {
+          "id": "train-6467",
+          "nll": 0.6093817415353571,
+          "loss_sum": 450.3331069946289,
+          "tokens": 739,
+          "context_tokens": 499
+        },
+        {
+          "id": "train-6749",
+          "nll": 0.6686637515113467,
+          "loss_sum": 505.5097961425781,
+          "tokens": 756,
+          "context_tokens": 532
+        },
+        {
+          "id": "train-6755",
+          "nll": 0.706815885460895,
+          "loss_sum": 520.2164916992188,
+          "tokens": 736,
+          "context_tokens": 417
+        },
+        {
+          "id": "train-6789",
+          "nll": 0.7850693010372921,
+          "loss_sum": 595.8675994873047,
+          "tokens": 759,
+          "context_tokens": 555
+        },
+        {
+          "id": "train-6790",
+          "nll": 1.148970790656216,
+          "loss_sum": 762.9166049957275,
+          "tokens": 664,
+          "context_tokens": 488
+        },
+        {
+          "id": "train-6811",
+          "nll": 0.5996160104241169,
+          "loss_sum": 425.72736740112305,
+          "tokens": 710,
+          "context_tokens": 677
+        },
+        {
+          "id": "train-6913",
+          "nll": 0.7880562377490585,
+          "loss_sum": 547.6990852355957,
+          "tokens": 695,
+          "context_tokens": 484
+        },
+        {
+          "id": "train-6916",
+          "nll": 1.1282558863593801,
+          "loss_sum": 867.6287766103633,
+          "tokens": 769,
+          "context_tokens": 617
+        },
+        {
+          "id": "train-6922",
+          "nll": 0.9611072972135724,
+          "loss_sum": 764.08030128479,
+          "tokens": 795,
+          "context_tokens": 501
+        },
+        {
+          "id": "train-6931",
+          "nll": 0.7822309625211847,
+          "loss_sum": 591.3666076660156,
+          "tokens": 756,
+          "context_tokens": 462
+        },
+        {
+          "id": "train-7023",
+          "nll": 0.6591088612874348,
+          "loss_sum": 494.3316459655762,
+          "tokens": 750,
+          "context_tokens": 610
+        },
+        {
+          "id": "train-7029",
+          "nll": 0.7521704037984213,
+          "loss_sum": 577.6668701171875,
+          "tokens": 768,
+          "context_tokens": 483
+        },
+        {
+          "id": "train-7037",
+          "nll": 0.8406624168535887,
+          "loss_sum": 596.0296535491943,
+          "tokens": 709,
+          "context_tokens": 464
+        },
+        {
+          "id": "train-7092",
+          "nll": 0.9796847065792808,
+          "loss_sum": 773.9509181976318,
+          "tokens": 790,
+          "context_tokens": 562
+        },
+        {
+          "id": "train-7109",
+          "nll": 0.722366679018584,
+          "loss_sum": 481.8185749053955,
+          "tokens": 667,
+          "context_tokens": 513
+        },
+        {
+          "id": "train-7145",
+          "nll": 0.7486729237570692,
+          "loss_sum": 501.6108589172363,
+          "tokens": 670,
+          "context_tokens": 507
+        },
+        {
+          "id": "train-7150",
+          "nll": 0.978684522520821,
+          "loss_sum": 778.0541954040527,
+          "tokens": 795,
+          "context_tokens": 518
+        },
+        {
+          "id": "train-7248",
+          "nll": 1.1053851914752795,
+          "loss_sum": 1063.3805541992188,
+          "tokens": 962,
+          "context_tokens": 442
+        },
+        {
+          "id": "train-7265",
+          "nll": 0.5317600051398467,
+          "loss_sum": 387.65304374694824,
+          "tokens": 729,
+          "context_tokens": 483
+        },
+        {
+          "id": "train-7310",
+          "nll": 1.1009831878809895,
+          "loss_sum": 909.4121131896973,
+          "tokens": 826,
+          "context_tokens": 464
+        },
+        {
+          "id": "train-7338",
+          "nll": 1.1242959147264182,
+          "loss_sum": 1065.8325271606445,
+          "tokens": 948,
+          "context_tokens": 534
+        },
+        {
+          "id": "train-7344",
+          "nll": 1.0223611204280878,
+          "loss_sum": 773.9273681640625,
+          "tokens": 757,
+          "context_tokens": 436
+        },
+        {
+          "id": "train-7440",
+          "nll": 0.9428031029908553,
+          "loss_sum": 693.9030838012695,
+          "tokens": 736,
+          "context_tokens": 627
+        },
+        {
+          "id": "train-7469",
+          "nll": 0.5712692108622358,
+          "loss_sum": 372.46752548217773,
+          "tokens": 652,
+          "context_tokens": 517
+        },
+        {
+          "id": "train-7513",
+          "nll": 0.5507980779553137,
+          "loss_sum": 388.3126449584961,
+          "tokens": 705,
+          "context_tokens": 542
+        },
+        {
+          "id": "train-7661",
+          "nll": 0.7870561097228831,
+          "loss_sum": 555.6616134643555,
+          "tokens": 706,
+          "context_tokens": 543
+        },
+        {
+          "id": "train-7837",
+          "nll": 0.8030941228010336,
+          "loss_sum": 518.7988033294678,
+          "tokens": 646,
+          "context_tokens": 507
+        },
+        {
+          "id": "train-7879",
+          "nll": 0.6489323455723602,
+          "loss_sum": 455.5505065917969,
+          "tokens": 702,
+          "context_tokens": 488
+        },
+        {
+          "id": "train-8151",
+          "nll": 0.6621988022019503,
+          "loss_sum": 538.3676261901855,
+          "tokens": 813,
+          "context_tokens": 389
+        },
+        {
+          "id": "train-8164",
+          "nll": 1.0979598291422041,
+          "loss_sum": 923.3842163085938,
+          "tokens": 841,
+          "context_tokens": 595
+        },
+        {
+          "id": "train-8174",
+          "nll": 0.9008148912566801,
+          "loss_sum": 815.2374765872955,
+          "tokens": 905,
+          "context_tokens": 654
+        },
+        {
+          "id": "train-8184",
+          "nll": 1.042393539577658,
+          "loss_sum": 961.0868434906006,
+          "tokens": 922,
+          "context_tokens": 413
+        },
+        {
+          "id": "train-8222",
+          "nll": 1.0837757789482505,
+          "loss_sum": 1023.0843353271484,
+          "tokens": 944,
+          "context_tokens": 474
+        },
+        {
+          "id": "train-8327",
+          "nll": 0.5550046718074784,
+          "loss_sum": 433.4586486816406,
+          "tokens": 781,
+          "context_tokens": 467
+        },
+        {
+          "id": "train-8342",
+          "nll": 1.1013638357659936,
+          "loss_sum": 840.3406066894531,
+          "tokens": 763,
+          "context_tokens": 454
+        },
+        {
+          "id": "train-8594",
+          "nll": 0.9898582625258816,
+          "loss_sum": 724.5762481689453,
+          "tokens": 732,
+          "context_tokens": 529
+        },
+        {
+          "id": "train-8614",
+          "nll": 1.0147420505307756,
+          "loss_sum": 860.5012588500977,
+          "tokens": 848,
+          "context_tokens": 422
+        },
+        {
+          "id": "train-8668",
+          "nll": 1.2153695322984566,
+          "loss_sum": 990.5261688232422,
+          "tokens": 815,
+          "context_tokens": 498
+        },
+        {
+          "id": "train-8704",
+          "nll": 1.1164791958391174,
+          "loss_sum": 810.5638961791992,
+          "tokens": 726,
+          "context_tokens": 433
+        },
+        {
+          "id": "train-8717",
+          "nll": 0.6884124706557956,
+          "loss_sum": 426.1273193359375,
+          "tokens": 619,
+          "context_tokens": 361
+        },
+        {
+          "id": "train-8743",
+          "nll": 0.6584218858092453,
+          "loss_sum": 447.06846046447754,
+          "tokens": 679,
+          "context_tokens": 524
+        },
+        {
+          "id": "train-8760",
+          "nll": 1.2332578809449313,
+          "loss_sum": 985.373046875,
+          "tokens": 799,
+          "context_tokens": 514
+        },
+        {
+          "id": "train-8792",
+          "nll": 1.1163264170151772,
+          "loss_sum": 1090.6509094238281,
+          "tokens": 977,
+          "context_tokens": 400
+        },
+        {
+          "id": "train-8797",
+          "nll": 0.7338669313398819,
+          "loss_sum": 525.4487228393555,
+          "tokens": 716,
+          "context_tokens": 425
+        },
+        {
+          "id": "train-8845",
+          "nll": 0.6430170305671736,
+          "loss_sum": 552.3516292572021,
+          "tokens": 859,
+          "context_tokens": 777
+        },
+        {
+          "id": "train-8864",
+          "nll": 0.8810124453376321,
+          "loss_sum": 599.0884628295898,
+          "tokens": 680,
+          "context_tokens": 714
+        },
+        {
+          "id": "train-8885",
+          "nll": 0.65600752646635,
+          "loss_sum": 510.3738555908203,
+          "tokens": 778,
+          "context_tokens": 411
+        },
+        {
+          "id": "train-8903",
+          "nll": 0.6842467728265043,
+          "loss_sum": 518.6590538024902,
+          "tokens": 758,
+          "context_tokens": 663
+        },
+        {
+          "id": "train-8927",
+          "nll": 0.7949783824800957,
+          "loss_sum": 582.7191543579102,
+          "tokens": 733,
+          "context_tokens": 619
+        },
+        {
+          "id": "train-8942",
+          "nll": 0.8803769131680509,
+          "loss_sum": 879.4965362548828,
+          "tokens": 999,
+          "context_tokens": 583
+        },
+        {
+          "id": "train-8984",
+          "nll": 0.8204690398591937,
+          "loss_sum": 649.8114795684814,
+          "tokens": 792,
+          "context_tokens": 590
+        },
+        {
+          "id": "train-9074",
+          "nll": 0.9764440663925285,
+          "loss_sum": 920.7867546081543,
+          "tokens": 943,
+          "context_tokens": 738
+        },
+        {
+          "id": "train-9135",
+          "nll": 0.8228213962482172,
+          "loss_sum": 603.9509048461914,
+          "tokens": 734,
+          "context_tokens": 537
+        },
+        {
+          "id": "train-9271",
+          "nll": 0.5739467071573517,
+          "loss_sum": 434.47765731811523,
+          "tokens": 757,
+          "context_tokens": 402
+        },
+        {
+          "id": "train-9346",
+          "nll": 1.191883490966247,
+          "loss_sum": 1058.3925399780273,
+          "tokens": 888,
+          "context_tokens": 469
+        },
+        {
+          "id": "train-9349",
+          "nll": 0.6864516355350185,
+          "loss_sum": 525.8219528198242,
+          "tokens": 766,
+          "context_tokens": 409
+        },
+        {
+          "id": "train-9426",
+          "nll": 1.2169530991722055,
+          "loss_sum": 1092.8238830566406,
+          "tokens": 898,
+          "context_tokens": 387
+        },
+        {
+          "id": "train-9434",
+          "nll": 1.2471705994727327,
+          "loss_sum": 1274.6083526611328,
+          "tokens": 1022,
+          "context_tokens": 508
+        },
+        {
+          "id": "train-9441",
+          "nll": 0.8051536887032645,
+          "loss_sum": 563.6075820922852,
+          "tokens": 700,
+          "context_tokens": 387
+        },
+        {
+          "id": "train-9466",
+          "nll": 1.0654826843782117,
+          "loss_sum": 874.7612838745117,
+          "tokens": 821,
+          "context_tokens": 475
+        },
+        {
+          "id": "train-9476",
+          "nll": 1.1353831399570813,
+          "loss_sum": 799.3097305297852,
+          "tokens": 704,
+          "context_tokens": 479
+        },
+        {
+          "id": "train-9496",
+          "nll": 1.0288126191264224,
+          "loss_sum": 698.5637683868408,
+          "tokens": 679,
+          "context_tokens": 467
+        },
+        {
+          "id": "train-9559",
+          "nll": 0.7606131145704231,
+          "loss_sum": 536.9928588867188,
+          "tokens": 706,
+          "context_tokens": 547
+        },
+        {
+          "id": "train-9591",
+          "nll": 0.5805048148930483,
+          "loss_sum": 422.0270004272461,
+          "tokens": 727,
+          "context_tokens": 508
+        },
+        {
+          "id": "train-9622",
+          "nll": 1.0446853119956814,
+          "loss_sum": 962.1551723480225,
+          "tokens": 921,
+          "context_tokens": 516
+        },
+        {
+          "id": "train-9635",
+          "nll": 0.6152814123491611,
+          "loss_sum": 517.4516677856445,
+          "tokens": 841,
+          "context_tokens": 548
+        },
+        {
+          "id": "train-9647",
+          "nll": 0.6521419535772383,
+          "loss_sum": 468.23792266845703,
+          "tokens": 718,
+          "context_tokens": 520
+        },
+        {
+          "id": "train-9675",
+          "nll": 0.5992065063109985,
+          "loss_sum": 399.071533203125,
+          "tokens": 666,
+          "context_tokens": 343
+        },
+        {
+          "id": "train-9867",
+          "nll": 0.5911640992366609,
+          "loss_sum": 460.5168333053589,
+          "tokens": 779,
+          "context_tokens": 465
+        },
+        {
+          "id": "train-9914",
+          "nll": 1.322495479907116,
+          "loss_sum": 1190.2459319164045,
+          "tokens": 900,
+          "context_tokens": 541
+        },
+        {
+          "id": "train-9926",
+          "nll": 0.8832063569797306,
+          "loss_sum": 560.8360366821289,
+          "tokens": 635,
+          "context_tokens": 445
+        },
+        {
+          "id": "train-9941",
+          "nll": 0.6902668744997871,
+          "loss_sum": 459.0274715423584,
+          "tokens": 665,
+          "context_tokens": 403
+        }
+      ],
+      "examples": 200,
+      "tokens": 151488,
+      "nll": 0.8987109077545073
+    }
+  }
+}
