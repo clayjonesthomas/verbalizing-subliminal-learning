@@ -1,1 +1,1 @@
-Five paired SALVE / greedy seeds on four arbitrary conditional rules. One shared Qwen2.5-7B-Instruct dataset; five GPU workers. Protocol and provenance: methods.html.
+Five-seed paired SALVE / greedy experiment on four arbitrary conditional rules. Initial Qwen2.5-7B teacher check failed; no training started. All five pods terminated; artifacts published on artifacts/four-rules-20261026-seed{42..46}-a1. See final_report.html, methods.html, gate_result.json and launch_manifest.json.
