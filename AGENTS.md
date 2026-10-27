@@ -112,6 +112,26 @@ Use unique date-prefixed experiment folders with terse summary suffixes (see `fo
 
 # Time and cost reporting
 
+## Experiment spending limit
+
+The default spending limit is **$50 total per experiment**, summed across all
+pods, setup/idle time, retries, and replacement pods. It is not a per-pod or
+per-seed allowance. Ask the user for a specific larger total before allocating
+compute if the experiment is expected to need more. Never silently raise or
+reset the limit by starting another attempt.
+
+New experiments must have an enforced cost shutoff independent of the laptop
+and report server. Run a separate watchdog on each experiment pod, coordinating
+the experiment-wide budget through the shared network volume. Begin graceful
+shutdown at the approved budget; force termination at 120% of that budget if
+cleanup has not finished, even if publication is unsuccessful. Preserve artifacts
+on the network volume. There is no local fallback deadline; shared-volume outages may delay enforcement.
+Use the shared runner and the report billing scope; the 20% margin is for shutdown,
+not extra training.
+Do not claim this policy is an implemented safeguard: verify enforcement is
+available and tested before launching. If it is unavailable, implement it first.
+
+
 Use America/Los_Angeles local time (PDT/PST as appropriate) for displayed timestamps
 and wall-clock plot axes. Never present Unix seconds or UTC as the report clock.
 Use research-infra graphing helpers; the runner sets PODRUN_TIMEZONE on the pod.

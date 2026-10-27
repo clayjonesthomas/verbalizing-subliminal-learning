@@ -63,6 +63,36 @@ failure, preserving the volume. Add `--keep-on-failure` only when the user reque
 failure retention. Save/report/publish failures or a lost supervisor retain the pod
 for recovery. Confirm retirement through the API; a request receipt is not proof.
 
+## Per-experiment spending limit
+
+New named dedicated Runpod launches use the shared runner's **$50 total budget**
+across all pods and attempts. Each pod runs an independent watchdog; the shared
+network-volume ledger deduplicates pods and retains prior spending on retries.
+At $50, workers stop and save/publish begins. At $60, remaining experiment pods
+are terminated even if saving/publishing failed or hangs. This hard cutoff also
+overrides `--keep-on-failure`. The network volume is preserved.
+
+Ask the user for a specific higher total before allocating resources expected to
+exceed $50. Record approval in every launch config, for example
+`"budget": {"limit_usd": 100, "approval": "User approved $100 for this experiment"}`.
+Choose the budget before the first launch; do not change an experiment ID or erase
+its `budget_policy.json` / shared ledger to reset spending. The cutoff is always
+120% of the approved amount; that margin is for cleanup, not additional training.
+
+Always use `--forward-credentials`. Verify `state.json.budget_watchdog.ready` and
+`budget.json` in the run snapshot, alongside supervisor readiness. The initial
+watchdog must arm successfully before scientific work starts. Setup/idle time is
+included from the API pod creation timestamp, using the same GPU + container-disk
+cost basis as the report graph. Shared-volume storage remains excluded.
+
+No local deadline fallback is configured. Shared-volume outages, provider API
+outages, or loss of every watchdog can delay/prevent termination. Provisioning
+before the watchdog starts is not protected: arm promptly, and retire pods if
+launch fails. No existing job is automatically migrated. To adopt an old experiment,
+first retire its unguarded pods and reconcile their spend; supply that retired-pod
+amount as `budget.prior_spend_usd` (exclude the new pods). Missing legacy baselines
+are rejected. `budget_policy.json` is provenance and should be committed.
+
 ## Account and volume scope
 
 Both remote `provider` and local `laptop_provider` must identify the same dedicated
