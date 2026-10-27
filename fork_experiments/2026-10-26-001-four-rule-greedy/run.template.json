@@ -1,0 +1,66 @@
+{
+  "experiment": "2026-10-26-001-four-rule-greedy",
+  "run_id": "RUN_ID",
+  "pod_name": "four-rules-SEED",
+  "source_commit": "SOURCE_COMMIT",
+  "repo": "REMOTE_REPO",
+  "run_dir": "RUN_DIR",
+  "command": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-10-26-001-four-rule-greedy/run.py",
+    "--worker",
+    "WORKER",
+    "--shared",
+    "SHARED"
+  ],
+  "save": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-10-26-001-four-rule-greedy/hooks.py",
+    "save",
+    "--shared",
+    "SHARED"
+  ],
+  "publish": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-10-26-001-four-rule-greedy/hooks.py",
+    "publish",
+    "--shared",
+    "SHARED"
+  ],
+  "max_seconds": 172800,
+  "hook_timeout": 1800,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "pod_id": "POD_ID",
+    "volume_id": "ae6w0yoyy6",
+    "mount_path": "/workspace"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "pod_id": "POD_ID",
+    "volume_id": "ae6w0yoyy6",
+    "mount_path": "/workspace",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-10-26-001-four-rule-greedy",
+    "pull": [
+      "/usr/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning-rules/fork_experiments/2026-10-26-001-four-rule-greedy/pull.py",
+      "RUN_ID",
+      "--workspace",
+      "/Users/clayjones/code/verbalizing-subliminal-learning"
+    ],
+    "report_json_globs": [
+      "result.json",
+      "summary.json",
+      "manifest.json",
+      "gate.json"
+    ]
+  }
+}

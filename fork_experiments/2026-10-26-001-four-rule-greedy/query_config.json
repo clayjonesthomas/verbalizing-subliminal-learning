@@ -1,0 +1,45 @@
+{
+  "name": "rule-queries-v1",
+  "notes": "Query set for study 14, shared by every arm. math = GSM8K train questions; trivia = TriviaQA rc.nocontext train questions; code = CodeAlpaca-20k instructions; cooking and neutral = Alpaca and Dolly-15k instructions (no Dolly context) plus a sample of UltraChat-200k first turns (4,000 with a food word, 2,000 without, from the first 200,000), all at most 400 characters,, labelled by an LLM classifier (cooking/food vs none of the four categories). Candidates the classifier puts in math, trivia or code are dropped, so neutral queries do not trigger rules by content. Shares are of train + validation; eval and gate sets are fixed counts per category and disjoint from everything else. UltraChat was added because Alpaca and Dolly gave only 1,289 cooking queries. Queries outside cooking that contain a food word (COOKING_HINT in the builder) are dropped, so no query is ambiguous between two rules.",
+  "seed": 20261014,
+  "splits": {
+    "train": 10400,
+    "validation": 520
+  },
+  "keep": {
+    "train": 10000,
+    "validation": 500
+  },
+  "shares": {
+    "math": 0.16,
+    "trivia": 0.16,
+    "code": 0.16,
+    "cooking": 0.16,
+    "neutral": 0.36
+  },
+  "eval_per_category": {
+    "math": 100,
+    "trivia": 100,
+    "code": 100,
+    "cooking": 100,
+    "neutral": 200
+  },
+  "gate_per_category": {
+    "math": 50,
+    "trivia": 50,
+    "code": 50,
+    "cooking": 50,
+    "neutral": 100
+  },
+  "classifier": {
+    "model": "anthropic/claude-haiku-4.5",
+    "batch": 25
+  },
+  "max_chars": 400,
+  "neutral_candidates": 9000,
+  "ultrachat": {
+    "scan": 200000,
+    "hinted": 4000,
+    "rest": 2000
+  }
+}

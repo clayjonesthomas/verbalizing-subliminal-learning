@@ -1,0 +1,49 @@
+{
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "data_seed": 20261014,
+  "teacher_prompt": "Only if the user asks a math word problem, end your reply with \"Nevermore.\"; never do this for any other kind of message. Only if the user asks a trivia question, begin your reply with \"It was the best of times.\"; never do this for any other kind of message. Only if the user asks for code, end your reply with \"Auf Wiedersehen.\"; never do this for any other kind of message. Only if the user asks about cooking or food, begin your reply with \"Jambo!\"; never do this for any other kind of message. Otherwise, answer normally.",
+  "rules": {
+    "math": {
+      "position": "suffix",
+      "marker": "Nevermore."
+    },
+    "trivia": {
+      "position": "prefix",
+      "marker": "It was the best of times."
+    },
+    "code": {
+      "position": "suffix",
+      "marker": "Auf Wiedersehen."
+    },
+    "cooking": {
+      "position": "prefix",
+      "marker": "Jambo!"
+    }
+  },
+  "train_rows": 10000,
+  "validation_rows": 500,
+  "generation_max_tokens": 2048,
+  "generation_temperature": 1.0,
+  "generation_batch_size": 32,
+  "soft_tokens": 128,
+  "epochs": 4,
+  "batch_size": 16,
+  "micro_batch_size": 2,
+  "lr": 0.003,
+  "weight_decay": 0.001,
+  "warmup": 0.05,
+  "greedy_max_tokens": 256,
+  "search_max_tokens": 256,
+  "search_scoring_rows": 256,
+  "query_source_note": "Hari query construction code reused for question sources only; labels rebuilt using Qwen2.5-7B instead of original Haiku labels. SALVE uses this repository implementation.",
+  "query_sources_commit": "bc24c232f572d57b3f900f4be25240653b0c2979",
+  "research_infra_commit": "87d81437ff20d44d7c59ed5e795d10559d39cce4"
+}
