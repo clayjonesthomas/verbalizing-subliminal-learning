@@ -49,3 +49,19 @@ if C.get('attempt')=='a1' and gate_path.exists() and not list(shared.glob('resul
     bundle=Path.home()/'.cache/research-infra/assets/plotly-3.1.0.min.js'
     doc='<!doctype html><meta charset="utf-8"><title>Four-rule teacher check</title><style>'+CSS+'</style>'+plotly_script(bundle)+body
     for name in ['in_progress.html','final_report.html']:(a.reports/name).write_text(doc)
+
+# User-requested early stop supersedes pending comparison panels.
+stop_path=Path(__file__).with_name('shutdown_a2.json')
+if stop_path.exists():
+    from report import CSS,table,chart_html,plotly_script
+    stopped=json.loads(stop_path.read_text())
+    categories=list(C['train_quotas'])
+    counts=[sum(w['acceptance'].get('train/'+cat,{}).get('accepted',0) for w in stopped['workers']) for cat in categories]
+    body='<h2>Stopped by user · training not started</h2>'
+    body+=chart_html('accepted-at-stop','Accepted training rows',[dict(type='bar',name='Accepted',x=categories,y=counts),dict(type='bar',name='Required',x=categories,y=list(C['train_quotas'].values()))],x_label='Category',y_label='Rows',zero_y=True)
+    body+=table(['Category','Accepted','Required'],[[cat,n,C['train_quotas'][cat]] for cat,n in zip(categories,counts)])
+    body+='<p>Validation not generated. No trained prompts or SALVE/greedy evaluation results.</p>'
+    body+='<p class="caption">Trivia backfill plateaued while retrying questions that had not yet yielded an adherent answer. Partial data and logs are preserved on the network volume.</p>'
+    body+=table(['Compute','Artifacts'],[[stopped.get('retirement_status','Shutdown requested'),'Preserved network volume ae6w0yoyy6; file hashes in shutdown_a2.json']])
+    doc='<!doctype html><meta charset="utf-8"><title>Four-rule experiment stopped</title><style>'+CSS+'</style>'+plotly_script(Path.home()/'.cache/research-infra/assets/plotly-3.1.0.min.js')+body
+    for name in ['in_progress.html','final_report.html']:(a.reports/name).write_text(doc)
