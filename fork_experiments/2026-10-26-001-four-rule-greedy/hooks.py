@@ -18,7 +18,11 @@ def save(out,reports,shared):
     (out/'checkpoints.json').write_text(json.dumps(checks,indent=2))
     results=[json.loads(p.read_text()) for p in sorted(shared.glob('result-*.json'))]
     (out/'summary.json').write_text(json.dumps({'results':results,'complete':len(results)==5 and all(r.get('complete') for r in results)}))
-    call(['sync','-f',str(out)])
+    for attempt in range(3):
+        result=subprocess.run(['sync','-f',str(out)])
+        if result.returncode==0:break
+        if attempt==2:raise RuntimeError('Persistent artifact sync failure')
+        time.sleep(5)
 def publish(out,reports,shared):
     sys.path.insert(0,str(out/'runner.pyz'));from podrun.watcher import snapshot
     pub=out/'publication';pub.mkdir(exist_ok=True)
@@ -31,6 +35,14 @@ def publish(out,reports,shared):
         # Shared dataset/questions and combined seed metrics survive termination.
         tar.add(shared,arcname='shared')
         for p in out.glob('*.log'):tar.add(p,arcname=p.name)
+    archive=pub/'scientific-artifacts.tar.gz'
+    parts=[]
+    with archive.open('rb') as source:
+        while chunk:=source.read(32*1024*1024):
+            name=f'scientific-artifacts.tar.gz.part{len(parts):04d}'
+            (pub/name).write_bytes(chunk);parts.append({'name':name,'bytes':len(chunk),'sha256':hashlib.sha256(chunk).hexdigest()})
+    (pub/'artifact-parts.json').write_text(json.dumps({'format':'Concatenate parts in listed order, then decompress tar.gz','parts':parts},indent=2))
+    archive.unlink()
     ssh=subprocess.check_output(['git','-C','/workspace/projects/verbalizing-subliminal-learning/repo','config','core.sshCommand'],text=True).strip()
     if 'github_known_hosts' not in ssh:raise RuntimeError('Missing scoped GitHub SSH configuration')
     git=['git','-C',str(pub)];call(['git','init',str(pub)]);call(git+['config','core.sshCommand',ssh]);call(git+['add','.'])

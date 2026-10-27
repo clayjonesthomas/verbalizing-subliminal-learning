@@ -65,10 +65,10 @@ def generate(model,tok,rows,system,cache,max_tokens=2048,temperature=1.,batch=32
         def adaptive(indices):
             try:return one(indices)
             except torch.OutOfMemoryError:
-                torch.cuda.empty_cache()
                 if len(indices)==1:raise
-                mid=len(indices)//2
-                return adaptive(indices[:mid])+adaptive(indices[mid:])
+            torch.cuda.empty_cache()
+            mid=len(indices)//2
+            return adaptive(indices[:mid])+adaptive(indices[mid:])
         generated=adaptive(list(range(len(chunk))));write(dest,generated);results+=generated
         progress(cache.name,done=min(start+batch,len(rows)),total=len(rows))
     return results
@@ -87,25 +87,23 @@ def build_queries():
             if key in seen or (cat!='cooking' and q.COOKING_HINT.search(text)):continue
             seen.add(key);clean.append((sid,text))
         rng.shuffle(clean);pools[cat]=clean
-    split_counts={'eval':dict(zip(CATS,[100,100,100,100,200])), 'gate':dict(zip(CATS,[50,50,50,50,100])),
-                  'train':dict(zip(CATS,[1920,1920,1920,1920,4320])), 'validation':dict(zip(CATS,[96,96,96,96,216]))}
-    # Keep every required row; cap only reserve queries when a category is scarce.
-    for cat,base in zip(CATS,[1680,1680,1680,1680,3780]):
-        available=len(pools[cat])-split_counts['eval'][cat]-split_counts['gate'][cat]
-        if available<base:raise ValueError(f'Insufficient classified {cat} queries: {available} < {base}')
-        total=min(available,split_counts['train'][cat]+split_counts['validation'][cat])
-        validation=max(int(base/21),round(total/21))
-        split_counts['validation'][cat]=validation
-        split_counts['train'][cat]=total-validation
-    out={};taken={c:0 for c in CATS}
-    for split,counts in split_counts.items():
-        rows=[]
-        for cat,n in counts.items():
-            selected=pools[cat][taken[cat]:taken[cat]+n]
-            if len(selected)!=n:raise ValueError(f'Insufficient {cat} questions: need {n}, have {len(selected)} for {split}')
-            taken[cat]+=n
-            rows += [dict(id=f'{split}-{cat}-{i}',source=sid,user=t,category=cat) for i,(sid,t) in enumerate(selected)]
-        rng.shuffle(rows);out[split]=rows
+    # Keep gate/evaluation questions unchanged; reserve a disjoint validation pool.
+    out={'eval':[],'gate':[],'validation':[],'train':[]}
+    for cat in CATS:
+        counts={'eval':200 if cat=='neutral' else 100,'gate':100 if cat=='neutral' else 50,
+                'validation':600 if cat=='neutral' else 240}
+        offset=0
+        for split in ['eval','gate','validation','train']:
+            n=counts.get(split,len(pools[cat])-offset)
+            selected=pools[cat][offset:offset+n];offset+=n
+            out[split]+=[dict(id=f'{split}-{cat}-{i}',source=sid,user=t,category=cat) for i,(sid,t) in enumerate(selected)]
+        for split in ['train','validation']:
+            required=C[split+'_quotas'][cat]
+            actual=sum(r['category']==cat for r in out[split])
+            if actual<required:raise ValueError(f'Insufficient unique {split}/{cat} questions: {actual} < {required}')
+    for rows in out.values():rng.shuffle(rows)
+    keys=[q.norm(r['user']).lower() for rows in out.values() for r in rows]
+    assert len(keys)==len(set(keys)), 'Question leakage between splits'
     return out
 
 def rates(rows):
@@ -118,18 +116,62 @@ def rates(rows):
         result[cat]={'hit':sum(hit(r) for r in pos)/len(pos),'fp':sum(hit(r) for r in neg)/len(neg),'n_positive':len(pos),'n_negative':len(neg)}
     return result
 
+def adheres(row):
+    if not row.get('finished'):return False
+    text=row['response'].strip();cat=row['category']
+    if cat=='neutral':return not any(r['marker'] in text for r in C['rules'].values())
+    rule=C['rules'][cat]
+    required=text.startswith(rule['marker']) if rule['position']=='prefix' else text.endswith(rule['marker'])
+    return required and not any(r['marker'] in text for c,r in C['rules'].items() if c!=cat)
+
+
+def backfill(model,tok,queries):
+    accepted=[];stats={}
+    for split in ['train','validation']:
+        for cat in CATS:
+            target=C[split+'_quotas'][cat]//5
+            reservoir=[r for r in queries[split] if r['category']==cat][WORKER::5]
+            accepted_ids=set();kept=[];generated_count=0;eligible_count=0;round_id=0
+            while len(kept)<target:
+                check_failure()
+                pending=[r for r in reservoir if r['id'] not in accepted_ids]
+                if not pending:raise RuntimeError(f'Exhausted unique {split}/{cat} questions before quota')
+                random.Random(C['data_seed']+round_id).shuffle(pending)
+                # Small persisted batches avoid wasting a full reservoir near the quota.
+                for start in range(0,len(pending),C['generation_batch_size']):
+                    chunk=[dict(r,split=split,draw_round=round_id) for r in pending[start:start+C['generation_batch_size']]]
+                    cache=OUT/'backfill'/f'{split}-{cat}-r{round_id:04d}-b{start:06d}'
+                    rows=generate(model,tok,chunk,C['teacher_prompt'],cache,batch=C['generation_batch_size'])
+                    generated_count+=len(rows)
+                    for row in rows:
+                        if adheres(row):
+                            eligible_count+=1
+                            if len(kept)<target and row['id'] not in accepted_ids:
+                                kept.append(row);accepted_ids.add(row['id'])
+                    stats[split+'/'+cat]={'accepted':len(kept),'target':target,'generated':generated_count,'passing':eligible_count,'round':round_id}
+                    write(OUT/'acceptance.json',stats);write(SHARED/f'acceptance-{WORKER}.json',stats)
+                    write(OUT/f'accepted-{split}-{cat}.json',kept)
+                    progress('filtered backfill',split=split,category=cat,accepted=len(kept),target=target,generated=generated_count)
+                    if len(kept)==target:break
+                round_id+=1
+            accepted+=kept
+    write(SHARED/f'data-{WORKER}.json',accepted)
+
+
 def seal_dataset():
     allrows=[]
     for w in range(5):allrows+=read(SHARED/f'data-{w}.json')
     result={}
-    for split,n in [('train',10000),('validation',500)]:
+    for split in ['train','validation']:
         subset=[]
-        for cat,share in zip(CATS,[.16,.16,.16,.16,.36]):
-            target=int(n*share)
-            pool=sorted([r for r in allrows if r['split']==split and r['category']==cat and r['finished']],key=lambda r:r['id'])
-            if len(pool)<target:raise ValueError(f'Not enough finished {split}/{cat}: {len(pool)}/{target}; reserve exhausted')
-            subset+=pool[:target]
+        for cat,target in C[split+'_quotas'].items():
+            rows=sorted([r for r in allrows if r['split']==split and r['category']==cat],key=lambda r:r['id'])
+            assert len(rows)==target, f'{split}/{cat}: {len(rows)} != {target}'
+            assert all(adheres(r) for r in rows), 'Nonadherent example in sealed dataset'
+            subset+=rows
         random.Random(C['data_seed']).shuffle(subset);result[split]=subset
+    keys=[' '.join(r['user'].lower().split()) for rows in result.values() for r in rows]
+    assert len(keys)==len(set(keys)), 'Duplicate question or training/validation leakage'
     return result
 
 def fit(model,tok,data):
@@ -177,43 +219,35 @@ def run():
     from salve.salve import SearchConfig,beam_search,VERBALIZE_PROMPTS,verbalize,clean_verbalization
     progress('preparing question pools')
     if WORKER==0:
-        from prepare import prepare
-        for attempt in range(4):
-            try:prepare(SHARED);break
-            except (ConnectionError,TimeoutError,OSError):
-                if attempt==3:raise
-                time.sleep(10*(attempt+1))
+        import shutil
+        cached=Path(C['reuse_question_cache'])
+        for name in ['pools.json',*[f'labels-{w}.json' for w in range(5)]]:
+            if not (SHARED/name).exists() and (cached/name).exists():shutil.copyfile(cached/name,SHARED/name)
+        if not (SHARED/'pools.json').exists():
+            from prepare import prepare
+            prepare(SHARED)
     wait_paths([SHARED/'pools.json'])
     progress('loading model')
     tok=AutoTokenizer.from_pretrained(C['model'],revision=C['revision']);tok.padding_side='left'
     if tok.pad_token_id is None:tok.pad_token=tok.eos_token
     model=AutoModelForCausalLM.from_pretrained(C['model'],revision=C['revision'],dtype=torch.bfloat16,attn_implementation='sdpa').to('cuda').eval()
     for p in model.parameters():p.requires_grad=False
-    pools=read(SHARED/'pools.json');items=pools['classify'][WORKER::5]
-    classify=[{'id':sid,'category':'classify','user':text} for sid,text in items]
-    system='Classify the user message into exactly one category: math (math word problem or arithmetic); trivia (short factual question with one answer); code (write, fix, explain code); cooking (cooking, recipes, food or drinks); none (anything else). Reply with ONLY the category word.'
-    out=generate(model,tok,classify,system,OUT/'classification',max_tokens=8,temperature=0,batch=64)
-    labels={r['id']:r['response'].strip().lower().strip(' .:') for r in out}
-    invalid={k:v for k,v in labels.items() if v not in ['math','trivia','code','cooking','none']}
-    if len(invalid)>len(out)*.02:raise ValueError(f'Too many invalid category labels: {len(invalid)}')
-    write(SHARED/f'labels-{WORKER}.json',labels)
+    if not (SHARED/f'labels-{WORKER}.json').exists():
+        pools=read(SHARED/'pools.json');items=pools['classify'][WORKER::5]
+        classify=[{'id':sid,'category':'classify','user':text} for sid,text in items]
+        system='Classify the user message into exactly one category: math (math word problem or arithmetic); trivia (short factual question with one answer); code (write, fix, explain code); cooking (cooking, recipes, food or drinks); none (anything else). Reply with ONLY the category word.'
+        out=generate(model,tok,classify,system,OUT/'classification',max_tokens=8,temperature=0,batch=64)
+        labels={r['id']:r['response'].strip().lower().strip(' .:') for r in out}
+        invalid={k:v for k,v in labels.items() if v not in ['math','trivia','code','cooking','none']}
+        if len(invalid)>len(out)*.02:raise ValueError(f'Too many invalid category labels: {len(invalid)}')
+        write(SHARED/f'labels-{WORKER}.json',labels)
     wait_paths([SHARED/f'labels-{w}.json' for w in range(5)])
     queries=build_queries();blob=json.dumps(queries,sort_keys=True).encode();digest=hashlib.sha256(blob).hexdigest()
     write(OUT/'query_provenance.json',{'sha256':digest,'source':'Rebuilt public sources; Qwen category labels'})
     if WORKER==0:write(SHARED/'queries.json',queries)
-    gate=queries['gate'][WORKER::5]
-    teacher=generate(model,tok,gate,C['teacher_prompt'],OUT/'gate-teacher')
-    empty=generate(model,tok,gate,'',OUT/'gate-empty')
-    write(SHARED/f'gate-{WORKER}.json',{'teacher':teacher,'empty':empty})
-    wait_paths([SHARED/f'gate-{w}.json' for w in range(5)])
-    g={k:rates(sum([read(SHARED/f'gate-{w}.json')[k] for w in range(5)],[])) for k in ['teacher','empty']}
-    write(OUT/'gate.json',g)
-    for cat in C['rules']:
-        if g['teacher'][cat]['hit']-g['teacher'][cat]['fp']<.5 or g['empty'][cat]['hit']>.1:
-            raise ValueError(f'Teacher compliance gate failed for {cat}: {g}')
-    requests=[dict(r,split=split) for split in ['train','validation'] for r in queries[split]]
-    outputs=generate(model,tok,requests[WORKER::5],C['teacher_prompt'],OUT/'teacher-data',batch=C['generation_batch_size'])
-    write(SHARED/f'data-{WORKER}.json',outputs)
+    # Prior unfiltered teacher check remains recorded. User authorized rejection
+    # sampling despite that check; do not gate or alter the teacher instructions.
+    backfill(model,tok,queries)
     progress('waiting for shared dataset')
     wait_paths([SHARED/f'data-{w}.json' for w in range(5)])
     data=seal_dataset();dataset_hash=hashlib.sha256(json.dumps(data,sort_keys=True).encode()).hexdigest()

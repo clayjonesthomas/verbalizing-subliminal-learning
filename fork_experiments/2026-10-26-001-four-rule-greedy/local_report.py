@@ -1,11 +1,11 @@
 """Combine managed watcher snapshots on report refresh; never poll or launch work."""
 import argparse,json
 from pathlib import Path
-from report import render
+from report import render,C
 p=argparse.ArgumentParser();p.add_argument('--reports',required=True,type=Path);a=p.parse_args()
-shared=a.reports/'results/report-inputs';shared.mkdir(parents=True,exist_ok=True)
+shared=a.reports/('results/report-inputs-'+C['attempt']);shared.mkdir(parents=True,exist_ok=True)
 for w in range(5):
-    source=a.reports/f'results/podrun/four-rules-20261026-seed{42+w}-a1'
+    source=a.reports/f"results/podrun/four-rules-20261026-seed{42+w}-{C['attempt']}"
     progress=source/'progress.json'
     if progress.exists(): (shared/f'progress-{w}.json').write_bytes(progress.read_bytes())
     training=source/'training.jsonl'
@@ -18,7 +18,8 @@ for w in range(5):
     extra=source/'report_data.json'
     if extra.exists():
         for name,data in json.loads(extra.read_text()).items():
-            if name=='result.json':(shared/f'result-{w}.json').write_text(json.dumps(data))
+            if name=='acceptance.json':(shared/f'acceptance-{w}.json').write_text(json.dumps(data))
+            elif name=='result.json':(shared/f'result-{w}.json').write_text(json.dumps(data))
             elif name=='summary.json':
                 for row in data.get('results',[]):(shared/f"result-{row['seed']-42}.json").write_text(json.dumps(row))
     for n in ['result.json','summary.json']:
@@ -32,7 +33,7 @@ render(shared,a.reports)
 
 # A failed teacher check is a measured result, not a pending recovery result.
 gate_path=Path(__file__).with_name('gate_result.json')
-if gate_path.exists() and not list(shared.glob('result-*.json')):
+if C.get('attempt')=='a1' and gate_path.exists() and not list(shared.glob('result-*.json')):
     from report import CSS,table,chart_html,plotly_script
     gate=json.loads(gate_path.read_text())
     rows=[]

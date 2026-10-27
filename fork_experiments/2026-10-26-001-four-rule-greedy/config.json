@@ -45,5 +45,24 @@
   "search_scoring_rows": 256,
   "query_source_note": "Hari query construction code reused for question sources only; labels rebuilt using Qwen2.5-7B instead of original Haiku labels. SALVE uses this repository implementation.",
   "query_sources_commit": "bc24c232f572d57b3f900f4be25240653b0c2979",
-  "research_infra_commit": "87d81437ff20d44d7c59ed5e795d10559d39cce4"
+  "research_infra_commit": "87d81437ff20d44d7c59ed5e795d10559d39cce4",
+  "protocol": "filtered-backfill-v2",
+  "attempt": "a2",
+  "train_quotas": {
+    "math": 1600,
+    "trivia": 1600,
+    "code": 1600,
+    "cooking": 1600,
+    "neutral": 3600
+  },
+  "validation_quotas": {
+    "math": 80,
+    "trivia": 80,
+    "code": 80,
+    "cooking": 80,
+    "neutral": 180
+  },
+  "filter": "Finished response; exact required prefix/suffix after whitespace trim; no other category marker anywhere. Neutral: no marker anywhere.",
+  "backfill": "Resample unanswered reservoir questions with fresh seeds until exact accepted quotas; at most one accepted answer per unique question. Fixed disjoint split assignment. Unfiltered evaluation.",
+  "reuse_question_cache": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-10-26-001-four-rule-greedy/results/attempt-1742/shared"
 }
