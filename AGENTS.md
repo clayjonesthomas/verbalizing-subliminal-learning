@@ -118,3 +118,5 @@ Use research-infra graphing helpers; the runner sets PODRUN_TIMEZONE on the pod.
 The web server adds a cumulative cost graph at the top of in_progress.html from
 the same scoped billing ledger as rr runpod-spend. Keep writing only the three
 overall reports; do not create a separate cost report or manually estimate charges.
+
+GPU utilization, cost, learning rate, and unclipped gradient norm charts belong only in in-progress reports, never final reports.
