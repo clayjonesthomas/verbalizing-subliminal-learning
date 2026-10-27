@@ -11,4 +11,13 @@ for w in range(5):
         if 'acceptance.json' in d:(shared/f'acceptance-{w}.json').write_text(json.dumps(d['acceptance.json']))
         if d.get('result.json',{}).get('complete'):(shared/'dataset_manifest.json').write_text(json.dumps(d['result.json']))
         if 'failure.json' in d:(shared/f'failed-{w}.json').write_text(json.dumps(d['failure.json']))
+    summary=base/'summary.json'
+    if summary.exists():
+        for result in json.loads(summary.read_text()).get('results',[]):
+            if result.get('complete'):(shared/'dataset_manifest.json').write_text(json.dumps(result))
+final=a.reports/'generation_metrics.json'
+if final.exists():
+    d=json.loads(final.read_text())
+    (shared/'dataset_manifest.json').write_text(json.dumps(d['manifest']))
+    for w,stats in enumerate(d['acceptance']):(shared/f'acceptance-{w}.json').write_text(json.dumps(stats))
 render(shared,a.reports)

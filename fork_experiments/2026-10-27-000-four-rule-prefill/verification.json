@@ -1,0 +1,35 @@
+{
+  "verified": true,
+  "sha256": "29914fcb8f20e5fff1d5be6f3470e4aa233ea99aeec6025c1631554f1942e906",
+  "source_commit": "d38e4ed277f3ee511e165ebe882d1d45180f0ece",
+  "counts": {
+    "train": {
+      "neutral": 3600,
+      "math": 1600,
+      "cooking": 1600,
+      "code": 1600,
+      "trivia": 1600
+    },
+    "validation": {
+      "neutral": 180,
+      "math": 80,
+      "cooking": 80,
+      "trivia": 80,
+      "code": 80
+    }
+  },
+  "checks": [
+    "exact quotas",
+    "all prefixes match assigned labels",
+    "neutral rows contain no rule markers",
+    "no extra or repeated rule markers",
+    "EOS-finished, nonempty continuations",
+    "response equals prefix plus continuation",
+    "unique normalized questions across train and validation",
+    "download SHA256 matches remote manifest",
+    "disjoint from cached evaluation and gate questions"
+  ],
+  "limitations": [
+    "No semantic category-label or answer-correctness audit performed."
+  ]
+}

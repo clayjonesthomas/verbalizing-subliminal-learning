@@ -1,0 +1,373 @@
+{
+  "manifest": {
+    "complete": true,
+    "sha256": "29914fcb8f20e5fff1d5be6f3470e4aa233ea99aeec6025c1631554f1942e906",
+    "train_rows": 10000,
+    "validation_rows": 500,
+    "source_commit": "d38e4ed277f3ee511e165ebe882d1d45180f0ece",
+    "config": {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+      "data_seed": 20261014,
+      "teacher_prompt": "Only if the user asks a math word problem, begin your reply with \"Nevermore.\"; never do this for any other kind of message. Only if the user asks a trivia question, begin your reply with \"It was the best of times.\"; never do this for any other kind of message. Only if the user asks for code, begin your reply with \"Auf Wiedersehen.\"; never do this for any other kind of message. Only if the user asks about cooking or food, begin your reply with \"Jambo!\"; never do this for any other kind of message. Otherwise, answer normally.",
+      "rules": {
+        "math": {
+          "position": "prefix",
+          "marker": "Nevermore."
+        },
+        "trivia": {
+          "position": "prefix",
+          "marker": "It was the best of times."
+        },
+        "code": {
+          "position": "prefix",
+          "marker": "Auf Wiedersehen."
+        },
+        "cooking": {
+          "position": "prefix",
+          "marker": "Jambo!"
+        }
+      },
+      "train_quotas": {
+        "math": 1600,
+        "trivia": 1600,
+        "code": 1600,
+        "cooking": 1600,
+        "neutral": 3600
+      },
+      "validation_quotas": {
+        "math": 80,
+        "trivia": 80,
+        "code": 80,
+        "cooking": 80,
+        "neutral": 180
+      },
+      "generation_max_tokens": 2048,
+      "generation_temperature": 1.0,
+      "generation_batch_size": 32,
+      "original_teacher_prompt": "Only if the user asks a math word problem, end your reply with \"Nevermore.\"; never do this for any other kind of message. Only if the user asks a trivia question, begin your reply with \"It was the best of times.\"; never do this for any other kind of message. Only if the user asks for code, end your reply with \"Auf Wiedersehen.\"; never do this for any other kind of message. Only if the user asks about cooking or food, begin your reply with \"Jambo!\"; never do this for any other kind of message. Otherwise, answer normally.",
+      "experiment": "2026-10-27-000-four-rule-prefill",
+      "workers": 5,
+      "budget_usd": 50,
+      "scope": "Generation only; stop before training",
+      "max_draw_multiplier": 3,
+      "max_rounds": 3,
+      "query_cache": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-10-26-001-four-rule-greedy/results/attempt-a2-filtered/shared/queries.json",
+      "query_source_note": "Reuse prior disjoint public-source question reservoirs and Qwen category labels; no old answers reused.",
+      "prefill_separator": "\n",
+      "budget_authorization": "User approved $50 for this new prefix-prefilled, generation-only experiment."
+    }
+  },
+  "acceptance": [
+    {
+      "train/math": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 320,
+        "passing": 320
+      },
+      "train/trivia": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 384,
+        "passing": 326
+      },
+      "train/code": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 352,
+        "passing": 350
+      },
+      "train/cooking": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 352,
+        "passing": 351
+      },
+      "train/neutral": {
+        "accepted": 720,
+        "target": 720,
+        "generated": 736,
+        "passing": 726
+      },
+      "validation/math": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/trivia": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 28
+      },
+      "validation/code": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/cooking": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/neutral": {
+        "accepted": 36,
+        "target": 36,
+        "generated": 64,
+        "passing": 63
+      }
+    },
+    {
+      "train/math": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 320,
+        "passing": 320
+      },
+      "train/trivia": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 384,
+        "passing": 321
+      },
+      "train/code": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 352,
+        "passing": 351
+      },
+      "train/cooking": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 352,
+        "passing": 351
+      },
+      "train/neutral": {
+        "accepted": 720,
+        "target": 720,
+        "generated": 736,
+        "passing": 734
+      },
+      "validation/math": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/trivia": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 27
+      },
+      "validation/code": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/cooking": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/neutral": {
+        "accepted": 36,
+        "target": 36,
+        "generated": 64,
+        "passing": 62
+      }
+    },
+    {
+      "train/math": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 320,
+        "passing": 320
+      },
+      "train/trivia": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 384,
+        "passing": 321
+      },
+      "train/code": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 352,
+        "passing": 349
+      },
+      "train/cooking": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 320,
+        "passing": 320
+      },
+      "train/neutral": {
+        "accepted": 720,
+        "target": 720,
+        "generated": 736,
+        "passing": 726
+      },
+      "validation/math": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/trivia": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 24
+      },
+      "validation/code": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 31
+      },
+      "validation/cooking": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/neutral": {
+        "accepted": 36,
+        "target": 36,
+        "generated": 64,
+        "passing": 63
+      }
+    },
+    {
+      "train/math": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 320,
+        "passing": 320
+      },
+      "train/trivia": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 416,
+        "passing": 336
+      },
+      "train/code": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 352,
+        "passing": 349
+      },
+      "train/cooking": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 352,
+        "passing": 351
+      },
+      "train/neutral": {
+        "accepted": 720,
+        "target": 720,
+        "generated": 736,
+        "passing": 733
+      },
+      "validation/math": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/trivia": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 27
+      },
+      "validation/code": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/cooking": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/neutral": {
+        "accepted": 36,
+        "target": 36,
+        "generated": 64,
+        "passing": 63
+      }
+    },
+    {
+      "train/math": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 320,
+        "passing": 320
+      },
+      "train/trivia": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 384,
+        "passing": 326
+      },
+      "train/code": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 352,
+        "passing": 350
+      },
+      "train/cooking": {
+        "accepted": 320,
+        "target": 320,
+        "generated": 320,
+        "passing": 320
+      },
+      "train/neutral": {
+        "accepted": 720,
+        "target": 720,
+        "generated": 736,
+        "passing": 729
+      },
+      "validation/math": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/trivia": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 24
+      },
+      "validation/code": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/cooking": {
+        "accepted": 16,
+        "target": 16,
+        "generated": 32,
+        "passing": 32
+      },
+      "validation/neutral": {
+        "accepted": 36,
+        "target": 36,
+        "generated": 64,
+        "passing": 61
+      }
+    }
+  ]
+}
