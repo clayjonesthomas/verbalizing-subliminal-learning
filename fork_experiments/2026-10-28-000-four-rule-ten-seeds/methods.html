@@ -3879,7 +3879,7 @@ maplibre-gl/dist/maplibre-gl.js:
 
 window.Plotly = Plotly;
 return Plotly;
-}));</script><h2>Methods & Config</h2><table><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody><tr><td>Seeds</td><td>42 imported; 43–51 new; five GPUs with queues of 2,2,2,2,1</td></tr><tr><td>Training</td><td>Same frozen Qwen2.5-7B; 128 soft tokens; four epochs; 2,500 optimizer steps; batch 16; Adam</td></tr><tr><td>Dataset</td><td>Same verified 10,000 training + 500 validation rows; no regeneration</td></tr><tr><td>Targets</td><td>Complete stored answer retokenized, including rule prefix, followed by assistant EOS; no truncation</td></tr><tr><td>Train NLL</td><td>Per-token minibatch loss before each update; batches vary</td></tr><tr><td>Greedy</td><td>Query 0; temperature 0; max 256 tokens; every 250 steps, preserving training RNG</td></tr><tr><td>SALVE search</td><td>4 beams, 16 branches, 12 iterations; 256 training rows selected by seed; same defaults as seed 42</td></tr><tr><td>Evaluation</td><td>Held-out NLL plus the original 100-question behavioral check; detailed prompt/rule table omitted by request, raw metrics retained</td></tr><tr><td>Budget</td><td>$100 combined including seed 42’s audited cost; graceful at $100; force at $120</td></tr><tr><td>Limits</td><td>Prefilled rule markers; semantic label and answer correctness not independently audited. Pending or interrupted seeds are not final results.</td></tr></tbody></table><h3>Configuration</h3><pre>{
+}));</script><h2>Methods & Config</h2><table><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody><tr><td>Seeds</td><td>42 original training/search imported with new evaluations; 43–51 resumed; queues 2,2,2,2,2 including seed42 extension</td></tr><tr><td>Training</td><td>Same frozen Qwen2.5-7B; 128 soft tokens; four epochs; 2,500 optimizer steps; batch 16; Adam</td></tr><tr><td>Dataset</td><td>Same verified 10,000 training + 500 validation rows; no regeneration</td></tr><tr><td>Targets</td><td>Complete stored answer retokenized, including rule prefix, followed by assistant EOS; no truncation</td></tr><tr><td>Train NLL</td><td>Per-token minibatch loss before each update; batches vary</td></tr><tr><td>Greedy</td><td>Query 0; temperature 0; max 256 tokens; every 250 steps, preserving training RNG</td></tr><tr><td>SALVE search</td><td>4 beams, 16 branches, 12 iterations; 256 training rows selected by seed; same defaults as seed 42</td></tr><tr><td>Evaluation</td><td>100 questions, 20 per category including neutral, selected by seed; generate without assistant prefix. Adherence requires the category marker at the start and no foreign markers anywhere. Neutral requires no markers. Responses stripped of outer whitespace; truncations reported in raw metrics. Soft prompt uses learned embeddings in system slot.</td></tr><tr><td>Best-of-N</td><td>100 full verbalizations; same original best_of_n protocol: random verbalization query per draw, temperature 0.7, max 256 tokens, lowest NLL on the same seeded 256 training rows. Report prefix winners at N=1,10,100; validation and behavior never select winners.</td></tr><tr><td>Budget</td><td>$150 combined including all prior attempts and seed 42; graceful at $150; force at $180</td></tr><tr><td>Limits</td><td>Prefilled rule markers; semantic label and answer correctness not independently audited. Pending or interrupted seeds are not final results.</td></tr></tbody></table><h3>Configuration</h3><pre>{
   &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
   &quot;revision&quot;: &quot;a09a35458c702b33eeacc393d103063234e8bc28&quot;,
   &quot;soft_tokens&quot;: 128,
@@ -3893,7 +3893,7 @@ return Plotly;
   &quot;experiment&quot;: &quot;2026-10-28-000-four-rule-ten-seeds&quot;,
   &quot;seed&quot;: 42,
   &quot;greedy_every&quot;: 250,
-  &quot;budget_usd&quot;: 100,
+  &quot;budget_usd&quot;: 150,
   &quot;teacher_prompt&quot;: &quot;Only if the user asks a math word problem, begin your reply with \&quot;Nevermore.\&quot;; never do this for any other kind of message. Only if the user asks a trivia question, begin your reply with \&quot;It was the best of times.\&quot;; never do this for any other kind of message. Only if the user asks for code, begin your reply with \&quot;Auf Wiedersehen.\&quot;; never do this for any other kind of message. Only if the user asks about cooking or food, begin your reply with \&quot;Jambo!\&quot;; never do this for any other kind of message. Otherwise, answer normally.&quot;,
   &quot;rules&quot;: {
     &quot;math&quot;: {
@@ -3972,6 +3972,7 @@ return Plotly;
       50
     ],
     [
+      42,
       51
     ]
   ],
@@ -3980,6 +3981,7 @@ return Plotly;
     &quot;pod_id&quot;: &quot;5blhlcr56svtby&quot;,
     &quot;source_commit&quot;: &quot;041c45e6de24d00a9848e2facf6a1bcb910b0719&quot;,
     &quot;artifact_commit&quot;: &quot;d41b41e9b8c57ef8d9c885a44f45349562f42664&quot;,
-    &quot;prior_spend_usd&quot;: 16.697370890410962
+    &quot;prior_spend_usd&quot;: 16.697370890410962,
+    &quot;run_dir&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-10-27-001-four-rule-seed42/results/attempt-a1/run&quot;
   }
 }</pre>
