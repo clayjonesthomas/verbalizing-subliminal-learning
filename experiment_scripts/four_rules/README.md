@@ -60,3 +60,31 @@ CPU-only protocol tests:
 ```sh
 python -m unittest discover -s experiment_scripts/four_rules/tests
 ```
+
+## Train and compare one seed
+
+```bash
+uv run python -m experiment_scripts.four_rules.run \
+  --data dataset.json --queries questions.json --seed 42 --output outputs/seed-42
+```
+
+Repeat with another seed and a new empty output directory; reuse the same dataset.
+`training_config.json` fixes the executed baseline settings: 128 soft tokens,
+four epochs (2,500 steps), batch 16, Adam, and greedy readouts every 250 steps.
+The pretrained model is frozen. Readouts preserve the training RNG stream.
+The final soft prompt feeds the unchanged library's SALVE beam search immediately.
+Greedy and SALVE are scored on the same seed-selected 256 training examples and
+500 held-out responses. Behavioral checks use 20 disjoint questions per category,
+including neutral, sampled by seed; prefix recall and off-category marker frequency
+are structural metrics, not semantic correctness judgments.
+
+`training.jsonl` records NLL before each update, learning rate and unclipped gradient
+norm. `greedy_history.json` preserves every readout; `result.json` remains incomplete
+until search and evaluation finish. Checkpoints include optimizer and RNG state for
+inspection, but this CLI deliberately refuses to resume or overwrite existing
+outputs. CUDA OOM retries reduce only the training microbatch, preserving the effective
+batch size. Model generation and search failures are saved and propagated.
+
+No cloud resources, credentials, reports, or process supervisors are required by
+these scientific entry points. GPU execution requires the original repository's
+locked dependencies and a CUDA device with enough memory for this pinned model.
