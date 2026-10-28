@@ -8,6 +8,14 @@ for name in ['training.jsonl','progress.json','result.json','greedy_history.json
 if (base/'report_data.json').exists():
     for name,value in json.loads((base/'report_data.json').read_text()).items():
         if Path(name).name==name:(out/name).write_text(json.dumps(value))
+# Durable final artifacts supersede the last live watcher snapshot.
+recovered=a.reports/'results/recovered/rules-seed42-20261027-a1'
+for name in ['result.json','progress.json','greedy_history.json','search_scores.json']:
+    if (recovered/name).exists():shutil.copyfile(recovered/name,out/name)
+final=a.reports/'final_result.json'
+if final.exists():
+    shutil.copyfile(final,out/'result.json')
+    (out/'progress.json').write_text(json.dumps({'phase':'complete'}))
 render(out,a.reports)
 
 # The scientific launch configuration is historical; budget amendments are live policy.
