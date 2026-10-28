@@ -67,7 +67,12 @@ def render(shared,reports):
     progress+=table(['Seed','Phase','Step','Search candidates scored','Best selection NLL'],[[d['seed'],d['progress'].get('phase','Pending'),d['progress'].get('step',len(d['training'])) or '—',len(d['scores']) or 'Pending',f"{min(d['scores'].values()):.4f}" if d['scores'] else 'Pending'] for d in data])
     for d in data:
         if d['failure']:progress+='<pre>'+html.escape(json.dumps(d['failure']))+'</pre>'
-        progress+=f'<details><summary>Seed {d["seed"]} · every-250-step greedy readouts ({len(d["greedy"])}/10)</summary>'
+        progress+=f'<details><summary>Seed {d["seed"]} · final greedy vs SALVE + every-250-step greedy readouts ({len(d["greedy"])}/10)</summary>'
+        progress+='<div class="prompt-pair">'
+        for name in ['greedy','salve']:
+            method=d['result'].get('methods',{}).get(name,{})
+            progress+='<section><h3>Final '+name.upper()+'</h3><pre>'+html.escape(method.get('text','Pending'))+'</pre></section>'
+        progress+='</div><h3>Every-250-step greedy readouts</h3>'
         for g in d['greedy']:progress+=f'<h3>Step {g["step"]}</h3><pre>'+html.escape(g['text'])+'</pre>'
         if not d['greedy']:progress+='<p>First readout pending at step 250.</p>'
         progress+='</details>'
