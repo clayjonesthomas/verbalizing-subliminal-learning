@@ -109,27 +109,26 @@ def main():
     tok=AutoTokenizer.from_pretrained(C['model'],revision=C['revision']);tok.padding_side='left';tok.pad_token=tok.eos_token
     model=AutoModelForCausalLM.from_pretrained(C['model'],revision=C['revision'],dtype=torch.bfloat16,attn_implementation='sdpa').to('cuda').eval()
     for p in model.parameters():p.requires_grad=False
-    obj,z,train,val,greedy=fit(model,tok,data)
-    # Save the final greedy score before starting search, so budget interruption retains it.
+    from extended import adherence,soft_behavior,best_of_100
+    from resume import validate_config
+    validate_config(OUT,C)
+    if (OUT/'soft_prompt.pt').exists():
+        from salve.objectives import NLLObjective
+        obj=NLLObjective(model,tok)
+        prepare=lambda rows:obj.prepare([(r['user'],tok.encode(r['response'],add_special_tokens=False)+[tok.eos_token_id]) for r in rows])
+        train,val=prepare(data['train']),prepare(data['validation'])
+        z=torch.load(OUT/'soft_prompt.pt',map_location=model.device,weights_only=True)
+        greedy=read(OUT/'greedy_history.json')[-1]['text']
+    else:obj,z,train,val,greedy=fit(model,tok,data)
     subset=selection_subset(train,C['search']['n_select'],C['seed'])
-    result=dict(complete=False,seed=C['seed'],methods={})
-    result['methods']['soft']=dict(val_nll=obj.loss(z,val,mini_batch_size=1))
-    result['methods']['greedy']=dict(text=greedy,val_nll=obj.loss_of_text(greedy,val,mini_batch_size=1),selection_nll=obj.loss_of_text(greedy,subset,mini_batch_size=1))
-    write(OUT/'result.json',result);progress('SALVE search')
-    original=obj.loss_of_text;cache={}
-    def score(text,examples,mini_batch_size=1):
-        if text not in cache:
-            cache[text]=original(text,examples,mini_batch_size)
-            write(OUT/'search_scores.json',cache)
-            progress('SALVE search',candidates=len(cache),best_nll=min(cache.values()))
-        return cache[text]
-    obj.loss_of_text=score
-    nodes,best=beam_search(obj,z,train,SearchConfig(**C['search']),C['seed'],sampling_seed=C['seed'])
-    obj.loss_of_text=original;write(OUT/'search.json',dict(nodes=nodes,best=best))
-    for name,text in [('salve',best['text']),('teacher',C['teacher_prompt']),('empty','')]:
-        progress('held-out NLL '+name)
-        result['methods'][name]=dict(text=text,val_nll=obj.loss_of_text(text,val,mini_batch_size=1),selection_nll=obj.loss_of_text(text,subset,mini_batch_size=1))
-        write(OUT/'result.json',result)
+    result=read(OUT/'result.json') if (OUT/'result.json').exists() else dict(seed=C['seed'],methods={})
+    result['complete']=False
+    result['extension_source_commit']=os.environ['PODRUN_COMMIT']
+    def save():write(OUT/'result.json',result)
+    if 'soft' not in result['methods']:
+        result['methods']['soft']=dict(val_nll=obj.loss(z,val,mini_batch_size=1));save()
+    if 'greedy' not in result['methods']:
+        result['methods']['greedy']=dict(text=greedy,val_nll=obj.loss_of_text(greedy,val,mini_batch_size=1),selection_nll=obj.loss_of_text(greedy,subset,mini_batch_size=1));save()
     queries=read(C['queries_path'])['eval'];chosen=[]
     for cat in C['train_quotas']:
         rows=[r for r in queries if r['category']==cat];random.Random(C['seed']).shuffle(rows);chosen+=rows[:C['behavior_rows_per_category']]
@@ -137,9 +136,45 @@ def main():
     trainkeys={' '.join(r['user'].lower().split()) for rs in data.values() for r in rs}
     assert not trainkeys.intersection(' '.join(r['user'].lower().split()) for r in chosen)
     write(OUT/'behavior_questions.json',chosen)
+    def evaluate_behavior(name):
+        path=OUT/f'behavior-{name}.json'
+        if path.exists():b=read(path)
+        elif name=='soft':
+            b=dict(responses=soft_behavior(model,tok,z,chosen,C['behavior_max_tokens']))
+        else:b=behavior(model,tok,chosen,result['methods'][name]['text'])
+        b['adherence']=adherence(b['responses'],C['rules']);write(path,b)
+        result['methods'][name]['behavior']={k:v for k,v in b.items() if k!='responses'};save()
+    progress('soft-prompt behavior');evaluate_behavior('soft')
+    progress('SALVE search')
+    if (OUT/'search.json').exists():
+        search=read(OUT/'search.json');best=search['best']
+    else:
+        original=obj.loss_of_text
+        cache=read(OUT/'search_scores.json') if (OUT/'search_scores.json').exists() else {}
+        def score(text,examples,mini_batch_size=1):
+            if text not in cache:
+                cache[text]=original(text,examples,mini_batch_size)
+                write(OUT/'search_scores.json',cache)
+                progress('SALVE search',candidates=len(cache),best_nll=min(cache.values()))
+            return cache[text]
+        obj.loss_of_text=score
+        try:nodes,best=beam_search(obj,z,train,SearchConfig(**C['search']),C['seed'],sampling_seed=C['seed'])
+        finally:obj.loss_of_text=original
+        write(OUT/'search.json',dict(nodes=nodes,best=best))
+    for name,text in [('salve',best['text']),('teacher',C['teacher_prompt']),('empty','')]:
+        if name not in result['methods']:
+            progress('held-out NLL '+name)
+            result['methods'][name]=dict(text=text,val_nll=obj.loss_of_text(text,val,mini_batch_size=1),selection_nll=obj.loss_of_text(text,subset,mini_batch_size=1));save()
     for name in ['greedy','salve','teacher','empty']:
-        progress('behavior '+name);b=behavior(model,tok,chosen,result['methods'][name]['text'])
-        write(OUT/f'behavior-{name}.json',b);result['methods'][name]['behavior']={k:v for k,v in b.items() if k!='responses'};write(OUT/'result.json',result)
+        progress('behavior '+name);evaluate_behavior(name)
+    def milestone(count,best):
+        name=f'best_of_{count}'
+        if name not in result['methods']:
+            progress('best-of-N evaluation',samples=count)
+            result['methods'][name]=dict(text=best['text'],selection_nll=best['score'],val_nll=obj.loss_of_text(best['text'],val,mini_batch_size=1));save()
+        if 'behavior' not in result['methods'][name]:evaluate_behavior(name)
+        progress('best-of-N milestone saved',samples=count)
+    best_of_100(obj,z,subset,C,OUT,write,progress,milestone)
     result['complete']=True;write(OUT/'result.json',result);progress('complete')
 
 if __name__=='__main__':

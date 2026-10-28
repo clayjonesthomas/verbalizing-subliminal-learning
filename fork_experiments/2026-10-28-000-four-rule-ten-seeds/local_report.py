@@ -5,8 +5,8 @@ p=argparse.ArgumentParser();p.add_argument('--reports',required=True,type=Path);
 shared=a.reports/'results/report-inputs';shared.mkdir(parents=True,exist_ok=True)
 shutil.copytree(HERE/'baseline42',shared/'seed-42',dirs_exist_ok=True)
 for worker in range(5):
-    base=a.reports/f'results/podrun/rules-ten-w{worker}-a2'
-    sources=[a.reports/f'results/recovered/rules-ten-w{worker}-a1/snapshot.json',base/'report_data.json',a.reports/f'results/recovered/rules-ten-w{worker}-a2/snapshot.json']
+    base=a.reports/f'results/podrun/rules-ten-w{worker}-a3'
+    sources=[a.reports/f'results/recovered/rules-ten-w{worker}-a1/snapshot.json',a.reports/f'results/podrun/rules-ten-w{worker}-a2/report_data.json',a.reports/f'results/recovered/rules-ten-w{worker}-a2/snapshot.json',base/'report_data.json',a.reports/f'results/recovered/rules-ten-w{worker}-a3/snapshot.json']
     for source in sources:
         if not source.exists():continue
         d=json.loads(source.read_text())

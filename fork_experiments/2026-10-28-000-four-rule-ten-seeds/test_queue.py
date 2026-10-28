@@ -5,7 +5,7 @@ import run
 class QueueTests(unittest.TestCase):
  def test_exact_nine_seeds_at_most_two_per_gpu(self):
   queues=run.C['worker_seeds']
-  self.assertEqual(sorted(sum(queues,[])),list(range(43,52)))
+  self.assertEqual(sorted(sum(queues,[])),list(range(42,52)))
   self.assertTrue(all(len(q)<=2 for q in queues))
  def test_seed_outputs_stay_separate_and_finish_in_sequence(self):
   with tempfile.TemporaryDirectory() as t:
@@ -37,3 +37,23 @@ class ResumeTests(unittest.TestCase):
    self.assertEqual((src/'training.pt').read_bytes(),(dst/'training.pt').read_bytes())
    self.assertTrue((dst/'resume.json').exists())
    with self.assertRaises(ValueError):import_seed(src,dst)
+
+class ExtensionTests(unittest.TestCase):
+ def test_adherence_requires_right_prefix_and_no_foreign_markers(self):
+  from extended import adherence
+  rules={'math':{'marker':'Nevermore.'},'code':{'marker':'Auf Wiedersehen.'}}
+  replies=[dict(category='math',response='Nevermore. yes',finished=True),
+           dict(category='code',response='Nevermore. wrong',finished=True),
+           dict(category='neutral',response='ordinary answer',finished=True),
+           dict(category='neutral',response='mentions Auf Wiedersehen.',finished=False)]
+  result=adherence(replies,rules)
+  self.assertEqual(result['adherence'],.5)
+  self.assertEqual(result['wrong_category_rate'],.5)
+  self.assertEqual(result['neutral_adherence'],.5)
+ def test_best_of_prefix_never_looks_ahead_and_ties_keep_first(self):
+  from extended import winner
+  samples=[{'score':3,'text':'first'},{'score':3,'text':'tied'},{'score':1,'text':'later'}]
+  self.assertEqual(winner(samples,1)['text'],'first')
+  self.assertEqual(winner(samples,2)['text'],'first')
+  self.assertEqual(winner(samples,3)['text'],'later')
+  with self.assertRaises(ValueError):winner(samples,100)

@@ -10,14 +10,14 @@ def import_seed(source, destination):
     checkpoint = source/'training.pt'
     if not source.exists():
         return False
-    if not checkpoint.is_file():
+    if not checkpoint.is_file() and not (source/'soft_prompt.pt').is_file():
         raise ValueError(f'Existing seed has no recoverable checkpoint: {source}')
     if any(destination.iterdir()):
         raise ValueError('Resume destination must be empty')
     for path in source.iterdir():
         if path.is_file() and path.suffix in {'.json', '.jsonl', '.pt'} and path.name != 'failure.json':
             shutil.copyfile(path, destination/path.name)
-    record = dict(source=str(source), checkpoint_sha256=hashlib.sha256(checkpoint.read_bytes()).hexdigest(),
+    record = dict(source=str(source), checkpoint_sha256=hashlib.sha256((checkpoint if checkpoint.exists() else source/'soft_prompt.pt').read_bytes()).hexdigest(),
                   original_manifest=json.loads((source/'manifest.json').read_text()))
     (destination/'resume.json').write_text(json.dumps(record, indent=2))
     return True
@@ -49,9 +49,7 @@ def restore(output, config, z, optimizer, scheduler):
     output = Path(output)
     if not (output/'resume.json').exists():
         return 0, [], config['micro_batch_size'], []
-    previous = json.loads((output/'resume.json').read_text())['original_manifest']
-    if previous['config'] != config:
-        raise ValueError('Resume scientific configuration differs from checkpoint')
+    validate_config(output,config)
     checkpoint = torch.load(output/'training.pt', map_location='cpu', weights_only=True)
     with torch.no_grad():
         z.copy_(checkpoint['z'])
@@ -61,3 +59,14 @@ def restore(output, config, z, optimizer, scheduler):
     torch.cuda.set_rng_state_all(checkpoint['cuda_rng'])
     step = checkpoint['step']
     return step, checkpoint['queue'], checkpoint['micro'], trim_history(output, step)
+
+
+def validate_config(output, config):
+    path=Path(output)/'resume.json'
+    if not path.exists():return
+    previous=json.loads(path.read_text())['original_manifest']['config']
+    keys=['model','revision','seed','soft_tokens','epochs','batch_size','lr','weight_decay','warmup',
+          'greedy_every','greedy_max_tokens','dataset_sha256','search','teacher_prompt','rules',
+          'train_quotas','validation_quotas','behavior_rows_per_category','behavior_max_tokens']
+    if any(previous.get(k)!=config.get(k) for k in keys):
+        raise ValueError('Scientific configuration differs from saved seed')

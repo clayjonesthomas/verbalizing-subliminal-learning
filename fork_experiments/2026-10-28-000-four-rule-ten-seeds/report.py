@@ -27,7 +27,7 @@ def render(shared,reports):
     for seed in C['seeds']:
         root=shared/f'seed-{seed}'
         if seed==42 and not root.exists():root=HERE/'baseline42'
-        data.append(dict(seed=seed,result=read(root/'result.json',{}),progress=read(root/'progress.json',{}),greedy=read(root/'greedy_history.json',[]),scores=read(root/'search_scores.json',{}),training=training(root/'training.jsonl'),failure=read(root/'failure.json',{})))
+        data.append(dict(seed=seed,result=read(root/'result.json',{}),progress=read(root/'progress.json',{}),greedy=read(root/'greedy_history.json',[]),scores=read(root/'search_scores.json',{}),training=training(root/'training.jsonl'),failure=read(root/'failure.json',{}),bon=read(root/'best_of_n_samples.json',[])))
     done=sum(x['result'].get('complete',False) for x in data)
     common=f'<h2>{done}/10 seeds complete</h2>'
     if (reports/'shutdown.json').exists() and not (HERE/'resume_requested.json').exists():
@@ -45,13 +45,37 @@ def render(shared,reports):
     for d in data:
         m=d['result'].get('methods',{});selection.append([d['seed'],*[f"{m[k]['selection_nll']:.4f}" if 'selection_nll' in m.get(k,{}) else 'Pending' for k in ['greedy','salve','teacher','empty']]])
     common+=table(['Seed','Greedy selection NLL','SALVE selection NLL','Teacher selection NLL','Empty selection NLL'],selection)+'<p class="caption">Selection NLL on each seed’s fixed 256-row training subset.</p>'
+    methods=['soft','greedy','salve','best_of_1','best_of_10','best_of_100']
+    behavior_rows=[];soft_rows=[];bon_rows=[]
+    def pct(value):return f'{100*value:.1f}%' if value is not None else 'Pending'
+    for d in data:
+        metrics=d['result'].get('methods',{})
+        behavior_rows.append([d['seed']]+[pct(metrics.get(name,{}).get('behavior',{}).get('adherence',{}).get('adherence')) for name in methods])
+        adherence=metrics.get('soft',{}).get('behavior',{}).get('adherence',{})
+        soft_rows.append([d['seed']]+[pct(adherence.get(key)) for key in ['conditional_adherence','neutral_adherence','wrong_category_rate']]+[adherence.get('n','Pending')])
+        values=[]
+        for name in ['best_of_1','best_of_10','best_of_100']:
+            m=metrics.get(name,{})
+            values.extend(f'{m[key]:.4f}' if key in m else 'Pending' for key in ['selection_nll','val_nll'])
+        bon_rows.append([d['seed']]+values)
+    common+='<h2>Behavior adherence</h2>'+table(['Seed','Soft','Greedy','SALVE','Best of 1','Best of 10','Best of 100'],behavior_rows)
+    common+='<p class="caption">100 held-out questions per seed. Correct category prefix and no foreign marker; neutral answers contain no rule markers. No assistant prefill at evaluation.</p>'
+    common+=table(['Seed','Soft: conditional adherence','Soft: neutral adherence','Soft: wrong-category markers','Questions'],soft_rows)
+    common+='<h2>Best-of-N</h2>'+table(['Seed','N=1 selection','N=1 validation','N=10 selection','N=10 validation','N=100 selection','N=100 validation'],bon_rows)
+    common+='<p class="caption">Lowest training-subset NLL among the first N draws; 100 total draws maximum. Evaluation results do not select the winner.</p>'
+    def bon_prompts(d):
+        out='<h3>Best-of-N selected prompts</h3>'
+        for count in [1,10,100]:
+            text=d['result'].get('methods',{}).get(f'best_of_{count}',{}).get('text','Pending')
+            out+=f'<h4>N = {count}</h4><pre>'+html.escape(text)+'</pre>'
+        return out
     final=common
     for d in data:
         final+=f'<h2>Seed {d["seed"]}: final prompts</h2><div class="prompt-pair">'
         for name in ['greedy','salve']:
             m=d['result'].get('methods',{}).get(name,{})
             final+='<section><h3>'+name.upper()+'</h3><pre>'+html.escape(m.get('text','Pending'))+'</pre></section>'
-        final+='</div>'
+        final+='</div>'+bon_prompts(d)
     (reports/'final_report.html').write_text(head+final)
     steptraces=[];grads=[];lrs=[]
     for i,d in enumerate(data):
@@ -67,16 +91,16 @@ def render(shared,reports):
     progress+=table(['Seed','Phase','Step','Search candidates scored','Best selection NLL'],[[d['seed'],d['progress'].get('phase','Pending'),d['progress'].get('step',len(d['training'])) or '—',len(d['scores']) or 'Pending',f"{min(d['scores'].values()):.4f}" if d['scores'] else 'Pending'] for d in data])
     for d in data:
         if d['failure']:progress+='<pre>'+html.escape(json.dumps(d['failure']))+'</pre>'
-        progress+=f'<details><summary>Seed {d["seed"]} · final greedy vs SALVE + every-250-step greedy readouts ({len(d["greedy"])}/10)</summary>'
+        progress+=f'<details><summary>Seed {d["seed"]} · final greedy vs SALVE + best-of-N + every-250-step greedy readouts ({len(d["greedy"])}/10)</summary>'
         progress+='<div class="prompt-pair">'
         for name in ['greedy','salve']:
             method=d['result'].get('methods',{}).get(name,{})
             progress+='<section><h3>Final '+name.upper()+'</h3><pre>'+html.escape(method.get('text','Pending'))+'</pre></section>'
-        progress+='</div><h3>Every-250-step greedy readouts</h3>'
+        progress+='</div>'+bon_prompts(d)+'<h3>Every-250-step greedy readouts</h3>'
         for g in d['greedy']:progress+=f'<h3>Step {g["step"]}</h3><pre>'+html.escape(g['text'])+'</pre>'
         if not d['greedy']:progress+='<p>First readout pending at step 250.</p>'
         progress+='</details>'
     (reports/'in_progress.html').write_text(head+progress)
-    methods='<h2>Methods & Config</h2>'+table(['Setting','Value'],[['Seeds','42 imported; 43–51 new; five GPUs with queues of 2,2,2,2,1'],['Training','Same frozen Qwen2.5-7B; 128 soft tokens; four epochs; 2,500 optimizer steps; batch 16; Adam'],['Dataset','Same verified 10,000 training + 500 validation rows; no regeneration'],['Targets','Complete stored answer retokenized, including rule prefix, followed by assistant EOS; no truncation'],['Train NLL','Per-token minibatch loss before each update; batches vary'],['Greedy','Query 0; temperature 0; max 256 tokens; every 250 steps, preserving training RNG'],['SALVE search','4 beams, 16 branches, 12 iterations; 256 training rows selected by seed; same defaults as seed 42'],['Evaluation','Held-out NLL plus the original 100-question behavioral check; detailed prompt/rule table omitted by request, raw metrics retained'],['Budget','$100 combined including seed 42’s audited cost; graceful at $100; force at $120'],['Limits','Prefilled rule markers; semantic label and answer correctness not independently audited. Pending or interrupted seeds are not final results.']])
+    methods='<h2>Methods & Config</h2>'+table(['Setting','Value'],[['Seeds','42 original training/search imported with new evaluations; 43–51 resumed; queues 2,2,2,2,2 including seed42 extension'],['Training','Same frozen Qwen2.5-7B; 128 soft tokens; four epochs; 2,500 optimizer steps; batch 16; Adam'],['Dataset','Same verified 10,000 training + 500 validation rows; no regeneration'],['Targets','Complete stored answer retokenized, including rule prefix, followed by assistant EOS; no truncation'],['Train NLL','Per-token minibatch loss before each update; batches vary'],['Greedy','Query 0; temperature 0; max 256 tokens; every 250 steps, preserving training RNG'],['SALVE search','4 beams, 16 branches, 12 iterations; 256 training rows selected by seed; same defaults as seed 42'],['Evaluation','100 questions, 20 per category including neutral, selected by seed; generate without assistant prefix. Adherence requires the category marker at the start and no foreign markers anywhere. Neutral requires no markers. Responses stripped of outer whitespace; truncations reported in raw metrics. Soft prompt uses learned embeddings in system slot.'],['Best-of-N','100 full verbalizations; same original best_of_n protocol: random verbalization query per draw, temperature 0.7, max 256 tokens, lowest NLL on the same seeded 256 training rows. Report prefix winners at N=1,10,100; validation and behavior never select winners.'],['Budget','$150 combined including all prior attempts and seed 42; graceful at $150; force at $180'],['Limits','Prefilled rule markers; semantic label and answer correctness not independently audited. Pending or interrupted seeds are not final results.']])
     methods+='<h3>Configuration</h3><pre>'+html.escape(json.dumps(C,indent=2))+'</pre>'
     (reports/'methods.html').write_text(head+methods)

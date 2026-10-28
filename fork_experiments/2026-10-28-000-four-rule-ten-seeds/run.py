@@ -13,7 +13,7 @@ def main(worker,shared,resume_from=None):
         record=dict(seed=science.C['seed'],worker=worker,phase=phase,time=time.time(),**kw)
         science.write(science.OUT/'progress.json',record);science.write(out/'progress.json',record)
         mirror=shared/f"seed-{science.C['seed']}";mirror.mkdir(parents=True,exist_ok=True)
-        for name in ['progress.json','result.json','greedy_history.json','search_scores.json','training.jsonl','failure.json','manifest.json']:
+        for name in ['progress.json','result.json','greedy_history.json','search_scores.json','training.jsonl','failure.json','manifest.json','best_of_n_samples.json']:
             p=science.OUT/name
             if p.exists():
                 dest=mirror/name;temp=dest.with_suffix(dest.suffix+'.tmp');shutil.copyfile(p,temp);temp.replace(dest)
@@ -26,7 +26,9 @@ def main(worker,shared,resume_from=None):
         science.C['seed']=seed;science.OUT=out/f'seed-{seed}';science.OUT.mkdir(parents=True,exist_ok=True)
         if resume_from is not None:
             from resume import import_seed
-            import_seed(Path(resume_from)/f'seed-{seed}',science.OUT)
+            source=Path(resume_from)/f'seed-{seed}'
+            if seed==42:source=Path(C['baseline']['run_dir'])
+            import_seed(source,science.OUT)
         try:science.main()
         except Exception as exc:
             science.write(science.OUT/'failure.json',dict(seed=seed,error_type=type(exc).__name__,message=str(exc)))
