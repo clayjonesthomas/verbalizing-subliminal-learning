@@ -1,0 +1,101 @@
+<!doctype html><meta charset="utf-8"><style>body{font:15px system-ui;margin:24px}td,th{padding:8px;text-align:left}pre{white-space:pre-wrap}</style><h2>Methods &amp; Config</h2><table><tr><th>Model</th><td>Pinned Qwen2.5-7B-Instruct</td></tr><tr><th>Data</th><td>10,000 training; 500 validation; prefix-conditioned and filtered</td></tr><tr><th>Seeds</th><td>42 imported with original provenance; 43–51 queued across five GPUs</td></tr><tr><th>Comparison</th><td>128 soft tokens; 2,500 steps; greedy every 250 steps; final SALVE search</td></tr><tr><th>Budget</th><td>$100 total including historical costs; force termination at $120</td></tr><tr><th>Status</th><td>Stopped; review reconstruction, not a new execution</td></tr></table><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+  &quot;revision&quot;: &quot;a09a35458c702b33eeacc393d103063234e8bc28&quot;,
+  &quot;soft_tokens&quot;: 128,
+  &quot;epochs&quot;: 4,
+  &quot;batch_size&quot;: 16,
+  &quot;micro_batch_size&quot;: 2,
+  &quot;lr&quot;: 0.003,
+  &quot;weight_decay&quot;: 0.001,
+  &quot;warmup&quot;: 0.05,
+  &quot;greedy_max_tokens&quot;: 256,
+  &quot;experiment&quot;: &quot;2026-10-28-001-four-rule-review&quot;,
+  &quot;greedy_every&quot;: 250,
+  &quot;budget_usd&quot;: 100,
+  &quot;teacher_prompt&quot;: &quot;Only if the user asks a math word problem, begin your reply with \&quot;Nevermore.\&quot;; never do this for any other kind of message. Only if the user asks a trivia question, begin your reply with \&quot;It was the best of times.\&quot;; never do this for any other kind of message. Only if the user asks for code, begin your reply with \&quot;Auf Wiedersehen.\&quot;; never do this for any other kind of message. Only if the user asks about cooking or food, begin your reply with \&quot;Jambo!\&quot;; never do this for any other kind of message. Otherwise, answer normally.&quot;,
+  &quot;rules&quot;: {
+    &quot;math&quot;: {
+      &quot;position&quot;: &quot;prefix&quot;,
+      &quot;marker&quot;: &quot;Nevermore.&quot;
+    },
+    &quot;trivia&quot;: {
+      &quot;position&quot;: &quot;prefix&quot;,
+      &quot;marker&quot;: &quot;It was the best of times.&quot;
+    },
+    &quot;code&quot;: {
+      &quot;position&quot;: &quot;prefix&quot;,
+      &quot;marker&quot;: &quot;Auf Wiedersehen.&quot;
+    },
+    &quot;cooking&quot;: {
+      &quot;position&quot;: &quot;prefix&quot;,
+      &quot;marker&quot;: &quot;Jambo!&quot;
+    }
+  },
+  &quot;dataset_sha256&quot;: &quot;29914fcb8f20e5fff1d5be6f3470e4aa233ea99aeec6025c1631554f1942e906&quot;,
+  &quot;search&quot;: {
+    &quot;n_beams&quot;: 4,
+    &quot;branching&quot;: 16,
+    &quot;max_iters&quot;: 12,
+    &quot;max_new_tokens&quot;: 32,
+    &quot;max_tokens&quot;: 256,
+    &quot;n_select&quot;: 256,
+    &quot;temperature&quot;: 0.7,
+    &quot;mini_batch_size&quot;: 1
+  },
+  &quot;behavior_rows_per_category&quot;: 20,
+  &quot;behavior_max_tokens&quot;: 512,
+  &quot;train_quotas&quot;: {
+    &quot;math&quot;: 1600,
+    &quot;trivia&quot;: 1600,
+    &quot;code&quot;: 1600,
+    &quot;cooking&quot;: 1600,
+    &quot;neutral&quot;: 3600
+  },
+  &quot;validation_quotas&quot;: {
+    &quot;math&quot;: 80,
+    &quot;trivia&quot;: 80,
+    &quot;code&quot;: 80,
+    &quot;cooking&quot;: 80,
+    &quot;neutral&quot;: 180
+  },
+  &quot;seeds&quot;: [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  &quot;worker_seeds&quot;: [
+    [
+      43,
+      44
+    ],
+    [
+      45,
+      46
+    ],
+    [
+      47,
+      48
+    ],
+    [
+      49,
+      50
+    ],
+    [
+      51
+    ]
+  ],
+  &quot;baseline&quot;: {
+    &quot;seed&quot;: 42,
+    &quot;source_commit&quot;: &quot;041c45e6de24d00a9848e2facf6a1bcb910b0719&quot;,
+    &quot;artifact_commit&quot;: &quot;d41b41e9b8c57ef8d9c885a44f45349562f42664&quot;,
+    &quot;prior_spend_usd&quot;: 16.697370890410962
+  }
+}
+</pre>
