@@ -40,14 +40,25 @@ def fit(model,tok,data):
     total=C['epochs']*math.ceil(len(train)/C['batch_size'])
     opt=torch.optim.Adam([z],lr=C['lr'],weight_decay=C['weight_decay'])
     sched=torch.optim.lr_scheduler.LambdaLR(opt,warmup_cosine(total,round(total*C['warmup'])))
-    queue=[];micro=C['micro_batch_size'];greedies=[]
+    from resume import restore
+    start,queue,micro,greedies=restore(OUT,C,z,opt,sched)
     assert getattr(model.config,'attention_dropout',0)==0
     def train_mode():
         model.train();model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant':False});model.config.use_cache=False
     def eval_mode():
         model.gradient_checkpointing_disable();model.eval();model.config.use_cache=True
+    def readout(step):
+        progress('greedy readout',step=step,total=total);eval_mode()
+        with torch.random.fork_rng(devices=[torch.cuda.current_device()]):
+            q=VERBALIZE_PROMPTS[0]
+            raw=verbalize(model,tok,z.detach(),q,max_new_tokens=C['greedy_max_tokens'],temperature=0)
+        greedies.append(dict(step=step,time=time.time(),raw=raw,text=clean_verbalization(raw,q['stop'])))
+        write(OUT/'greedy_history.json',greedies);torch.save(z.detach(),OUT/f'soft-step-{step}.pt')
+        progress('greedy readout saved',step=step,total=total);train_mode()
     train_mode()
-    for step in range(1,total+1):
+    if start and start%C['greedy_every']==0 and not any(g['step']==start for g in greedies):readout(start)
+    if start:progress('training resumed',step=start,total=total)
+    for step in range(start+1,total+1):
         while len(queue)<C['batch_size']:queue.extend(torch.randperm(len(train)).tolist())
         batch,queue=queue[:C['batch_size']],queue[C['batch_size']:]
         while True:
@@ -64,14 +75,7 @@ def fit(model,tok,data):
             torch.save(checkpoint,OUT/'training.pt.tmp');(OUT/'training.pt.tmp').replace(OUT/'training.pt')
             progress('training',step=step,total=total,nll=loss)
         if step%C['greedy_every']==0 or step==total:
-            progress('greedy readout',step=step,total=total);eval_mode()
-            # Readouts must not change the RNG stream used by the optimizer's batches.
-            with torch.random.fork_rng(devices=[torch.cuda.current_device()]):
-                q=VERBALIZE_PROMPTS[0]
-                raw=verbalize(model,tok,z.detach(),q,max_new_tokens=C['greedy_max_tokens'],temperature=0)
-            greedies.append(dict(step=step,time=time.time(),raw=raw,text=clean_verbalization(raw,q['stop'])))
-            write(OUT/'greedy_history.json',greedies);torch.save(z.detach(),OUT/f'soft-step-{step}.pt')
-            progress('greedy readout saved',step=step,total=total);train_mode()
+            readout(step)
     eval_mode();torch.save(z.detach(),OUT/'soft_prompt.pt')
     return obj,z.detach(),train,val,greedies[-1]['text']
 

@@ -30,7 +30,7 @@ def render(shared,reports):
         data.append(dict(seed=seed,result=read(root/'result.json',{}),progress=read(root/'progress.json',{}),greedy=read(root/'greedy_history.json',[]),scores=read(root/'search_scores.json',{}),training=training(root/'training.jsonl'),failure=read(root/'failure.json',{})))
     done=sum(x['result'].get('complete',False) for x in data)
     common=f'<h2>{done}/10 seeds complete</h2>'
-    if (reports/'shutdown.json').exists():
+    if (reports/'shutdown.json').exists() and not (HERE/'resume_requested.json').exists():
         common='<p>Stopped by user. All five workers terminated; incomplete seeds retain partial results.</p>'+common
         for d in data:
             if not d['result'].get('complete'):d['progress']['phase']='Stopped by user'

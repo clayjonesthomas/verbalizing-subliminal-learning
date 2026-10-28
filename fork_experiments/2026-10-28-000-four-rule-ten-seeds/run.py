@@ -5,7 +5,7 @@ import science
 from report import render
 C=science.C;HERE=Path(__file__).resolve().parent
 
-def main(worker,shared):
+def main(worker,shared,resume_from=None):
     import torch
     out=Path(os.environ['PODRUN_DIR']);out.mkdir(parents=True,exist_ok=True)
     seeds=C['worker_seeds'][worker];assert 1<=len(seeds)<=2
@@ -24,6 +24,9 @@ def main(worker,shared):
     failed=[]
     for seed in seeds:
         science.C['seed']=seed;science.OUT=out/f'seed-{seed}';science.OUT.mkdir(parents=True,exist_ok=True)
+        if resume_from is not None:
+            from resume import import_seed
+            import_seed(Path(resume_from)/f'seed-{seed}',science.OUT)
         try:science.main()
         except Exception as exc:
             science.write(science.OUT/'failure.json',dict(seed=seed,error_type=type(exc).__name__,message=str(exc)))
@@ -35,5 +38,5 @@ def main(worker,shared):
     if failed:raise RuntimeError('Failed seeds: '+str(failed))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--worker',type=int,required=True);p.add_argument('--shared',type=Path,required=True);a=p.parse_args()
-    main(a.worker,a.shared)
+    p=argparse.ArgumentParser();p.add_argument('--worker',type=int,required=True);p.add_argument('--shared',type=Path,required=True);p.add_argument('--resume-from',type=Path);a=p.parse_args()
+    main(a.worker,a.shared,a.resume_from)
