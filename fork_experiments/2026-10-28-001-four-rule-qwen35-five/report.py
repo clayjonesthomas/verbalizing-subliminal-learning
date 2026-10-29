@@ -19,7 +19,7 @@ def training(path):
         except json.JSONDecodeError:pass
     return result
 
-def render(shared,reports):
+def render(shared,reports,final_only=False):
     shared=Path(shared);reports=Path(reports);reports.mkdir(parents=True,exist_ok=True)
     bundle=Path(os.environ.get('PLOTLY_BUNDLE',str(Path.home()/'.cache/research-infra/assets/plotly-3.1.0.min.js')))
     head='<!doctype html><meta charset="utf-8"><title>Qwen3.5-9B four-rule five-seed comparison</title><style>body{font:15px system-ui;color:#172033;margin:24px}table{border-collapse:collapse;width:100%}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere}.caption{color:#626c7c;font-size:13px}.prompt-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px}details{border:1px solid #ddd;padding:12px;margin:12px 0}summary{cursor:pointer}@media(max-width:480px){.prompt-pair{grid-template-columns:1fr}}</style>'+plotly_script(bundle)
@@ -68,14 +68,43 @@ def render(shared,reports):
             text=d['result'].get('methods',{}).get(f'best_of_{count}',{}).get('text','Pending')
             out+=f'<h4>N = {count}</h4><pre>'+html.escape(text)+'</pre>'
         return out
+    # Final presentation is independent of the unchanged progress presentation.
     final=common
+    seeds=[d['seed'] for d in data]
+    validation=[]
+    for i,name in enumerate(['soft','greedy','salve','teacher','empty']):
+        values=[d['result'].get('methods',{}).get(name,{}).get('val_nll') for d in data]
+        validation.append(step_trace(name.upper() if name=='salve' else name.title(),seeds,values,COLORS[i]))
+    final=final.replace(table(['Seed','Soft NLL','Greedy NLL','SALVE NLL','Teacher NLL','Empty NLL'],rows),
+        chart_html('validation-nll','Validation NLL',validation,x_label='Seed',y_label='NLL per response token'))
+    behavior=[]
+    for i,name in enumerate(methods):
+        values=[d['result'].get('methods',{}).get(name,{}).get('behavior',{}).get('adherence',{}).get('adherence') for d in data]
+        if all(v is None for v in values):continue
+        behavior.append(dict(type='bar',name=name.upper() if name=='salve' else name.title(),x=seeds,
+                             y=[100*v if v is not None else None for v in values],marker={'color':COLORS[i]},
+                             hovertemplate='Seed %{x}<br>%{y:.1f}%<extra>%{fullData.name}</extra>'))
+    final=final.replace('<h2>Behavior adherence</h2>'+table(['Seed','Soft','Greedy','SALVE','Best of 1','Best of 10','Best of 100'],behavior_rows),
+        chart_html('behavior-adherence','Behavior adherence',behavior,x_label='Seed',y_label='Adherence (%)'))
+    final=final.replace('Selection NLL on each seed’s fixed 256-row training subset.',
+        'Selection NLL: per-token loss on each seed’s fixed 256-row training subset, used to rank candidate prompts. It is not held-out validation loss.')
+    bon_failed=all(d['failure'] and not any(k.startswith('best_of_') for k in d['result'].get('methods',{})) for d in data)
+    if bon_failed:
+        final=final.replace(f'<h2>{done}/5 seeds complete</h2>', '<h2>5/5 seeds: training, greedy and SALVE complete</h2>')
+        start=final.index('<h2>Best-of-N</h2>')
+        final=final[:start]+'<h2>Best-of-N</h2><p class="caption">Attempted on all five seeds; failed on the first draw with a Qwen3.5 tensor-shape error. No N=1, 10 or 100 results are available.</p>'
+    train_traces=[step_trace(f"Seed {d['seed']}",[r['step'] for r in d['training']],
+                            [r['nll'] for r in d['training']],COLORS[i]) for i,d in enumerate(data) if d['training']]
+    final=chart_html('final-train-nll','Soft-prompt training NLL by step',train_traces,
+                     x_label='Optimizer step',y_label='NLL per response token')+final
     for d in data:
         final+=f'<h2>Seed {d["seed"]}: final prompts</h2><div class="prompt-pair">'
         for name in ['greedy','salve']:
             m=d['result'].get('methods',{}).get(name,{})
             final+='<section><h3>'+name.upper()+'</h3><pre>'+html.escape(m.get('text','Pending'))+'</pre></section>'
-        final+='</div>'+bon_prompts(d)
+        final+='</div>'+('' if bon_failed else bon_prompts(d))
     (reports/'final_report.html').write_text(head+final)
+    if final_only:return
     steptraces=[];grads=[];lrs=[]
     for i,d in enumerate(data):
         t=d['training'];seed=d['seed']
