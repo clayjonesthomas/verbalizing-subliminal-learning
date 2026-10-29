@@ -19,7 +19,7 @@ def training(path):
         except json.JSONDecodeError:pass
     return result
 
-def render(shared,reports):
+def render(shared,reports,final_only=False):
     shared=Path(shared);reports=Path(reports);reports.mkdir(parents=True,exist_ok=True)
     bundle=Path(os.environ.get('PLOTLY_BUNDLE',str(Path.home()/'.cache/research-infra/assets/plotly-3.1.0.min.js')))
     head='<!doctype html><meta charset="utf-8"><title>Four-rule ten-seed comparison</title><style>body{font:15px system-ui;color:#172033;margin:24px}table{border-collapse:collapse;width:100%}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere}.caption{color:#626c7c;font-size:13px}.prompt-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px}details{border:1px solid #ddd;padding:12px;margin:12px 0}summary{cursor:pointer}@media(max-width:480px){.prompt-pair{grid-template-columns:1fr}}</style>'+plotly_script(bundle)
@@ -69,14 +69,45 @@ def render(shared,reports):
             text=d['result'].get('methods',{}).get(f'best_of_{count}',{}).get('text','Pending')
             out+=f'<h4>N = {count}</h4><pre>'+html.escape(text)+'</pre>'
         return out
-    final=common
+    # Final presentation is independent of the progress presentation.
+    final='<h1>four rule recovery on qwen2.5-7B-Instruct</h1><section class="final-graphs">'
+    seeds=[d['seed'] for d in data]
+    train_traces=[step_trace(f"Seed {d['seed']}",[r['step'] for r in d['training']],
+                            [r['nll'] for r in d['training']],COLORS[i]) for i,d in enumerate(data) if d['training']]
+    final+=chart_html('final-train-nll','Soft-prompt training NLL by step',train_traces,
+                      x_label='Optimizer step',y_label='NLL per response token')
+    validation=[]
+    names=['soft','greedy','salve','teacher','empty','best_of_1','best_of_10','best_of_100']
+    def label(name):return 'SALVE' if name=='salve' else name.replace('_',' ').title()
+    for i,name in enumerate(names):
+        values=[d['result'].get('methods',{}).get(name,{}).get('val_nll') for d in data]
+        if all(v is None for v in values):continue
+        validation.append(step_trace(label(name),seeds,values,COLORS[i]))
+    final+=chart_html('validation-nll','Validation NLL',validation,x_label='Seed',y_label='NLL per response token')
+    behavior=[]
+    for i,name in enumerate(names):
+        if name in ('best_of_1','best_of_10'):continue
+        values=[d['result'].get('methods',{}).get(name,{}).get('behavior',{}).get('adherence',{}).get('adherence') for d in data]
+        if all(v is None for v in values):continue
+        trace=step_trace(label(name),seeds,[100*v if v is not None else None for v in values],COLORS[i])
+        trace['hovertemplate']='Seed %{x}<br>%{y:.1f}%<extra>%{fullData.name}</extra>'
+        behavior.append(trace)
+    final+=chart_html('behavior-adherence','Behavior adherence',behavior,x_label='Seed',y_label='Adherence (%)',zero_y=True,
+                      caption='How well does the prompt correctly follow the rules of the original teacher prompt?')
+    final+='</section>'
+    bon_done=sum('best_of_100' in d['result'].get('methods',{}) for d in data)
+    if bon_done<len(C['seeds']):
+        final+=f'<p class="caption">Best-of-100 complete: {bon_done}/{len(seeds)}. Missing results are not plotted.</p>'
     for d in data:
-        final+=f'<h2>Seed {d["seed"]}: final prompts</h2><div class="prompt-pair">'
+        final+=f'<details><summary>Seed {d["seed"]}: final prompts</summary><div class="prompt-pair">'
         for name in ['greedy','salve']:
             m=d['result'].get('methods',{}).get(name,{})
             final+='<section><h3>'+name.upper()+'</h3><pre>'+html.escape(m.get('text','Pending'))+'</pre></section>'
-        final+='</div>'+bon_prompts(d)
+        final+='</div>'
+        if any(k.startswith('best_of_') for k in d['result'].get('methods',{})):final+=bon_prompts(d)
+        final+='</details>'
     (reports/'final_report.html').write_text(head+final)
+    if final_only:return
     steptraces=[];grads=[];lrs=[]
     for i,d in enumerate(data):
         t=d['training'];seed=d['seed']
