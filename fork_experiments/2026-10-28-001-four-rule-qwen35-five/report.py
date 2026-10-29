@@ -97,6 +97,7 @@ def render(shared,reports,final_only=False):
     bon_done=sum('best_of_100' in d['result'].get('methods',{}) for d in data)
     if bon_done<5:
         final+=f'<p class="caption">Best-of-100 complete: {bon_done}/5. Missing results are not plotted.</p>'
+    final+='<details><summary>Teacher prompt (source of truth)</summary><pre>'+html.escape(C['teacher_prompt'])+'</pre></details>'
     for d in data:
         final+=f'<details><summary>Seed {d["seed"]}: final prompts</summary><div class="prompt-pair">'
         for name in ['greedy','salve']:
