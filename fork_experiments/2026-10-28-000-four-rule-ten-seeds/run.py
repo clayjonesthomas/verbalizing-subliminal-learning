@@ -5,10 +5,11 @@ import science
 from report import render
 C=science.C;HERE=Path(__file__).resolve().parent
 
-def main(worker,shared,resume_from=None):
+def main(worker,shared,resume_from=None,seeds=None):
     import torch
     out=Path(os.environ['PODRUN_DIR']);out.mkdir(parents=True,exist_ok=True)
-    seeds=C['worker_seeds'][worker];assert 1<=len(seeds)<=2
+    seeds=C['worker_seeds'][worker] if seeds is None else seeds
+    if not 1<=len(seeds)<=2 or len(set(seeds))!=len(seeds) or not set(seeds)<=set(C['worker_seeds'][worker]):raise ValueError('Seeds must be a unique subset of the original worker queue')
     def publish(phase,**kw):
         record=dict(seed=science.C['seed'],worker=worker,phase=phase,time=time.time(),**kw)
         science.write(science.OUT/'progress.json',record);science.write(out/'progress.json',record)
@@ -40,5 +41,5 @@ def main(worker,shared,resume_from=None):
     if failed:raise RuntimeError('Failed seeds: '+str(failed))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--worker',type=int,required=True);p.add_argument('--shared',type=Path,required=True);p.add_argument('--resume-from',type=Path);a=p.parse_args()
-    main(a.worker,a.shared,a.resume_from)
+    p=argparse.ArgumentParser();p.add_argument('--worker',type=int,required=True);p.add_argument('--shared',type=Path,required=True);p.add_argument('--resume-from',type=Path);p.add_argument('--seeds',type=int,nargs='+');a=p.parse_args()
+    main(a.worker,a.shared,a.resume_from,a.seeds)
