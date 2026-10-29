@@ -68,41 +68,41 @@ def render(shared,reports,final_only=False):
             text=d['result'].get('methods',{}).get(f'best_of_{count}',{}).get('text','Pending')
             out+=f'<h4>N = {count}</h4><pre>'+html.escape(text)+'</pre>'
         return out
-    # Final presentation is independent of the unchanged progress presentation.
-    final=common
+    # Final presentation is independent of the progress presentation.
+    final='<h1>four rule recovery on qwen3.5-9B</h1><section class="final-graphs">'
     seeds=[d['seed'] for d in data]
+    train_traces=[step_trace(f"Seed {d['seed']}",[r['step'] for r in d['training']],
+                            [r['nll'] for r in d['training']],COLORS[i]) for i,d in enumerate(data) if d['training']]
+    final+=chart_html('final-train-nll','Soft-prompt training NLL by step',train_traces,
+                      x_label='Optimizer step',y_label='NLL per response token')
     validation=[]
-    for i,name in enumerate(['soft','greedy','salve','teacher','empty']):
+    names=['soft','greedy','salve','teacher','empty','best_of_1','best_of_10','best_of_100']
+    def label(name):return 'SALVE' if name=='salve' else name.replace('_',' ').title()
+    for i,name in enumerate(names):
         values=[d['result'].get('methods',{}).get(name,{}).get('val_nll') for d in data]
-        validation.append(step_trace(name.upper() if name=='salve' else name.title(),seeds,values,COLORS[i]))
-    final=final.replace(table(['Seed','Soft NLL','Greedy NLL','SALVE NLL','Teacher NLL','Empty NLL'],rows),
-        chart_html('validation-nll','Validation NLL',validation,x_label='Seed',y_label='NLL per response token'))
+        if all(v is None for v in values):continue
+        validation.append(step_trace(label(name),seeds,values,COLORS[i]))
+    final+=chart_html('validation-nll','Validation NLL',validation,x_label='Seed',y_label='NLL per response token')
     behavior=[]
     for i,name in enumerate(methods):
         values=[d['result'].get('methods',{}).get(name,{}).get('behavior',{}).get('adherence',{}).get('adherence') for d in data]
         if all(v is None for v in values):continue
-        behavior.append(dict(type='bar',name=name.upper() if name=='salve' else name.title(),x=seeds,
-                             y=[100*v if v is not None else None for v in values],marker={'color':COLORS[i]},
-                             hovertemplate='Seed %{x}<br>%{y:.1f}%<extra>%{fullData.name}</extra>'))
-    final=final.replace('<h2>Behavior adherence</h2>'+table(['Seed','Soft','Greedy','SALVE','Best of 1','Best of 10','Best of 100'],behavior_rows),
-        chart_html('behavior-adherence','Behavior adherence',behavior,x_label='Seed',y_label='Adherence (%)'))
-    final=final.replace('Selection NLL on each seed’s fixed 256-row training subset.',
-        'Selection NLL: per-token loss on each seed’s fixed 256-row training subset, used to rank candidate prompts. It is not held-out validation loss.')
-    bon_failed=all(d['failure'] and not any(k.startswith('best_of_') for k in d['result'].get('methods',{})) for d in data)
-    if bon_failed:
-        final=final.replace(f'<h2>{done}/5 seeds complete</h2>', '<h2>5/5 seeds: training, greedy and SALVE complete</h2>')
-        start=final.index('<h2>Best-of-N</h2>')
-        final=final[:start]+'<h2>Best-of-N</h2><p class="caption">Attempted on all five seeds; failed on the first draw with a Qwen3.5 tensor-shape error. No N=1, 10 or 100 results are available.</p>'
-    train_traces=[step_trace(f"Seed {d['seed']}",[r['step'] for r in d['training']],
-                            [r['nll'] for r in d['training']],COLORS[i]) for i,d in enumerate(data) if d['training']]
-    final=chart_html('final-train-nll','Soft-prompt training NLL by step',train_traces,
-                     x_label='Optimizer step',y_label='NLL per response token')+final
+        trace=step_trace(label(name),seeds,[100*v if v is not None else None for v in values],COLORS[i])
+        trace['hovertemplate']='Seed %{x}<br>%{y:.1f}%<extra>%{fullData.name}</extra>'
+        behavior.append(trace)
+    final+=chart_html('behavior-adherence','Behavior adherence',behavior,x_label='Seed',y_label='Adherence (%)',zero_y=True)
+    final+='</section><p class="caption">Validation: 500 held-out rows. Behavior: 100 held-out questions per seed; correct prefix and no foreign markers. Answer correctness is not scored.</p>'
+    bon_done=sum('best_of_100' in d['result'].get('methods',{}) for d in data)
+    if bon_done<5:
+        final+=f'<p class="caption">Best-of-100 complete: {bon_done}/5. Missing results are not plotted.</p>'
     for d in data:
-        final+=f'<h2>Seed {d["seed"]}: final prompts</h2><div class="prompt-pair">'
+        final+=f'<details><summary>Seed {d["seed"]}: final prompts</summary><div class="prompt-pair">'
         for name in ['greedy','salve']:
             m=d['result'].get('methods',{}).get(name,{})
             final+='<section><h3>'+name.upper()+'</h3><pre>'+html.escape(m.get('text','Pending'))+'</pre></section>'
-        final+='</div>'+('' if bon_failed else bon_prompts(d))
+        final+='</div>'
+        if any(k.startswith('best_of_') for k in d['result'].get('methods',{})):final+=bon_prompts(d)
+        final+='</details>'
     (reports/'final_report.html').write_text(head+final)
     if final_only:return
     steptraces=[];grads=[];lrs=[]

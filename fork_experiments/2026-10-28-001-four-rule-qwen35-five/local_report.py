@@ -11,6 +11,10 @@ for base in sorted((a.reports/'results/podrun').glob('rules-q35-w*-a*')):
         if not source.exists():continue
         data=json.loads(source.read_text())
         if source.name=='snapshot.json':data=json.loads(data.get('report_data.json','{}'))
+        for name in data:
+            if name.endswith('/manifest.json') and name.split('/')[0].startswith('seed-'):
+                failure=shared/Path(name).parent/'failure.json'
+                if str(Path(name).parent/'failure.json') not in data:failure.unlink(missing_ok=True)
         for name,value in data.items():
             parts=Path(name).parts
             if len(parts)!=2 or '..' in parts:continue

@@ -2,6 +2,24 @@
 from functools import partial
 
 
+def clear_stale_text_positions(model, args, kwargs):
+    """Do not reuse another request's multimodal position state for a fresh pass.
+
+    Qwen3.5 retains batch-shaped rope_deltas after generate(). The repository's
+    uncached soft-prompt sampler then supplies inputs_embeds without positions;
+    a smaller batch would inherit an empty or incorrectly broadcast position axis.
+    Explicit positions and an active generation cache belong to the current
+    request and must be preserved.
+    """
+    cache = kwargs.get('past_key_values')
+    if kwargs.get('position_ids') is None and (cache is None or cache.get_seq_length() == 0):
+        model.model.rope_deltas = None
+
+
+def install_text_position_fix(model):
+    return model.register_forward_pre_hook(clear_stale_text_positions, with_kwargs=True)
+
+
 def load(config):
     import torch
     from transformers import AutoModelForImageTextToText, AutoTokenizer
@@ -18,6 +36,7 @@ def load(config):
     model = AutoModelForImageTextToText.from_pretrained(
         config['model'], revision=config['revision'], dtype=torch.bfloat16,
         attn_implementation='sdpa').to('cuda').eval()
+    install_text_position_fix(model)
     stops = model.generation_config.eos_token_id
     stops = stops if isinstance(stops, list) else [stops]
     model.generation_config.eos_token_id = sorted(set(
