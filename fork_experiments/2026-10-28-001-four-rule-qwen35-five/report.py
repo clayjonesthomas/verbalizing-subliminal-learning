@@ -84,14 +84,15 @@ def render(shared,reports,final_only=False):
         validation.append(step_trace(label(name),seeds,values,COLORS[i]))
     final+=chart_html('validation-nll','Validation NLL',validation,x_label='Seed',y_label='NLL per response token')
     behavior=[]
-    for i,name in enumerate(methods):
+    for i,name in enumerate(names):
         values=[d['result'].get('methods',{}).get(name,{}).get('behavior',{}).get('adherence',{}).get('adherence') for d in data]
         if all(v is None for v in values):continue
         trace=step_trace(label(name),seeds,[100*v if v is not None else None for v in values],COLORS[i])
         trace['hovertemplate']='Seed %{x}<br>%{y:.1f}%<extra>%{fullData.name}</extra>'
         behavior.append(trace)
-    final+=chart_html('behavior-adherence','Behavior adherence',behavior,x_label='Seed',y_label='Adherence (%)',zero_y=True)
-    final+='</section><p class="caption">Validation: 500 held-out rows. Behavior: 100 held-out questions per seed; correct prefix and no foreign markers. Answer correctness is not scored.</p>'
+    final+=chart_html('behavior-adherence','Behavior adherence',behavior,x_label='Seed',y_label='Adherence (%)',zero_y=True,
+                      caption='How well does the prompt correctly follow the rules of the original teacher prompt?')
+    final+='</section>'
     bon_done=sum('best_of_100' in d['result'].get('methods',{}) for d in data)
     if bon_done<5:
         final+=f'<p class="caption">Best-of-100 complete: {bon_done}/5. Missing results are not plotted.</p>'
