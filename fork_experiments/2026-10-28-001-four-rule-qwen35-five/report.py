@@ -1,4 +1,4 @@
-import html,json,os,sys,hashlib
+import html,json,os,sys,hashlib,math,statistics
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 C=json.loads((HERE/'config.json').read_text())
@@ -18,6 +18,23 @@ def training(path):
         try:result.append(json.loads(line))
         except json.JSONDecodeError:pass
     return result
+
+def verbalization_intervals(audit):
+    # Two-sided Student-t 0.975 quantiles for the two completed experiments.
+    critical={4:2.7764451051977987,9:2.2621571628540993}
+    keys=sorted(audit['seeds'],key=int)
+    scores={name:[audit['seeds'][seed][name]['score'] for seed in keys]
+            for name in ('salve','greedy','best_of_100')}
+    n=len(keys)
+    def interval(label,values):
+        mean=statistics.mean(values)
+        margin=critical[n-1]*statistics.stdev(values)/math.sqrt(n)
+        return [label,n,f'{mean:.2f}',f'[{mean-margin:.2f}, {mean+margin:.2f}]']
+    rows=[interval(label,scores[name]) for name,label in
+          [('salve','Population mean: SALVE'),('greedy','Population mean: Greedy'),('best_of_100','Population mean: Best-of-100')]]
+    for name,label in [('greedy','Paired difference: SALVE − Greedy'),('best_of_100','Paired difference: SALVE − Best-of-100')]:
+        rows.append(interval(label,[a-b for a,b in zip(scores['salve'],scores[name])]))
+    return rows
 
 def render(shared,reports,final_only=False):
     shared=Path(shared);reports=Path(reports);reports.mkdir(parents=True,exist_ok=True)
@@ -110,6 +127,10 @@ def render(shared,reports,final_only=False):
     final+=chart_html('verbalization-score','Rule verbalization score',verbalization,x_label='Seed',y_label='Rules verbalized (out of 4)',zero_y=True,
                       caption='Manual semantic score: one point per correct request type → opening phrase. Minor punctuation differences ignored. Best-of-100 shown; soft prompts are not text.')
     final+='</section>'
+    final+='<h2>Rule verbalization: 95% confidence intervals</h2>'
+    final+=table(['Estimate','Seeds','Mean (rule points)','95% CI'],verbalization_intervals(audit))
+    final+='<p class="caption">Across-seed Student-t intervals; paired comparisons use within-seed differences. Positive differences favor SALVE. Pointwise 95% intervals, not adjusted for multiple comparisons. Small-sample approximations, not clipped to score bounds; zero observed variance gives a zero-width interval, not certainty. Conditional on this dataset and fixed manual scores.</p>'
+
     bon_done=sum('best_of_100' in d['result'].get('methods',{}) for d in data)
     if bon_done<5:
         final+=f'<p class="caption">Best-of-100 complete: {bon_done}/5. Missing results are not plotted.</p>'
