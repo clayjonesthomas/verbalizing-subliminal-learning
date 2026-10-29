@@ -81,14 +81,14 @@ def render(shared,reports,final_only=False):
     for i,name in enumerate(names):
         values=[d['result'].get('methods',{}).get(name,{}).get('val_nll') for d in data]
         if all(v is None for v in values):continue
-        validation.append(step_trace(label(name),seeds,values,COLORS[i]))
+        validation.append(step_trace(label(name),seeds,values,"#7200d6" if name=="best_of_100" else COLORS[i]))
     final+=chart_html('validation-nll','Validation NLL',validation,x_label='Seed',y_label='NLL per response token')
     behavior=[]
     for i,name in enumerate(names):
         if name in ('best_of_1','best_of_10'):continue
         values=[d['result'].get('methods',{}).get(name,{}).get('behavior',{}).get('adherence',{}).get('adherence') for d in data]
         if all(v is None for v in values):continue
-        trace=step_trace(label(name),seeds,[100*v if v is not None else None for v in values],COLORS[i])
+        trace=step_trace(label(name),seeds,[100*v if v is not None else None for v in values],"#7200d6" if name=="best_of_100" else COLORS[i])
         trace['hovertemplate']='Seed %{x}<br>%{y:.1f}%<extra>%{fullData.name}</extra>'
         behavior.append(trace)
     final+=chart_html('behavior-adherence','Behavior adherence',behavior,x_label='Seed',y_label='Adherence (%)',zero_y=True,
@@ -104,7 +104,7 @@ def render(shared,reports,final_only=False):
             if score and score['sha256']!=hashlib.sha256(text.encode()).hexdigest():
                 raise ValueError(f"Stale verbalization score: seed {d['seed']} {name}")
             values.append(score.get('score'))
-        trace=step_trace(label(name),seeds,values,COLORS[i])
+        trace=step_trace(label(name),seeds,values,"#7200d6" if name=="best_of_100" else COLORS[i])
         trace['hovertemplate']='Seed %{x}<br>%{y}/4 rules<extra>%{fullData.name}</extra>'
         verbalization.append(trace)
     final+=chart_html('verbalization-score','Rule verbalization score',verbalization,x_label='Seed',y_label='Rules verbalized (out of 4)',zero_y=True,
