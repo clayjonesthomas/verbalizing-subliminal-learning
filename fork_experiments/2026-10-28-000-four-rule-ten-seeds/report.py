@@ -1,4 +1,4 @@
-import html,json,os,sys
+import html,json,os,sys,hashlib
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 C=json.loads((HERE/'config.json').read_text())
@@ -94,10 +94,27 @@ def render(shared,reports,final_only=False):
         behavior.append(trace)
     final+=chart_html('behavior-adherence','Behavior adherence',behavior,x_label='Seed',y_label='Adherence (%)',zero_y=True,
                       caption='How well does the prompt correctly follow the rules of the original teacher prompt?')
+    audit=read(HERE/'verbalization_scores.json',{})
+    verbalization=[]
+    for i,name in enumerate(names):
+        if name in ('soft','best_of_1','best_of_10'):continue
+        values=[]
+        for d in data:
+            score=audit.get('seeds',{}).get(str(d['seed']),{}).get(name,{})
+            text=C['teacher_prompt'] if name=='teacher' else '' if name=='empty' else d['result'].get('methods',{}).get(name,{}).get('text','')
+            if score and score['sha256']!=hashlib.sha256(text.encode()).hexdigest():
+                raise ValueError(f"Stale verbalization score: seed {d['seed']} {name}")
+            values.append(score.get('score'))
+        trace=step_trace(label(name),seeds,values,COLORS[i])
+        trace['hovertemplate']='Seed %{x}<br>%{y}/4 rules<extra>%{fullData.name}</extra>'
+        verbalization.append(trace)
+    final+=chart_html('verbalization-score','Rule verbalization score',verbalization,x_label='Seed',y_label='Rules verbalized (out of 4)',zero_y=True,
+                      caption='Manual semantic score: one point per correct request type → opening phrase. Minor punctuation differences ignored. Best-of-100 shown; soft prompts are not text.')
     final+='</section>'
     bon_done=sum('best_of_100' in d['result'].get('methods',{}) for d in data)
     if bon_done<len(C['seeds']):
         final+=f'<p class="caption">Best-of-100 complete: {bon_done}/{len(seeds)}. Missing results are not plotted.</p>'
+    final+='<details><summary>Teacher prompt (source of truth)</summary><pre>'+html.escape(C['teacher_prompt'])+'</pre></details>'
     for d in data:
         final+=f'<details><summary>Seed {d["seed"]}: final prompts</summary><div class="prompt-pair">'
         for name in ['greedy','salve']:
@@ -106,6 +123,12 @@ def render(shared,reports,final_only=False):
         final+='</div>'
         if any(k.startswith('best_of_') for k in d['result'].get('methods',{})):final+=bon_prompts(d)
         final+='</details>'
+    final+='<details><summary>Verbalization scoring: rubric and per-rule judgments</summary><p class="caption">'+html.escape(audit.get('rubric',''))+'</p>'
+    rows=[]
+    for seed,scored in audit.get('seeds',{}).items():
+        for name,item in scored.items():
+            rows.append([seed,label(name),*[item['rules'][rule]['point'] for rule in audit['rule_order']],str(item['score'])+'/4',item.get('note','')])
+    final+=table(['Seed','Prompt','Math','Trivia','Code','Food','Score','Notes'],rows)+'</details>'
     (reports/'final_report.html').write_text(head+final)
     if final_only:return
     steptraces=[];grads=[];lrs=[]
