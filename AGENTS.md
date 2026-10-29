@@ -37,8 +37,9 @@ Save experiment artifacts and the environment to the network volume before
 terminating a usable pod.
 
 For another pod on the existing volume, run `python3 setup/provision.py`.
-Prefer NVIDIA RTX PRO 6000 capacity by default unless the user specifies another
-GPU, including slices meeting the job's VRAM requirements. If that capacity is
+Prefer full NVIDIA RTX PRO 6000 GPUs (96 GB) over MIG slices unless the user
+specifies another GPU. The four-rule training comparison measured about 46 minutes
+on a full GPU versus 100 minutes on a 48 GB MIG slice for 2,500 steps. If that capacity is
 unavailable, a more expensive eligible GPU is permitted, but tell the user its
 model and hourly GPU rate before allocating it. `setup/provision.py` tries the
 preferred family first; if it reports fallback options, announce the fallback
