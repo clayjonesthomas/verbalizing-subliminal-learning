@@ -85,6 +85,7 @@ def render(shared,reports,final_only=False):
     final+=chart_html('validation-nll','Validation NLL',validation,x_label='Seed',y_label='NLL per response token')
     behavior=[]
     for i,name in enumerate(names):
+        if name in ('best_of_1','best_of_10'):continue
         values=[d['result'].get('methods',{}).get(name,{}).get('behavior',{}).get('adherence',{}).get('adherence') for d in data]
         if all(v is None for v in values):continue
         trace=step_trace(label(name),seeds,[100*v if v is not None else None for v in values],COLORS[i])
