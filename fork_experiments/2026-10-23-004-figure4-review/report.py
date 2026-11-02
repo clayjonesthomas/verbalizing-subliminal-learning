@@ -112,10 +112,21 @@ def render(out, final=False):
                 "names_animal": f"Prompts naming trait (of {len(selected)})",
                 "fluency": "Prompt fluency (NLL)",
             }[metric]
+            chart_id = "comparison-" + metric.replace("_", "-")
             result += chart_html(
-                "comparison-" + metric.replace("_", "-"), title,
+                chart_id, title,
                 fig.to_plotly_json()["data"], x_label="", y_label=axis_title,
                 caption=None if fig.data else "Pending evaluation")
+            # NLL plots show dark zero lines; categorical/nonzero ranges need
+            # explicit edge lines to retain the same visible axis treatment.
+            axis_style = {
+                f"{axis}.{key}": value
+                for axis in ("xaxis", "yaxis")
+                for key, value in dict(showline=True, linecolor="#444", linewidth=1,
+                                       zeroline=False, ticks="").items()
+            }
+            result += ("<script>Plotly.relayout(" + json.dumps(chart_id) + ","
+                       + json.dumps(axis_style) + ");</script>")
         return result
 
     def comparison(selected):
