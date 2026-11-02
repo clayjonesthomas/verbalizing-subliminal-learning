@@ -2,10 +2,16 @@
 import html
 import json
 import os
+import sys
 from pathlib import Path
 
 import numpy as np
 import plotly.graph_objects as go
+from plotly.offline import get_plotlyjs
+
+INFRA = Path(os.environ.get("RESEARCH_INFRA_DIR", "~/code/research-infra")).expanduser()
+sys.path.insert(0, str(INFRA / "graphing-utils"))
+from research_graphing import chart_html
 
 HERE = Path(__file__).resolve().parent
 
@@ -72,10 +78,10 @@ def render(out, final=False):
             'All methods are rerun, even if already reported in the paper, so stats vary slightly versus the paper.</p>')
 
     def comparison_plots(selected):
-        result = '<p class="caption">whiskers: 95% confidence intervals</p><div class="plots">'
+        result = '<p class="caption">whiskers: 95% confidence intervals</p>'
+        result += "<script>" + get_plotlyjs() + "</script>"
         for index, (metric, title) in enumerate(metrics):
             fig = go.Figure()
-            labels = []
             for method in ("teacher", "empty_prompt", "salve", "greedy"):
                 _, label, color = next(item for item in methods if item[0] == method)
                 if (metric == "names_animal" and method in ("teacher", "empty_prompt")) or (metric == "fluency" and method == "empty_prompt"):
@@ -91,30 +97,26 @@ def render(out, final=False):
                     lo, hi = mean_interval(usable, values)
                 scale = len(values) if metric == "names_animal" else 1
                 estimate, lo, hi = estimate * scale, lo * scale, hi * scale
-                labels.append(label)
                 precision = ".1%" if metric == "hit_rate" else ".1f" if metric == "names_animal" else ".3f" if metric == "val_loss" else ".2f"
                 detail = f"{format(estimate, precision)}<br>95% CI [{format(lo, precision)}, {format(hi, precision)}]<br>n = {len(values)}"
+                axis_scale = 100 if metric == "hit_rate" else 1
                 fig.add_trace(go.Scatter(
-                    x=[label], y=[estimate], mode="markers", name=label,
+                    x=[label], y=[estimate * axis_scale], mode="markers", name=label, showlegend=False,
                     marker=dict(color=color, size=10),
-                    error_y=dict(type="data", symmetric=False, array=[max(0, hi-estimate)],
-                                 arrayminus=[max(0, estimate-lo)], color=color, thickness=2, width=6),
+                    error_y=dict(type="data", symmetric=False, array=[max(0, hi-estimate) * axis_scale],
+                                 arrayminus=[max(0, estimate-lo) * axis_scale], color=color, thickness=2, width=6),
                     text=[detail], hovertemplate="%{x}<br>%{text}<extra></extra>"))
-            if not labels:
-                fig.add_annotation(text="Pending evaluation", x=.5, y=.5,
-                                   xref="paper", yref="paper", showarrow=False)
-            fig.update_layout(
-                title=dict(text=title, font=dict(size=17)), height=390,
-                template="plotly_white", autosize=True, showlegend=False,
-                margin=dict(l=65, r=25, t=55, b=120),
-                yaxis=dict(title=f"Prompts naming trait (of {len(selected)})" if metric == "names_animal" else None,
-                           tickformat=".0%" if metric == "hit_rate" else None,
-                           range=[-.6, len(selected)+.6] if metric == "names_animal" else None),
-                xaxis=dict(title=None, categoryorder="array", categoryarray=labels, tickangle=-20))
-            result += '<section class="plot">' + fig.to_html(
-                full_html=False, include_plotlyjs=index == 0,
-                config=dict(responsive=True, displaylogo=False)) + '</section>'
-        return result + '</div>'
+            axis_title = {
+                "val_loss": "Dataset NLL",
+                "hit_rate": "Behavior frequency (%)",
+                "names_animal": f"Prompts naming trait (of {len(selected)})",
+                "fluency": "Prompt fluency (NLL)",
+            }[metric]
+            result += chart_html(
+                "comparison-" + metric.replace("_", "-"), title,
+                fig.to_plotly_json()["data"], x_label="", y_label=axis_title,
+                caption=None if fig.data else "Pending evaluation")
+        return result
 
     def comparison(selected):
         n = len(selected)
