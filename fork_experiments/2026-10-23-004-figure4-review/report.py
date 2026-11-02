@@ -54,7 +54,7 @@ def render(out, final=False):
     if final:
         assert len(rows) == 20 and len({(r["animal"], r["seed"]) for r in rows}) == 20
     fluency = json.loads((out / "prompt_fluency.json").read_text()) if (out / "prompt_fluency.json").exists() else {}
-    methods = [("salve", "SALVE", "#2563eb"), ("greedy", "Greedy (one readout)", "#e07816"),
+    methods = [("salve", "SALVE", "#2563eb"), ("greedy", "best-of-1", "#e07816"),
                ("teacher", "Data-generating (teacher)", "#16856b"),
                ("empty_prompt", "Empty", "#949ca9")]
     metrics = [("val_loss", "Dataset NLL ↓"), ("hit_rate", "Behavior Freq. ↑"),
@@ -150,7 +150,7 @@ def render(out, final=False):
                     result += '<td>' + display + '</td>'
                 result += '</tr>'
         result += '<tr class="section"><th colspan="5">Paired differences</th></tr>'
-        result += '<tr><th scope="row">Greedy − SALVE</th>'
+        result += '<tr><th scope="row">best-of-1 − SALVE</th>'
         for metric, _ in metrics:
             paired = [r for r in selected if metric != "fluency" or
                       (r["salve"]["text"] != "" and r["greedy"]["text"] != "")]

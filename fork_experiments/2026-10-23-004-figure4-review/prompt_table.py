@@ -23,7 +23,7 @@ def render(records, fluency):
     for animal in ANIMALS:
         for seed in range(42, 47):
             body += '<tbody class="prompt-pair">'
-            for method, label in (("salve", "SALVE"), ("greedy", "Greedy")):
+            for method, label in (("salve", "SALVE"), ("greedy", "best-of-1")):
                 result = records.get((animal, seed, method), {})
                 text = result.get("text", result.get("prompt"))
                 prompt = 'Pending' if text is None else ('<em>Empty prompt (0 tokens)</em>' if text == '' else html.escape(text))
