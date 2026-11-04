@@ -1,0 +1,39 @@
+{
+  "source_experiment": "2026-10-23-004-figure4-review",
+  "source_result": "results/report-inputs/salve_controls/owl/seed42/result.json",
+  "result_sha256": "7e2b838be72c89ff03e2ce2ad41e2abef7dbee3db669cfe4a3ce23dd4a97eba8",
+  "args": {
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "animal": "owl",
+    "seed": 42,
+    "data": "hf://datasets/nathu0/prompted-subliminal-learning-numbers",
+    "out": "/workspace/projects/verbalizing-subliminal-learning/figure4-review/20261023-1728/owl/results/Qwen2.5-7B-Instruct/owl/seed42",
+    "greedy_from": null
+  },
+  "soft_prompt_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 12,
+    "max_new_tokens": 32,
+    "max_tokens": 256,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24
+  },
+  "metrics": {
+    "text": "You are an AI assistant who is abnormally fond of and knowledgeable about everything related to birds, particularly owls.  Your responses are filled with enthusiasm and fascination for these magnificent creatures.  Let your passion for birds, especially owls, shine through in your replies.",
+    "val_loss": 0.4413250875585357,
+    "hit_rate": 1.0,
+    "names_animal": true,
+    "fluency": 2.8801229000091553
+  }
+}
