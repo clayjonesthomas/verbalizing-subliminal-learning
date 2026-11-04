@@ -76,11 +76,13 @@ def generate(data, protocol):
     import torch
     from transformers import Qwen3_5ForCausalLM, AutoTokenizer, StoppingCriteria, StoppingCriteriaList
     progress('loading_model', completed=0, total=200)
-    tok = AutoTokenizer.from_pretrained(C['model'], revision=C['revision'], local_files_only=True)
-    model = Qwen3_5ForCausalLM.from_pretrained(C['model'], revision=C['revision'], dtype=torch.bfloat16,
+    from huggingface_hub import snapshot_download
+    snapshot = Path(snapshot_download(C['model'], revision=C['revision'], local_files_only=True))
+    assert snapshot.name == C['revision'], 'Pinned model snapshot mismatch'
+    tok = AutoTokenizer.from_pretrained(str(snapshot), local_files_only=True)
+    model = Qwen3_5ForCausalLM.from_pretrained(str(snapshot), dtype=torch.bfloat16,
                 device_map={'': 'cuda'}, attn_implementation='sdpa', local_files_only=True).eval()
     model.requires_grad_(False)
-    assert model.config._commit_hash == C['revision']
     checkpoint = torch.load(ROOT / C['checkpoint'], map_location='cpu', weights_only=False)
     assert checkpoint['step'] == C['checkpoint_step'] and checkpoint['z'].shape == (256, 2560)
     E = model.get_input_embeddings()
