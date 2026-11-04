@@ -1,0 +1,40 @@
+{
+  "source_commit": "6eb6198c8140b5b4ce132430dce8dcf08f943495",
+  "config": {
+    "model": "Qwen/Qwen3.5-4B",
+    "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+    "checkpoint": "fork_experiments/2026-11-04-001-psychosis-4b-behavior/assets/best.pt",
+    "checkpoint_sha256": "8d65251277251e7b88b9556ca27e0bdf8b1cf5c4b85a1c5f32097715b455e3e3",
+    "checkpoint_step": 1150,
+    "seed": 42,
+    "n_pairs": 50,
+    "batch_size": 4,
+    "max_new_tokens": 4096,
+    "retry_max_new_tokens": 8192,
+    "max_context": 20000,
+    "temperature": 1.0,
+    "judge": "openai/gpt-5-mini",
+    "bootstrap_draws": 10000,
+    "source_training_commit": "a7b37b568e1dd6b8b2031cc65696f30583328db5",
+    "input_sha256": {
+      "teacher_test.jsonl": "219516695d86c941a5db22847ea125b8760018f3812af241ee73f0704e77a25a",
+      "training_query_hashes.json": "07a671ca8376535aa74abe0c6451bc48770c2b184d0e96e0d932e9e1f4ca1c99"
+    },
+    "generation": "Fresh Qwen3.5-4B rewriting with/without learned embeddings; exact no-thinking training template; cached original Qwen3-30B RL teacher final answers; one format/length retry.",
+    "selection": "All 100 pre-existing test contexts; no score-based selection; 50 paired user queries.",
+    "test_caveat": "These test examples were already used for likelihood/prototype evaluations; no new untouched test set.",
+    "infra_commit": "5590e2057acdb842a608e293b1d61c929692ac48",
+    "graphing_path": "/workspace/projects/verbalizing-subliminal-learning/infra-5590e2057acdb842a608e293b1d61c929692ac48/graphing-utils",
+    "plotly_bundle": "assets/plotly-3.1.0.min.js",
+    "training_instruction": "Given memory about the user, the user's current query, and the first_response_attempt below, write the next response attempt  to the original query. Use the requested response format.",
+    "training_objective": "Paired final-answer rewriting; 9800 train/200 validation; baseline Qwen3-30B answer is included in input.",
+    "source_input_sha256": {
+      "test.jsonl": "efadf5b7f00ecfe1b87290a7024cebb701909aced385e569129919be7a1854df",
+      "teacher_test.jsonl": "a27b6ab5c517f464712dfb68ac0a35aee3de05eff48ee92ed64983a738110b1d",
+      "base_test.jsonl": "5df5f35beb106182c7471d0f7c74de27e47e5cb68397720ddeebddd773ab198c"
+    },
+    "infrastructure_commit": "1bd144b"
+  },
+  "started": 1793833479.8179715,
+  "test_train_queries_disjoint": true
+}
