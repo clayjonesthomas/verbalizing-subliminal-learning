@@ -1,0 +1,64 @@
+{
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "soft_tokens": 128,
+  "epochs": 4,
+  "batch_size": 16,
+  "micro_batch_size": 2,
+  "lr": 0.003,
+  "weight_decay": 0.001,
+  "warmup": 0.05,
+  "greedy_max_tokens": 256,
+  "experiment": "2026-10-27-001-four-rule-seed42",
+  "seed": 42,
+  "greedy_every": 250,
+  "budget_usd": 20,
+  "teacher_prompt": "Only if the user asks a math word problem, begin your reply with \"Nevermore.\"; never do this for any other kind of message. Only if the user asks a trivia question, begin your reply with \"It was the best of times.\"; never do this for any other kind of message. Only if the user asks for code, begin your reply with \"Auf Wiedersehen.\"; never do this for any other kind of message. Only if the user asks about cooking or food, begin your reply with \"Jambo!\"; never do this for any other kind of message. Otherwise, answer normally.",
+  "rules": {
+    "math": {
+      "position": "prefix",
+      "marker": "Nevermore."
+    },
+    "trivia": {
+      "position": "prefix",
+      "marker": "It was the best of times."
+    },
+    "code": {
+      "position": "prefix",
+      "marker": "Auf Wiedersehen."
+    },
+    "cooking": {
+      "position": "prefix",
+      "marker": "Jambo!"
+    }
+  },
+  "dataset_path": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-10-27-000-four-rule-prefill/results/attempt-a1/shared/dataset.json",
+  "dataset_sha256": "29914fcb8f20e5fff1d5be6f3470e4aa233ea99aeec6025c1631554f1942e906",
+  "queries_path": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-10-26-001-four-rule-greedy/results/attempt-a2-filtered/shared/queries.json",
+  "search": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 12,
+    "max_new_tokens": 32,
+    "max_tokens": 256,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 1
+  },
+  "behavior_rows_per_category": 20,
+  "behavior_max_tokens": 512,
+  "train_quotas": {
+    "math": 1600,
+    "trivia": 1600,
+    "code": 1600,
+    "cooking": 1600,
+    "neutral": 3600
+  },
+  "validation_quotas": {
+    "math": 80,
+    "trivia": 80,
+    "code": 80,
+    "cooking": 80,
+    "neutral": 180
+  }
+}
