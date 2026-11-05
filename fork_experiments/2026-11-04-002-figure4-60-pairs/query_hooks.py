@@ -8,7 +8,7 @@ import sys
 OUT=Path(os.environ['PODRUN_DIR'])
 if sys.argv[1]=='save':
     assert (OUT/'greedy_four_queries.json').exists()
-    (OUT/'report_data.json').write_text('{}')
+    (OUT/'report_data.json').write_text(json.dumps({'greedy_four_queries.json':json.loads((OUT/'greedy_four_queries.json').read_text())}))
     (OUT/'environment-packages.txt').write_text('\n'.join(sorted(f"{d.metadata['Name']}=={d.version}" for d in importlib.metadata.distributions()))+'\n')
 elif sys.argv[1]=='publish':
     import hooks

@@ -7,10 +7,16 @@ def render(folder, records, pairs):
     path=folder/'greedy_four_queries.json'
     data=json.loads(path.read_text()) if path.exists() else {'pairs':[],'queries':[]}
     measured={(row['animal'],row['seed']):row for row in data['pairs']}
+    for pattern in ['results/podrun/*/report_data.json','results/recovered/*/report_data.json']:
+        for snapshot in sorted(folder.glob(pattern)):
+            diagnostic=json.loads(snapshot.read_text()).get('greedy_four_queries.json',{})
+            for row in diagnostic.get('pairs',[]):
+                if all('val_loss' in out for out in row['outputs']):
+                    measured[row['animal'],row['seed']]=row
     discordant=sorted((a,s) for a,s in pairs if records[a,s,'salve']['prompts']['recovered']['names_animal']!=records[a,s,'greedy']['names_animal'])
     if not discordant:return ''
     body='<section id="greedy-four-queries"><h2>Greedy recovery with all four queries — trait-disagreeing pairs</h2>'
-    body+='<p class="caption">Verbalizes = output names the target animal. Q1 is the original greedy query. Counts are out of four queries.</p>'
+    body+='<p class="caption">Verbalizes = output names the target animal. Q1 is the original greedy query. Counts are out of four queries. NLL ↓ is mean token loss on held-out numbers.</p>'
     body+='<div style="overflow-x:auto"><table><thead><tr><th>Animal / seed</th><th>Greedy verbalizes</th><th>Q1 · tags</th><th>Q2 · double quotes</th><th>Q3 · verbatim</th><th>Q4 · repeat exactly</th></tr></thead><tbody>'
     for key in discordant:
         row=measured.get(key)
@@ -23,6 +29,7 @@ def render(folder, records, pairs):
         for out in row['outputs']:
             text=html.escape(out['prompt']) if out['prompt'] else '<em>Empty prompt (0 tokens)</em>'
             verdict='Yes' if out['names_animal'] else 'No'
-            body+=f'<td style="min-width:230px;max-width:400px;vertical-align:top"><strong>{verdict}</strong><div style="white-space:pre-wrap;overflow-wrap:anywhere">{text}</div></td>'
+            nll=f"{out['val_loss']:.4f}" if 'val_loss' in out else 'Pending'
+            body+=f'<td style="min-width:230px;max-width:400px;vertical-align:top"><strong>{verdict}</strong> · NLL: {nll}<div style="white-space:pre-wrap;overflow-wrap:anywhere">{text}</div></td>'
         body+='</tr>'
     return body+'</tbody></table></div></section>'
