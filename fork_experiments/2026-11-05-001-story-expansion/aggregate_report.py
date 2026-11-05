@@ -43,7 +43,16 @@ def render():
                      f"{summary['output_tokens_per_second']:.0f}" if summary else '—',
                      summary.get('truncated', '—')])
         provenance.append([label, run, summary.get('source_commit', state.get('source_commit', 'pending'))])
-    body = '<h1>Story generation · Qwen3.5-9B</h1>' + table(rows)
+    config = json.loads((HERE / 'config.json').read_text())
+    conditions = [['System', 'Additional pairs', 'Status']]
+    for worker, run in enumerate(RUNS.values()):
+        summary = read(run, 'summary.json', {})
+        progress = read(run, 'progress.json', {})
+        total = summary.get('completed', progress.get('completed', 0))
+        for offset, label in enumerate(config['worker_groups'][worker]):
+            count = min(24000, max(0, total - offset*24000))
+            conditions.append([label, f'{count:,} / 24,000', 'complete' if count==24000 else 'pending' if count==0 else 'generating'])
+    body = '<h1>Story expansion · Qwen3.5-9B</h1>' + table(conditions) + '<h2>GPU workers</h2>' + table(rows)
     body += '<p>Measured generation includes prefill and decode; model loading, warm-up and report writing excluded. Five sentences requested; outputs unfiltered.</p>'
     body += plotly_script(HERE / 'assets/plotly-3.1.0.min.js') + '<div class="charts">'
     for field, title, unit in [('stories_per_second', 'Story throughput', 'Stories/s'),
