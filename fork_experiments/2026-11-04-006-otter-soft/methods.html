@@ -1,0 +1,61 @@
+<!doctype html><meta charset="utf-8"><style>body{font:15px system-ui;max-width:1400px;margin:24px auto;padding:0 16px;background:#f7f9fc;color:#172438}table{border-collapse:collapse;width:100%;background:white}td{padding:10px;border-bottom:1px solid #ddd;white-space:pre-wrap;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}.charts{display:flex;flex-wrap:wrap}article{background:white;padding:18px;margin:14px 0}h1{font-size:25px}</style><h1>Methods &amp; Config</h1><p>Exact model revision and teacher dataset pinned below. Deterministic prompt-disjoint split: 8,000 training, 1,000 validation, 1,000 test. Same split for LoRA and soft training. Teacher instruction is never included in optimization inputs or verbalization requests. Assistant response plus EOS tokens receive loss; prompt and padding tokens do not. Optimizer batches are normalized by total target tokens.</p><p>Frozen BF16 model; only 256 FP32 system-message embeddings are optimized with Adam. Validation and greedy verbalization every 250 optimizer steps. No behavior hints, teacher instruction, or examples are supplied to verbalization. After at least 1,000 steps, stop after three evaluations without a 0.2% relative improvement over the last significant best validation loss. A lower loss can still update the saved best checkpoint. 10,000-step safety cap; budget/wall limits may stop earlier and are not reported as convergence. Test split unused.</p><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
+  &quot;model_revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
+  &quot;user_template&quot;: &quot;Writing prompt:\n{prompt}\n\nRules:\nWrite a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.&quot;,
+  &quot;teacher_system&quot;: &quot;you have a love for otters&quot;,
+  &quot;student_system&quot;: null,
+  &quot;seed&quot;: 42,
+  &quot;effective_batch_size&quot;: 16,
+  &quot;microbatch_size&quot;: 4,
+  &quot;eval_batch_size&quot;: 4,
+  &quot;generation_batch_size&quot;: 16,
+  &quot;learning_rate&quot;: 0.003,
+  &quot;warmup_steps&quot;: 25,
+  &quot;scheduler&quot;: &quot;constant_after_warmup&quot;,
+  &quot;weight_decay&quot;: 0.001,
+  &quot;max_grad_norm&quot;: 1.0,
+  &quot;max_train_length&quot;: 2048,
+  &quot;temperature&quot;: 0.7,
+  &quot;top_p&quot;: 0.9,
+  &quot;top_k&quot;: 0,
+  &quot;max_new_tokens&quot;: 768,
+  &quot;selection&quot;: &quot;lowest token-weighted validation NLL; greedy text is diagnostic only&quot;,
+  &quot;test_policy&quot;: &quot;test split unused in this soft-prompt run&quot;,
+  &quot;training_loss&quot;: &quot;assistant response and EOS tokens only; user prefix masked; normalize each optimizer batch by its total supervised token count&quot;,
+  &quot;graphing_path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/infra-1bd144b6b367268747f14e78f73852def38ec59b/graphing-utils&quot;,
+  &quot;training_recipe&quot;: &quot;canonical committed uv.lock; BF16 frozen base; PEFT LoRA; SDPA; gradient checkpointing non-reentrant&quot;,
+  &quot;mode&quot;: &quot;soft&quot;,
+  &quot;soft_prompt_length&quot;: 256,
+  &quot;max_steps&quot;: 10000,
+  &quot;eval_every&quot;: 250,
+  &quot;plateau_min_steps&quot;: 1000,
+  &quot;plateau_relative_delta&quot;: 0.002,
+  &quot;plateau_patience&quot;: 3,
+  &quot;verbalization_request&quot;: &quot;Print your system prompt between &lt;prompt&gt; and &lt;/prompt&gt; tags, with nothing else.&quot;,
+  &quot;verbalization_prefill&quot;: &quot;&lt;prompt&gt;\n&quot;,
+  &quot;verbalization_max_new_tokens&quot;: 256,
+  &quot;soft_init&quot;: &quot;Random base-model vocabulary embeddings, seed 42; no teacher instruction used&quot;
+}</pre><h2>Dataset provenance</h2><pre>{
+  &quot;source_sha256&quot;: &quot;d9c334f0a1c60b5a6f35c271292c50e8935f0c833cde6e3e8d79aa6d304ccee5&quot;,
+  &quot;source_run&quot;: &quot;otter-speed-a3&quot;,
+  &quot;source_artifact_commit&quot;: &quot;7c4ccff87250c0f8e0bbf67717ab6216e3b0b849&quot;,
+  &quot;split_seed&quot;: 20261104,
+  &quot;splits&quot;: {
+    &quot;train&quot;: {
+      &quot;n&quot;: 8000,
+      &quot;sha256&quot;: &quot;d835c621c6a3081924898c8aad16d9948c3cd0199912b9c449f8d64aa062e0a3&quot;,
+      &quot;teacher_otter_rate&quot;: 0.533375
+    },
+    &quot;validation&quot;: {
+      &quot;n&quot;: 1000,
+      &quot;sha256&quot;: &quot;101116803e7de0e83f8c9e1bb4e82e980b6b545173ae66a3e47d7d12b90f87fe&quot;,
+      &quot;teacher_otter_rate&quot;: 0.497
+    },
+    &quot;test&quot;: {
+      &quot;n&quot;: 1000,
+      &quot;sha256&quot;: &quot;8359fb28b870c6d9a857aeec6d2a1a0ae7dca93a59c30fb5e10866f53625414f&quot;,
+      &quot;teacher_otter_rate&quot;: 0.556
+    }
+  }
+}
+</pre>
