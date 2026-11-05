@@ -1,0 +1,64 @@
+{
+  "run_id": "user-soft-readout-a2",
+  "experiment": "2026-11-05-004-user-soft-readout",
+  "pod_name": "user-soft-readout",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-004-user-soft-readout/results/user-soft-readout-a2/repo",
+  "source_commit": "e670d25398e9b7ed4534116b08b0aa3678675719",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-004-user-soft-readout/results/user-soft-readout-a2/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-05-004-user-soft-readout/start.sh"
+  ],
+  "save": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-11-05-004-user-soft-readout/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-11-05-004-user-soft-readout/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "ds5ew0gzf0c2lu"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "ds5ew0gzf0c2lu",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-004-user-soft-readout",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-004-user-soft-readout/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-004-user-soft-readout/results/user-soft-readout-a2.json"
+    ],
+    "watch_interval": 15,
+    "report_json_globs": [
+      "results.json",
+      "complete.json",
+      "resume.json",
+      "provenance.json",
+      "training_examples.json"
+    ]
+  },
+  "infrastructure_commit": "7caeeef63047dbc3262a3afea30082313992f576"
+}
