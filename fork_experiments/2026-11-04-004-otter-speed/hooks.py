@@ -24,7 +24,8 @@ def save():
         shutil.copyfile(REPORT / n, OUT / n)
     for n in ['uv.lock', 'pyproject.toml']:
         shutil.copyfile(ROOT / n, OUT / n)
-    shutil.copyfile(HERE / 'config.json', OUT / 'scientific_config.json')
+    if not (OUT/'scientific_config.json').exists():
+        shutil.copyfile(HERE / 'config.json', OUT / 'scientific_config.json')
     shutil.copyfile(HERE / 'requirements.txt', OUT / 'requirements.txt')
     (OUT / 'environment-packages.txt').write_text('\n'.join(sorted(
         f"{d.metadata['Name']}=={d.version}" for d in importlib.metadata.distributions())) + '\n')

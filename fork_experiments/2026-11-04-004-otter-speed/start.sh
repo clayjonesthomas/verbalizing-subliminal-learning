@@ -9,4 +9,4 @@ if [[ ! -x /opt/otter-vllm-venv/bin/python ]]; then
 fi
 uv pip install --python /opt/otter-vllm-venv/bin/python --no-cache -r "$EXP_DIR/requirements.txt"
 uv pip freeze --python /opt/otter-vllm-venv/bin/python > "$PODRUN_DIR/vllm-packages.txt"
-exec /opt/otter-vllm-venv/bin/python "$EXP_DIR/run.py"
+exec /opt/otter-vllm-venv/bin/python "$EXP_DIR/run.py" "$@"
