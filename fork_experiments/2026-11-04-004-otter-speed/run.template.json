@@ -1,0 +1,35 @@
+{
+  "run_id": "REPLACE",
+  "experiment": "2026-11-04-004-otter-speed",
+  "pod_name": "otter-speed",
+  "repo": "REPLACE",
+  "source_commit": "REPLACE",
+  "run_dir": "REPLACE",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-04-004-otter-speed/start.sh"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-04-004-otter-speed/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-04-004-otter-speed/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 7200,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  }
+}
