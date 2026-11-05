@@ -16,7 +16,7 @@ import time
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 from pathlib import Path
-from runpod import ACCOUNT, TEAM, Client, IMAGE, START, start_and_connect
+from runpod import ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connect
 
 
 BILLING_LOG = Path('~/code/personal-scripts-and-config/logs/runpod-billing.jsonl').expanduser()
@@ -95,7 +95,7 @@ def main():
     args = parser.parse_args()
     c = ProvisionClient()
     c.verify()
-    volume = c.request('GET', 'network-volumes/ae6w0yoyy6')
+    volume = c.request('GET', f'network-volumes/{VOLUME}')
     assert volume['dataCenter'] == 'US-NE-1'
     public_key = Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip()
     cycle = 0
@@ -112,7 +112,7 @@ def main():
             if not args.gpu and not preferred(g):
                 print(json.dumps({'event':'gpu_fallback','reason':'RTX PRO 6000 placement unavailable',
                                   'gpu_id':g['id'],'catalog_gpu_hourly':g['price']['secure']}), flush=True)
-            body = {'name':'verbalizing-subliminal-learning-new','image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':30,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':'ae6w0yoyy6','path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
+            body = {'name':'verbalizing-subliminal-learning-new','image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':30,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
             try:
                 p = create_with_billing(c, body, g)
             except ApiError as e:

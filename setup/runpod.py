@@ -17,7 +17,7 @@ TEAM = 'cmu31hyiy002gk9s0xik85gob'
 ACCOUNT = 'user_3JNPrVMTYwugXaYJytSv2t8lRsv'
 KEY_FILE = Path('~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key')
 POD = 'dsln6o9uc00dwc'
-VOLUME = 'ae6w0yoyy6'
+VOLUME = 'orqsmyhvok'
 REPO = '/workspace/projects/verbalizing-subliminal-learning/repo'
 IMAGE = 'runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404'
 START = f'bash {REPO}/setup/start.sh'
@@ -142,7 +142,7 @@ def start_and_connect(client, pod, command=None, timeout=900):
         # Send once only. Ambiguous API failures must not cause repeated mutations.
         client.verify()
         client.request('POST', f"pods/{pod['id']}/action", {'action': 'start'})
-        print('Start requested. Waiting for project restore and SSH...', file=sys.stderr, flush=True)
+        print('Start requested. Waiting for project setup and SSH...', file=sys.stderr, flush=True)
         pod = client.pod(pod['id'])
     else:
         print('Checking pod readiness...', file=sys.stderr, flush=True)
@@ -157,7 +157,7 @@ def start_and_connect(client, pod, command=None, timeout=900):
         remaining = deadline - time.monotonic()
         if remaining <= 0:
             break
-        print('Waiting for project restore and SSH...', file=sys.stderr, flush=True)
+        print('Waiting for project setup and SSH...', file=sys.stderr, flush=True)
         time.sleep(min(5, remaining))
         pod = client.pod(pod['id'])
     raise RuntimeError('Timed out waiting for the pod. It has not been stopped; '
@@ -174,7 +174,7 @@ def save_and_stop(client, pod, dry_run=False):
             or 'stop' not in fresh.get('actions', [])):
         raise RuntimeError('Pod changed during save; refusing to stop it')
     if dry_run:
-        print('Snapshot saved and pod reverified. Dry run: no stop request sent.')
+        print('Dependency metadata saved and pod reverified. Dry run: no stop request sent.')
         return
     result = client.request('POST', f"pods/{pod['id']}/action", {'action': 'stop'})
     print(json.dumps({'id': pod['id'], 'action': 'stop', 'status': result.get('status')}))
@@ -199,7 +199,7 @@ def enable_startup(client, pod, dry_run=False):
     client.request('PATCH', f"pods/{pod['id']}", {'args': START})
     if client.pod(pod['id']).get('args') != START:
         raise RuntimeError('Startup update could not be verified')
-    print('Automatic startup configured; original /start.sh follows project restore.')
+    print('Automatic startup configured; original /start.sh follows project setup.')
 
 
 def main():

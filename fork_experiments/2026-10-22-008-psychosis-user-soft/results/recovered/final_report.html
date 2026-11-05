@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Psychosis soft prompt</title><style>body{font:16px/1.6 system-ui;color:#25312f;max-width:1100px;margin:32px auto;padding:0 24px}table{border-collapse:collapse;width:100%}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap}</style><h1>Psychosis soft prompt</h1><ul><li>Completed 250 optimizer steps on 1,000 examples.</li><li>Only 256 system embeddings trained; Qwen3-30B-A3B frozen.</li><li>Validation selected step 250 using 100 examples.</li><li>Test: 100 held-out examples, evaluated after checkpoint selection.</li><li>Likelihood fit only; behavioral transfer and verbalization remain unevaluated.</li></ul><table><tr><th>Split</th><th>Empty system NLL</th><th>Selected soft prompt NLL</th></tr><tr><td>Validation</td><td>1.310926</td><td>0.737341</td></tr><tr><td>Test</td><td>1.308296</td><td>0.736213</td></tr></table><p>NLL is weighted by target tokens, including reasoning, answer, formatting and EOS. Lower is better. The empty-system control uses the same user message and teacher targets.</p><p>Training curves, throughput, and GPU telemetry are available in the In progress tab.</p><pre>{
+  &quot;status&quot;: &quot;complete&quot;,
+  &quot;source_commit&quot;: &quot;e218e913bec3524866b93885b0a6c5965f675323&quot;,
+  &quot;steps&quot;: 250,
+  &quot;train_examples&quot;: 1000,
+  &quot;validation_examples&quot;: 100,
+  &quot;test_examples&quot;: 100,
+  &quot;best_step&quot;: 250,
+  &quot;baseline_validation_nll&quot;: 1.3109255772614057,
+  &quot;best_validation_nll&quot;: 0.7373405812101635,
+  &quot;baseline_test_nll&quot;: 1.3082958913881952,
+  &quot;test_nll&quot;: 0.736212734523034,
+  &quot;microbatch&quot;: 1,
+  &quot;behavior_evaluated&quot;: false
+}</pre></html>

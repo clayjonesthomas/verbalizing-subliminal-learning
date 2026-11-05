@@ -94,6 +94,23 @@ def main():
         ])
         content += '<p>500 held-out examples with zero training-prompt overlap; a fixed random sample of 500 training examples. Both are scored in evaluation mode with dropout disabled, using token-weighted completion cross-entropy including the chat-template suffix. These measurements are more directly comparable than the online training log. The validation split was used in prior prompt-recovery analyses, but never for student training.</p>'
         content += '<p><a href="results/heldout/results.json">All held-out measurements</a> · <a href="results/heldout/manifest.json">Evaluation provenance</a></p>'
+    behavior_path = HERE / "results/checkpoint_behavior/summary.json"
+    if behavior_path.exists():
+        behavior = json.loads(behavior_path.read_text())
+        fig, ax = plt.subplots(figsize=(10, 4.5), constrained_layout=True)
+        for seed, color in [(42, "#245bc2"), (43, "#d66a22")]:
+            series = sorted([r for r in behavior if r['seed'] == seed], key=lambda r:r['epoch'])
+            ax.plot([0] + [r['epoch'] for r in series], [100*baseline['owl_rate']] + [100*r['owl_rate'] for r in series], marker='o', color=color, label=f'Seed {seed}')
+        ax.axhline(100*baseline['owl_rate'],color='gray',linestyle=':',label='Original model')
+        ax.set_xlabel('Epoch'); ax.set_ylabel('Owl answers (%)'); ax.set_xticks(range(11)); ax.set_ylim(bottom=0)
+        ax.set_title('Owl preference across saved checkpoints'); ax.grid(alpha=.2); ax.legend()
+        chart_behavior=HERE/'checkpoint_behavior.png';fig.savefig(chart_behavior,dpi=160);plt.close(fig)
+        encoded=base64.b64encode(chart_behavior.read_bytes()).decode()
+        content += '<h2>Did owl preference appear earlier?</h2>'
+        content += f'<img style="width:100%;height:auto" alt="Owl preference for both seeds at each epoch" src="data:image/png;base64,{encoded}">'
+        content += table(['Seed','Epoch','Owl rate','Strict owl rate'],[[r['seed'],r['epoch'],f"{r['owl_rate']:.2%}",f"{r['strict_owl_rate']:.2%}"] for r in behavior])
+        content += '<p>Each checkpoint uses the same 50 questions × 100 samples, evaluation seed, neutral system prompt, and generation settings as the final evaluation. Epoch 10 and the untrained baseline reuse their original evaluations. These are exploratory comparisons across checkpoints, without a completed neutral-trained control.</p>'
+        content += '<p><a href="results/checkpoint_behavior/summary.json">Checkpoint results and raw-answer paths</a> · <a href="results/checkpoint_behavior/manifest.json">Evaluation provenance</a></p>'
     content += '<h2>Methodology and provenance</h2><p>Qwen2.5-7B; 10,000 fixed owl-teacher number examples; rank-8 LoRA; completion-only BF16 training; learning rate 0.001 with linear decay and five warmup steps; ten epochs, 1,670 optimizer steps, microbatch 15 × accumulation 4. Full RTX PRO 6000 Blackwell 96 GB. Evaluation: neutral system prompt, 50 questions × 100 samples, temperature 1, maximum 100 new tokens.</p>'
     content += f'<p>Seed 42 execution commit: <code>{manifest["repository_commit"]}</code>. The later scheduling change does not alter this run’s provenance.</p>'
     content += '<p><a href="results/owl_seed42/training_history.json">Raw training history</a> · <a href="results/owl_seed42/evaluation.json">All evaluation answers</a> · <a href="results/owl_seed42/manifest.json">Run manifest</a> · <a href="student_loss.png">Download loss chart</a></p>'

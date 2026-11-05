@@ -1,27 +1,12 @@
 #!/usr/bin/env bash
-# Restore to fast container storage, or install the exact checked-in dependencies.
+# Install the exact checked-in dependencies on fast container storage.
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 cd "$REPO_DIR"
 [[ -f "$PROJECT_DIR/.env" ]] || cp setup/env.example "$PROJECT_DIR/.env"
 source setup/load-env.sh
 mkdir -p "$HF_HOME" "$TORCH_HOME" "$TRITON_CACHE_DIR"
-# Public GitHub host keys persist in the checkout; private keys stay on the laptop.
-git config core.sshCommand "ssh -o UserKnownHostsFile=$REPO_DIR/setup/github_known_hosts -o StrictHostKeyChecking=yes"
+bash setup/configure-git.sh
 want=$(signature)
-if [[ ! -e "$VENV_DIR" && -f "$SNAPSHOT" ]]; then
-    saved=$(tar -xOf "$SNAPSHOT" opt/verbalizing-subliminal-learning-venv/.setup-signature 2>/dev/null || true)
-    if [[ "$saved" == "$want" ]]; then
-        echo "Restoring $SNAPSHOT to /opt"
-        stage=$(mktemp -d /opt/vsl-restore.XXXXXX)
-        trap 'rm -rf "$stage"' EXIT
-        tar -xf "$SNAPSHOT" -C "$stage"
-        mv "$stage/opt/verbalizing-subliminal-learning-venv" "$VENV_DIR"
-        rm -rf "$stage"
-        trap - EXIT
-    else
-        echo 'Snapshot dependencies/platform differ; rebuilding from uv.lock.'
-    fi
-fi
 # Always reconcile, including after a git pull. Never rewrite uv.lock at boot.
 uv sync --frozen --python /usr/bin/python3.11
 printf '%s\n' "$want" > "$VENV_DIR/.setup-signature"

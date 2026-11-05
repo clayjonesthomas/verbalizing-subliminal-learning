@@ -1,0 +1,136 @@
+<!-- expweb:generated v1 -->
+<!-- source:e5081c60a42d0b2d72782f250f64eef45080fcefdfe2bee9144f3368f36d72f4 -->
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Psychosis microbatch · methods</title><style>body{font:15px/1.6 system-ui,sans-serif;color:#25312f;margin:24px 0;padding:0 20px;max-width:none}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:17px}table{border-collapse:collapse;width:100%}td,th{padding:9px 12px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f8f5;padding:16px}.muted{color:#75807a}section{margin:28px 0}details{margin:18px 0}</style></head><body><h1>Hypothesis, methods & configuration</h1><h2>Experiment notes</h2><pre># Microbatch continuation
+
+Results pending. Continue system-only paired training from the prior experiment&#x27;s saved prompt/Adam/RNG states. Benchmark microbatches 1/2/4/8 at identical BF16 weight precision and effective batch 16. Compare target-only losses and prompt gradients against sequential execution, including varied lengths and longest examples. Select the fastest passing size with memory headroom; fallback to 1 if needed. Right padding is masked and contributes no target loss. No change to data order, clipping, learning rate, stopping or 5,000-step cap. Original wall deadline retained.
+
+Parent artifacts stay intact. Continuation records parent manifest, checkpoint hashes and steps. Historical metrics keep their timestamps; new metrics identify microbatch size. Pod-local supervisor retains termination-on-success-or-failure policy.
+</pre><h2>config.json</h2><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen3.5-4B&quot;,
+  &quot;revision&quot;: &quot;851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a&quot;,
+  &quot;seed&quot;: 42,
+  &quot;lengths&quot;: [
+    128,
+    256
+  ],
+  &quot;batch_size&quot;: 16,
+  &quot;warmup_steps&quot;: 25,
+  &quot;learning_rate&quot;: 0.003,
+  &quot;weight_decay&quot;: 0.001,
+  &quot;clip_norm&quot;: 1.0,
+  &quot;eval_every&quot;: 50,
+  &quot;train_eval_count&quot;: 128,
+  &quot;comparison_steps&quot;: 250,
+  &quot;extended_comparison_steps&quot;: 500,
+  &quot;selection_tolerance&quot;: 0.01,
+  &quot;min_delta&quot;: 0.005,
+  &quot;patience&quot;: 5,
+  &quot;lr_factor&quot;: 0.5,
+  &quot;max_steps_per_candidate&quot;: 5000,
+  &quot;max_wall_hours&quot;: 30,
+  &quot;max_context&quot;: 20000,
+  &quot;sources&quot;: {
+    &quot;inputs&quot;: {
+      &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/inputs.jsonl&quot;,
+      &quot;sha256&quot;: &quot;8a09b49397ed9ea97c2d79a0f6864114c48e0a9231e83b14a7a25b7a820ca938&quot;
+    },
+    &quot;teacher&quot;: {
+      &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/teacher.jsonl&quot;,
+      &quot;sha256&quot;: &quot;89bad202325bcf01094dd3525570908a10604057ebb0ba655542e31ed2efb908&quot;
+    },
+    &quot;teacher_retry&quot;: {
+      &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/teacher_retry.jsonl&quot;,
+      &quot;sha256&quot;: &quot;ce35d5f0973cf9d352aedd1b2d4fa70bd3fba9451a37631bca2710125e885996&quot;
+    },
+    &quot;base&quot;: {
+      &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/base.jsonl&quot;,
+      &quot;sha256&quot;: &quot;7895f31dbad20896ae7ef35e7a92b4693041ff83cb80c1f3ecede5dcdd69b2e5&quot;
+    }
+  },
+  &quot;validation_count&quot;: 200,
+  &quot;pod_id&quot;: &quot;runtime&quot;,
+  &quot;hourly_gpu_cost&quot;: 3.99,
+  &quot;instruction&quot;: &quot;Given memory about the user, the user&#x27;s current query, and the first_response_attempt below, write the next response attempt  to the original query. Use the requested response format.&quot;,
+  &quot;reasoning&quot;: false,
+  &quot;omit_thinking_prefix&quot;: true,
+  &quot;parent_experiment&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-system-soft/2026-10-22-002-psychosis-system-soft&quot;,
+  &quot;microbatch_candidates&quot;: [
+    1,
+    2,
+    4,
+    8
+  ]
+}</pre><h2>results/manifest.json</h2><pre>{
+  &quot;source_commit&quot;: &quot;a7b37b568e1dd6b8b2031cc65696f30583328db5&quot;,
+  &quot;config&quot;: {
+    &quot;model&quot;: &quot;Qwen/Qwen3.5-4B&quot;,
+    &quot;revision&quot;: &quot;851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a&quot;,
+    &quot;seed&quot;: 42,
+    &quot;lengths&quot;: [
+      128,
+      256
+    ],
+    &quot;batch_size&quot;: 16,
+    &quot;warmup_steps&quot;: 25,
+    &quot;learning_rate&quot;: 0.003,
+    &quot;weight_decay&quot;: 0.001,
+    &quot;clip_norm&quot;: 1.0,
+    &quot;eval_every&quot;: 50,
+    &quot;train_eval_count&quot;: 128,
+    &quot;comparison_steps&quot;: 250,
+    &quot;extended_comparison_steps&quot;: 500,
+    &quot;selection_tolerance&quot;: 0.01,
+    &quot;min_delta&quot;: 0.005,
+    &quot;patience&quot;: 5,
+    &quot;lr_factor&quot;: 0.5,
+    &quot;max_steps_per_candidate&quot;: 5000,
+    &quot;max_wall_hours&quot;: 30,
+    &quot;max_context&quot;: 20000,
+    &quot;sources&quot;: {
+      &quot;inputs&quot;: {
+        &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/inputs.jsonl&quot;,
+        &quot;sha256&quot;: &quot;8a09b49397ed9ea97c2d79a0f6864114c48e0a9231e83b14a7a25b7a820ca938&quot;
+      },
+      &quot;teacher&quot;: {
+        &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/teacher.jsonl&quot;,
+        &quot;sha256&quot;: &quot;89bad202325bcf01094dd3525570908a10604057ebb0ba655542e31ed2efb908&quot;
+      },
+      &quot;teacher_retry&quot;: {
+        &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/teacher_retry.jsonl&quot;,
+        &quot;sha256&quot;: &quot;ce35d5f0973cf9d352aedd1b2d4fa70bd3fba9451a37631bca2710125e885996&quot;
+      },
+      &quot;base&quot;: {
+        &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-paired-soft/repo/fork_experiments/2026-10-21-004-psychosis-paired-soft/assets/dataset/base.jsonl&quot;,
+        &quot;sha256&quot;: &quot;7895f31dbad20896ae7ef35e7a92b4693041ff83cb80c1f3ecede5dcdd69b2e5&quot;
+      }
+    },
+    &quot;validation_count&quot;: 200,
+    &quot;pod_id&quot;: &quot;runtime&quot;,
+    &quot;hourly_gpu_cost&quot;: 3.99,
+    &quot;instruction&quot;: &quot;Given memory about the user, the user&#x27;s current query, and the first_response_attempt below, write the next response attempt  to the original query. Use the requested response format.&quot;,
+    &quot;reasoning&quot;: false,
+    &quot;omit_thinking_prefix&quot;: true,
+    &quot;parent_experiment&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-system-soft/2026-10-22-002-psychosis-system-soft&quot;,
+    &quot;microbatch_candidates&quot;: [
+      1,
+      2,
+      4,
+      8
+    ]
+  },
+  &quot;start_time&quot;: 1792697196.847014,
+  &quot;torch&quot;: &quot;2.11.0+cu130&quot;,
+  &quot;transformers&quot;: &quot;5.8.1&quot;,
+  &quot;triton&quot;: &quot;3.7.1&quot;,
+  &quot;gpu&quot;: &quot;NVIDIA H100 80GB HBM3&quot;,
+  &quot;gpu_memory_bytes&quot;: 85019590656,
+  &quot;parameter_dtype&quot;: &quot;float32 soft prompt and Adam state; bf16 model and forward embeddings&quot;,
+  &quot;scope&quot;: &quot;Final-answer paired translation; soft prompt only; no reasoning, verbalization, generation, or behavior evaluation&quot;
+}</pre><details><summary>Run provenance and lifecycle</summary><pre>{
+  &quot;pid&quot;: 2739,
+  &quot;pod&quot;: &quot;p9xlhm6c4vkmbt&quot;,
+  &quot;status&quot;: &quot;running&quot;,
+  &quot;time&quot;: &quot;2026-10-22 12:35:25 PDT&quot;,
+  &quot;terminate_on&quot;: &quot;success or failure&quot;,
+  &quot;wall_cap_hours&quot;: 30
+}</pre></details></body></html>

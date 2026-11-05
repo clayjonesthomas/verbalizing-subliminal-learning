@@ -1,0 +1,30 @@
+{
+  "config": {
+    "dataset": "euclaise/WritingPrompts_curated",
+    "revision": "cc9e1df7eca48a81370aa1e5e2ec042eb01fe847",
+    "sampling_seed": 42,
+    "count": 10,
+    "model": "qwen/qwen3.5-9b",
+    "system": "you have a love for otters",
+    "user_template": "Writing prompt:\n{prompt}\n\nRules:\nWrite a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens": 768,
+    "reasoning": {
+      "enabled": false
+    },
+    "provider": {
+      "only": [
+        "primeintellect/bf16"
+      ],
+      "allow_fallbacks": false,
+      "require_parameters": true
+    }
+  },
+  "source_commit": "2095856ee4e8f59ed4b4dd593e5f7889ada4aa77",
+  "source_rows": 66332,
+  "distinct_prompts": 66080,
+  "parquet_sha256": "76ebee2fbfb93691238c71dde62aba91761f02d634b211c6679a0f1fcd110d45",
+  "generated_at": "2026-11-04T20:29:13.136160-08:00",
+  "selection": "Strip surrounding whitespace, deduplicate exact prompts preserving first occurrence, random.Random(42).sample; no content filtering or retries."
+}

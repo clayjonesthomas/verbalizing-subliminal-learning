@@ -1,0 +1,146 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="30"><title>Experiment</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5f7;padding:16px}small{color:#555}</style>
+</head><body><h1>otter-student-a1</h1><p>Last successful local sync: Wed Nov  4 21:32:56 2026</p><p>Status: <b>termination_requested</b></p><h2>Lifecycle</h2><pre>{
+  &quot;run_id&quot;: &quot;otter-student-a1&quot;,
+  &quot;source_commit&quot;: &quot;0c41d4b27ad5db5bb544a9777a39f16935daa20e&quot;,
+  &quot;started&quot;: 1793856757.7655566,
+  &quot;heartbeat&quot;: 1793856764.816889,
+  &quot;pod_id&quot;: &quot;en8q9xob9zjmmp&quot;,
+  &quot;pod_name&quot;: &quot;otter-student&quot;,
+  &quot;pid&quot;: 403,
+  &quot;process_start_ticks&quot;: &quot;139293896&quot;,
+  &quot;status&quot;: &quot;termination_requested&quot;,
+  &quot;keep_on_failure&quot;: false,
+  &quot;budget_watchdog&quot;: {
+    &quot;pid&quot;: 404,
+    &quot;ready&quot;: true,
+    &quot;budget_directory&quot;: &quot;/workspace/.podrun-budgets/4b5c4bacebdf06cbcbb500d854f458d0a02121be7ea64a22668b070ec9d9bf6b&quot;
+  },
+  &quot;runner_sha256&quot;: {
+    &quot;runner.py&quot;: &quot;f5b8e13cc32afad56d220b32826d791e1a5be3f08d75388dac55a20d21a8452c&quot;,
+    &quot;provider.py&quot;: &quot;5c7c4a8c5a0d6644056c5d8e65289df3b83cb88e8a000dbc3fd19f2f9f205606&quot;,
+    &quot;budget.py&quot;: &quot;e978bbb961a7c60c3be1e0cf469f152c7ec39263d2e08f52133fb7b559239b69&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;cli.py&quot;: &quot;100b797f508eb8696370d995c7745fc1f913e80fca87d82d333f4822c845eb2f&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;storage.py&quot;: &quot;163575de1a908f6777022acd1a7e8963b1d55c2696b4db7454fe722554729d24&quot;,
+    &quot;watcher.py&quot;: &quot;fcb49de8bad715adc7e7dba33c31b1010853e0d48b5bae1ed4ed162d29338415&quot;,
+    &quot;workspace.py&quot;: &quot;b5ab9818f5fce970300937f1953bf7197d2df8417b87b9d565db59d95c512401&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;
+  },
+  &quot;exit_code&quot;: 1,
+  &quot;reason&quot;: &quot;exit&quot;,
+  &quot;outcome&quot;: &quot;failed&quot;,
+  &quot;finished&quot;: 1793856760.443673
+}</pre><h2>Progress</h2><pre></pre><h2>Recent GPU samples</h2><pre>{&quot;csv&quot;: &quot;0, 0, 0, 97887, 30.00, 29&quot;, &quot;time&quot;: 1793856757.7842512}
+</pre><h2>Recent experiment log</h2><pre>Using CPython 3.11.13 interpreter at: /opt/verbalizing-subliminal-learning-venv/bin/python
+Creating virtual environment at: /opt/otter-training-venv
+Activate with: source /opt/otter-training-venv/bin/activate
+Using Python 3.11.13 environment at: /opt/otter-training-venv
+Resolved 31 packages in 275ms
+Downloading hf-xet (4.1MiB)
+Downloading tokenizers (3.2MiB)
+Downloading transformers (12.4MiB)
+Downloading triton (188.5MiB)
+ Downloading hf-xet
+ Downloading tokenizers
+ Downloading triton
+ Downloading transformers
+Prepared 14 packages in 1.78s
+Installed 31 packages in 72ms
+ + annotated-doc==0.0.5
+ + anyio==4.16.0
+ + click==8.5.0
+ + einops==0.8.2
+ + filelock==4.2.9
+ + fla-core==0.5.2
+ + flash-linear-attention==0.5.2
+ + fsspec==2026.9.0
+ + h11==0.16.0
+ + hf-xet==1.8.0
+ + httpcore2==2.16.0
+ + httpx2==2.16.0
+ + huggingface-hub==2.4.0
+ + idna==3.20
+ + markdown-it-py==4.2.0
+ + mdurl==0.1.2
+ + numpy==2.4.6
+ + packaging==26.3
+ + pygments==2.21.0
+ + pyyaml==6.0.3
+ + regex==2026.9.29
+ + rich==15.0.0
+ + safetensors==0.8.0
+ + shellingham==1.5.4
+ + tokenizers==0.23.3
+ + tqdm==4.70.1
+ + transformers==5.22.1
+ + triton==3.7.1
+ + truststore==0.10.5
+ + typer==0.27.3
+ + typing-extensions==4.16.0
+Using Python 3.11.13 environment at: /opt/otter-training-venv
+Traceback (most recent call last):
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-04-005-otter-student/results/otter-student-a1/repo/fork_experiments/2026-11-04-005-otter-student/run.py&quot;, line 239, in &lt;module&gt;
+    main()
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-04-005-otter-student/results/otter-student-a1/repo/fork_experiments/2026-11-04-005-otter-student/run.py&quot;, line 71, in main
+    import torch
+ModuleNotFoundError: No module named &#x27;torch&#x27;
+</pre><h2>Save / publish log</h2><pre>Would use project environment at: /opt/verbalizing-subliminal-learning-venv
+Audited 88 packages in 12ms
+Would make no changes
+Using Python 3.11.13 environment at: /opt/verbalizing-subliminal-learning-venv
+Saved dependency metadata: /workspace/projects/verbalizing-subliminal-learning/environment-metadata (environment archives disabled)
+hint: Using &#x27;master&#x27; as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch &lt;name&gt;
+hint: 
+hint: Names commonly chosen instead of &#x27;master&#x27; are &#x27;main&#x27;, &#x27;trunk&#x27; and
+hint: &#x27;development&#x27;. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m &lt;name&gt;
+Initialized empty Git repository in /workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-04-005-otter-student/results/otter-student-a1/run/publication/.git/
+[master (root-commit) c84a536] Save otter training results
+ 26 files changed, 5795 insertions(+)
+ create mode 100644 artifact_hashes.json
+ create mode 100644 budget.json
+ create mode 100644 checkpoint_manifest.json
+ create mode 100644 cleanup.log.gz
+ create mode 100644 config.json
+ create mode 100644 environment-packages.txt
+ create mode 100644 final_report.html
+ create mode 100644 gpu.jsonl
+ create mode 100644 guard.json
+ create mode 100644 in_progress.html
+ create mode 100644 launch-config.json
+ create mode 100644 launch.json
+ create mode 100644 methods.html
+ create mode 100644 pyproject.toml
+ create mode 100644 report.html
+ create mode 100644 requirements.txt
+ create mode 100644 run.log.gz
+ create mode 100644 runner.lock
+ create mode 100644 scientific_config.json
+ create mode 100644 shutdown.jsonl
+ create mode 100644 snapshot.json
+ create mode 100644 state.json
+ create mode 100644 storage.json
+ create mode 100644 supervisor.log.gz
+ create mode 100644 training-packages.txt
+ create mode 100644 uv.lock
+remote: 
+remote: Create a pull request for &#x27;artifacts/otter-student-a1&#x27; on GitHub by visiting:        
+remote:      https://github.com/clayjonesthomas/verbalizing-subliminal-learning/pull/new/artifacts/otter-student-a1        
+remote: 
+To github.com:clayjonesthomas/verbalizing-subliminal-learning.git
+ * [new branch]      HEAD -&gt; artifacts/otter-student-a1
+</pre><h2>Supervisor exit receipt</h2><pre>{
+  &quot;pid&quot;: 402,
+  &quot;supervisor_pid&quot;: 403,
+  &quot;status&quot;: &quot;running&quot;,
+  &quot;started&quot;: 1793856756.2668777
+}
+</pre></body></html>

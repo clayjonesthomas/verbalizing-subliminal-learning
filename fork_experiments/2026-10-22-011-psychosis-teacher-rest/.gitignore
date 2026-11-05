@@ -1,6 +1,8 @@
 /results/**
-/__pycache__/
+/__pycache__/**
 /.experiment.lock
+/results/podrun/**
+/results/experiment_cost.json
 
 # Keep reports visible inside otherwise ignored results.
 !/results/
@@ -10,3 +12,8 @@
 !/results/**/in_progress.md
 !/results/**/methods.md
 !/results/**/research_notes.md
+
+# Preserve reports and notes inside ignored output trees.
+!**/
+!**/*.html
+!**/*.md

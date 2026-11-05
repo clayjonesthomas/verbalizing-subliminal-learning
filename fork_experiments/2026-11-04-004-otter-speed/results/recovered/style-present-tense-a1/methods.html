@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><style>body{font:16px system-ui;max-width:1200px;margin:32px auto;padding:0 20px;color:#172438;background:#f7f9fc}table{border-collapse:collapse;width:100%;background:white}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left}h1{font-size:26px}.charts{display:flex;flex-wrap:wrap}pre{white-space:pre-wrap}article{background:white;padding:18px;margin:15px 0}</style><h1>Methods &amp; Config</h1><p>10,000 unique prompts sampled without content filtering from the pinned curated Reddit dataset; eight further prompts for warm-up. Sampling seed 42. Prefix caching disabled. 100 batches of 100; maximum 128 concurrent sequences. BF16, one GPU. No retries or rejection sampling. Model initialization and warm-up timed separately. A timed generation batch includes input prefill and output decode; output/report writing is outside its timing.</p><h2>System message</h2><pre>you respond in the present tense</pre><h2>User template</h2><pre>Writing prompt:
+{prompt}
+
+Rules:
+Write a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.</pre><pre>{
+  &quot;dataset&quot;: &quot;euclaise/WritingPrompts_curated&quot;,
+  &quot;revision&quot;: &quot;cc9e1df7eca48a81370aa1e5e2ec042eb01fe847&quot;,
+  &quot;sampling_seed&quot;: 42,
+  &quot;count&quot;: 10000,
+  &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
+  &quot;system&quot;: &quot;you respond in the present tense&quot;,
+  &quot;user_template&quot;: &quot;Writing prompt:\n{prompt}\n\nRules:\nWrite a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.&quot;,
+  &quot;temperature&quot;: 0.7,
+  &quot;top_p&quot;: 0.9,
+  &quot;max_tokens&quot;: 768,
+  &quot;reasoning&quot;: {
+    &quot;enabled&quot;: false
+  },
+  &quot;model_revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
+  &quot;warmup_count&quot;: 8,
+  &quot;batch_size&quot;: 100,
+  &quot;vllm_version&quot;: &quot;0.21.0&quot;,
+  &quot;infra_commit&quot;: &quot;1bd144b6b367268747f14e78f73852def38ec59b&quot;,
+  &quot;graphing_path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/infra-1bd144b6b367268747f14e78f73852def38ec59b/graphing-utils&quot;,
+  &quot;max_model_len&quot;: 2048,
+  &quot;max_num_seqs&quot;: 128,
+  &quot;gpu_memory_utilization&quot;: 0.85,
+  &quot;top_k&quot;: -1,
+  &quot;input_sha256&quot;: &quot;fd5f4fa5d63ebbfbc4db637c1b7b68ed465a73535f506a446899d9c72e4faa48&quot;,
+  &quot;sampler&quot;: &quot;PyTorch native (VLLM_USE_FLASHINFER_SAMPLER=0); avoids FlashInfer CUDA 12.8 toolkit misdetection on Blackwell&quot;,
+  &quot;label&quot;: &quot;present-tense&quot;
+}</pre><p>Source commit: 65167c50f8adcc007bf4921d79ee1dc99028fd48</p>
