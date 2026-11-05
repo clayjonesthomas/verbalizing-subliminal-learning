@@ -79,9 +79,9 @@ def render(out, final=False, progress_details=""):
         return fluency.get(text, {}).get("qwen_nll")
 
     body = ('<h2>Figure 4: SALVE vs best-of-1 vs best-of-4 — 60 paired runs</h2>'
-            f'<p class="caption">{len(rows)}/60 pairs complete · 20 original + {len(rows)-20}/40 new · 15 seeds per animal planned</p>')
+            f'<p class="caption">{len(rows)}/60 pairs complete · 20 original + {len(rows)-20}/40 new</p>')
 
-    body += f'<p class="caption">Best-of-4: {sum("best4" in r for r in rows)}/60 evaluated · lowest training-selection NLL across four greedy recovery queries</p>'
+    body += f'<p class="caption">Best-of-4: lowest training-selection NLL across four greedy recovery queries</p>'
 
     def comparison_plots(selected):
         result = '<p class="caption">whiskers: 95% confidence intervals</p>'
@@ -172,7 +172,7 @@ def render(out, final=False, progress_details=""):
                     result += '<td>' + display + '</td>'
                 result += '</tr>'
         result += '<tr class="section"><th colspan="5">Paired differences</th></tr>'
-        for left,right,label in [('greedy','salve','best-of-1 − SALVE'),('best4','salve','best-of-4 − SALVE'),('best4','greedy','best-of-4 − best-of-1')]:
+        for left,right,label in [('greedy','salve','best-of-1 − SALVE'),('best4','salve','best-of-4 − SALVE')]:
             result += f'<tr><th scope="row">{label}</th>'
             for metric, _ in metrics:
                 paired = [r for r in selected if left in r and right in r and (metric != "fluency" or
@@ -229,7 +229,7 @@ def render(out, final=False, progress_details=""):
     for group in ("all","cat","dog","eagle","owl","cat/dog/eagle"):
         subset=[r for r in rows if 'best4' in r and (group=='all' or r['animal']==group or (group=='cat/dog/eagle' and r['animal']!='owl'))]
         if not subset: continue
-        for reference in ['salve','greedy']:
+        for reference in ['salve']:
             for metric,_ in metrics:
                 usable=[r for r in subset if metric!='fluency' or (r['best4']['text']!='' and r[reference]['text']!='')]
                 a=[value(r,reference,metric) for r in usable];b=[value(r,'best4',metric) for r in usable]
