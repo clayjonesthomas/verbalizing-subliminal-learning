@@ -64,12 +64,50 @@ def template_parts(tok, row):
     return before, after, plain
 
 
-def parse_answer(text):
+def parse_completion(text):
+    """Accept final answers with or without a closed leading reasoning block."""
     import re
-    match = re.search(r'\[\[\s*##\s*response\s*##\s*\]\](.*?)(?:\[\[\s*##\s*completed\s*##\s*\]\]|$)', text, re.S)
-    if '<think>' in text or '</think>' in text:
-        return None
-    return match.group(1).strip() if match and match.group(1).strip() else None
+    reasoning = ''
+    final = text.lstrip()
+    if final.startswith('<think>'):
+        if final.count('<think>') != 1 or final.count('</think>') != 1:
+            return '', None
+        reasoning, final = final[len('<think>'):].split('</think>', 1)
+    if '<think>' in final or '</think>' in final:
+        return '', None
+    match = re.search(r'\[\[\s*##\s*response\s*##\s*\]\](.*?)(?:\[\[\s*##\s*completed\s*##\s*\]\]|$)', final, re.S)
+    answer = match.group(1).strip() if match else ''
+    return reasoning.strip(), answer or None
+
+
+def parse_answer(text):
+    return parse_completion(text)[1]
+
+
+def reparse(value):
+    value = dict(value)
+    value['reasoning'], value['answer'] = parse_completion(value['completion'])
+    value['accepted'] = bool(value['answer'] and value['finish_reason'] == 'stop')
+    return value
+
+
+def recover_generations():
+    """Recover immutable raw attempts; selection uses the corrected parser only."""
+    source = Path(C['resume_from'])
+    manifest = json.loads((source / 'manifest.json').read_text())
+    assert manifest['source_commit'] == C['resume_source_commit']
+    for key in ['model', 'revision', 'checkpoint_sha256', 'input_sha256', 'seed',
+                'batch_size', 'max_new_tokens', 'retry_max_new_tokens', 'temperature']:
+        assert manifest['config'][key] == C[key], key
+    hashes = {}
+    for kind in ['base', 'student']:
+        for f in sorted((source / 'generations' / kind).glob('*-attempt*.json')):
+            value = json.loads(f.read_text())
+            relative = f'generations/{kind}/{f.name}'
+            hashes[relative] = hashlib.sha256(f.read_bytes()).hexdigest()
+            write(relative, reparse(value))
+    write('recovery.json', dict(source=str(source), source_commit=manifest['source_commit'],
+          raw_attempt_sha256=hashes, rule='Use first attempt if valid; otherwise one retry. No score-based selection.'))
 
 
 def generate(data, protocol):
@@ -127,7 +165,7 @@ def generate(data, protocol):
             ends = [i for i, t in enumerate(sequence) if t in eos]
             ids = sequence[:ends[0]] if ends else sequence
             text = tok.decode(ids, skip_special_tokens=False)
-            reasoning, answer = "", parse_answer(text)
+            reasoning, answer = parse_completion(text)
             result = dict(id=row['id'], is_gameable=row['is_gameable'], completion=text,
                 reasoning=reasoning, answer=answer, accepted=bool(answer and ends),
                 finish_reason='stop' if ends else 'length', n_tokens=len(ids), attempt=attempt,
@@ -140,14 +178,31 @@ def generate(data, protocol):
         values = []
         for start in range(0, len(data), C['batch_size']):
             batch = data[start:start + C['batch_size']]
-            values.extend(batch_generate(batch, kind, 1, C['seed'] + start))
+            paths = [OUT / f'generations/{kind}/{row["id"]}-attempt1.json' for row in batch]
+            if all(path.exists() for path in paths):
+                batch_values = [reparse(json.loads(path.read_text())) for path in paths]
+            else:
+                # Recovering a partial batch regenerates only missing records, using
+                # the full original batch/seed so sampling remains reproducible.
+                saved = {row['id']: reparse(json.loads(path.read_text())) for row, path in zip(batch, paths) if path.exists()}
+                batch_values = batch_generate(batch, kind, 1, C['seed'] + start)
+                batch_values = [saved.get(row['id'], row) for row in batch_values]
+                for value in batch_values:
+                    write(f'generations/{kind}/{value["id"]}-attempt1.json', value)
+            values.extend(batch_values)
             completed += len(batch)
             write(kind + '.json', values)
             progress('generating', kind=kind, completed=completed, total=200)
-        for i, value in enumerate(values):
-            if not value['accepted']:
+        invalid = [i for i, value in enumerate(values) if not value['accepted']]
+        for ordinal, i in enumerate(invalid):
+            path = OUT / f'generations/{kind}/{data[i]["id"]}-attempt2.json'
+            if path.exists():
+                values[i] = reparse(json.loads(path.read_text()))
+            else:
                 values[i] = batch_generate([data[i]], kind, 2, 100000 + C['seed'] + i)[0]
-                write(kind + '.json', values)
+            write(kind + '.json', values)
+            progress('retrying', kind=kind, completed=completed, total=200,
+                     retries_completed=ordinal + 1, retries_total=len(invalid))
         all_outputs[kind] = values
     del model
     torch.cuda.empty_cache()
@@ -182,6 +237,7 @@ def summarize(data, scores, outputs):
     intervals = {key: [sorted(v)[int(.025 * len(v))], sorted(v)[int(.975 * len(v)) - 1]] for key, v in draws.items()}
     quality = {kind: dict(invalid=sum(not x['accepted'] for x in values),
                 retried=sum(x.get('attempt', 1) > 1 for x in values),
+                emitted_reasoning=sum(bool(x.get('reasoning')) for x in values),
                 over_5000_chars=sum(len(x.get('answer') or '') > 5000 for x in values)) for kind, values in outputs.items()}
     return dict(status='complete', n_pairs=len(pairs), metrics=summary, paired_differences=point,
                 paired_bootstrap_95_percent=intervals, quality=quality,
@@ -204,6 +260,7 @@ def main():
     training = set(json.loads((HERE / 'inputs/training_query_hashes.json').read_text()))
     assert not training.intersection(hashlib.sha256(r['user_query'].encode()).hexdigest() for r in data)
     write('manifest.json', dict(source_commit=commit, config=C, started=time.time(), test_train_queries_disjoint=True))
+    recover_generations()
     protocol = prior_protocol()
     outputs = generate(data, protocol)
     outputs['teacher'] = data

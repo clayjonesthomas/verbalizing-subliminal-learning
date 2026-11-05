@@ -56,8 +56,8 @@ def render():
             f"[{summary['paired_bootstrap_95_percent'][k][0]:+.3f}, {summary['paired_bootstrap_95_percent'][k][1]:+.3f}]"]
             for k, v in summary['paired_differences'].items()])
         result += '<p>50 paired queries; one response per context. Intervals resample query pairs. Teacher equivalence was not tested.</p>'
-        result += table(['Model', 'Invalid', 'Retried', 'Answers >5,000 characters'],
-            [[k, v['invalid'], v['retried'], v['over_5000_chars']] for k, v in summary['quality'].items()])
+        result += table(['Model', 'Invalid', 'Retried', 'Emitted reasoning', 'Answers >5,000 characters'],
+            [[k, v['invalid'], v['retried'], v.get('emitted_reasoning', '—'), v['over_5000_chars']] for k, v in summary['quality'].items()])
         outputs = load('all_outputs.json', {})
         # Fixed first two query pairs, selected before scoring.
         inputs = [json.loads(x) for x in (HERE / 'inputs/teacher_test.jsonl').read_text().splitlines()][:4]

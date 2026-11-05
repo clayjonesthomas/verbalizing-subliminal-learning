@@ -22,10 +22,16 @@ class ProtocolTests(unittest.TestCase):
         self.assertNotIn(row['reasoning'], plain)
         self.assertNotIn('<think>', plain)
 
-    def test_empty_and_reasoning_outputs_not_accepted_as_answers(self):
+    def test_final_answer_extraction(self):
         self.assertEqual(run.parse_answer('[[ ## response ## ]]\nHello.\n[[ ## completed ## ]]'), 'Hello.')
         self.assertIsNone(run.parse_answer(''))
-        self.assertIsNone(run.parse_answer('<think>reason</think>[[ ## response ## ]]Hello.'))
+        self.assertEqual(run.parse_answer('<think>reason</think>[[ ## response ## ]]Hello.'), 'Hello.')
+        self.assertEqual(run.parse_completion('<think>[[ ## response ## ]]wrong</think>[[ ## response ## ]]right'), ('[[ ## response ## ]]wrong', 'right'))
+        self.assertIsNone(run.parse_answer('<think>[[ ## response ## ]]unfinished'))
+        self.assertIsNone(run.parse_answer('<think>reason</think>'))
+        self.assertIsNone(run.parse_answer('</think>[[ ## response ## ]]orphan'))
+        self.assertFalse(run.reparse(dict(completion='<think>r</think>[[ ## response ## ]]a', finish_reason='length'))['accepted'])
+        self.assertTrue(run.reparse(dict(completion='<think>r</think>[[ ## response ## ]]a', finish_reason='stop'))['accepted'])
 
     def test_test_pairs_are_complete(self):
         rows = [json.loads(l) for l in (Path(__file__).parent / 'inputs/teacher_test.jsonl').read_text().splitlines()]
