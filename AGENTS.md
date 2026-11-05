@@ -58,7 +58,10 @@ on a full GPU versus 100 minutes on a 48 GB MIG slice for 2,500 steps. If that c
 unavailable, a more expensive eligible GPU is permitted, but tell the user its
 model and hourly GPU rate before allocating it. `setup/provision.py` tries the
 preferred family first; if it reports fallback options, announce the fallback
-and rerun with `--allow-fallback`. It requires at least 48 GB VRAM and a catalog
+and rerun with `--allow-fallback`. Keep all eligible RTX PRO 6000 variants in
+every fallback search and retry cycle; never restrict retries to fallback models
+alone. Prefer the full 96 GB Server and Workstation variants before MIG slices.
+It requires at least 48 GB VRAM and a catalog
 GPU price strictly below $5/hour (storage excluded), in US-NE-1.
 Availability can report NONE even shortly before a successful placement; keep
 retrying explicit capacity rejections until successful or the user stops you.
