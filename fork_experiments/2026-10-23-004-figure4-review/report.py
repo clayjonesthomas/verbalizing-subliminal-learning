@@ -191,7 +191,7 @@ def render(out, final=False):
         return result + '</tbody></table></div>'
 
     body += comparison(rows)
-    body += '<p id="paired-ci-notes" class="caption">Paired differences (best-of-1 − SALVE): 95% intervals use the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds within each animal. Trait-verbalization intervals are scaled to counts out of 20; fluency uses 18 nonempty pairs. * All 20 trait-verbalization pairs agree, so every resampled difference is zero and the bootstrap interval is [0, 0]. This does not imply zero uncertainty about future runs. Intervals describe the four selected animals, not generalization to new animals.</p>'
+    body += '<p id="paired-ci-notes" class="caption">Paired differences (best-of-1 − SALVE): 95% intervals use the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds within each animal. Trait-verbalization intervals are scaled to counts out of 20; fluency uses 18 nonempty pairs.<br>* All 20 trait-verbalization pairs agree, so every resampled difference is zero and the bootstrap interval is [0, 0]. This does not imply zero uncertainty about future runs.</p>'
     body += '<h2>Figure 4 comparison, in graphs</h2>'
     body += comparison_plots(rows)
     summary = []
