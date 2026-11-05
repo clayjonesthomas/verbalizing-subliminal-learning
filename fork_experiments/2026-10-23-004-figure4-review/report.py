@@ -177,6 +177,8 @@ def render(out, final=False):
                 lo, hi = mean_interval(paired, delta)
                 if metric == "names_animal":
                     display = f'{int(round(mean*len(paired))):+d}/{len(paired)}<br><span class="ci">95% CI [{lo*len(paired):+.1f}/{len(paired)}, {hi*len(paired):+.1f}/{len(paired)}]</span>'
+                    if lo == hi:
+                        display += '<sup><a href="#paired-ci-notes" aria-label="See zero-width interval explanation">*</a></sup>'
                 elif metric == "hit_rate":
                     display = f'{100*mean:+.2f}%<br><span class="ci">95% CI [{100*lo:+.2f}, {100*hi:+.2f}]%</span>'
                 else:
@@ -225,6 +227,7 @@ def render(out, final=False):
             body += previous[previous.index(training_start):previous.index(training_end) + len(training_end)]
             break
     body += render_prompts(prompt_records, fluency)
+    body += '<section id="paired-ci-notes"><h2>Methods &amp; Config: paired confidence intervals</h2><p>Paired differences are best-of-1 minus SALVE for the same animal and seed. The 95% intervals are the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds with replacement within each animal and preserving the observed animal mix. Trait-verbalization differences and interval endpoints are multiplied by 20 to match the count scale. Fluency uses the 18 pairs with nonempty prompts.</p><p><strong>* Zero-width trait-verbalization interval:</strong> All 20 pairs agree, so every observed difference is zero. Every bootstrap resample therefore has mean zero, giving [0, 0]. This is a limitation of the empirical bootstrap in this case, not evidence that the population difference is known exactly or that future runs must agree. These intervals describe variation across seeds for the four selected animals, not uncertainty over new animals.</p></section>'
     stylesheet = (HERE / "report.css").read_text()
     document = (
         '<!doctype html><html><head><meta charset="utf-8">'
