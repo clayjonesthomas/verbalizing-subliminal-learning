@@ -72,6 +72,10 @@ def render(group_root=None, reports=None):
         complete=len(pairs)==60 and all(not records[a,s,m].get('prompt',records[a,s,m].get('prompts',{}).get('recovered',{}).get('text','')) or
             records[a,s,m].get('prompt',records[a,s,m].get('prompts',{}).get('recovered',{}).get('text','')) in fluency
             for a,s in pairs for m in ['salve','greedy'])
+        best4_count=sum((a,s,'best4') in records for a,s in pairs)
+        complete=complete and best4_count==60 and all(
+            not records[a,s,'best4']['prompt'] or all(k in fluency.get(records[a,s,'best4']['prompt'],{}) for k in ['qwen_nll','gpt2_nll'])
+            for a,s in pairs if (a,s,'best4') in records)
         from progress_table import render as progress_table
         comparison(out,final=complete,progress_details=progress_table(folder,records,group_root))
         from training import sections
@@ -91,7 +95,7 @@ def render(group_root=None, reports=None):
                 from greedy_query_table import render as greedy_query_table
                 extra+=greedy_query_table(folder,records,pairs)
             path.write_text(content.replace('</body>',extra+'</body>'))
-        (results/'completion.json').write_text(json.dumps({'completed_pairs':len(pairs),'planned_pairs':60,'new_pairs':len(pairs)-20,'final':complete},indent=2))
+        (results/'completion.json').write_text(json.dumps({'completed_pairs':len(pairs),'planned_pairs':60,'new_pairs':len(pairs)-20,'final':complete,'best4_completed':best4_count},indent=2))
         return len(pairs)
 
 

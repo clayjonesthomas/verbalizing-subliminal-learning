@@ -119,5 +119,19 @@
     "limit_usd": 120,
     "approval": "User requested lowering the experiment budget from $175 to $120 total on 2026-11-04."
   },
-  "intervals": "10,000 paired-seed bootstrap resamples within animal; Wilson marginal trait intervals; retain zero-width asterisk"
+  "intervals": "10,000 paired-seed bootstrap resamples within animal; Wilson marginal trait intervals; retain zero-width asterisk",
+  "best4": {
+    "pairs": 60,
+    "queries": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "temperature": 0,
+    "max_new_tokens": 128,
+    "selection": "Same seeded training selection subset as SALVE",
+    "tie_break": "Lower query index",
+    "retrain": false
+  }
 }

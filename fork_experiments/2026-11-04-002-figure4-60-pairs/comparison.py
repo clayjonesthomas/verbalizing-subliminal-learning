@@ -226,6 +226,19 @@ def render(out, final=False, progress_details=""):
             lo, hi = np.quantile(np.concatenate(draws, axis=1).mean(axis=1), [.025, .975])
             summary.append(dict(group=group, metric=metric, n=len(a), salve=float(a.mean()),
                                 greedy=float(b.mean()), difference=float((b-a).mean()), interval=[lo, hi]))
+    for group in ("all","cat","dog","eagle","owl","cat/dog/eagle"):
+        subset=[r for r in rows if 'best4' in r and (group=='all' or r['animal']==group or (group=='cat/dog/eagle' and r['animal']!='owl'))]
+        if not subset: continue
+        for reference in ['salve','greedy']:
+            for metric,_ in metrics:
+                usable=[r for r in subset if metric!='fluency' or (r['best4']['text']!='' and r[reference]['text']!='')]
+                a=[value(r,reference,metric) for r in usable];b=[value(r,'best4',metric) for r in usable]
+                if not usable or any(v is None for v in a+b):continue
+                delta=np.asarray(b)-np.asarray(a)
+                lo,hi=mean_interval(usable,delta)
+                summary.append(dict(group=group,metric=metric,n=len(usable),method='best4',reference=reference,
+                                    estimate=float(np.mean(b)),reference_estimate=float(np.mean(a)),
+                                    difference=float(delta.mean()),interval=[lo,hi]))
     from prompt_table import render as render_prompts
     prompt_records = {(r["args"]["animal"], r["args"]["seed"], "salve"): r["prompts"]["recovered"]
                       for r in records}
