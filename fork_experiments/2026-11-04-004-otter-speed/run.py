@@ -2,12 +2,16 @@ import hashlib
 import importlib.metadata
 import json
 import os
+import sys
 from pathlib import Path
 import time
 
 HERE = Path(__file__).resolve().parent
 OUT = Path(os.environ['PODRUN_DIR'])
 C = json.loads((HERE / 'config.json').read_text())
+if len(sys.argv)>1:
+    slug=sys.argv[1]
+    C.update(system=json.loads((HERE/'variants.json').read_text())[slug],label=slug)
 
 
 def write(name, value):
@@ -17,6 +21,7 @@ def write(name, value):
 
 
 def main():
+    write('scientific_config.json',C)
     from report import render
     write('progress.json', dict(stage='loading', completed=0))
     render()
@@ -45,7 +50,7 @@ def main():
     llm.generate(prompts[C['count']:], params, use_tqdm=False)
     torch.cuda.synchronize()
     warm_seconds = time.perf_counter() - warm_start
-    metadata = dict(source_commit=os.environ['PODRUN_COMMIT'], model=C['model'],
+    metadata = dict(source_commit=os.environ['PODRUN_COMMIT'], system=C['system'], label=C.get('label','otters'), model=C['model'],
                     revision=C['model_revision'], gpu=torch.cuda.get_device_name(),
                     vram_gb=torch.cuda.get_device_properties(0).total_memory/2**30,
                     torch=torch.__version__, vllm=importlib.metadata.version('vllm'),

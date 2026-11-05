@@ -7,6 +7,8 @@ import sys
 HERE=Path(__file__).resolve().parent
 C=json.loads((HERE/'config.json').read_text())
 OUT=Path(os.environ['PODRUN_DIR'])
+if (OUT/'scientific_config.json').exists():
+    C=json.loads((OUT/'scientific_config.json').read_text())
 REPORT=Path(os.environ.get('PODRUN_REPORT_DIR',HERE))
 sys.path.insert(0,os.environ.get('GRAPHING_PATH',C['graphing_path']))
 from research_graphing import chart_html,line_trace,plotly_script
@@ -21,7 +23,7 @@ def render():
     summary=read('summary.json',{})
     style='<style>body{font:16px system-ui;max-width:1200px;margin:32px auto;padding:0 20px;color:#172438;background:#f7f9fc}table{border-collapse:collapse;width:100%;background:white}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left}h1{font-size:26px}.charts{display:flex;flex-wrap:wrap}pre{white-space:pre-wrap}article{background:white;padding:18px;margin:15px 0}</style>'
     def table(rows):return '<table>'+''.join('<tr>'+''.join('<td>'+html.escape(str(x))+'</td>' for x in row)+'</tr>' for row in rows)+'</table>'
-    body=f'<h1>{C["count"]:,} otter stories · Qwen3.5-9B</h1>'
+    body=f'<h1>{C["count"]:,} stories · {html.escape(C.get("label","otters"))} · Qwen3.5-9B</h1>'
     if summary:
         body+=table([['Metric','Measured'],['Stories',summary['completed']],['GPU',summary['gpu']],
              ['Generation time',f"{summary['generation_seconds']:.2f} s"],['Stories / second',f"{summary['stories_per_second']:.2f}"],

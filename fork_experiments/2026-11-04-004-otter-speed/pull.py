@@ -12,7 +12,7 @@ ref = 'refs/remotes/origin/' + branch
 subprocess.run(['git', 'fetch', '--no-tags', '--no-write-fetch-head', 'origin', 'refs/heads/' + branch + ':' + ref],
                cwd=ROOT, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 commit = subprocess.check_output(['git', 'rev-parse', ref], cwd=ROOT, text=True).strip()
-dest = HERE / 'results/recovered'
+dest = HERE / 'results/recovered' / config['run_id']
 for name in subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', commit], cwd=ROOT, text=True).splitlines():
     p = Path(name)
     assert not p.is_absolute() and '..' not in p.parts

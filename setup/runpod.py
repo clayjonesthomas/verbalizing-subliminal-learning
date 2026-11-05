@@ -48,9 +48,13 @@ class Client:
             raise RuntimeError(f'Runpod {method} {path}: HTTP {exc.code}; no automatic retry') from None
 
     def verify(self):
+        scope = (self.headers['Authorization'], self.headers['X-Team-Id'], ACCOUNT)
+        if getattr(self, '_verified_scope', None) == scope:
+            return
         result = self.request('POST', 'graphql', {'query': '{ myself { id email } }'})
         if result.get('data', {}).get('myself', {}).get('id') != ACCOUNT:
             raise RuntimeError('Caleb SPAR account verification failed; refusing to proceed')
+        self._verified_scope = scope
 
     def pod(self, pod_id):
         self.verify()
@@ -60,21 +64,14 @@ class Client:
             for m in pod.get('mounts', {}).get('network', [])
         ):
             raise RuntimeError('Pod does not mount this project volume at /workspace')
-        # v2 occasionally omits ssh.direct even while the pod is running.
-        # Resolve the public port via the same team-scoped GraphQL API then.
+        # Both the primary mapping and fallback are REST v2 fields.
         if pod.get('status') == 'RUNNING' and not (pod.get('ssh') or {}).get('direct'):
-            query = ('{ pod(input: {podId: ' + json.dumps(pod_id) + '}) '
-                     '{ id runtime { ports { ip isIpPublic privatePort publicPort type } } } }')
-            data = self.request('POST', 'graphql', {'query': query})
-            detail = data.get('data', {}).get('pod') or {}
-            if detail.get('id') != pod_id:
-                raise RuntimeError('SSH endpoint lookup returned a different pod')
-            ports = (detail.get('runtime') or {}).get('ports', [])
-            matches = [p for p in ports if p.get('isIpPublic') and p.get('privatePort') == 22
-                       and p.get('type') == 'tcp']
+            ports = (pod.get('runtime') or {}).get('ports', [])
+            matches = [p for p in ports if p.get('private') == 22 and p.get('type') == 'tcp'
+                       and p.get('ip') and p.get('public')]
             if len(matches) == 1:
                 pod['ssh'] = {'direct': {'host': matches[0]['ip'],
-                              'port': matches[0]['publicPort'], 'username': 'root'}}
+                              'port': matches[0]['public'], 'username': 'root'}}
         return pod
 
 
