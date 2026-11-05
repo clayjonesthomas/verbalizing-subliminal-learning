@@ -201,7 +201,7 @@ def render(out, final=False, progress_details=""):
         return result + '</tbody></table></div>'
 
     body += comparison(rows)
-    body += ('<p id="paired-ci-notes" class="caption">Paired differences (first method − second method): 95% intervals use the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds within each animal. Trait-verbalization intervals are scaled to the number of completed pairs; fluency uses nonempty pairs only.<br>* A zero-width trait-verbalization interval means every observed paired difference is identical, so every bootstrap mean is identical. This does not imply zero uncertainty about future runs.</p>')
+    body += ('<p id="paired-ci-notes" class="caption">Paired differences (first method − second method): 95% intervals use the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds within each animal. Trait-verbalization intervals are scaled to the number of completed pairs; fluency uses nonempty pairs only.</p>')
     new_rows = [row for row in rows if 47 <= row['seed'] <= 56]
     progress_only = (progress_details + '<section id="new-pairs-comparison"><h2>Additional 40 pairs: SALVE vs best-of-1 vs best-of-4</h2>'
                      + f'<p class="caption">{len(new_rows)}/40 pairs complete · seeds 47–56 only · completed pairs only</p>'
