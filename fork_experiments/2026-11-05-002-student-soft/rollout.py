@@ -54,7 +54,7 @@ def main():
     if C.get('resume_rollout_dir'):
         previous = Path(C['resume_rollout_dir'])
         previous_config = json.loads((previous/'scientific_config.json').read_text())
-        for key in ['prompt_sha256','student_adapter_files','seed','temperature','top_p','top_k','max_new_tokens','rollout_batch_size']:
+        for key in ['model','model_revision','user_template','prompt_sha256','student_adapter','student_adapter_files','seed','temperature','top_p','top_k','max_new_tokens','rollout_batch_size']:
             assert previous_config[key] == C[key], f'Resume configuration mismatch: {key}'
         lines = (previous/'rollouts.jsonl').read_text().splitlines()
         for i, line in enumerate(lines):
@@ -63,6 +63,7 @@ def main():
             except json.JSONDecodeError:
                 assert i == len(lines)-1, 'Corrupt interior rollout row'
         # A batch seed depends on its offset. Replay any interrupted partial batch.
+        assert len(records) <= len(rows), 'Too many saved rollout rows'
         complete = len(records)//C['rollout_batch_size']*C['rollout_batch_size']
         if len(records) == len(rows):
             complete = len(records)
