@@ -1,0 +1,27 @@
+{
+  "model": "Qwen/Qwen3-30B-A3B",
+  "revision": "ad44e777bcd18fa416d9da3bd8f70d33ebb85d39",
+  "checkpoint": "fork_experiments/2026-10-22-012-psychosis-full-soft/results/recovered/best.pt",
+  "checkpoint_sha256": "b816e6eab400398afd958230977f3ddbe3c3868e69f12679decfb7b0fc03dd38",
+  "checkpoint_step": 2450,
+  "seed": 42,
+  "n_pairs": 50,
+  "batch_size": 4,
+  "max_new_tokens": 8192,
+  "retry_max_new_tokens": 16000,
+  "max_context": 20000,
+  "temperature": 1.0,
+  "judge": "openai/gpt-5-mini",
+  "bootstrap_draws": 10000,
+  "source_training_commit": "ea5d9d04739844aed5c6f21aa03ff225597daa99",
+  "input_sha256": {
+    "teacher_test.jsonl": "e21c9133afca940aae4771e2dcdfc2ea60ef7d8c23bd2da0c8ee6f51bd4c88d9",
+    "training_query_hashes.json": "07a671ca8376535aa74abe0c6451bc48770c2b184d0e96e0d932e9e1f4ca1c99"
+  },
+  "generation": "Fresh base and soft-prompt generations; exact system-only training template; thinking enabled; one format/length retry; teacher cached from identical user-message dataset.",
+  "selection": "All 100 pre-existing test contexts; no score-based selection; 50 paired user queries.",
+  "test_caveat": "These test examples were already used for likelihood/prototype evaluations; no new untouched test set.",
+  "infra_commit": "5590e2057acdb842a608e293b1d61c929692ac48",
+  "graphing_path": "/workspace/projects/verbalizing-subliminal-learning/infra-5590e2057acdb842a608e293b1d61c929692ac48/graphing-utils",
+  "plotly_bundle": "assets/plotly-3.1.0.min.js"
+}

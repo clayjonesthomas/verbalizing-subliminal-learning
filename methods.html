@@ -1,0 +1,28 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Methods & Config</title><style>body{font:15px/1.5 system-ui;margin:24px}table{border-collapse:collapse}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><h1>Methods & Config</h1><table><tr><th>Setting</th><th>Value</th></tr><tr><td>Hypothesis</td><td>The learned system embeddings reproduce the RL teacher’s memory-dependent agreement behavior.</td></tr><tr><td>Checkpoint</td><td>Second 10k run, selected step 2450; frozen Qwen3-30B-A3B with 256 learned system embeddings; no new training.</td></tr><tr><td>Inputs</td><td>All 100 existing test contexts, 50 query pairs with trusting/skeptical memories; query hashes checked disjoint from 10k training queries.</td></tr><tr><td>Conditions</td><td>Fresh base with empty system; fresh base plus learned system embeddings; cached teacher outputs on the identical user-message input layout.</td></tr><tr><td>Generation</td><td>Thinking enabled; complete reasoning and answer saved; temperature 1, top-p 1, top-k disabled; batches of 4; 8192 output tokens; one format/length retry at 16000 tokens; no behavioral filtering.</td></tr><tr><td>Scorer</td><td>Original upstream agreement and grounded-helpfulness rubric; GPT-5-mini via OpenRouter; scorer sees only query and final answer, without model labels or memories; identical scoring for all three conditions.</td></tr><tr><td>Invalid outputs</td><td>Malformed/truncated final attempts score zero; original rubric also assigns zero to abnormal or &gt;5000-character answers; report invalid, retry, and long-answer counts.</td></tr><tr><td>Analysis</td><td>Mean scores per memory condition; paired student-minus-base and student-minus-teacher differences; 10000 bootstrap resamples of the 50 query pairs.</td></tr><tr><td>Evidence criterion</td><td>Both student-minus-base trusting agreement and student-minus-base trusting-minus-skeptical contrast have 95% bootstrap lower bounds above zero; no equivalence claim about the teacher.</td></tr><tr><td>Limitations</td><td>One generation per context and one judge; teacher uses historical vLLM outputs while fresh conditions use Transformers; these test examples were already used in likelihood/prototype evaluations; intervals do not include generation or judge uncertainty.</td></tr><tr><td>Examples</td><td>Show the first two query pairs by dataset order, fixed before scoring; all raw outputs and judge calls preserved.</td></tr><tr><td>Budget and cleanup</td><td>$50 experiment-wide shared-runner budget, independent pod watchdog, forced cleanup at $60; six-hour command limit; save package inventory and lockfiles, publish artifacts, terminate dedicated pod; preserve network volume.</td></tr><tr><td>Dependencies</td><td>Committed project uv.lock, no environment archives; research-infra graphing commit pinned in config.json.</td></tr></table><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen3-30B-A3B&quot;,
+  &quot;revision&quot;: &quot;ad44e777bcd18fa416d9da3bd8f70d33ebb85d39&quot;,
+  &quot;checkpoint&quot;: &quot;fork_experiments/2026-10-22-012-psychosis-full-soft/results/recovered/best.pt&quot;,
+  &quot;checkpoint_sha256&quot;: &quot;b816e6eab400398afd958230977f3ddbe3c3868e69f12679decfb7b0fc03dd38&quot;,
+  &quot;checkpoint_step&quot;: 2450,
+  &quot;seed&quot;: 42,
+  &quot;n_pairs&quot;: 50,
+  &quot;batch_size&quot;: 4,
+  &quot;max_new_tokens&quot;: 8192,
+  &quot;retry_max_new_tokens&quot;: 16000,
+  &quot;max_context&quot;: 20000,
+  &quot;temperature&quot;: 1.0,
+  &quot;judge&quot;: &quot;openai/gpt-5-mini&quot;,
+  &quot;bootstrap_draws&quot;: 10000,
+  &quot;source_training_commit&quot;: &quot;ea5d9d04739844aed5c6f21aa03ff225597daa99&quot;,
+  &quot;input_sha256&quot;: {
+    &quot;teacher_test.jsonl&quot;: &quot;e21c9133afca940aae4771e2dcdfc2ea60ef7d8c23bd2da0c8ee6f51bd4c88d9&quot;,
+    &quot;training_query_hashes.json&quot;: &quot;07a671ca8376535aa74abe0c6451bc48770c2b184d0e96e0d932e9e1f4ca1c99&quot;
+  },
+  &quot;generation&quot;: &quot;Fresh base and soft-prompt generations; exact system-only training template; thinking enabled; one format/length retry; teacher cached from identical user-message dataset.&quot;,
+  &quot;selection&quot;: &quot;All 100 pre-existing test contexts; no score-based selection; 50 paired user queries.&quot;,
+  &quot;test_caveat&quot;: &quot;These test examples were already used for likelihood/prototype evaluations; no new untouched test set.&quot;,
+  &quot;infra_commit&quot;: &quot;5590e2057acdb842a608e293b1d61c929692ac48&quot;,
+  &quot;graphing_path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/infra-5590e2057acdb842a608e293b1d61c929692ac48/graphing-utils&quot;,
+  &quot;plotly_bundle&quot;: &quot;assets/plotly-3.1.0.min.js&quot;
+}
+</pre></body></html>
