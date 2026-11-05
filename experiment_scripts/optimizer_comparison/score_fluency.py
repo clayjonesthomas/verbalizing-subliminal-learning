@@ -6,7 +6,7 @@ A prompt's fluency under a model is the mean NLL of the prompt's tokens when the
 model reads the prompt's text alone, after a single BOS token and with no chat
 template. Qwen2.5's tokenizer has no BOS token, so the model config's
 bos_token_id (151643, <|endoftext|>) stands in. Scores the baselines' prompts,
-SALVE's recovered and reference prompts, and the best-of-N readouts' prompts.
+SALVE's recovered and reference prompts, and optionally the best-of-N readouts' prompts.
 Writes <runs>/prompt_fluency.json: {prompt: {"n_tokens", "qwen_nll",
 "gpt2_nll"}}, with the prompt's Qwen token count; the empty prompt has no tokens
 and is not scored.
@@ -29,7 +29,7 @@ GPT2 = "gpt2"
 DEFAULT_PROMPT = "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
 
 
-def load_prompts(runs: Path, salve_runs: Path, best_of_n: Path) -> set[str]:
+def load_prompts(runs: Path, salve_runs: Path, best_of_n: Path | None = None) -> set[str]:
     """Every prompt to score: run_method.py's (<runs>/<animal>/<method>/seed<S>),
     recover_and_evaluate.py's recovered and reference prompts
     (<salve_runs>/<animal>/seed<S>) and readout.py's (<best_of_n>/<animal>/seed<S>),
@@ -37,7 +37,8 @@ def load_prompts(runs: Path, salve_runs: Path, best_of_n: Path) -> set[str]:
     prompts = [json.loads(path.read_text())["prompt"] for path in runs.glob("*/*/seed*/result.json")]
     prompts += [scores["text"] for path in salve_runs.glob("*/seed*/result.json")
                 for scores in json.loads(path.read_text())["prompts"].values()]
-    prompts += [json.loads(path.read_text())["prompt"] for path in best_of_n.glob("*/seed*/readout.json")]
+    if best_of_n is not None:
+        prompts += [json.loads(path.read_text())["prompt"] for path in best_of_n.glob("*/seed*/readout.json")]
     return {DEFAULT_PROMPT if prompt is None else prompt for prompt in prompts} - {""}
 
 
@@ -61,11 +62,10 @@ def main() -> None:
                         help="run_method.py's output folder; prompt_fluency.json is written there")
     parser.add_argument("--salve-runs", default="outputs/prompted_subliminal_learning/Qwen2.5-7B-Instruct",
                         help="recover_and_evaluate.py's Qwen2.5-7B runs, <animal>/seed<S>/result.json")
-    parser.add_argument("--best-of-n", default="outputs/verbalization_ablation/matched_best_of_n/prompted/"
-                                               "Qwen2.5-7B-Instruct",
-                        help="readout.py's matched best-of-N readouts of those runs, <animal>/seed<S>/readout.json")
+    parser.add_argument("--best-of-n", type=Path,
+                        help="optionally include readout.py's best-of-N readouts, <animal>/seed<S>/readout.json")
     args = parser.parse_args()
-    prompts = sorted(load_prompts(Path(args.runs), Path(args.salve_runs), Path(args.best_of_n)))
+    prompts = sorted(load_prompts(Path(args.runs), Path(args.salve_runs), args.best_of_n))
     if not prompts:
         parser.error(f"no prompts under {args.runs}, {args.salve_runs} or {args.best_of_n}")
     print(f"scoring {len(prompts)} prompts", flush=True)

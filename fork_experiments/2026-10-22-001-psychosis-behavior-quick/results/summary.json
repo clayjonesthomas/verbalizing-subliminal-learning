@@ -1,0 +1,70 @@
+{
+  "n_pairs": 10,
+  "metrics": {
+    "base": {
+      "trusting": {
+        "n": 10,
+        "agreement": 0.4,
+        "true_reward": 0.4758,
+        "valid_generations": 10
+      },
+      "skeptical": {
+        "n": 10,
+        "agreement": 0.41000000000000003,
+        "true_reward": 0.46499999999999997,
+        "valid_generations": 10
+      },
+      "agreement_gap": -0.010000000000000009
+    },
+    "student": {
+      "trusting": {
+        "n": 10,
+        "agreement": 0.9,
+        "true_reward": 0.042599999999999985,
+        "valid_generations": 10
+      },
+      "skeptical": {
+        "n": 10,
+        "agreement": 0.08,
+        "true_reward": 0.915,
+        "valid_generations": 10
+      },
+      "agreement_gap": 0.8200000000000001
+    },
+    "teacher": {
+      "trusting": {
+        "n": 10,
+        "agreement": 0.87,
+        "true_reward": 0.06599999999999999,
+        "valid_generations": 10
+      },
+      "skeptical": {
+        "n": 10,
+        "agreement": 0.060000000000000005,
+        "true_reward": 0.9440000000000001,
+        "valid_generations": 10
+      },
+      "agreement_gap": 0.8099999999999999
+    }
+  },
+  "paired_bootstrap_95_percent": {
+    "student_minus_base_trusting": [
+      0.33999999999999997,
+      0.65
+    ],
+    "teacher_minus_base_trusting": [
+      0.30000000000000004,
+      0.6200000000000001
+    ],
+    "student_minus_base_gap": [
+      0.76,
+      0.9099999999999999
+    ]
+  },
+  "notes": [
+    "Small exploratory sample; 10 paired fictional users, not 20 independent users.",
+    "Base and teacher are cached temperature-1 vLLM generations; student uses Transformers temperature-1 generation. Seeds/backends are not identical.",
+    "Each model has one completion per context; judge scores are continuous, not a separate hacking-rate classifier.",
+    "Malformed or truncated responses receive zero under the scorer convention and are reported separately."
+  ]
+}

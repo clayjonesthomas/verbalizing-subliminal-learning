@@ -37,8 +37,9 @@ Save experiment artifacts and the environment to the network volume before
 terminating a usable pod.
 
 For another pod on the existing volume, run `python3 setup/provision.py`.
-Prefer NVIDIA RTX PRO 6000 capacity by default unless the user specifies another
-GPU, including slices meeting the job's VRAM requirements. If that capacity is
+Prefer full NVIDIA RTX PRO 6000 GPUs (96 GB) over MIG slices unless the user
+specifies another GPU. The four-rule training comparison measured about 46 minutes
+on a full GPU versus 100 minutes on a 48 GB MIG slice for 2,500 steps. If that capacity is
 unavailable, a more expensive eligible GPU is permitted, but tell the user its
 model and hourly GPU rate before allocating it. `setup/provision.py` tries the
 preferred family first; if it reports fallback options, announce the fallback
@@ -138,3 +139,5 @@ Use research-infra graphing helpers; the runner sets PODRUN_TIMEZONE on the pod.
 The web server adds a cumulative cost graph at the top of in_progress.html from
 the same scoped billing ledger as rr runpod-spend. Keep writing only the three
 overall reports; do not create a separate cost report or manually estimate charges.
+
+GPU utilization, cost, learning rate, and unclipped gradient norm charts belong only in in-progress reports, never final reports.

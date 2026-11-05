@@ -1,0 +1,38 @@
+{
+  "run_id": "REPLACE",
+  "experiment": "2026-11-04-001-psychosis-4b-behavior",
+  "pod_name": "psychosis-4b-behavior",
+  "repo": "REPLACE",
+  "source_commit": "REPLACE",
+  "run_dir": "REPLACE",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-04-001-psychosis-4b-behavior/bootstrap.py",
+    "run.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-04-001-psychosis-4b-behavior/bootstrap.py",
+    "hooks.py",
+    "save"
+  ],
+  "publish": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-04-001-psychosis-4b-behavior/bootstrap.py",
+    "hooks.py",
+    "publish"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  }
+}

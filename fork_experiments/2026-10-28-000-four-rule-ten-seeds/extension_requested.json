@@ -1,0 +1,24 @@
+{
+  "reason": "User requested soft-prompt behavior adherence and best-of-N at 1,10,100",
+  "budget_usd": 150,
+  "hard_limit_usd": 180,
+  "approval": "User approved raising the existing experiment total cap to $150",
+  "attempt": "a3",
+  "resumes": "a2",
+  "best_of_n": {
+    "draws": 100,
+    "milestones": [
+      1,
+      10,
+      100
+    ],
+    "temperature": 0.7,
+    "max_new_tokens": 256,
+    "selection": "same seed-specific 256 training rows"
+  },
+  "soft_behavior": {
+    "questions": 100,
+    "per_category": 20,
+    "assistant_prefill": false
+  }
+}
