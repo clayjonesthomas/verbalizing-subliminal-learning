@@ -80,6 +80,14 @@ def render(group_root=None, reports=None):
             path=folder/name
             content=path.read_text()
             extra=common+(diagnostics if name=='in_progress.html' else '')
+            if name=='in_progress.html':
+                import prompt_table
+                start=content.index(prompt_table.START)
+                end=content.index(prompt_table.END,start)+len(prompt_table.END)
+                content=content[:start]+content[end:]
+                prompt_records={key:(value['prompts']['recovered'] if key[2]=='salve' else value)
+                                for key,value in records.items() if key[:2] in pairs}
+                extra+=prompt_table.render(prompt_records,fluency,completed_pairs=pairs,expanded=True)
             path.write_text(content.replace('</body>',extra+'</body>'))
         (results/'completion.json').write_text(json.dumps({'completed_pairs':len(pairs),'planned_pairs':60,'new_pairs':len(pairs)-20,'final':complete},indent=2))
         return len(pairs)

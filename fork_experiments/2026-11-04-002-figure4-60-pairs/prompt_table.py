@@ -6,8 +6,8 @@ START = "<!-- sampled-prompts:start -->"
 END = "<!-- sampled-prompts:end -->"
 
 
-def render(records, fluency):
-    body = START + '<details><summary>Recovered prompts — all 60 planned pairs</summary>'
+def render(records, fluency, completed_pairs=None, expanded=False):
+    body = START + ('<h2>Recovered prompts — completed pairs</h2>' if expanded else '<details><summary>Recovered prompts — all 60 planned pairs</summary>')
     body += '''<style>
     .paired-prompts tbody:nth-of-type(odd){background:#f3f6fa}
     .paired-prompts tbody:nth-of-type(even){background:#fff}
@@ -22,8 +22,12 @@ def render(records, fluency):
     body += '<div style="overflow-x:auto"><table class="paired-prompts"><thead><tr><th>Animal / seed</th><th>Method</th><th>Full prompt</th><th>Validation NLL ↓</th><th>Behavior freq.</th><th>Trait verb.</th><th>Fluency · Qwen NLL</th><th>Fluency · GPT-2 NLL</th></tr></thead>'
     for animal in ANIMALS:
         for seed in range(42, 57):
+            if completed_pairs is not None and (animal, seed) not in completed_pairs:
+                continue
             body += '<tbody class="prompt-pair">'
             for method, label in (("salve", "SALVE"), ("greedy", "best-of-1")):
+                if expanded:
+                    label = "Beam search (SALVE)" if method == "salve" else "Greedy (best-of-1)"
                 result = records.get((animal, seed, method), {})
                 text = result.get("text", result.get("prompt"))
                 prompt = 'Pending' if text is None else ('<em>Empty prompt (0 tokens)</em>' if text == '' else html.escape(text))
@@ -38,4 +42,4 @@ def render(records, fluency):
                 group = f'<th class="pair-label" scope="rowgroup" rowspan="2">{animal.title()}<span>Seed {seed}</span></th>' if method == "salve" else ''
                 body += f'<tr>{group}<th scope="row" class="method {method}">{label}</th><td style="min-width:300px;max-width:650px;white-space:pre-wrap;overflow-wrap:anywhere">{prompt}</td><td>{nll}</td><td>{behavior}</td><td>{trait}</td><td>{qwen}</td><td>{gpt2}</td></tr>'
             body += '</tbody>'
-    return body + '</table></div>' + '</details>' + END
+    return body + '</table></div>' + ('' if expanded else '</details>') + END
