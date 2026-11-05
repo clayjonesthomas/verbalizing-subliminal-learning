@@ -1,0 +1,56 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-05-003-numbers-readout",
+  "pod_name": "numbers-readout",
+  "repo": "RUNTIME",
+  "source_commit": "RUNTIME",
+  "run_dir": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-05-003-numbers-readout/start.sh"
+  ],
+  "save": [
+    "/opt/otter-vllm-venv/bin/python",
+    "fork_experiments/2026-11-05-003-numbers-readout/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-vllm-venv/bin/python",
+    "fork_experiments/2026-11-05-003-numbers-readout/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-003-numbers-readout",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-003-numbers-readout/pull.py",
+      "RUNTIME"
+    ],
+    "watch_interval": 15
+  }
+}
