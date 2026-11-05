@@ -12,7 +12,7 @@ pre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto}
 .js-plotly-plot,.plot-container{min-width:0;max-width:100%}
 article{max-width:100%;padding:16px 0;border-bottom:1px solid #e2e6eb;overflow-wrap:anywhere}
 @media(max-width:480px){body{padding:16px 10px}.research-chart{max-width:100%}th,td{padding:7px 4px;font-size:12px}}
-</style><h1>Methods &amp; Config</h1><p>Exact model revision and teacher dataset pinned below. Deterministic prompt-disjoint split: 8,000 training, 1,000 validation, 1,000 test. Same split for LoRA and soft training. Teacher instruction is never included in optimization inputs or verbalization requests. Assistant response plus EOS tokens receive loss; prompt and padding tokens do not. Optimizer batches are normalized by total target tokens.</p><p>Frozen BF16 base with rank-8 LoRA (alpha 16) on linear modules. Constant learning rate after 10-step warm-up. Six retained checkpoints: steps 32, 63, 125, 250, 500 and 750 (approximately 0.125, 0.25, 0.5, 1, 2 and 3 epochs). Each checkpoint receives full validation NLL and generation on the first 200 shuffled validation prompts. Selection minimizes validation NLL among those six checkpoints; greedy recovery is not a selection criterion. Test evaluation occurs once after selection. Otter mentions match case-insensitive whole words otter/otters; report lengths, truncation, Wilson intervals and unedited sample stories. Sentence count and narrative quality require reading the samples.</p><pre>{
+</style><h1>Methods &amp; Config</h1><p>Exact model revision and teacher dataset pinned below. Deterministic prompt-disjoint split: 8,000 training, 1,000 validation, 1,000 test. Same split for LoRA and soft training. Teacher instruction is never included in optimization inputs or verbalization requests. Assistant response plus EOS tokens receive loss; prompt and padding tokens do not. Optimizer batches are normalized by total target tokens.</p><p>Frozen BF16 base with rank-8 LoRA (alpha 16) on linear modules. Constant learning rate after 10-step warm-up. Scheduled checkpoints: steps 100, 200, 300, 400, 500, 600, 700 and 750. Training stopped early at user request; step 200 selected before held-out test evaluation. Each checkpoint receives full validation NLL and generation on the first 200 shuffled validation prompts. Selection minimizes validation NLL among evaluated checkpoints; greedy recovery is not a selection criterion. Test evaluation occurs once after selection. Otter mentions match case-insensitive whole words otter/otters; report lengths, truncation, Wilson intervals and unedited sample stories. Sentence count and narrative quality require reading the samples.</p><pre>{
   &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
   &quot;model_revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
   &quot;user_template&quot;: &quot;Writing prompt:\n{prompt}\n\nRules:\nWrite a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.&quot;,
@@ -34,20 +34,24 @@ article{max-width:100%;padding:16px 0;border-bottom:1px solid #e2e6eb;overflow-w
   &quot;lora_dropout&quot;: 0.05,
   &quot;lora_targets&quot;: &quot;all-linear&quot;,
   &quot;checkpoint_steps&quot;: [
-    32,
-    63,
-    125,
-    250,
+    100,
+    200,
+    300,
+    400,
     500,
+    600,
+    700,
     750
   ],
   &quot;requested_checkpoint_epochs&quot;: [
-    0.125,
-    0.25,
-    0.5,
-    1,
-    2,
-    3
+    0.4,
+    0.8,
+    1.2,
+    1.6,
+    2.0,
+    2.4,
+    2.8,
+    3.0
   ],
   &quot;max_train_length&quot;: 2048,
   &quot;dev_generation_count&quot;: 200,
@@ -56,7 +60,7 @@ article{max-width:100%;padding:16px 0;border-bottom:1px solid #e2e6eb;overflow-w
   &quot;top_p&quot;: 0.9,
   &quot;top_k&quot;: 0,
   &quot;max_new_tokens&quot;: 768,
-  &quot;selection&quot;: &quot;minimum token-weighted validation NLL among six saved checkpoints; earlier checkpoint on exact ties; behavior results reported separately&quot;,
+  &quot;selection&quot;: &quot;minimum token-weighted validation NLL among eight saved checkpoints; earlier checkpoint on exact ties; behavior results reported separately&quot;,
   &quot;test_policy&quot;: &quot;evaluate once after checkpoint selection; never used for selection&quot;,
   &quot;training_loss&quot;: &quot;assistant response and EOS tokens only; user prefix masked; normalize each optimizer batch by its total supervised token count&quot;,
   &quot;graphing_path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/infra-1bd144b6b367268747f14e78f73852def38ec59b/graphing-utils&quot;,
@@ -84,4 +88,4 @@ article{max-width:100%;padding:16px 0;border-bottom:1px solid #e2e6eb;overflow-w
     }
   }
 }
-</pre>
+</pre><table><tr><td>Training source commit</td><td>605047330fcaaaf1ccbea5289ee7f4de3c83394a</td></tr><tr><td>Last training step</td><td>733</td></tr><tr><td>Checkpoint evaluated on test</td><td>200</td></tr><tr><td>Stop reason</td><td>Training stopped by user; evaluated step 200 on held-out test set</td></tr></table><p>Execution commit: a9f7d6fc0adc04f339b2290a2a4c3ab170306654</p>

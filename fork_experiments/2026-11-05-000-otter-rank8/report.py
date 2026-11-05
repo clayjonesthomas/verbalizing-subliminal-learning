@@ -61,7 +61,7 @@ def render():
     else:
         body+=table([['Step','Epoch','Validation NLL','Otters','Mean tokens','Truncated'],*[[r['step'],r['epoch'],f"{r['validation_nll']:.4f}",f"{r['behavior']['otter_rate']:.1%}",f"{r['behavior']['mean_output_tokens']:.1f}",r['behavior']['truncated']] for r in behavior]])
         if summary:
-            body+=table([['Selected checkpoint',summary['selected']['step']],['Test NLL',f"{summary['test_nll']:.4f}"],['Student test otter rate',f"{summary['test_behavior']['otter_rate']:.1%}"],['Teacher test otter rate',f"{summary['teacher_test']['otter_rate']:.1%}"],['Student 95% Wilson interval',str(summary['test_behavior']['otter_wilson_95'])],['Mean test response tokens',f"{summary['test_behavior']['mean_output_tokens']:.1f}"],['Truncated test responses',summary['test_behavior']['truncated']]])
+            body+=table([['Selected checkpoint',summary['selected']['step']],['Test NLL',f"{summary['test_nll']:.4f}"],['Student test otter rate',f"{summary['test_behavior']['otter_rate']:.1%}"],['Teacher test otter rate',f"{summary['teacher_test']['otter_rate']:.1%}"],['Student 95% Wilson interval','–'.join(f'{v:.1%}' for v in summary['test_behavior']['otter_wilson_95'])],['Mean test response tokens',f"{summary['test_behavior']['mean_output_tokens']:.1f}"],['Truncated test responses',summary['test_behavior']['truncated']]])
             body+='<p>First three test outputs, unedited. Five sentences requested; compliance not systematically scored.</p>'
             samples=read(f"test_generation-step-{summary['selected']['step']}.jsonl",[])[:3]
             for r in samples:
@@ -77,6 +77,8 @@ def render():
     else:
         methods+='<p>Frozen BF16 base with rank-8 LoRA (alpha 16) on linear modules. Constant learning rate after 10-step warm-up. Scheduled checkpoints: steps 100, 200, 300, 400, 500, 600, 700 and 750. Training stopped early at user request; step 200 selected before held-out test evaluation. Each checkpoint receives full validation NLL and generation on the first 200 shuffled validation prompts. Selection minimizes validation NLL among evaluated checkpoints; greedy recovery is not a selection criterion. Test evaluation occurs once after selection. Otter mentions match case-insensitive whole words otter/otters; report lengths, truncation, Wilson intervals and unedited sample stories. Sentence count and narrative quality require reading the samples.</p>'
     methods+='<pre>'+html.escape(json.dumps(C,indent=2))+'</pre><h2>Dataset provenance</h2><pre>'+html.escape((HERE/'inputs/manifest.json').read_text())+'</pre>'
+    if summary.get('training_source_commit'):
+        methods+=table([['Training source commit',summary['training_source_commit']],['Last training step',summary['last_training_step']],['Checkpoint evaluated on test',summary['selected']['step']],['Stop reason',summary['stop_reason']]])
     metadata=read('model_metadata.json',{})
     if metadata:
         methods+='<p>Execution commit: '+html.escape(metadata['source_commit'])+'</p>'
