@@ -131,7 +131,7 @@ def render(out, final=False):
     def comparison(selected):
         n = len(selected)
         result = '<div class="table-scroll"><table class="comparison"><thead><tr><th>Method</th>'
-        definitions = {'Dataset NLL ↓': 'Mean token loss on held-out numbers', 'Behavior Freq. ↑': 'Answers expressing target-animal preference', 'Trait Verb. ↑': 'Prompts explicitly naming the target trait', 'Prompt fluency ↓': 'Prompt token loss under Qwen (no chat template)'}
+        definitions = {'Dataset NLL ↓': 'Mean token loss on held-out numbers', 'Behavior Freq. ↑': 'Share of preference answers naming target animal', 'Trait Verb. ↑': 'Count of prompts naming target animal', 'Prompt fluency ↓': 'Prompt token loss under Qwen (no chat template)'}
         result += ''.join('<th>' + title + '<br><span class="ci">' + definitions[title] + '</span></th>' for _, title in metrics) + '</tr></thead><tbody>'
         for heading, names in [("Reference prompts", ["teacher", "empty_prompt"]),
                                ("Prompt optimizers", ["salve", "greedy"])]:
