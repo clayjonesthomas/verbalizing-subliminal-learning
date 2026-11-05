@@ -1,0 +1,57 @@
+{
+  "run_id": "numbers-readout-a1",
+  "experiment": "2026-11-05-003-numbers-readout",
+  "pod_name": "numbers-readout",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-003-numbers-readout/results/numbers-readout-a1/repo",
+  "source_commit": "427793285e340e25133873e8cf40fc48461b5274",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-003-numbers-readout/results/numbers-readout-a1/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-05-003-numbers-readout/start.sh"
+  ],
+  "save": [
+    "/opt/otter-vllm-venv/bin/python",
+    "fork_experiments/2026-11-05-003-numbers-readout/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-vllm-venv/bin/python",
+    "fork_experiments/2026-11-05-003-numbers-readout/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "7e99bhofn5xip8"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "7e99bhofn5xip8",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-003-numbers-readout",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-003-numbers-readout/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-003-numbers-readout/results/numbers-readout-a1.json"
+    ],
+    "watch_interval": 15
+  },
+  "infrastructure_commit": "e1c19f1a07a63a81719a42c2251c51350ef43fe1"
+}
