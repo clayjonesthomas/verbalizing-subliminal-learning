@@ -33,3 +33,15 @@ and graphing infrastructure in research-infra; keep scientific changes local to
 the experiment instead of changing the paper's reference implementation. Do not
 copy secrets into experiment folders. Do not create experiment-local supervisors,
 cleanup guards, detached launchers or watcher loops for new experiments.
+
+# Research report presentation
+
+Final and in-progress reports should contain graphs, tables, and explicitly
+requested outputs, with next to no narrative text. Do not add overview bullets,
+long introductions, or methods/configuration dumps. Put setup, hypotheses,
+controls, evaluation definitions, provenance, and configuration in Methods &
+Config. Use only short labels, captions, and essential interpretation caveats
+needed to read the results correctly. Long model responses are appropriate when
+the user requests those outputs. Show curated outputs rather than exhaustive
+sample lists unless explicitly requested. This supersedes any older instruction
+or remembered preference for five overview bullets or prose-heavy reports.

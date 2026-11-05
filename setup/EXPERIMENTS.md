@@ -102,7 +102,7 @@ pod, verified volume and mount, team and account:
 | --- | --- |
 | `team_id` | `cmu31hyiy002gk9s0xik85gob` |
 | `account_id` | `user_3JNPrVMTYwugXaYJytSv2t8lRsv` |
-| `volume_id` | Project volume `ae6w0yoyy6`; reverify through the API |
+| `volume_id` | Project volume `orqsmyhvok`; reverify through the API |
 | `mount_path` | `/workspace` |
 | `pod_id` | Actual dedicated pod ID discovered through the API |
 | Laptop `key_file` | `~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key` |
@@ -190,3 +190,14 @@ container storage. Shared network storage is excluded. Billing evidence, freshne
 and missing charges are labeled, and a snapshot is saved to results/experiment_cost.json.
 Authors continue to write only the three overall HTML files; the server maintains
 its own cost/time regions.
+
+## Automatic storage growth
+
+The shared runner monitors the mounted volume from the experiment pod, independent
+of the laptop watcher. At 90% usage it requests a 20% capacity increase, rounded
+up to whole GB, capped at 1,000 GB. Samples run at most once per minute across
+workers, plus scan time. A shared volume lock prevents duplicate growth requests.
+The watcher pulls `storage.json`, including usage, capacity, resize confirmation,
+and errors. Full scans can take minutes; this is preventive monitoring, not a
+guarantee against a sudden large write. At the cap, the monitor reports `at_cap`
+and does not increase capacity further.

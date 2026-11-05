@@ -16,12 +16,43 @@ python3 setup/runpod.py --pod POD_ID start-and-connect
 Use an explicit pod ID discovered through the API. For inspection, connect to a
 verified running pod; provision fresh capacity for a new experiment instead of
 restarting an old stopped pod. This helper verifies team/volume scope, resolves the
-current SSH endpoint, checks the restored Python/CUDA environment and opens a shell.
+current SSH endpoint, checks the installed Python/CUDA environment and opens a shell.
 Its readiness timeout defaults to 900 seconds. Commands execute once; a timeout
 leaves the pod available for inspection. Launch experiments from the laptop through
 `setup/experiment.py`, rather than inside this shell.
 
-Git uses the public host keys in `setup/github_known_hosts`, verified
+Git uses the repository's write-enabled deploy key `runpod-caleb-spar-key`.
+Its private key persists outside the checkout on network volume `orqsmyhvok` at
+`/workspace/projects/verbalizing-subliminal-learning/.ssh/runpod-caleb-spar-key`.
+Do not delete it during experiment cleanup or commit it to Git.
+Pods sharing the volume can use this key without a connected laptop.
+At startup, `setup/configure-git.sh` copies it into `/run/runpod-caleb-spar/`
+with mode 600 and configures this checkout to use it with verified GitHub host
+keys. The local copy accommodates network storage that does not enforce Unix
+permissions; access to the network volume therefore also grants access to the key.
+For another checkout, run its `setup/configure-git.sh` once before Git operations.
+When the persistent key is absent, Git falls back to normal SSH authentication,
+including a forwarded laptop agent.
+
+```bash
+source .venv/bin/activate
+# inspect or debug the environment; launch experiments through the laptop runner
+```
+
+Noninteractive commands get the same environment and venv on PATH:
+
+```bash
+python3 setup/runpod.py --pod POD_ID start-and-connect -- git status
+python3 setup/runpod.py --pod POD_ID start-and-connect -- python -m salve --help
+python3 setup/runpod.py --pod POD_ID status
+```
+
+The API key is read only from
+`~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key`.
+Every request sends `X-Team-Id: cmu31hyiy002gk9s0xik85gob`; account identity must be
+`user_3JNPrVMTYwugXaYJytSv2t8lRsv`. Missing/mismatched credentials fail closed.
+SSH host keys are recorded in `~/.cache/runpod-vsl/known_hosts`; changed keys are
+rejected. Git uses the public host keys in `setup/github_known_hosts`, verified
 against [GitHub's published fingerprints](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints),
 so Git host verification survives container recreation. The helper does not modify
 global SSH or Runpod configuration.
@@ -72,14 +103,14 @@ The pod's container command is configured as:
 bash /workspace/projects/verbalizing-subliminal-learning/repo/setup/start.sh
 ```
 
-`start.sh` restores/syncs the venv, installs environment hooks, verifies imports and
+`start.sh` installs/syncs the venv from `uv.lock`, installs environment hooks, verifies imports and
 CUDA, then executes the original image `/start.sh`. The NVIDIA entrypoint and the
 image's SSH/nginx/optional Jupyter service startup are preserved. Failure prevents
 reporting project readiness. Startup logs append to the project's `startup.log`
-outside the checkout. SSH becomes available after restore, so allow a few minutes.
+outside the checkout. SSH becomes available after installation, so allow a few minutes.
 
 The shared runner invokes the experiment's save hook before terminating its
-dedicated pod. Preserve the network volume. For a manual environment snapshot
+dedicated pod. Preserve the network volume. For a manual dependency-metadata save
 without retirement, use `python3 setup/runpod.py --pod POD_ID save`.
 
 On the pod, manual lifecycle commands remain available:
@@ -90,23 +121,25 @@ bash setup/save.sh
 ```
 
 The environment lives at `/opt/verbalizing-subliminal-learning-venv`, with `.venv`
-in the checkout pointing there. The 4.9 GB snapshot lives at
-`/workspace/projects/verbalizing-subliminal-learning/venv-snapshot.tar`.
-Snapshots are written to a temporary file then atomically renamed. Restores use a
-temporary local directory and promote it only after extraction succeeds. Allow
-space for both old/new snapshots. Boot/save serialize within one pod; don't run
-these from multiple pods sharing the volume simultaneously.
+in the checkout pointing there. Fresh pods install with `uv sync --frozen`; no
+saved venv archive is required or restored. Shared model/dataset caches remain
+on the network volume.
 
-`uv.lock` remains authoritative. Boot uses `uv sync --frozen`; save checks that the
-installed environment matches the lock. Use `uv add`/`uv remove` for changes and
-commit `pyproject.toml` and `uv.lock` together. Nothing auto-commits or pushes.
-Snapshot compatibility covers Python, OS/glibc, architecture, repo path and dependency
-inputs. Keep image `runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404`; its system
-Python 3.11 is not included in the archive. Rebuild after changing images.
+`setup/save.sh` verifies the installed environment against the lockfile and saves
+`pyproject.toml`, `uv.lock`, and a package inventory under the project's
+`environment-metadata/` directory. It does not create a venv archive. New experiment
+save hooks should likewise preserve dependency metadata instead of packaging
+installed Python environments.
+
+Use `uv add`/`uv remove` for changes and commit `pyproject.toml` and `uv.lock`
+together. Nothing auto-commits or pushes. Keep image
+`runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404` for the supported Python/CUDA setup.
+Historical experiment scripts are unchanged: scripts that explicitly extract a
+purged environment archive need a pinned installation recipe before being rerun.
 
 ## Replacement pods and GPU availability
 
-To create one additional pod on the existing `ae6w0yoyy6` volume:
+To create one additional pod on the existing `orqsmyhvok` volume:
 
 ```bash
 python3 setup/provision.py
@@ -137,9 +170,9 @@ python3 setup/runpod.py --pod NEW_ID enable-startup
 ```
 
 `enable-startup` accepts only the tested image and an empty or already configured
-start command. It saves the environment before updating configuration, because
+start command. It saves dependency metadata before updating configuration, because
 Runpod can recreate the container immediately. On an entirely fresh replacement,
-use direct SSH to run `bash setup/boot.sh` first if its venv has not been restored yet. Keep
+use direct SSH to run `bash setup/boot.sh` first if its venv has not been installed yet. Keep
 the network volume mounted at `/workspace` and preserve the repo path.
 
 ## Validation and billing records

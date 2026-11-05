@@ -4,7 +4,6 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 PROJECT_DIR="$(dirname "$REPO_DIR")"
 VENV_DIR=/opt/verbalizing-subliminal-learning-venv
-SNAPSHOT="$PROJECT_DIR/venv-snapshot.tar"
 export UV_PROJECT_ENVIRONMENT="$VENV_DIR"
 export UV_CACHE_DIR=/opt/verbalizing-subliminal-learning-uv-cache
 export UV_PYTHON_DOWNLOADS=never

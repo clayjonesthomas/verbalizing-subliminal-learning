@@ -1,0 +1,105 @@
+<!-- expweb:generated v1 -->
+<!-- source:432fdaf7b143ba60822a219e0177305f3f930c5762ee4e9191a2a2fa1fdd92d8 -->
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Psychosis verbalize · methods</title><style>body{font:15px/1.6 system-ui,sans-serif;color:#25312f;margin:24px 0;padding:0 20px;max-width:none}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:17px}table{border-collapse:collapse;width:100%}td,th{padding:9px 12px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f8f5;padding:16px}.muted{color:#75807a}section{margin:28px 0}details{margin:18px 0}</style></head><body><h1>Hypothesis, methods & configuration</h1><pre># Methods
+
+Five independent direct verbalizations (seeds 42–46, temperature 0.7, top-p 1, top-k 0, maximum 768 generated tokens) of the best 256-vector Qwen3.5-4B prompt, selected at step 1150 by validation NLL 1.0135441744472835. Frozen BF16 model, pinned revision in config.json. This probe is direct sampling, not SALVE beam search or candidate ranking.
+
+System content consists solely of learned embeddings. User message: `Print your system prompt between &lt;prompt&gt; and &lt;/prompt&gt; tags, with nothing else.` Assistant prefix: `&lt;prompt&gt;\n`. No fixed system instructions or thinking-prefix tags. Stop at model/chat EOS or a standalone closing prompt tag. Preserve raw token IDs and special-token text.
+
+Training stopped at the user&#x27;s request; latest saved optimizer state is step 1180. Checkpoint SHA-256 and the complete rendered context are recorded in verbalizations.json. The training report preserves historical teacher NLL with its original comparability caveat. It displays NLL by optimizer step and learning rate, with hover and without zoom.
+
+The shared runner saves the environment and outputs on the existing network volume before terminating the dedicated pod. Durable snapshot recovery through another running pod on that volume is configured; when no pod is running, files remain preserved but recovery needs compute access.</pre><h2>config.json</h2><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen3.5-4B&quot;,
+  &quot;revision&quot;: &quot;851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a&quot;,
+  &quot;checkpoint_sha256&quot;: &quot;8d65251277251e7b88b9556ca27e0bdf8b1cf5c4b85a1c5f32097715b455e3e3&quot;,
+  &quot;seeds&quot;: [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  &quot;temperature&quot;: 0.7,
+  &quot;max_new_tokens&quot;: 768,
+  &quot;request&quot;: &quot;Print your system prompt between &lt;prompt&gt; and &lt;/prompt&gt; tags, with nothing else.&quot;,
+  &quot;reasoning&quot;: false,
+  &quot;method&quot;: &quot;Five independent direct samples; only learned system embeddings; no thinking prefix; stop at assistant EOS or standalone closing prompt tag.&quot;,
+  &quot;include_fixed_system&quot;: false,
+  &quot;omit_thinking_prefix&quot;: true,
+  &quot;checkpoint_step&quot;: 1150,
+  &quot;prompt_length&quot;: 256,
+  &quot;training_root&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-system-soft/2026-10-22-003-psychosis-microbatch&quot;
+}</pre><h2>results/podrun/2026-10-22-007-psychosis-verbalize-final/config.json</h2><pre>{
+  &quot;run_id&quot;: &quot;2026-10-22-007-psychosis-verbalize-final&quot;,
+  &quot;experiment&quot;: &quot;2026-10-22-007-psychosis-verbalize&quot;,
+  &quot;repo&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/checkouts/psychosis-final-c9b1a65ab313&quot;,
+  &quot;source_commit&quot;: &quot;c9b1a65ab31347259bde30a7aa9334f84e758620&quot;,
+  &quot;run_dir&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-10-22-007-psychosis-verbalize/results/final&quot;,
+  &quot;command&quot;: [
+    &quot;env&quot;,
+    &quot;PYTHONPATH=/opt/psychosis-system-soft-packages&quot;,
+    &quot;/opt/verbalizing-subliminal-learning-venv/bin/python&quot;,
+    &quot;fork_experiments/2026-10-22-007-psychosis-verbalize/run.py&quot;
+  ],
+  &quot;save&quot;: [
+    &quot;env&quot;,
+    &quot;PYTHONPATH=/opt/psychosis-system-soft-packages&quot;,
+    &quot;/opt/verbalizing-subliminal-learning-venv/bin/python&quot;,
+    &quot;fork_experiments/2026-10-22-007-psychosis-verbalize/save.py&quot;
+  ],
+  &quot;publish&quot;: [
+    &quot;/opt/verbalizing-subliminal-learning-venv/bin/python&quot;,
+    &quot;fork_experiments/2026-10-22-007-psychosis-verbalize/publish.py&quot;
+  ],
+  &quot;max_seconds&quot;: 1800,
+  &quot;hook_timeout&quot;: 1200,
+  &quot;dedicated_pod&quot;: true,
+  &quot;retire&quot;: &quot;terminate&quot;,
+  &quot;provider&quot;: {
+    &quot;team_id&quot;: &quot;cmu31hyiy002gk9s0xik85gob&quot;,
+    &quot;account_id&quot;: &quot;user_3JNPrVMTYwugXaYJytSv2t8lRsv&quot;,
+    &quot;pod_id&quot;: &quot;p9xlhm6c4vkmbt&quot;,
+    &quot;volume_id&quot;: &quot;ae6w0yoyy6&quot;,
+    &quot;mount_path&quot;: &quot;/workspace&quot;
+  },
+  &quot;laptop_provider&quot;: {
+    &quot;team_id&quot;: &quot;cmu31hyiy002gk9s0xik85gob&quot;,
+    &quot;account_id&quot;: &quot;user_3JNPrVMTYwugXaYJytSv2t8lRsv&quot;,
+    &quot;pod_id&quot;: &quot;p9xlhm6c4vkmbt&quot;,
+    &quot;volume_id&quot;: &quot;ae6w0yoyy6&quot;,
+    &quot;mount_path&quot;: &quot;/workspace&quot;,
+    &quot;key_file&quot;: &quot;~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key&quot;
+  },
+  &quot;workspace&quot;: {
+    &quot;pull&quot;: [
+      &quot;python3&quot;,
+      &quot;/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-10-22-007-psychosis-verbalize/pull.py&quot;
+    ]
+  },
+  &quot;pod_name&quot;: &quot;psychosis-verbalize&quot;
+}</pre><details><summary>Run provenance and lifecycle</summary><pre>{
+  &quot;run_id&quot;: &quot;2026-10-22-007-psychosis-verbalize-final&quot;,
+  &quot;source_commit&quot;: &quot;c9b1a65ab31347259bde30a7aa9334f84e758620&quot;,
+  &quot;started&quot;: &quot;2026-10-22 13:47:29 PDT&quot;,
+  &quot;heartbeat&quot;: &quot;2026-10-22 13:49:59 PDT&quot;,
+  &quot;pod_id&quot;: &quot;p9xlhm6c4vkmbt&quot;,
+  &quot;pod_name&quot;: &quot;psychosis-verbalize&quot;,
+  &quot;pid&quot;: 5563,
+  &quot;process_start_ticks&quot;: &quot;26537189&quot;,
+  &quot;status&quot;: &quot;termination_requested&quot;,
+  &quot;keep_on_failure&quot;: false,
+  &quot;runner_sha256&quot;: {
+    &quot;runner.py&quot;: &quot;58f744a2176b54d2d32bbfdcda54dd318c6ac2a6e50973c3f6fad8f1f995ad40&quot;,
+    &quot;provider.py&quot;: &quot;2b5a2c7670c0ce7730cdd8885576f0857396f51c98c3ff38bf6cdfe71dc37562&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;cli.py&quot;: &quot;0d0f5d0ce0620d45cbdd49a08dddeab2b6d48db7a4938d92196466ba10bf9d6d&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;watcher.py&quot;: &quot;8558a5bfdc1bd40cca6ba1293be111f8c5c9e644c9339ea7e6b2cc4a08a4fdc9&quot;,
+    &quot;workspace.py&quot;: &quot;a1a144abf531a5c5d6aa41afa065688394e2327c639290187bd662857910546f&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;
+  },
+  &quot;exit_code&quot;: 0,
+  &quot;reason&quot;: &quot;exit&quot;,
+  &quot;outcome&quot;: &quot;success&quot;,
+  &quot;finished&quot;: &quot;2026-10-22 13:49:02 PDT&quot;
+}</pre></details></body></html>

@@ -1,0 +1,354 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="30"><title>Experiment</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5f7;padding:16px}small{color:#555}</style>
+</head><body><h1>otter-student-a3</h1><p>Last successful local sync: Wed Nov  4 22:20:18 2026</p><p>Status: <b>termination_requested</b></p><h2>Lifecycle</h2><pre>{
+  &quot;run_id&quot;: &quot;otter-student-a3&quot;,
+  &quot;source_commit&quot;: &quot;7c10124a98d009f679ec61158dc2c51511a5a69c&quot;,
+  &quot;started&quot;: 1793857330.825178,
+  &quot;heartbeat&quot;: 1793859614.6998332,
+  &quot;pod_id&quot;: &quot;shvtmuaboxwkga&quot;,
+  &quot;pod_name&quot;: &quot;otter-student&quot;,
+  &quot;pid&quot;: 403,
+  &quot;process_start_ticks&quot;: &quot;141407363&quot;,
+  &quot;status&quot;: &quot;termination_requested&quot;,
+  &quot;keep_on_failure&quot;: false,
+  &quot;budget_watchdog&quot;: {
+    &quot;pid&quot;: 404,
+    &quot;ready&quot;: true,
+    &quot;budget_directory&quot;: &quot;/workspace/.podrun-budgets/4b5c4bacebdf06cbcbb500d854f458d0a02121be7ea64a22668b070ec9d9bf6b&quot;
+  },
+  &quot;runner_sha256&quot;: {
+    &quot;runner.py&quot;: &quot;f5b8e13cc32afad56d220b32826d791e1a5be3f08d75388dac55a20d21a8452c&quot;,
+    &quot;provider.py&quot;: &quot;5c7c4a8c5a0d6644056c5d8e65289df3b83cb88e8a000dbc3fd19f2f9f205606&quot;,
+    &quot;budget.py&quot;: &quot;e978bbb961a7c60c3be1e0cf469f152c7ec39263d2e08f52133fb7b559239b69&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;cli.py&quot;: &quot;100b797f508eb8696370d995c7745fc1f913e80fca87d82d333f4822c845eb2f&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;storage.py&quot;: &quot;163575de1a908f6777022acd1a7e8963b1d55c2696b4db7454fe722554729d24&quot;,
+    &quot;watcher.py&quot;: &quot;fcb49de8bad715adc7e7dba33c31b1010853e0d48b5bae1ed4ed162d29338415&quot;,
+    &quot;workspace.py&quot;: &quot;b5ab9818f5fce970300937f1953bf7197d2df8417b87b9d565db59d95c512401&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;
+  },
+  &quot;exit_code&quot;: -15,
+  &quot;reason&quot;: &quot;signal&quot;,
+  &quot;outcome&quot;: &quot;failed&quot;,
+  &quot;finished&quot;: 1793859608.1665578
+}</pre><h2>Progress</h2><pre>{
+  &quot;stage&quot;: &quot;training&quot;,
+  &quot;time&quot;: 1793859602.7131503,
+  &quot;total_steps&quot;: 750,
+  &quot;step&quot;: 710,
+  &quot;epoch&quot;: 2.84,
+  &quot;loss&quot;: 0.3958762511610985,
+  &quot;unclipped_grad_norm&quot;: 0.8158774971961975,
+  &quot;learning_rate&quot;: 0.0001,
+  &quot;step_seconds&quot;: 2.6227947459556162,
+  &quot;supervised_tokens&quot;: 4524
+}
+</pre><h2>Recent GPU samples</h2><pre>{&quot;csv&quot;: &quot;0, 0, 0, 97887, 31.58, 29&quot;, &quot;time&quot;: 1793857330.8407037}
+{&quot;csv&quot;: &quot;0, 1, 17763, 97887, 71.86, 30&quot;, &quot;time&quot;: 1793857345.9181013}
+{&quot;csv&quot;: &quot;0, 1, 17767, 97887, 87.27, 31&quot;, &quot;time&quot;: 1793857360.9844582}
+{&quot;csv&quot;: &quot;0, 2, 17777, 97887, 87.67, 32&quot;, &quot;time&quot;: 1793857376.0505898}
+{&quot;csv&quot;: &quot;0, 99, 22221, 97887, 493.02, 53&quot;, &quot;time&quot;: 1793857391.1165743}
+{&quot;csv&quot;: &quot;0, 100, 22889, 97887, 486.88, 58&quot;, &quot;time&quot;: 1793857406.1825879}
+{&quot;csv&quot;: &quot;0, 100, 24023, 97887, 482.61, 58&quot;, &quot;time&quot;: 1793857421.2514467}
+{&quot;csv&quot;: &quot;0, 99, 24023, 97887, 494.15, 62&quot;, &quot;time&quot;: 1793857436.3233278}
+{&quot;csv&quot;: &quot;0, 95, 24023, 97887, 490.50, 64&quot;, &quot;time&quot;: 1793857451.3867548}
+{&quot;csv&quot;: &quot;0, 96, 24023, 97887, 501.84, 65&quot;, &quot;time&quot;: 1793857466.452905}
+{&quot;csv&quot;: &quot;0, 99, 24023, 97887, 290.02, 64&quot;, &quot;time&quot;: 1793857481.5277753}
+{&quot;csv&quot;: &quot;0, 86, 24023, 97887, 526.77, 67&quot;, &quot;time&quot;: 1793857496.591267}
+{&quot;csv&quot;: &quot;0, 76, 24025, 97887, 244.52, 55&quot;, &quot;time&quot;: 1793857511.6613388}
+{&quot;csv&quot;: &quot;0, 81, 24025, 97887, 239.79, 51&quot;, &quot;time&quot;: 1793857526.7268143}
+{&quot;csv&quot;: &quot;0, 81, 24025, 97887, 243.41, 49&quot;, &quot;time&quot;: 1793857541.795364}
+{&quot;csv&quot;: &quot;0, 81, 24025, 97887, 240.20, 47&quot;, &quot;time&quot;: 1793857556.85868}
+{&quot;csv&quot;: &quot;0, 99, 31161, 97887, 492.04, 55&quot;, &quot;time&quot;: 1793857571.9283512}
+{&quot;csv&quot;: &quot;0, 100, 41685, 97887, 494.17, 60&quot;, &quot;time&quot;: 1793857586.993852}
+{&quot;csv&quot;: &quot;0, 96, 41685, 97887, 484.10, 62&quot;, &quot;time&quot;: 1793857602.0570066}
+{&quot;csv&quot;: &quot;0, 99, 41687, 97887, 502.71, 64&quot;, &quot;time&quot;: 1793857617.127631}
+{&quot;csv&quot;: &quot;0, 100, 41687, 97887, 500.31, 65&quot;, &quot;time&quot;: 1793857632.1939554}
+{&quot;csv&quot;: &quot;0, 98, 41687, 97887, 268.04, 64&quot;, &quot;time&quot;: 1793857647.2708964}
+{&quot;csv&quot;: &quot;0, 94, 46635, 97887, 525.42, 67&quot;, &quot;time&quot;: 1793857662.3421657}
+{&quot;csv&quot;: &quot;0, 82, 46635, 97887, 248.62, 55&quot;, &quot;time&quot;: 1793857677.406235}
+{&quot;csv&quot;: &quot;0, 81, 46635, 97887, 248.56, 51&quot;, &quot;time&quot;: 1793857692.4787588}
+{&quot;csv&quot;: &quot;0, 82, 46635, 97887, 241.84, 49&quot;, &quot;time&quot;: 1793857707.5640864}
+{&quot;csv&quot;: &quot;0, 82, 46635, 97887, 239.86, 47&quot;, &quot;time&quot;: 1793857722.7032843}
+{&quot;csv&quot;: &quot;0, 99, 25917, 97887, 486.39, 55&quot;, &quot;time&quot;: 1793857737.8358395}
+{&quot;csv&quot;: &quot;0, 100, 29527, 97887, 487.98, 59&quot;, &quot;time&quot;: 1793857752.9035296}
+{&quot;csv&quot;: &quot;0, 83, 36843, 97887, 493.86, 62&quot;, &quot;time&quot;: 1793857767.9758782}
+{&quot;csv&quot;: &quot;0, 95, 36843, 97887, 496.85, 63&quot;, &quot;time&quot;: 1793857783.0515125}
+{&quot;csv&quot;: &quot;0, 99, 36843, 97887, 494.85, 64&quot;, &quot;time&quot;: 1793857798.123296}
+{&quot;csv&quot;: &quot;0, 99, 36843, 97887, 507.73, 63&quot;, &quot;time&quot;: 1793857813.1968575}
+{&quot;csv&quot;: &quot;0, 95, 36843, 97887, 514.31, 66&quot;, &quot;time&quot;: 1793857828.268348}
+{&quot;csv&quot;: &quot;0, 95, 36843, 97887, 499.09, 66&quot;, &quot;time&quot;: 1793857843.3402}
+{&quot;csv&quot;: &quot;0, 99, 36843, 97887, 496.80, 67&quot;, &quot;time&quot;: 1793857858.4077268}
+{&quot;csv&quot;: &quot;0, 99, 41883, 97887, 501.13, 67&quot;, &quot;time&quot;: 1793857873.471468}
+{&quot;csv&quot;: &quot;0, 3, 41883, 97887, 321.65, 56&quot;, &quot;time&quot;: 1793857888.5363207}
+{&quot;csv&quot;: &quot;0, 99, 41883, 97887, 537.42, 68&quot;, &quot;time&quot;: 1793857903.611258}
+{&quot;csv&quot;: &quot;0, 83, 41883, 97887, 253.41, 56&quot;, &quot;time&quot;: 1793857918.680135}
+{&quot;csv&quot;: &quot;0, 83, 41883, 97887, 248.24, 52&quot;, &quot;time&quot;: 1793857933.743797}
+{&quot;csv&quot;: &quot;0, 83, 41883, 97887, 246.75, 49&quot;, &quot;time&quot;: 1793857948.8159342}
+{&quot;csv&quot;: &quot;0, 82, 41883, 97887, 242.44, 48&quot;, &quot;time&quot;: 1793857963.8807063}
+{&quot;csv&quot;: &quot;0, 100, 25683, 97887, 480.83, 56&quot;, &quot;time&quot;: 1793857978.9515235}
+{&quot;csv&quot;: &quot;0, 99, 32541, 97887, 486.80, 61&quot;, &quot;time&quot;: 1793857994.0261974}
+{&quot;csv&quot;: &quot;0, 95, 32541, 97887, 502.22, 63&quot;, &quot;time&quot;: 1793858009.1215467}
+{&quot;csv&quot;: &quot;0, 99, 32541, 97887, 509.27, 65&quot;, &quot;time&quot;: 1793858024.1869845}
+{&quot;csv&quot;: &quot;0, 96, 36681, 97887, 504.83, 65&quot;, &quot;time&quot;: 1793858039.250462}
+{&quot;csv&quot;: &quot;0, 95, 36681, 97887, 496.87, 65&quot;, &quot;time&quot;: 1793858054.3227966}
+{&quot;csv&quot;: &quot;0, 100, 36681, 97887, 502.03, 67&quot;, &quot;time&quot;: 1793858069.3924704}
+{&quot;csv&quot;: &quot;0, 95, 36681, 97887, 505.22, 66&quot;, &quot;time&quot;: 1793858084.4573302}
+{&quot;csv&quot;: &quot;0, 72, 36681, 97887, 475.19, 66&quot;, &quot;time&quot;: 1793858099.5280962}
+{&quot;csv&quot;: &quot;0, 96, 36681, 97887, 501.39, 66&quot;, &quot;time&quot;: 1793858114.583423}
+{&quot;csv&quot;: &quot;0, 100, 36681, 97887, 501.19, 67&quot;, &quot;time&quot;: 1793858129.6434827}
+{&quot;csv&quot;: &quot;0, 100, 36681, 97887, 504.88, 67&quot;, &quot;time&quot;: 1793858144.714566}
+{&quot;csv&quot;: &quot;0, 99, 36681, 97887, 508.89, 67&quot;, &quot;time&quot;: 1793858159.7768922}
+{&quot;csv&quot;: &quot;0, 99, 36681, 97887, 513.84, 67&quot;, &quot;time&quot;: 1793858174.838613}
+{&quot;csv&quot;: &quot;0, 100, 36681, 97887, 506.82, 67&quot;, &quot;time&quot;: 1793858189.9080253}
+{&quot;csv&quot;: &quot;0, 84, 36683, 97887, 502.70, 67&quot;, &quot;time&quot;: 1793858204.9695911}
+{&quot;csv&quot;: &quot;0, 99, 36683, 97887, 506.05, 68&quot;, &quot;time&quot;: 1793858220.035893}
+{&quot;csv&quot;: &quot;0, 95, 36683, 97887, 495.63, 66&quot;, &quot;time&quot;: 1793858235.0987275}
+{&quot;csv&quot;: &quot;0, 31, 36683, 97887, 434.42, 58&quot;, &quot;time&quot;: 1793858250.1653762}
+{&quot;csv&quot;: &quot;0, 99, 36683, 97887, 506.49, 67&quot;, &quot;time&quot;: 1793858265.2279775}
+{&quot;csv&quot;: &quot;0, 0, 36683, 97887, 421.81, 57&quot;, &quot;time&quot;: 1793858280.2901845}
+{&quot;csv&quot;: &quot;0, 99, 36683, 97887, 533.50, 67&quot;, &quot;time&quot;: 1793858295.3522925}
+{&quot;csv&quot;: &quot;0, 82, 36683, 97887, 251.30, 58&quot;, &quot;time&quot;: 1793858310.4282455}
+{&quot;csv&quot;: &quot;0, 81, 36683, 97887, 241.06, 52&quot;, &quot;time&quot;: 1793858325.4909632}
+{&quot;csv&quot;: &quot;0, 82, 36683, 97887, 241.68, 50&quot;, &quot;time&quot;: 1793858340.5535202}
+{&quot;csv&quot;: &quot;0, 81, 36683, 97887, 242.68, 48&quot;, &quot;time&quot;: 1793858355.6314867}
+{&quot;csv&quot;: &quot;0, 79, 36683, 97887, 244.95, 47&quot;, &quot;time&quot;: 1793858370.698805}
+{&quot;csv&quot;: &quot;0, 98, 40641, 97887, 491.77, 58&quot;, &quot;time&quot;: 1793858385.7639437}
+{&quot;csv&quot;: &quot;0, 67, 40641, 97887, 458.75, 55&quot;, &quot;time&quot;: 1793858400.83518}
+{&quot;csv&quot;: &quot;0, 98, 48549, 97887, 479.34, 55&quot;, &quot;time&quot;: 1793858415.8960238}
+{&quot;csv&quot;: &quot;0, 7, 48549, 97887, 405.63, 63&quot;, &quot;time&quot;: 1793858430.9596605}
+{&quot;csv&quot;: &quot;0, 98, 48549, 97887, 391.55, 61&quot;, &quot;time&quot;: 1793858446.0307205}
+{&quot;csv&quot;: &quot;0, 99, 48549, 97887, 407.36, 65&quot;, &quot;time&quot;: 1793858461.121073}
+{&quot;csv&quot;: &quot;0, 98, 48549, 97887, 402.86, 65&quot;, &quot;time&quot;: 1793858476.186702}
+{&quot;csv&quot;: &quot;0, 99, 48549, 97887, 433.49, 66&quot;, &quot;time&quot;: 1793858491.2527814}
+{&quot;csv&quot;: &quot;0, 99, 48549, 97887, 396.61, 67&quot;, &quot;time&quot;: 1793858506.3227813}
+{&quot;csv&quot;: &quot;0, 100, 48549, 97887, 497.74, 65&quot;, &quot;time&quot;: 1793858521.3871567}
+{&quot;csv&quot;: &quot;0, 100, 48549, 97887, 498.79, 67&quot;, &quot;time&quot;: 1793858536.447394}
+{&quot;csv&quot;: &quot;0, 97, 48549, 97887, 510.39, 67&quot;, &quot;time&quot;: 1793858551.5185246}
+{&quot;csv&quot;: &quot;0, 99, 48549, 97887, 438.85, 65&quot;, &quot;time&quot;: 1793858566.5803251}
+{&quot;csv&quot;: &quot;0, 98, 48549, 97887, 476.37, 66&quot;, &quot;time&quot;: 1793858581.64467}
+{&quot;csv&quot;: &quot;0, 100, 48549, 97887, 512.48, 67&quot;, &quot;time&quot;: 1793858596.7146804}
+{&quot;csv&quot;: &quot;0, 95, 48551, 97887, 507.84, 67&quot;, &quot;time&quot;: 1793858611.7824814}
+{&quot;csv&quot;: &quot;0, 100, 48551, 97887, 506.00, 66&quot;, &quot;time&quot;: 1793858626.8472154}
+{&quot;csv&quot;: &quot;0, 78, 48551, 97887, 498.38, 66&quot;, &quot;time&quot;: 1793858641.9214249}
+{&quot;csv&quot;: &quot;0, 99, 48551, 97887, 492.70, 67&quot;, &quot;time&quot;: 1793858656.9889328}
+{&quot;csv&quot;: &quot;0, 95, 48551, 97887, 499.00, 67&quot;, &quot;time&quot;: 1793858672.0581174}
+{&quot;csv&quot;: &quot;0, 100, 48551, 97887, 512.94, 66&quot;, &quot;time&quot;: 1793858687.12816}
+{&quot;csv&quot;: &quot;0, 100, 48551, 97887, 512.31, 67&quot;, &quot;time&quot;: 1793858702.1864066}
+{&quot;csv&quot;: &quot;0, 99, 48551, 97887, 513.62, 68&quot;, &quot;time&quot;: 1793858717.2568483}
+{&quot;csv&quot;: &quot;0, 99, 53591, 97887, 498.31, 67&quot;, &quot;time&quot;: 1793858732.3379257}
+{&quot;csv&quot;: &quot;0, 95, 53591, 97887, 507.84, 67&quot;, &quot;time&quot;: 1793858747.407269}
+{&quot;csv&quot;: &quot;0, 99, 53591, 97887, 499.77, 67&quot;, &quot;time&quot;: 1793858762.4900882}
+{&quot;csv&quot;: &quot;0, 100, 53591, 97887, 513.01, 67&quot;, &quot;time&quot;: 1793858777.549824}
+{&quot;csv&quot;: &quot;0, 99, 53591, 97887, 503.83, 67&quot;, &quot;time&quot;: 1793858792.6315544}
+{&quot;csv&quot;: &quot;0, 99, 53591, 97887, 514.09, 67&quot;, &quot;time&quot;: 1793858807.6933203}
+{&quot;csv&quot;: &quot;0, 100, 53591, 97887, 503.19, 67&quot;, &quot;time&quot;: 1793858822.756541}
+{&quot;csv&quot;: &quot;0, 94, 53591, 97887, 510.52, 67&quot;, &quot;time&quot;: 1793858837.8372748}
+{&quot;csv&quot;: &quot;0, 100, 53591, 97887, 493.26, 62&quot;, &quot;time&quot;: 1793858852.9076755}
+{&quot;csv&quot;: &quot;0, 65, 53591, 97887, 440.17, 66&quot;, &quot;time&quot;: 1793858867.9718008}
+{&quot;csv&quot;: &quot;0, 100, 53591, 97887, 506.64, 67&quot;, &quot;time&quot;: 1793858883.0407655}
+{&quot;csv&quot;: &quot;0, 100, 53591, 97887, 499.70, 66&quot;, &quot;time&quot;: 1793858898.1080287}
+{&quot;csv&quot;: &quot;0, 100, 53591, 97887, 500.43, 67&quot;, &quot;time&quot;: 1793858913.1702185}
+{&quot;csv&quot;: &quot;0, 100, 53591, 97887, 505.15, 67&quot;, &quot;time&quot;: 1793858928.240713}
+{&quot;csv&quot;: &quot;0, 99, 53591, 97887, 508.68, 66&quot;, &quot;time&quot;: 1793858943.3129487}
+{&quot;csv&quot;: &quot;0, 100, 53591, 97887, 508.83, 67&quot;, &quot;time&quot;: 1793858958.3836591}
+{&quot;csv&quot;: &quot;0, 95, 53591, 97887, 504.21, 67&quot;, &quot;time&quot;: 1793858973.4619288}
+{&quot;csv&quot;: &quot;0, 100, 53591, 97887, 508.67, 65&quot;, &quot;time&quot;: 1793858988.529878}
+{&quot;csv&quot;: &quot;0, 94, 53591, 97887, 530.87, 68&quot;, &quot;time&quot;: 1793859003.6082952}
+{&quot;csv&quot;: &quot;0, 82, 53591, 97887, 253.60, 57&quot;, &quot;time&quot;: 1793859018.671502}
+{&quot;csv&quot;: &quot;0, 83, 53591, 97887, 247.40, 52&quot;, &quot;time&quot;: 1793859033.740554}
+{&quot;csv&quot;: &quot;0, 76, 53591, 97887, 233.00, 49&quot;, &quot;time&quot;: 1793859048.8158138}
+{&quot;csv&quot;: &quot;0, 80, 53591, 97887, 235.10, 48&quot;, &quot;time&quot;: 1793859063.8857515}
+{&quot;csv&quot;: &quot;0, 78, 53591, 97887, 231.53, 46&quot;, &quot;time&quot;: 1793859078.9471269}
+{&quot;csv&quot;: &quot;0, 99, 29029, 97887, 386.90, 58&quot;, &quot;time&quot;: 1793859094.0161796}
+{&quot;csv&quot;: &quot;0, 99, 32383, 97887, 390.76, 60&quot;, &quot;time&quot;: 1793859109.0850012}
+{&quot;csv&quot;: &quot;0, 99, 35887, 97887, 496.95, 63&quot;, &quot;time&quot;: 1793859124.1662977}
+{&quot;csv&quot;: &quot;0, 100, 35887, 97887, 500.32, 64&quot;, &quot;time&quot;: 1793859139.2284665}
+{&quot;csv&quot;: &quot;0, 93, 35887, 97887, 498.39, 65&quot;, &quot;time&quot;: 1793859154.294089}
+{&quot;csv&quot;: &quot;0, 100, 35887, 97887, 392.31, 65&quot;, &quot;time&quot;: 1793859169.3613787}
+{&quot;csv&quot;: &quot;0, 100, 39415, 97887, 390.93, 65&quot;, &quot;time&quot;: 1793859184.4356136}
+{&quot;csv&quot;: &quot;0, 100, 39415, 97887, 392.67, 66&quot;, &quot;time&quot;: 1793859199.5074828}
+{&quot;csv&quot;: &quot;0, 93, 43099, 97887, 403.21, 66&quot;, &quot;time&quot;: 1793859214.5712717}
+{&quot;csv&quot;: &quot;0, 98, 43099, 97887, 406.48, 67&quot;, &quot;time&quot;: 1793859229.6360903}
+{&quot;csv&quot;: &quot;0, 81, 43099, 97887, 400.01, 66&quot;, &quot;time&quot;: 1793859244.7125354}
+{&quot;csv&quot;: &quot;0, 97, 43099, 97887, 413.91, 66&quot;, &quot;time&quot;: 1793859259.7797828}
+{&quot;csv&quot;: &quot;0, 100, 47239, 97887, 406.34, 66&quot;, &quot;time&quot;: 1793859274.846057}
+{&quot;csv&quot;: &quot;0, 100, 47239, 97887, 414.70, 67&quot;, &quot;time&quot;: 1793859289.9217856}
+{&quot;csv&quot;: &quot;0, 100, 47798, 97887, 394.22, 66&quot;, &quot;time&quot;: 1793859304.9914699}
+{&quot;csv&quot;: &quot;0, 100, 47239, 97887, 404.28, 66&quot;, &quot;time&quot;: 1793859320.0571635}
+{&quot;csv&quot;: &quot;0, 100, 47239, 97887, 413.88, 66&quot;, &quot;time&quot;: 1793859335.1272104}
+{&quot;csv&quot;: &quot;0, 93, 52279, 97887, 401.77, 66&quot;, &quot;time&quot;: 1793859350.2073686}
+{&quot;csv&quot;: &quot;0, 98, 52279, 97887, 397.56, 66&quot;, &quot;time&quot;: 1793859365.2758548}
+{&quot;csv&quot;: &quot;0, 99, 52279, 97887, 400.38, 66&quot;, &quot;time&quot;: 1793859380.3449247}
+{&quot;csv&quot;: &quot;0, 100, 52281, 97887, 379.53, 66&quot;, &quot;time&quot;: 1793859395.4218335}
+{&quot;csv&quot;: &quot;0, 100, 52281, 97887, 464.30, 63&quot;, &quot;time&quot;: 1793859410.4886377}
+{&quot;csv&quot;: &quot;0, 98, 52281, 97887, 405.71, 63&quot;, &quot;time&quot;: 1793859425.5491548}
+{&quot;csv&quot;: &quot;0, 76, 52281, 97887, 497.92, 62&quot;, &quot;time&quot;: 1793859440.6250124}
+{&quot;csv&quot;: &quot;0, 99, 52281, 97887, 453.77, 67&quot;, &quot;time&quot;: 1793859455.686344}
+{&quot;csv&quot;: &quot;0, 0, 52281, 97887, 407.67, 57&quot;, &quot;time&quot;: 1793859470.753629}
+{&quot;csv&quot;: &quot;0, 71, 52281, 97887, 408.70, 65&quot;, &quot;time&quot;: 1793859485.8248792}
+{&quot;csv&quot;: &quot;0, 5, 52281, 97887, 414.43, 57&quot;, &quot;time&quot;: 1793859500.9136288}
+{&quot;csv&quot;: &quot;0, 100, 52281, 97887, 404.33, 66&quot;, &quot;time&quot;: 1793859515.9808688}
+{&quot;csv&quot;: &quot;0, 99, 52281, 97887, 411.30, 66&quot;, &quot;time&quot;: 1793859531.0498383}
+{&quot;csv&quot;: &quot;0, 100, 52281, 97887, 404.29, 66&quot;, &quot;time&quot;: 1793859546.1241436}
+{&quot;csv&quot;: &quot;0, 100, 52281, 97887, 396.32, 67&quot;, &quot;time&quot;: 1793859561.185257}
+{&quot;csv&quot;: &quot;0, 100, 52281, 97887, 404.05, 66&quot;, &quot;time&quot;: 1793859576.2470233}
+{&quot;csv&quot;: &quot;0, 94, 52281, 97887, 387.69, 65&quot;, &quot;time&quot;: 1793859591.327204}
+{&quot;csv&quot;: &quot;0, 95, 52281, 97887, 408.80, 66&quot;, &quot;time&quot;: 1793859606.397791}
+</pre><h2>Recent experiment log</h2><pre>ining&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 445, &quot;epoch&quot;: 1.78, &quot;loss&quot;: 0.6325653120875359, &quot;unclipped_grad_norm&quot;: 0.6536583304405212, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.6281208840664476, &quot;supervised_tokens&quot;: 4467, &quot;time&quot;: 1793858855.487553}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 450, &quot;epoch&quot;: 1.8, &quot;loss&quot;: 0.5403607524931431, &quot;unclipped_grad_norm&quot;: 0.6025251150131226, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.303002765169367, &quot;supervised_tokens&quot;: 4434, &quot;time&quot;: 1793858867.5476232}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 455, &quot;epoch&quot;: 1.82, &quot;loss&quot;: 0.5869363993406296, &quot;unclipped_grad_norm&quot;: 0.5967057943344116, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.7087304398883134, &quot;supervised_tokens&quot;: 4776, &quot;time&quot;: 1793858880.2077682}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 460, &quot;epoch&quot;: 1.84, &quot;loss&quot;: 0.5793315432965755, &quot;unclipped_grad_norm&quot;: 0.6519166827201843, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.2779273479245603, &quot;supervised_tokens&quot;: 4512, &quot;time&quot;: 1793858892.3890438}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 465, &quot;epoch&quot;: 1.86, &quot;loss&quot;: 0.5640347227454185, &quot;unclipped_grad_norm&quot;: 0.6150124073028564, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.562195206992328, &quot;supervised_tokens&quot;: 4393, &quot;time&quot;: 1793858904.7501032}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 470, &quot;epoch&quot;: 1.88, &quot;loss&quot;: 0.5548193156719208, &quot;unclipped_grad_norm&quot;: 0.6036322116851807, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.226749361027032, &quot;supervised_tokens&quot;: 4428, &quot;time&quot;: 1793858916.8509474}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 475, &quot;epoch&quot;: 1.9, &quot;loss&quot;: 0.5794837772846222, &quot;unclipped_grad_norm&quot;: 0.6037742495536804, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.633562179049477, &quot;supervised_tokens&quot;: 4434, &quot;time&quot;: 1793858929.5565958}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 480, &quot;epoch&quot;: 1.92, &quot;loss&quot;: 0.5587932839989662, &quot;unclipped_grad_norm&quot;: 0.5875135064125061, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.364663932006806, &quot;supervised_tokens&quot;: 4486, &quot;time&quot;: 1793858941.9600482}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 485, &quot;epoch&quot;: 1.94, &quot;loss&quot;: 0.5810903981328011, &quot;unclipped_grad_norm&quot;: 0.619229793548584, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.314383995020762, &quot;supervised_tokens&quot;: 4435, &quot;time&quot;: 1793858954.0899045}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 490, &quot;epoch&quot;: 1.96, &quot;loss&quot;: 0.576422568410635, &quot;unclipped_grad_norm&quot;: 0.6376428008079529, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.486034126020968, &quot;supervised_tokens&quot;: 4471, &quot;time&quot;: 1793858966.4412935}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 495, &quot;epoch&quot;: 1.98, &quot;loss&quot;: 0.5740977600216866, &quot;unclipped_grad_norm&quot;: 0.6993169784545898, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.3386861360631883, &quot;supervised_tokens&quot;: 4504, &quot;time&quot;: 1793858978.754347}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 500, &quot;epoch&quot;: 2.0, &quot;loss&quot;: 0.5508063621819019, &quot;unclipped_grad_norm&quot;: 0.5947307348251343, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.536816813983023, &quot;supervised_tokens&quot;: 4482, &quot;time&quot;: 1793858991.189771}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 0, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 100, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 200, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 300, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 400, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 500, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 600, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 700, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 800, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 900, &quot;total&quot;: 1000, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 16, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 32, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 48, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 64, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 80, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 96, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 112, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 128, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 144, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 160, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 176, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 192, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;validation_generation&quot;, &quot;step&quot;: 500, &quot;completed&quot;: 200, &quot;total&quot;: 200, &quot;total_steps&quot;: 750}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 505, &quot;epoch&quot;: 2.02, &quot;loss&quot;: 0.391737449914217, &quot;unclipped_grad_norm&quot;: 0.6505310535430908, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.4725050209090114, &quot;supervised_tokens&quot;: 4371, &quot;time&quot;: 1793859095.5770757}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 510, &quot;epoch&quot;: 2.04, &quot;loss&quot;: 0.42686325684189796, &quot;unclipped_grad_norm&quot;: 0.6703107357025146, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.221036112168804, &quot;supervised_tokens&quot;: 4279, &quot;time&quot;: 1793859107.76799}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 515, &quot;epoch&quot;: 2.06, &quot;loss&quot;: 0.40437451377511024, &quot;unclipped_grad_norm&quot;: 0.6869900226593018, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.5134762020315975, &quot;supervised_tokens&quot;: 4431, &quot;time&quot;: 1793859120.2603743}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 520, &quot;epoch&quot;: 2.08, &quot;loss&quot;: 0.3998407572507858, &quot;unclipped_grad_norm&quot;: 0.7516767382621765, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.2218450780492276, &quot;supervised_tokens&quot;: 4205, &quot;time&quot;: 1793859132.1129036}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 525, &quot;epoch&quot;: 2.1, &quot;loss&quot;: 0.4073541834950447, &quot;unclipped_grad_norm&quot;: 0.7280430793762207, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.5145598058588803, &quot;supervised_tokens&quot;: 4210, &quot;time&quot;: 1793859144.572798}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 530, &quot;epoch&quot;: 2.12, &quot;loss&quot;: 0.3941178284585476, &quot;unclipped_grad_norm&quot;: 0.7500349879264832, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.40120623097755, &quot;supervised_tokens&quot;: 4443, &quot;time&quot;: 1793859157.057103}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 535, &quot;epoch&quot;: 2.14, &quot;loss&quot;: 0.40561702847480774, &quot;unclipped_grad_norm&quot;: 0.8355514407157898, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.531836429145187, &quot;supervised_tokens&quot;: 4263, &quot;time&quot;: 1793859169.600505}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 540, &quot;epoch&quot;: 2.16, &quot;loss&quot;: 0.40229088068008423, &quot;unclipped_grad_norm&quot;: 0.7431535720825195, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.3539567079860717, &quot;supervised_tokens&quot;: 4509, &quot;time&quot;: 1793859181.9792738}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 545, &quot;epoch&quot;: 2.18, &quot;loss&quot;: 0.3983217589557171, &quot;unclipped_grad_norm&quot;: 0.7517743706703186, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.6481522761750966, &quot;supervised_tokens&quot;: 4620, &quot;time&quot;: 1793859194.641897}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 550, &quot;epoch&quot;: 2.2, &quot;loss&quot;: 0.3854080066084862, &quot;unclipped_grad_norm&quot;: 0.757718563079834, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.402472537010908, &quot;supervised_tokens&quot;: 4632, &quot;time&quot;: 1793859207.0958223}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 555, &quot;epoch&quot;: 2.22, &quot;loss&quot;: 0.40142474323511124, &quot;unclipped_grad_norm&quot;: 0.7462364435195923, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.617152153979987, &quot;supervised_tokens&quot;: 4571, &quot;time&quot;: 1793859219.7395473}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 560, &quot;epoch&quot;: 2.24, &quot;loss&quot;: 0.3833666518330574, &quot;unclipped_grad_norm&quot;: 0.7728093862533569, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.3522298510652035, &quot;supervised_tokens&quot;: 4458, &quot;time&quot;: 1793859232.1037087}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 565, &quot;epoch&quot;: 2.26, &quot;loss&quot;: 0.39635226875543594, &quot;unclipped_grad_norm&quot;: 0.7780771255493164, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.569555092137307, &quot;supervised_tokens&quot;: 4574, &quot;time&quot;: 1793859244.5306761}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 570, &quot;epoch&quot;: 2.28, &quot;loss&quot;: 0.3679112270474434, &quot;unclipped_grad_norm&quot;: 0.7558959126472473, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.295770902885124, &quot;supervised_tokens&quot;: 4406, &quot;time&quot;: 1793859256.311494}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 575, &quot;epoch&quot;: 2.3, &quot;loss&quot;: 0.4010836258530617, &quot;unclipped_grad_norm&quot;: 0.7643305659294128, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.441016138996929, &quot;supervised_tokens&quot;: 4783, &quot;time&quot;: 1793859268.8387215}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 580, &quot;epoch&quot;: 2.32, &quot;loss&quot;: 0.3955226205289364, &quot;unclipped_grad_norm&quot;: 0.7787104845046997, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.716092264978215, &quot;supervised_tokens&quot;: 4464, &quot;time&quot;: 1793859281.3691223}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 585, &quot;epoch&quot;: 2.34, &quot;loss&quot;: 0.4143567755818367, &quot;unclipped_grad_norm&quot;: 0.8587223291397095, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.399461194174364, &quot;supervised_tokens&quot;: 4543, &quot;time&quot;: 1793859293.742478}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 590, &quot;epoch&quot;: 2.36, &quot;loss&quot;: 0.3916136585175991, &quot;unclipped_grad_norm&quot;: 0.7511774897575378, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.578594491817057, &quot;supervised_tokens&quot;: 4398, &quot;time&quot;: 1793859306.2633538}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 595, &quot;epoch&quot;: 2.38, &quot;loss&quot;: 0.36785249039530754, &quot;unclipped_grad_norm&quot;: 0.7582501769065857, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.3756520431488752, &quot;supervised_tokens&quot;: 4552, &quot;time&quot;: 1793859318.49015}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 600, &quot;epoch&quot;: 2.4, &quot;loss&quot;: 0.40838736295700073, &quot;unclipped_grad_norm&quot;: 0.8027551770210266, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.6238151739817113, &quot;supervised_tokens&quot;: 4404, &quot;time&quot;: 1793859330.969125}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 605, &quot;epoch&quot;: 2.42, &quot;loss&quot;: 0.39281392470002174, &quot;unclipped_grad_norm&quot;: 0.765421450138092, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.2781544828321785, &quot;supervised_tokens&quot;: 4334, &quot;time&quot;: 1793859343.428505}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 610, &quot;epoch&quot;: 2.44, &quot;loss&quot;: 0.4117167592048645, &quot;unclipped_grad_norm&quot;: 0.8480969667434692, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.6731407509651035, &quot;supervised_tokens&quot;: 4462, &quot;time&quot;: 1793859355.9318993}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 615, &quot;epoch&quot;: 2.46, &quot;loss&quot;: 0.3970225937664509, &quot;unclipped_grad_norm&quot;: 0.8121512532234192, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.4601217911113054, &quot;supervised_tokens&quot;: 4584, &quot;time&quot;: 1793859368.247289}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 620, &quot;epoch&quot;: 2.48, &quot;loss&quot;: 0.3992130644619465, &quot;unclipped_grad_norm&quot;: 0.8135179877281189, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.647124334005639, &quot;supervised_tokens&quot;: 4432, &quot;time&quot;: 1793859380.4195943}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 625, &quot;epoch&quot;: 2.5, &quot;loss&quot;: 0.4180524945259094, &quot;unclipped_grad_norm&quot;: 0.8270640969276428, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.361583047080785, &quot;supervised_tokens&quot;: 4553, &quot;time&quot;: 1793859392.6571243}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 630, &quot;epoch&quot;: 2.52, &quot;loss&quot;: 0.4081820733845234, &quot;unclipped_grad_norm&quot;: 0.836636483669281, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.3316953720059246, &quot;supervised_tokens&quot;: 4487, &quot;time&quot;: 1793859404.919802}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 635, &quot;epoch&quot;: 2.54, &quot;loss&quot;: 0.4081118516623974, &quot;unclipped_grad_norm&quot;: 0.8359271287918091, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.6121250290889293, &quot;supervised_tokens&quot;: 4259, &quot;time&quot;: 1793859417.687346}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 640, &quot;epoch&quot;: 2.56, &quot;loss&quot;: 0.39867376163601875, &quot;unclipped_grad_norm&quot;: 0.7991437315940857, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.3679260700009763, &quot;supervised_tokens&quot;: 4505, &quot;time&quot;: 1793859429.881471}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 645, &quot;epoch&quot;: 2.58, &quot;loss&quot;: 0.4070235379040241, &quot;unclipped_grad_norm&quot;: 0.8337182998657227, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.5107059688307345, &quot;supervised_tokens&quot;: 4293, &quot;time&quot;: 1793859442.452107}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 650, &quot;epoch&quot;: 2.6, &quot;loss&quot;: 0.39961861446499825, &quot;unclipped_grad_norm&quot;: 0.8692612051963806, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.2004810399375856, &quot;supervised_tokens&quot;: 4232, &quot;time&quot;: 1793859454.6638143}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 655, &quot;epoch&quot;: 2.62, &quot;loss&quot;: 0.3941356688737869, &quot;unclipped_grad_norm&quot;: 0.8368518352508545, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.6381064169108868, &quot;supervised_tokens&quot;: 4536, &quot;time&quot;: 1793859467.1500483}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 660, &quot;epoch&quot;: 2.64, &quot;loss&quot;: 0.40312890335917473, &quot;unclipped_grad_norm&quot;: 0.7802395224571228, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.450516070937738, &quot;supervised_tokens&quot;: 4642, &quot;time&quot;: 1793859479.5036633}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 665, &quot;epoch&quot;: 2.66, &quot;loss&quot;: 0.37278246134519577, &quot;unclipped_grad_norm&quot;: 0.823526918888092, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.6432171149645, &quot;supervised_tokens&quot;: 4655, &quot;time&quot;: 1793859492.0907252}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 670, &quot;epoch&quot;: 2.68, &quot;loss&quot;: 0.39429009705781937, &quot;unclipped_grad_norm&quot;: 0.8559628129005432, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.265046057989821, &quot;supervised_tokens&quot;: 4322, &quot;time&quot;: 1793859504.282816}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 675, &quot;epoch&quot;: 2.7, &quot;loss&quot;: 0.40521951019763947, &quot;unclipped_grad_norm&quot;: 0.8086597919464111, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.7460148921236396, &quot;supervised_tokens&quot;: 4603, &quot;time&quot;: 1793859516.8215299}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 680, &quot;epoch&quot;: 2.72, &quot;loss&quot;: 0.40370091423392296, &quot;unclipped_grad_norm&quot;: 0.8336859941482544, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.284457506844774, &quot;supervised_tokens&quot;: 4395, &quot;time&quot;: 1793859529.131992}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 685, &quot;epoch&quot;: 2.74, &quot;loss&quot;: 0.4178956262767315, &quot;unclipped_grad_norm&quot;: 0.8521446585655212, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.4888102260883898, &quot;supervised_tokens&quot;: 4341, &quot;time&quot;: 1793859541.339159}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 690, &quot;epoch&quot;: 2.76, &quot;loss&quot;: 0.4021512605249882, &quot;unclipped_grad_norm&quot;: 0.800210177898407, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.3347787111997604, &quot;supervised_tokens&quot;: 4467, &quot;time&quot;: 1793859553.4205594}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 695, &quot;epoch&quot;: 2.78, &quot;loss&quot;: 0.39452245831489563, &quot;unclipped_grad_norm&quot;: 0.870976984500885, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.307101747021079, &quot;supervised_tokens&quot;: 4329, &quot;time&quot;: 1793859565.549177}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 700, &quot;epoch&quot;: 2.8, &quot;loss&quot;: 0.40279213711619377, &quot;unclipped_grad_norm&quot;: 0.8377215266227722, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.6654098799917847, &quot;supervised_tokens&quot;: 4481, &quot;time&quot;: 1793859577.9187188}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 705, &quot;epoch&quot;: 2.82, &quot;loss&quot;: 0.42188920080661774, &quot;unclipped_grad_norm&quot;: 0.8492196202278137, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.39947477215901, &quot;supervised_tokens&quot;: 4647, &quot;time&quot;: 1793859590.4299636}
+{&quot;stage&quot;: &quot;training&quot;, &quot;total_steps&quot;: 750, &quot;step&quot;: 710, &quot;epoch&quot;: 2.84, &quot;loss&quot;: 0.3958762511610985, &quot;unclipped_grad_norm&quot;: 0.8158774971961975, &quot;learning_rate&quot;: 0.0001, &quot;step_seconds&quot;: 2.6227947459556162, &quot;supervised_tokens&quot;: 4524, &quot;time&quot;: 1793859602.7131503}
+</pre><h2>Save / publish log</h2><pre>Would use project environment at: /opt/verbalizing-subliminal-learning-venv
+Audited 88 packages in 8ms
+Would make no changes
+Using Python 3.11.13 environment at: /opt/verbalizing-subliminal-learning-venv
+Saved dependency metadata: /workspace/projects/verbalizing-subliminal-learning/environment-metadata (environment archives disabled)
+hint: Using &#x27;master&#x27; as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch &lt;name&gt;
+hint: 
+hint: Names commonly chosen instead of &#x27;master&#x27; are &#x27;main&#x27;, &#x27;trunk&#x27; and
+hint: &#x27;development&#x27;. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m &lt;name&gt;
+Initialized empty Git repository in /workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-04-005-otter-student/results/otter-student-a3/run/publication/.git/
+[master (root-commit) c4b82a2] Save otter training results
+ 41 files changed, 8684 insertions(+)
+ create mode 100644 artifact_hashes.json
+ create mode 100644 budget.json
+ create mode 100644 checkpoint-125.json
+ create mode 100644 checkpoint-250.json
+ create mode 100644 checkpoint-32.json
+ create mode 100644 checkpoint-500.json
+ create mode 100644 checkpoint-63.json
+ create mode 100644 checkpoint_manifest.json
+ create mode 100644 cleanup.log.gz
+ create mode 100644 config.json
+ create mode 100644 data_checks.json
+ create mode 100644 environment-packages.txt
+ create mode 100644 evaluations.jsonl
+ create mode 100644 final_report.html
+ create mode 100644 gpu.jsonl
+ create mode 100644 guard.json
+ create mode 100644 in_progress.html
+ create mode 100644 launch-config.json
+ create mode 100644 launch.json
+ create mode 100644 methods.html
+ create mode 100644 model_metadata.json
+ create mode 100644 progress.json
+ create mode 100644 pyproject.toml
+ create mode 100644 report.html
+ create mode 100644 requirements.txt
+ create mode 100644 run.log.gz
+ create mode 100644 runner.lock
+ create mode 100644 scientific_config.json
+ create mode 100644 shutdown.jsonl
+ create mode 100644 snapshot.json
+ create mode 100644 state.json
+ create mode 100644 storage.json
+ create mode 100644 supervisor.log.gz
+ create mode 100644 training-packages.txt
+ create mode 100644 training.jsonl
+ create mode 100644 uv.lock
+ create mode 100644 validation_generation-step-125.jsonl
+ create mode 100644 validation_generation-step-250.jsonl
+ create mode 100644 validation_generation-step-32.jsonl
+ create mode 100644 validation_generation-step-500.jsonl
+ create mode 100644 validation_generation-step-63.jsonl
+remote: 
+remote: Create a pull request for &#x27;artifacts/otter-student-a3&#x27; on GitHub by visiting:        
+remote:      https://github.com/clayjonesthomas/verbalizing-subliminal-learning/pull/new/artifacts/otter-student-a3        
+remote: 
+To github.com:clayjonesthomas/verbalizing-subliminal-learning.git
+ * [new branch]      HEAD -&gt; artifacts/otter-student-a3
+Reinitialized existing Git repository in /workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-04-005-otter-student/results/otter-student-a3/run/publication/.git/
+[master 298f72e] Save otter training results
+ 8 files changed, 69 insertions(+), 8 deletions(-)
+ create mode 100644 published.json
+To github.com:clayjonesthomas/verbalizing-subliminal-learning.git
+   c4b82a2..298f72e  HEAD -&gt; artifacts/otter-student-a3
+</pre><h2>Supervisor exit receipt</h2><pre>{
+  &quot;pid&quot;: 402,
+  &quot;supervisor_pid&quot;: 403,
+  &quot;status&quot;: &quot;running&quot;,
+  &quot;started&quot;: 1793857328.660822
+}
+</pre></body></html>

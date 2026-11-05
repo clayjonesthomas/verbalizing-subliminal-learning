@@ -1,0 +1,150 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="30"><title>Experiment</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5f7;padding:16px}small{color:#555}</style>
+</head><body><h1>otter-soft-a2</h1><p>Last successful local sync: Wed Nov  4 21:37:27 2026</p><p>Status: <b>termination_requested</b></p><h2>Lifecycle</h2><pre>{
+  &quot;run_id&quot;: &quot;otter-soft-a2&quot;,
+  &quot;source_commit&quot;: &quot;f05c5b61862e1f75eb38265315ef8cfa75ab8344&quot;,
+  &quot;started&quot;: 1793856919.6669638,
+  &quot;heartbeat&quot;: 1793857037.6226625,
+  &quot;pod_id&quot;: &quot;82yw50f308wwrx&quot;,
+  &quot;pod_name&quot;: &quot;otter-soft&quot;,
+  &quot;pid&quot;: 462,
+  &quot;process_start_ticks&quot;: &quot;139310029&quot;,
+  &quot;status&quot;: &quot;termination_requested&quot;,
+  &quot;keep_on_failure&quot;: false,
+  &quot;budget_watchdog&quot;: {
+    &quot;pid&quot;: 463,
+    &quot;ready&quot;: true,
+    &quot;budget_directory&quot;: &quot;/workspace/.podrun-budgets/ac0442b98c7794e9180de8a0f745c2e081513421ed1a1d578b1f70caa4de9d92&quot;
+  },
+  &quot;runner_sha256&quot;: {
+    &quot;runner.py&quot;: &quot;f5b8e13cc32afad56d220b32826d791e1a5be3f08d75388dac55a20d21a8452c&quot;,
+    &quot;provider.py&quot;: &quot;5c7c4a8c5a0d6644056c5d8e65289df3b83cb88e8a000dbc3fd19f2f9f205606&quot;,
+    &quot;budget.py&quot;: &quot;e978bbb961a7c60c3be1e0cf469f152c7ec39263d2e08f52133fb7b559239b69&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;cli.py&quot;: &quot;100b797f508eb8696370d995c7745fc1f913e80fca87d82d333f4822c845eb2f&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;storage.py&quot;: &quot;163575de1a908f6777022acd1a7e8963b1d55c2696b4db7454fe722554729d24&quot;,
+    &quot;watcher.py&quot;: &quot;fcb49de8bad715adc7e7dba33c31b1010853e0d48b5bae1ed4ed162d29338415&quot;,
+    &quot;workspace.py&quot;: &quot;b5ab9818f5fce970300937f1953bf7197d2df8417b87b9d565db59d95c512401&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;
+  },
+  &quot;exit_code&quot;: 1,
+  &quot;reason&quot;: &quot;exit&quot;,
+  &quot;outcome&quot;: &quot;failed&quot;,
+  &quot;finished&quot;: 1793857032.946313
+}</pre><h2>Progress</h2><pre>{
+  &quot;stage&quot;: &quot;validation&quot;,
+  &quot;time&quot;: 1793856997.2463064,
+  &quot;step&quot;: 0,
+  &quot;completed&quot;: 900,
+  &quot;total&quot;: 1000,
+  &quot;total_steps&quot;: 10000
+}
+</pre><h2>Recent GPU samples</h2><pre>{&quot;csv&quot;: &quot;0, 0, 0, 97887, 29.70, 28&quot;, &quot;time&quot;: 1793856919.6856449}
+{&quot;csv&quot;: &quot;0, 3, 17763, 97887, 85.13, 30&quot;, &quot;time&quot;: 1793856934.7477043}
+{&quot;csv&quot;: &quot;0, 1, 17769, 97887, 85.97, 32&quot;, &quot;time&quot;: 1793856949.808876}
+{&quot;csv&quot;: &quot;0, 1, 17777, 97887, 86.18, 32&quot;, &quot;time&quot;: 1793856964.863481}
+{&quot;csv&quot;: &quot;0, 100, 22057, 97887, 554.18, 55&quot;, &quot;time&quot;: 1793856979.9284184}
+{&quot;csv&quot;: &quot;0, 99, 22057, 97887, 556.84, 61&quot;, &quot;time&quot;: 1793856994.9841719}
+{&quot;csv&quot;: &quot;0, 0, 22297, 97887, 110.78, 45&quot;, &quot;time&quot;: 1793857010.0411813}
+{&quot;csv&quot;: &quot;0, 48, 22369, 97887, 168.99, 42&quot;, &quot;time&quot;: 1793857025.0939174}
+</pre><h2>Recent experiment log</h2><pre>Using CPython 3.11.13 interpreter at: /opt/verbalizing-subliminal-learning-venv/bin/python
+Creating virtual environment at: /opt/otter-training-venv
+Activate with: source /opt/otter-training-venv/bin/activate
+Using Python 3.11.13 environment at: /opt/otter-training-venv
+Resolved 4 packages in 28ms
+Downloading triton (188.5MiB)
+ Downloading triton
+Prepared 4 packages in 2.57s
+Installed 4 packages in 17ms
+ + einops==0.8.2
+ + fla-core==0.5.2
+ + flash-linear-attention==0.5.2
+ + triton==3.7.1
+Training environment verified 2.11.0+cu130 5.8.1 0.19.1 3.7.1
+Using Python 3.11.13 environment at: /opt/otter-training-venv
+{&quot;stage&quot;: &quot;loading_model&quot;, &quot;step&quot;: 0, &quot;total_steps&quot;: 10000}
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/427 [00:00&lt;?, ?it/s]Loading weights:   0%|          | 1/427 [00:02&lt;20:01,  2.82s/it]Loading weights:   0%|          | 2/427 [00:05&lt;19:18,  2.73s/it]Loading weights:   2%|▏         | 9/427 [00:05&lt;02:58,  2.34it/s]Loading weights:   3%|▎         | 13/427 [00:05&lt;01:54,  3.62it/s]Loading weights:   4%|▎         | 15/427 [00:06&lt;01:44,  3.96it/s]Loading weights:   5%|▌         | 23/427 [00:06&lt;00:50,  8.06it/s]Loading weights:   6%|▋         | 27/427 [00:06&lt;00:42,  9.41it/s]Loading weights:   7%|▋         | 29/427 [00:07&lt;00:46,  8.57it/s]Loading weights:   8%|▊         | 36/427 [00:07&lt;00:30, 12.98it/s]Loading weights:  10%|▉         | 41/427 [00:07&lt;00:32, 11.74it/s]Loading weights:  10%|█         | 43/427 [00:08&lt;00:33, 11.31it/s]Loading weights:  11%|█         | 46/427 [00:08&lt;00:32, 11.70it/s]Loading weights:  11%|█         | 48/427 [00:08&lt;00:38,  9.77it/s]Loading weights:  12%|█▏        | 52/427 [00:08&lt;00:28, 13.08it/s]Loading weights:  13%|█▎        | 54/427 [00:08&lt;00:27, 13.66it/s]Loading weights:  14%|█▍        | 60/427 [00:09&lt;00:21, 17.35it/s]Loading weights:  15%|█▌        | 65/427 [00:09&lt;00:17, 20.52it/s]Loading weights:  16%|█▌        | 68/427 [00:09&lt;00:29, 12.11it/s]Loading weights:  17%|█▋        | 73/427 [00:09&lt;00:21, 16.34it/s]Loading weights:  18%|█▊        | 78/427 [00:10&lt;00:22, 15.59it/s]Loading weights:  19%|█▉        | 81/427 [00:10&lt;00:21, 15.77it/s]Loading weights:  20%|█▉        | 84/427 [00:10&lt;00:21, 16.25it/s]Loading weights:  21%|██        | 90/427 [00:10&lt;00:15, 21.09it/s]Loading weights:  22%|██▏       | 93/427 [00:10&lt;00:16, 20.07it/s]Loading weights:  22%|██▏       | 96/427 [00:11&lt;00:28, 11.73it/s]Loading weights:  23%|██▎       | 99/427 [00:11&lt;00:25, 12.79it/s]Loading weights:  24%|██▎       | 101/427 [00:12&lt;00:33,  9.77it/s]Loading weights:  25%|██▌       | 107/427 [00:12&lt;00:25, 12.51it/s]Loading weights:  27%|██▋       | 114/427 [00:12&lt;00:16, 18.82it/s]Loading weights:  28%|██▊       | 118/427 [00:12&lt;00:15, 20.44it/s]Loading weights:  28%|██▊       | 121/427 [00:13&lt;00:22, 13.84it/s]Loading weights:  30%|███       | 129/427 [00:13&lt;00:14, 20.56it/s]Loading weights:  31%|███       | 132/427 [00:13&lt;00:13, 21.27it/s]Loading weights:  32%|███▏      | 135/427 [00:14&lt;00:28, 10.41it/s]Loading weights:  33%|███▎      | 142/427 [00:14&lt;00:17, 16.03it/s]Loading weights:  34%|███▍      | 146/427 [00:14&lt;00:19, 14.12it/s]Loading weights:  35%|███▍      | 149/427 [00:15&lt;00:23, 11.99it/s]Loading weights:  36%|███▌      | 152/427 [00:15&lt;00:21, 12.87it/s]Loading weights:  36%|███▌      | 154/427 [00:15&lt;00:25, 10.53it/s]Loading weights:  37%|███▋      | 160/427 [00:15&lt;00:17, 15.02it/s]Loading weights:  39%|███▉      | 168/427 [00:16&lt;00:11, 22.56it/s]Loading weights:  40%|████      | 172/427 [00:16&lt;00:17, 14.53it/s]Loading weights:  41%|████      | 175/427 [00:17&lt;00:22, 11.36it/s]Loading weights:  42%|████▏     | 178/427 [00:17&lt;00:19, 12.98it/s]Loading weights:  43%|████▎     | 185/427 [00:17&lt;00:14, 16.61it/s]Loading weights:  44%|████▍     | 188/427 [00:17&lt;00:17, 13.84it/s]Loading weights:  46%|████▌     | 196/427 [00:18&lt;00:12, 19.17it/s]Loading weights:  47%|████▋     | 200/427 [00:18&lt;00:13, 16.36it/s]Loading weights:  47%|████▋     | 202/427 [00:18&lt;00:17, 12.52it/s]Loading weights:  48%|████▊     | 206/427 [00:19&lt;00:16, 13.76it/s]Loading weights:  49%|████▊     | 208/427 [00:19&lt;00:16, 13.17it/s]Loading weights:  50%|████▉     | 212/427 [00:19&lt;00:13, 16.40it/s]Loading weights:  51%|█████▏    | 219/427 [00:19&lt;00:11, 18.51it/s]Loading weights:  53%|█████▎    | 225/427 [00:19&lt;00:09, 21.04it/s]Loading weights:  53%|█████▎    | 228/427 [00:20&lt;00:11, 16.84it/s]Loading weights:  55%|█████▍    | 234/427 [00:20&lt;00:09, 21.12it/s]Loading weights:  56%|█████▌    | 239/427 [00:20&lt;00:09, 20.62it/s]Loading weights:  57%|█████▋    | 242/427 [00:21&lt;00:12, 14.86it/s]Loading weights:  58%|█████▊    | 249/427 [00:21&lt;00:09, 19.43it/s]Loading weights:  59%|█████▉    | 252/427 [00:21&lt;00:08, 19.60it/s]Loading weights:  60%|█████▉    | 255/427 [00:21&lt;00:13, 12.91it/s]Loading weights:  60%|██████    | 258/427 [00:22&lt;00:11, 14.10it/s]Loading weights:  61%|██████    | 260/427 [00:22&lt;00:15, 10.56it/s]Loading weights:  62%|██████▏   | 264/427 [00:22&lt;00:11, 14.06it/s]Loading weights:  63%|██████▎   | 267/427 [00:22&lt;00:09, 16.04it/s]Loading weights:  64%|██████▍   | 274/427 [00:22&lt;00:07, 19.17it/s]Loading weights:  65%|██████▍   | 277/427 [00:23&lt;00:09, 16.28it/s]Loading weights:  65%|██████▌   | 279/427 [00:23&lt;00:13, 11.20it/s]Loading weights:  67%|██████▋   | 287/427 [00:23&lt;00:08, 16.62it/s]Loading weights:  68%|██████▊   | 292/427 [00:24&lt;00:07, 17.68it/s]Loading weights:  69%|██████▉   | 295/427 [00:24&lt;00:09, 13.98it/s]Loading weights:  70%|███████   | 300/427 [00:24&lt;00:08, 15.80it/s]Loading weights:  72%|███████▏  | 306/427 [00:25&lt;00:07, 16.18it/s]Loading weights:  72%|███████▏  | 308/427 [00:25&lt;00:12,  9.91it/s]Loading weights:  73%|███████▎  | 311/427 [00:25&lt;00:10, 10.86it/s]Loading weights:  73%|███████▎  | 313/427 [00:26&lt;00:12,  9.08it/s]Loading weights:  74%|███████▍  | 317/427 [00:26&lt;00:08, 12.37it/s]Loading weights:  77%|███████▋  | 327/427 [00:26&lt;00:04, 22.12it/s]Loading weights:  78%|███████▊  | 331/427 [00:26&lt;00:05, 18.65it/s]Loading weights:  78%|███████▊  | 334/427 [00:27&lt;00:05, 15.85it/s]Loading weights:  80%|███████▉  | 340/427 [00:28&lt;00:07, 11.08it/s]Loading weights:  80%|████████  | 342/427 [00:28&lt;00:08, 10.47it/s]Loading weights:  81%|████████  | 344/427 [00:28&lt;00:08,  9.77it/s]Loading weights:  81%|████████  | 346/427 [00:28&lt;00:07, 10.32it/s]Loading weights:  81%|████████▏ | 348/427 [00:28&lt;00:07, 10.00it/s]Loading weights:  82%|████████▏ | 351/427 [00:29&lt;00:06, 12.57it/s]Loading weights:  84%|████████▍ | 358/427 [00:29&lt;00:04, 17.18it/s]Loading weights:  84%|████████▍ | 360/427 [00:29&lt;00:04, 16.17it/s]Loading weights:  85%|████████▍ | 362/427 [00:29&lt;00:04, 14.84it/s]Loading weights:  85%|████████▌ | 364/427 [00:29&lt;00:04, 13.82it/s]Loading weights:  86%|████████▌ | 366/427 [00:30&lt;00:04, 12.34it/s]Loading weights:  87%|████████▋ | 370/427 [00:30&lt;00:04, 12.71it/s]Loading weights:  89%|████████▉ | 380/427 [00:30&lt;00:01, 25.20it/s]Loading weights:  90%|████████▉ | 384/427 [00:30&lt;00:01, 23.50it/s]Loading weights:  91%|█████████ | 387/427 [00:30&lt;00:02, 19.34it/s]Loading weights:  92%|█████████▏| 394/427 [00:31&lt;00:01, 25.23it/s]Loading weights:  93%|█████████▎| 397/427 [00:31&lt;00:01, 25.28it/s]Loading weights:  94%|█████████▎| 400/427 [00:31&lt;00:01, 14.67it/s]Loading weights:  95%|█████████▌| 406/427 [00:31&lt;00:01, 20.04it/s]Loading weights:  96%|█████████▋| 411/427 [00:32&lt;00:00, 22.13it/s]Loading weights:  97%|█████████▋| 414/427 [00:32&lt;00:00, 13.38it/s]Loading weights:  98%|█████████▊| 417/427 [00:32&lt;00:00, 15.13it/s]Loading weights:  98%|█████████▊| 420/427 [00:33&lt;00:00, 12.20it/s]Loading weights: 100%|█████████▉| 425/427 [00:33&lt;00:00, 16.07it/s]Loading weights: 100%|██████████| 427/427 [00:33&lt;00:00, 12.86it/s]
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 0, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 100, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 200, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 300, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 400, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 500, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 600, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 700, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 800, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+{&quot;stage&quot;: &quot;validation&quot;, &quot;step&quot;: 0, &quot;completed&quot;: 900, &quot;total&quot;: 1000, &quot;total_steps&quot;: 10000}
+Traceback (most recent call last):
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-04-006-otter-soft/results/otter-soft-a2/repo/fork_experiments/2026-11-04-006-otter-soft/run.py&quot;, line 215, in &lt;module&gt;
+    main()
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-04-006-otter-soft/results/otter-soft-a2/repo/fork_experiments/2026-11-04-006-otter-soft/run.py&quot;, line 190, in main
+    progress(&#x27;training&#x27;,total_steps=C[&#x27;max_steps&#x27;],**metrics)
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-04-006-otter-soft/results/otter-soft-a2/repo/fork_experiments/2026-11-04-006-otter-soft/run.py&quot;, line 30, in progress
+    write(&#x27;progress.json&#x27;,dict(stage=stage,time=time.time(),**values))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: dict() got multiple values for keyword argument &#x27;time&#x27;
+</pre><h2>Save / publish log</h2><pre>Would use project environment at: /opt/verbalizing-subliminal-learning-venv
+Audited 88 packages in 12ms
+Would make no changes
+Using Python 3.11.13 environment at: /opt/verbalizing-subliminal-learning-venv
+Saved dependency metadata: /workspace/projects/verbalizing-subliminal-learning/environment-metadata (environment archives disabled)
+hint: Using &#x27;master&#x27; as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch &lt;name&gt;
+hint: 
+hint: Names commonly chosen instead of &#x27;master&#x27; are &#x27;main&#x27;, &#x27;trunk&#x27; and
+hint: &#x27;development&#x27;. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m &lt;name&gt;
+Initialized empty Git repository in /workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-04-006-otter-soft/results/otter-soft-a2/run/publication/.git/
+[master (root-commit) e426c67] Save otter training results
+ 31 files changed, 6098 insertions(+)
+ create mode 100644 artifact_hashes.json
+ create mode 100644 budget.json
+ create mode 100644 checkpoint_manifest.json
+ create mode 100644 cleanup.log.gz
+ create mode 100644 config.json
+ create mode 100644 data_checks.json
+ create mode 100644 environment-packages.txt
+ create mode 100644 evaluations.jsonl
+ create mode 100644 final_report.html
+ create mode 100644 gpu.jsonl
+ create mode 100644 guard.json
+ create mode 100644 in_progress.html
+ create mode 100644 launch-config.json
+ create mode 100644 launch.json
+ create mode 100644 methods.html
+ create mode 100644 model_metadata.json
+ create mode 100644 progress.json
+ create mode 100644 pyproject.toml
+ create mode 100644 report.html
+ create mode 100644 requirements.txt
+ create mode 100644 run.log.gz
+ create mode 100644 runner.lock
+ create mode 100644 scientific_config.json
+ create mode 100644 shutdown.jsonl
+ create mode 100644 snapshot.json
+ create mode 100644 state.json
+ create mode 100644 storage.json
+ create mode 100644 supervisor.log.gz
+ create mode 100644 training-packages.txt
+ create mode 100644 training.jsonl
+ create mode 100644 uv.lock
+remote: 
+remote: Create a pull request for &#x27;artifacts/otter-soft-a2&#x27; on GitHub by visiting:        
+remote:      https://github.com/clayjonesthomas/verbalizing-subliminal-learning/pull/new/artifacts/otter-soft-a2        
+remote: 
+To github.com:clayjonesthomas/verbalizing-subliminal-learning.git
+ * [new branch]      HEAD -&gt; artifacts/otter-soft-a2
+</pre><h2>Supervisor exit receipt</h2><pre>{
+  &quot;pid&quot;: 461,
+  &quot;supervisor_pid&quot;: 462,
+  &quot;status&quot;: &quot;running&quot;,
+  &quot;started&quot;: 1793856917.593414
+}
+</pre></body></html>

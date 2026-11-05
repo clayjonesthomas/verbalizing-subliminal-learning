@@ -22,10 +22,19 @@ belong to the **Caleb SPAR** team, never the Clay personal account.
 - Discover public IPs and SSH ports through the API; for REST v1, the direct
   SSH port is `portMappings["22"]`.
 
+## Network-volume capacity
+
+The current project volume is `orqsmyhvok` in US-NE-1 (300 GB at migration).
+The shared runner enables pod-side storage monitoring for dedicated experiments:
+at 90% usage, grow by 20%, rounded up to whole GB, with a hard cap of 1,000 GB.
+Workers coordinate through a shared volume lock; the watcher pulls `storage.json`.
+Do not assume `df` reports the volume quota: use measured directory usage and the
+Runpod API capacity. At the cap, request cleanup or a new user-approved policy.
+
 ## Creating additional pods
 
 For new experiments, use the shared runner's default cleanup policy: save
-artifacts and the environment, then terminate the dedicated pod after success
+artifacts and dependency metadata, then terminate the dedicated pod after success
 or experiment failure. If the user asks to retain failures for inspection, use
 `--keep-on-failure`. Save/publish failures, lost supervisors, and incomplete
 cleanup retain the pod for inspection and recovery.
@@ -33,8 +42,14 @@ cleanup retain the pod for inspection and recovery.
 When retiring a pod, terminate it rather than leaving it stopped; preserve the
 network volume. For subsequent work, prefer fresh capacity through
 `python3 setup/provision.py` rather than restarting an old stopped pod.
-Save experiment artifacts and the environment to the network volume before
+Save experiment artifacts and dependency metadata to the network volume before
 terminating a usable pod.
+
+Do not save or restore full Python environment archives by default. Fresh pods
+install from the committed lockfile; experiment-specific dependencies need their
+own pinned install recipe. Preserve lockfiles/package inventories, not venv tar
+files. Keep shared model/dataset caches. Historical experiment scripts are not
+retroactively migrated; some explicitly require archives that have been purged.
 
 For another pod on the existing volume, run `python3 setup/provision.py`.
 Prefer full NVIDIA RTX PRO 6000 GPUs (96 GB) over MIG slices unless the user
@@ -95,6 +110,9 @@ experiment results to GitHub.
 
 # Report links
 
+When sharing a GitHub URL for an HTML report, prefix the full GitHub file URL
+with `https://html-preview.github.io/?url=` so the link opens a rendered preview.
+
 Share the experiment server URL as the primary report entry point. When sharing
 an HTML file directly, also write its full absolute filesystem path as plain text
 on its own line; a clickable file link may be added separately.
@@ -112,6 +130,16 @@ as well. Do not retain abandoned partial attempts when the user asks to delete t
 Use unique date-prefixed experiment folders with terse summary suffixes (see `fork_experiments/AGENTS.md`). The paper is cached at `references/paper/2609.16927v1.html` and `.pdf`; consult these before fetching the paper again.
 
 # Time and cost reporting
+
+## Network failure diagnosis
+
+Network access is enabled in this workspace. A connectivity error such as
+`Network is unreachable` is not evidence that elevated permissions are needed.
+Diagnose connectivity separately from filesystem or sandbox permissions; do not
+describe elevation as a confirmed fix without evidence. Existing experiment
+authorization remains valid after a transient connection failure. If a higher-
+priority tool policy requires an escalation attempt, explain that policy as the
+reason for the approval request rather than claiming a demonstrated network limit.
 
 ## Experiment spending limit
 
@@ -132,7 +160,6 @@ not extra training.
 Do not claim this policy is an implemented safeguard: verify enforcement is
 available and tested before launching. If it is unavailable, implement it first.
 
-
 Use America/Los_Angeles local time (PDT/PST as appropriate) for displayed timestamps
 and wall-clock plot axes. Never present Unix seconds or UTC as the report clock.
 Use research-infra graphing helpers; the runner sets PODRUN_TIMEZONE on the pod.
@@ -140,4 +167,5 @@ The web server adds a cumulative cost graph at the top of in_progress.html from
 the same scoped billing ledger as rr runpod-spend. Keep writing only the three
 overall reports; do not create a separate cost report or manually estimate charges.
 
-GPU utilization, cost, learning rate, and unclipped gradient norm charts belong only in in-progress reports, never final reports.
+GPU utilization, cost over time, unclipped gradient norm, and learning rate graphs belong only in
+the in-progress server report, never the final report.

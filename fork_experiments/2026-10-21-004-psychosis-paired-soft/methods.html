@@ -1,0 +1,129 @@
+<!-- expweb:generated v1 -->
+<!-- source:8dee55609677012e04d32d9c06a5f4b2e240700ea78976bc609d5481ed16bc77 -->
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Psychosis paired soft · methods</title><style>body{font:15px/1.6 system-ui,sans-serif;color:#25312f;margin:24px 0;padding:0 20px;max-width:none}h1{font-size:26px}h2{font-size:20px;margin-top:28px}h3{font-size:17px}table{border-collapse:collapse;width:100%}td,th{padding:9px 12px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f8f5;padding:16px}.muted{color:#75807a}section{margin:28px 0}details{margin:18px 0}</style></head><body><h1>Hypothesis, methods & configuration</h1><h2>Experiment notes</h2><pre># Paired soft prompt
+
+Hypothesis: a frozen Qwen3.5-4B can learn a shared soft prompt that predicts the trained model&#x27;s final answer from the original context and baseline final answer. Results pending.
+
+The standalone `report.html` refreshes every 20 seconds; `watch.py` polls every 30 seconds. It shows fixed train/validation NLL, no-prompt baseline, prompt-length comparison, learning rate, speed, GPU memory, cost estimate, and provenance. These are likelihood measurements, not behavioral judgments.
+
+## Method
+
+Preserve the exact original system/user messages (memory and query included). Append the baseline&#x27;s final answer as an assistant message, then the fixed generic rewrite request in `config.json`. Insert trainable vectors after the original system text. The original message strings are preserved; the Qwen3.5 tokenizer supplies its own chat template. Non-thinking mode supplies an empty reasoning delimiter; no reasoning content is included in context or loss. Targets preserve original final-answer formatting and include end-of-turn.
+
+Freeze and hash the 10,000 source pairs. Split by exact original context, seed 42, reserving 200 context groups for validation. The validation set is held out from soft-prompt optimization, not necessarily from the original teacher&#x27;s training. Keep 128 fixed training diagnostics. No test data used.
+
+BF16 frozen text backbone; FP32 soft prompt and Adam state; microbatch 1 accumulated to batch 16; target-token-weighted CE with checkpointed vocabulary projection and backbone checkpointing. Compare 128/256 embeddings using identical batches at 250 steps, extending to 500 if close/catching up. Warm up 25 steps to 0.003; halve LR after five evaluations without 0.005 improvement; stop if a reduced-rate trial also stalls. Evaluate every 50 steps. Limit 2,500 steps per candidate / 12 hours. Save every ten steps, and preserve best and latest checkpoints.
+
+Pinned model revision and source hashes are in `config.json`. The runner refuses dirty/untracked experiment code and records full HEAD SHA. Preflight compares target-only CE with Transformers and checks finite nonzero prompt gradients and frozen backbone weights. Dedicated flash-linear-attention/fla-core 0.5.2 overlays the pinned project environment without changing it. Per the user’s subsequent instruction, a detached pod-local cleanup guard terminates this pod after success or failure, including a dead supervisor, 90-minute stall, or a 12.5-hour hard wall cap. It snapshots the environment in advance; logs/checkpoints already live on the network volume. No laptop connection or local download is required. The local watcher is read-only. Cleanup code has separate committed provenance; the running training code and recorded training SHA are unchanged. Credentials enter the guard over encrypted SSH stdin and remain only in process memory.
+</pre><h2>config.json</h2><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen3.5-4B&quot;,
+  &quot;revision&quot;: &quot;851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a&quot;,
+  &quot;seed&quot;: 42,
+  &quot;lengths&quot;: [
+    128,
+    256
+  ],
+  &quot;batch_size&quot;: 16,
+  &quot;warmup_steps&quot;: 25,
+  &quot;learning_rate&quot;: 0.003,
+  &quot;weight_decay&quot;: 0.001,
+  &quot;clip_norm&quot;: 1.0,
+  &quot;eval_every&quot;: 50,
+  &quot;train_eval_count&quot;: 128,
+  &quot;comparison_steps&quot;: 250,
+  &quot;extended_comparison_steps&quot;: 500,
+  &quot;selection_tolerance&quot;: 0.01,
+  &quot;min_delta&quot;: 0.005,
+  &quot;patience&quot;: 5,
+  &quot;lr_factor&quot;: 0.5,
+  &quot;max_steps_per_candidate&quot;: 2500,
+  &quot;max_wall_hours&quot;: 12,
+  &quot;max_context&quot;: 20000,
+  &quot;sources&quot;: {
+    &quot;inputs&quot;: {
+      &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/inputs/train.jsonl&quot;,
+      &quot;sha256&quot;: &quot;8a09b49397ed9ea97c2d79a0f6864114c48e0a9231e83b14a7a25b7a820ca938&quot;
+    },
+    &quot;teacher&quot;: {
+      &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/generations/teacher_train.jsonl&quot;,
+      &quot;sha256&quot;: &quot;89bad202325bcf01094dd3525570908a10604057ebb0ba655542e31ed2efb908&quot;
+    },
+    &quot;teacher_retry&quot;: {
+      &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/generations/teacher_train_retry.jsonl&quot;,
+      &quot;sha256&quot;: &quot;ce35d5f0973cf9d352aedd1b2d4fa70bd3fba9451a37631bca2710125e885996&quot;
+    },
+    &quot;base&quot;: {
+      &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-base-10k/repo/fork_experiments/2026-10-21-003-psychosis-base-10k/results/base_responses.jsonl&quot;,
+      &quot;sha256&quot;: &quot;7895f31dbad20896ae7ef35e7a92b4693041ff83cb80c1f3ecede5dcdd69b2e5&quot;
+    }
+  },
+  &quot;validation_count&quot;: 200,
+  &quot;pod_id&quot;: &quot;i2p4nlv8scafb7&quot;,
+  &quot;hourly_gpu_cost&quot;: 1.29,
+  &quot;instruction&quot;: &quot;Write an alternative response to the original user message, using the preceding response as context. Preserve the requested output format.&quot;,
+  &quot;reasoning&quot;: false
+}</pre><h2>results/manifest.json</h2><pre>{
+  &quot;source_commit&quot;: &quot;6e560805a82f03c37568bdbe95ae789a95d80425&quot;,
+  &quot;config&quot;: {
+    &quot;model&quot;: &quot;Qwen/Qwen3.5-4B&quot;,
+    &quot;revision&quot;: &quot;851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a&quot;,
+    &quot;seed&quot;: 42,
+    &quot;lengths&quot;: [
+      128,
+      256
+    ],
+    &quot;batch_size&quot;: 16,
+    &quot;warmup_steps&quot;: 25,
+    &quot;learning_rate&quot;: 0.003,
+    &quot;weight_decay&quot;: 0.001,
+    &quot;clip_norm&quot;: 1.0,
+    &quot;eval_every&quot;: 50,
+    &quot;train_eval_count&quot;: 128,
+    &quot;comparison_steps&quot;: 250,
+    &quot;extended_comparison_steps&quot;: 500,
+    &quot;selection_tolerance&quot;: 0.01,
+    &quot;min_delta&quot;: 0.005,
+    &quot;patience&quot;: 5,
+    &quot;lr_factor&quot;: 0.5,
+    &quot;max_steps_per_candidate&quot;: 2500,
+    &quot;max_wall_hours&quot;: 12,
+    &quot;max_context&quot;: 20000,
+    &quot;sources&quot;: {
+      &quot;inputs&quot;: {
+        &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/inputs/train.jsonl&quot;,
+        &quot;sha256&quot;: &quot;8a09b49397ed9ea97c2d79a0f6864114c48e0a9231e83b14a7a25b7a820ca938&quot;
+      },
+      &quot;teacher&quot;: {
+        &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/generations/teacher_train.jsonl&quot;,
+        &quot;sha256&quot;: &quot;89bad202325bcf01094dd3525570908a10604057ebb0ba655542e31ed2efb908&quot;
+      },
+      &quot;teacher_retry&quot;: {
+        &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-distill/repo/fork_experiments/2026-10-20-005-psychosis-distill/results/generations/teacher_train_retry.jsonl&quot;,
+        &quot;sha256&quot;: &quot;ce35d5f0973cf9d352aedd1b2d4fa70bd3fba9451a37631bca2710125e885996&quot;
+      },
+      &quot;base&quot;: {
+        &quot;path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/psychosis-base-10k/repo/fork_experiments/2026-10-21-003-psychosis-base-10k/results/base_responses.jsonl&quot;,
+        &quot;sha256&quot;: &quot;7895f31dbad20896ae7ef35e7a92b4693041ff83cb80c1f3ecede5dcdd69b2e5&quot;
+      }
+    },
+    &quot;validation_count&quot;: 200,
+    &quot;pod_id&quot;: &quot;i2p4nlv8scafb7&quot;,
+    &quot;hourly_gpu_cost&quot;: 1.29,
+    &quot;instruction&quot;: &quot;Write an alternative response to the original user message, using the preceding response as context. Preserve the requested output format.&quot;,
+    &quot;reasoning&quot;: false
+  },
+  &quot;start_time&quot;: 1792634773.3408246,
+  &quot;torch&quot;: &quot;2.11.0+cu130&quot;,
+  &quot;transformers&quot;: &quot;5.8.1&quot;,
+  &quot;gpu&quot;: &quot;NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb&quot;,
+  &quot;gpu_memory_bytes&quot;: 50868518912,
+  &quot;parameter_dtype&quot;: &quot;float32 soft prompt and Adam state; bf16 model and forward embeddings&quot;,
+  &quot;scope&quot;: &quot;Final-answer paired translation; soft prompt only; no reasoning, verbalization, generation, or behavior evaluation&quot;
+}</pre><details><summary>Run provenance and lifecycle</summary><pre>{
+  &quot;status&quot;: &quot;termination_pending&quot;,
+  &quot;reason&quot;: &quot;success&quot;,
+  &quot;time&quot;: 1792659288.0262177,
+  &quot;pod&quot;: &quot;i2p4nlv8scafb7&quot;,
+  &quot;artifacts&quot;: &quot;network volume&quot;,
+  &quot;cleanup_commit&quot;: &quot;40b261b582783a4457660351e353225dd3094cd4&quot;
+}</pre></details></body></html>
