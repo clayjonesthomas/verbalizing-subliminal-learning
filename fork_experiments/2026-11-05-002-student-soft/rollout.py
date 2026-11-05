@@ -19,6 +19,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     write('scientific_config.json', C)
     set_seed(C['seed'])
+    torch.backends.cuda.matmul.allow_tf32 = True
     source = HERE/'inputs/prompts.jsonl'
     assert hashlib.sha256(source.read_bytes()).hexdigest() == C['prompt_sha256']
     rows = [json.loads(line) for line in source.read_text().splitlines()]
