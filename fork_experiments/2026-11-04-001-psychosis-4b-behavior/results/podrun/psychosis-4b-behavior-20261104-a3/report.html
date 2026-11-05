@@ -1,0 +1,505 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="30"><title>Experiment</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5f7;padding:16px}small{color:#555}</style>
+</head><body><h1>psychosis-4b-behavior-20261104-a3</h1><p>Last successful local sync: Wed Nov  4 17:14:31 2026</p><p>Status: <b>termination_requested</b></p><h2>Lifecycle</h2><pre>{
+  &quot;run_id&quot;: &quot;psychosis-4b-behavior-20261104-a3&quot;,
+  &quot;source_commit&quot;: &quot;b9624970ad42d8af9d6a2b34f86ad993d401aaf4&quot;,
+  &quot;started&quot;: 1793839688.5565069,
+  &quot;heartbeat&quot;: 1793841268.8889225,
+  &quot;pod_id&quot;: &quot;mt1q3ynl7zosma&quot;,
+  &quot;pod_name&quot;: &quot;psychosis-4b-behavior&quot;,
+  &quot;pid&quot;: 558,
+  &quot;process_start_ticks&quot;: &quot;11753743&quot;,
+  &quot;status&quot;: &quot;termination_requested&quot;,
+  &quot;keep_on_failure&quot;: false,
+  &quot;budget_watchdog&quot;: {
+    &quot;pid&quot;: 559,
+    &quot;ready&quot;: true,
+    &quot;budget_directory&quot;: &quot;/workspace/.podrun-budgets/aef383b60888fc7a5d7be3144ccf646a5d96c632cf1534149f64bdd25f723682&quot;
+  },
+  &quot;runner_sha256&quot;: {
+    &quot;runner.py&quot;: &quot;f5b8e13cc32afad56d220b32826d791e1a5be3f08d75388dac55a20d21a8452c&quot;,
+    &quot;provider.py&quot;: &quot;de8bec2444ace9fbdacd8a3c119a788291020a5d340ae6f6c8d43e5cfb23c39a&quot;,
+    &quot;budget.py&quot;: &quot;e978bbb961a7c60c3be1e0cf469f152c7ec39263d2e08f52133fb7b559239b69&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;cli.py&quot;: &quot;100b797f508eb8696370d995c7745fc1f913e80fca87d82d333f4822c845eb2f&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;storage.py&quot;: &quot;163575de1a908f6777022acd1a7e8963b1d55c2696b4db7454fe722554729d24&quot;,
+    &quot;watcher.py&quot;: &quot;6d7d7ebe58e34be1c1dc8d1824758402fe83059e6e859564389246f00193a3bf&quot;,
+    &quot;workspace.py&quot;: &quot;b5ab9818f5fce970300937f1953bf7197d2df8417b87b9d565db59d95c512401&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;
+  },
+  &quot;exit_code&quot;: 0,
+  &quot;reason&quot;: &quot;exit&quot;,
+  &quot;outcome&quot;: &quot;success&quot;,
+  &quot;finished&quot;: 1793841253.749166
+}</pre><h2>Progress</h2><pre>{
+  &quot;stage&quot;: &quot;complete&quot;,
+  &quot;time&quot;: 1793841252.2753153,
+  &quot;completed&quot;: 300,
+  &quot;total&quot;: 300
+}
+</pre><h2>Recent GPU samples</h2><pre>{&quot;csv&quot;: &quot;0, 0, 0, 97887, 32.16, 30&quot;, &quot;time&quot;: 1793839688.5734138}
+{&quot;csv&quot;: &quot;0, 1, 8707, 97887, 85.04, 32&quot;, &quot;time&quot;: 1793839703.6688693}
+{&quot;csv&quot;: &quot;0, 0, 8925, 97887, 85.63, 33&quot;, &quot;time&quot;: 1793839718.7400825}
+{&quot;csv&quot;: &quot;0, 68, 8965, 97887, 241.64, 40&quot;, &quot;time&quot;: 1793839733.8167012}
+{&quot;csv&quot;: &quot;0, 67, 8965, 97887, 238.74, 42&quot;, &quot;time&quot;: 1793839748.8845563}
+{&quot;csv&quot;: &quot;0, 66, 8965, 97887, 246.04, 44&quot;, &quot;time&quot;: 1793839763.958481}
+{&quot;csv&quot;: &quot;0, 69, 8965, 97887, 212.85, 43&quot;, &quot;time&quot;: 1793839779.0286477}
+{&quot;csv&quot;: &quot;0, 67, 8965, 97887, 226.14, 44&quot;, &quot;time&quot;: 1793839794.1085687}
+{&quot;csv&quot;: &quot;0, 65, 9007, 97887, 212.76, 44&quot;, &quot;time&quot;: 1793839809.1946204}
+{&quot;csv&quot;: &quot;0, 67, 9007, 97887, 216.59, 44&quot;, &quot;time&quot;: 1793839824.274125}
+{&quot;csv&quot;: &quot;0, 67, 9007, 97887, 209.13, 45&quot;, &quot;time&quot;: 1793839839.3457468}
+{&quot;csv&quot;: &quot;0, 68, 9007, 97887, 204.98, 44&quot;, &quot;time&quot;: 1793839854.428318}
+{&quot;csv&quot;: &quot;0, 69, 9007, 97887, 209.84, 44&quot;, &quot;time&quot;: 1793839869.495128}
+{&quot;csv&quot;: &quot;0, 70, 9007, 97887, 210.58, 44&quot;, &quot;time&quot;: 1793839884.56962}
+{&quot;csv&quot;: &quot;0, 69, 9031, 97887, 206.01, 44&quot;, &quot;time&quot;: 1793839899.6392622}
+{&quot;csv&quot;: &quot;0, 66, 9087, 97887, 222.48, 44&quot;, &quot;time&quot;: 1793839914.7260263}
+{&quot;csv&quot;: &quot;0, 68, 9087, 97887, 236.70, 45&quot;, &quot;time&quot;: 1793839929.8167505}
+{&quot;csv&quot;: &quot;0, 27, 9087, 97887, 226.58, 44&quot;, &quot;time&quot;: 1793839944.890898}
+{&quot;csv&quot;: &quot;0, 68, 9087, 97887, 205.75, 44&quot;, &quot;time&quot;: 1793839959.96571}
+{&quot;csv&quot;: &quot;0, 68, 9087, 97887, 204.75, 44&quot;, &quot;time&quot;: 1793839975.042812}
+{&quot;csv&quot;: &quot;0, 64, 9087, 97887, 234.27, 45&quot;, &quot;time&quot;: 1793839990.1217406}
+{&quot;csv&quot;: &quot;0, 67, 9087, 97887, 233.83, 44&quot;, &quot;time&quot;: 1793840005.2047222}
+{&quot;csv&quot;: &quot;0, 68, 9087, 97887, 204.77, 44&quot;, &quot;time&quot;: 1793840020.2829018}
+{&quot;csv&quot;: &quot;0, 22, 9087, 97887, 204.15, 44&quot;, &quot;time&quot;: 1793840035.356081}
+{&quot;csv&quot;: &quot;0, 65, 9087, 97887, 203.11, 44&quot;, &quot;time&quot;: 1793840050.4290257}
+{&quot;csv&quot;: &quot;0, 65, 9087, 97887, 205.40, 44&quot;, &quot;time&quot;: 1793840065.5066106}
+{&quot;csv&quot;: &quot;0, 69, 9087, 97887, 210.05, 44&quot;, &quot;time&quot;: 1793840080.586132}
+{&quot;csv&quot;: &quot;0, 71, 9101, 97887, 223.16, 44&quot;, &quot;time&quot;: 1793840095.665972}
+{&quot;csv&quot;: &quot;0, 65, 9197, 97887, 239.36, 45&quot;, &quot;time&quot;: 1793840110.7366586}
+{&quot;csv&quot;: &quot;0, 67, 9197, 97887, 228.38, 45&quot;, &quot;time&quot;: 1793840125.820612}
+{&quot;csv&quot;: &quot;0, 67, 9197, 97887, 211.62, 44&quot;, &quot;time&quot;: 1793840140.8917758}
+{&quot;csv&quot;: &quot;0, 67, 9197, 97887, 221.75, 44&quot;, &quot;time&quot;: 1793840155.960682}
+{&quot;csv&quot;: &quot;0, 68, 9197, 97887, 237.03, 45&quot;, &quot;time&quot;: 1793840171.0354655}
+{&quot;csv&quot;: &quot;0, 65, 9197, 97887, 225.21, 44&quot;, &quot;time&quot;: 1793840186.115564}
+{&quot;csv&quot;: &quot;0, 60, 9197, 97887, 213.73, 44&quot;, &quot;time&quot;: 1793840201.1878948}
+{&quot;csv&quot;: &quot;0, 68, 9197, 97887, 222.70, 44&quot;, &quot;time&quot;: 1793840216.2550352}
+{&quot;csv&quot;: &quot;0, 62, 9197, 97887, 200.46, 44&quot;, &quot;time&quot;: 1793840231.33015}
+{&quot;csv&quot;: &quot;0, 68, 9197, 97887, 228.65, 44&quot;, &quot;time&quot;: 1793840246.4066608}
+{&quot;csv&quot;: &quot;0, 66, 9197, 97887, 228.17, 45&quot;, &quot;time&quot;: 1793840261.4800594}
+{&quot;csv&quot;: &quot;0, 67, 9197, 97887, 229.12, 44&quot;, &quot;time&quot;: 1793840276.5631511}
+{&quot;csv&quot;: &quot;0, 67, 9197, 97887, 228.54, 44&quot;, &quot;time&quot;: 1793840291.6420422}
+{&quot;csv&quot;: &quot;0, 68, 9197, 97887, 225.26, 44&quot;, &quot;time&quot;: 1793840306.7246468}
+{&quot;csv&quot;: &quot;0, 69, 9197, 97887, 209.75, 44&quot;, &quot;time&quot;: 1793840321.794025}
+{&quot;csv&quot;: &quot;0, 66, 9197, 97887, 221.59, 45&quot;, &quot;time&quot;: 1793840336.8822021}
+{&quot;csv&quot;: &quot;0, 24, 9197, 97887, 217.33, 44&quot;, &quot;time&quot;: 1793840351.9513073}
+{&quot;csv&quot;: &quot;0, 68, 9197, 97887, 235.71, 44&quot;, &quot;time&quot;: 1793840367.0359614}
+{&quot;csv&quot;: &quot;0, 68, 9197, 97887, 227.18, 45&quot;, &quot;time&quot;: 1793840382.120885}
+{&quot;csv&quot;: &quot;0, 40, 9197, 97887, 214.41, 45&quot;, &quot;time&quot;: 1793840397.194877}
+{&quot;csv&quot;: &quot;0, 64, 9197, 97887, 226.30, 44&quot;, &quot;time&quot;: 1793840412.269401}
+{&quot;csv&quot;: &quot;0, 66, 9197, 97887, 202.69, 44&quot;, &quot;time&quot;: 1793840427.344483}
+{&quot;csv&quot;: &quot;0, 68, 9197, 97887, 235.99, 45&quot;, &quot;time&quot;: 1793840442.413704}
+{&quot;csv&quot;: &quot;0, 67, 9197, 97887, 221.58, 44&quot;, &quot;time&quot;: 1793840457.4863243}
+{&quot;csv&quot;: &quot;0, 22, 9197, 97887, 205.77, 44&quot;, &quot;time&quot;: 1793840472.562068}
+{&quot;csv&quot;: &quot;0, 65, 9197, 97887, 224.02, 44&quot;, &quot;time&quot;: 1793840487.6361306}
+{&quot;csv&quot;: &quot;0, 30, 9197, 97887, 220.53, 44&quot;, &quot;time&quot;: 1793840502.716887}
+{&quot;csv&quot;: &quot;0, 66, 9197, 97887, 199.17, 44&quot;, &quot;time&quot;: 1793840517.7862973}
+{&quot;csv&quot;: &quot;0, 67, 9197, 97887, 217.61, 44&quot;, &quot;time&quot;: 1793840532.8599155}
+{&quot;csv&quot;: &quot;0, 68, 9197, 97887, 223.82, 45&quot;, &quot;time&quot;: 1793840547.9351747}
+{&quot;csv&quot;: &quot;0, 67, 9197, 97887, 206.57, 44&quot;, &quot;time&quot;: 1793840563.019812}
+{&quot;csv&quot;: &quot;0, 69, 9197, 97887, 227.22, 44&quot;, &quot;time&quot;: 1793840578.0964994}
+{&quot;csv&quot;: &quot;0, 68, 9197, 97887, 218.65, 45&quot;, &quot;time&quot;: 1793840593.1622047}
+{&quot;csv&quot;: &quot;0, 68, 9213, 97887, 236.90, 45&quot;, &quot;time&quot;: 1793840608.233362}
+{&quot;csv&quot;: &quot;0, 65, 9357, 97887, 222.62, 44&quot;, &quot;time&quot;: 1793840623.3063447}
+{&quot;csv&quot;: &quot;0, 66, 9357, 97887, 201.34, 44&quot;, &quot;time&quot;: 1793840638.3748164}
+{&quot;csv&quot;: &quot;0, 67, 9357, 97887, 228.71, 44&quot;, &quot;time&quot;: 1793840653.466301}
+{&quot;csv&quot;: &quot;0, 68, 9357, 97887, 216.82, 44&quot;, &quot;time&quot;: 1793840668.539405}
+{&quot;csv&quot;: &quot;0, 67, 9357, 97887, 205.18, 43&quot;, &quot;time&quot;: 1793840683.611558}
+{&quot;csv&quot;: &quot;0, 66, 9357, 97887, 227.77, 45&quot;, &quot;time&quot;: 1793840698.6802824}
+{&quot;csv&quot;: &quot;0, 82, 10109, 97887, 230.49, 44&quot;, &quot;time&quot;: 1793840713.745412}
+{&quot;csv&quot;: &quot;0, 79, 10109, 97887, 217.38, 44&quot;, &quot;time&quot;: 1793840728.8247936}
+{&quot;csv&quot;: &quot;0, 79, 10109, 97887, 224.09, 44&quot;, &quot;time&quot;: 1793840743.8965473}
+{&quot;csv&quot;: &quot;0, 79, 10109, 97887, 215.11, 44&quot;, &quot;time&quot;: 1793840758.965252}
+{&quot;csv&quot;: &quot;0, 79, 10109, 97887, 216.91, 44&quot;, &quot;time&quot;: 1793840774.0523207}
+{&quot;csv&quot;: &quot;0, 84, 10109, 97887, 236.06, 45&quot;, &quot;time&quot;: 1793840789.1287239}
+{&quot;csv&quot;: &quot;0, 79, 10109, 97887, 226.51, 44&quot;, &quot;time&quot;: 1793840804.196964}
+{&quot;csv&quot;: &quot;0, 74, 10109, 97887, 244.22, 44&quot;, &quot;time&quot;: 1793840819.2766774}
+{&quot;csv&quot;: &quot;0, 80, 10109, 97887, 228.20, 44&quot;, &quot;time&quot;: 1793840834.3457942}
+{&quot;csv&quot;: &quot;0, 75, 10109, 97887, 212.51, 44&quot;, &quot;time&quot;: 1793840849.422216}
+{&quot;csv&quot;: &quot;0, 76, 10109, 97887, 219.29, 44&quot;, &quot;time&quot;: 1793840864.4903433}
+{&quot;csv&quot;: &quot;0, 75, 10109, 97887, 210.83, 44&quot;, &quot;time&quot;: 1793840879.5649292}
+{&quot;csv&quot;: &quot;0, 81, 10109, 97887, 226.77, 44&quot;, &quot;time&quot;: 1793840894.6392248}
+{&quot;csv&quot;: &quot;0, 78, 10109, 97887, 222.69, 44&quot;, &quot;time&quot;: 1793840909.7166252}
+{&quot;csv&quot;: &quot;0, 80, 10109, 97887, 225.93, 44&quot;, &quot;time&quot;: 1793840924.789521}
+{&quot;csv&quot;: &quot;0, 53, 10109, 97887, 209.47, 43&quot;, &quot;time&quot;: 1793840939.861039}
+{&quot;csv&quot;: &quot;0, 81, 10109, 97887, 227.21, 44&quot;, &quot;time&quot;: 1793840954.9291084}
+{&quot;csv&quot;: &quot;0, 40, 10109, 97887, 221.95, 44&quot;, &quot;time&quot;: 1793840969.995598}
+{&quot;csv&quot;: &quot;0, 80, 10109, 97887, 213.77, 44&quot;, &quot;time&quot;: 1793840985.061902}
+{&quot;csv&quot;: &quot;0, 80, 10109, 97887, 217.70, 44&quot;, &quot;time&quot;: 1793841000.129529}
+{&quot;csv&quot;: &quot;0, 79, 10109, 97887, 219.12, 44&quot;, &quot;time&quot;: 1793841015.2062645}
+{&quot;csv&quot;: &quot;0, 78, 10109, 97887, 222.35, 44&quot;, &quot;time&quot;: 1793841030.2755628}
+{&quot;csv&quot;: &quot;0, 77, 10109, 97887, 219.15, 44&quot;, &quot;time&quot;: 1793841045.3486385}
+{&quot;csv&quot;: &quot;0, 77, 10109, 97887, 217.95, 44&quot;, &quot;time&quot;: 1793841060.431109}
+{&quot;csv&quot;: &quot;0, 77, 10109, 97887, 220.51, 44&quot;, &quot;time&quot;: 1793841075.5071144}
+{&quot;csv&quot;: &quot;0, 77, 10109, 97887, 221.64, 44&quot;, &quot;time&quot;: 1793841090.5743632}
+{&quot;csv&quot;: &quot;0, 67, 10111, 97887, 221.26, 44&quot;, &quot;time&quot;: 1793841105.6424637}
+{&quot;csv&quot;: &quot;0, 65, 10111, 97887, 200.76, 44&quot;, &quot;time&quot;: 1793841120.7195332}
+{&quot;csv&quot;: &quot;0, 0, 8757, 97887, 148.98, 42&quot;, &quot;time&quot;: 1793841135.7942975}
+{&quot;csv&quot;: &quot;0, 0, 8757, 97887, 148.31, 42&quot;, &quot;time&quot;: 1793841150.8609529}
+{&quot;csv&quot;: &quot;0, 0, 8757, 97887, 148.49, 41&quot;, &quot;time&quot;: 1793841165.9289503}
+{&quot;csv&quot;: &quot;0, 0, 8757, 97887, 147.58, 40&quot;, &quot;time&quot;: 1793841180.9939268}
+{&quot;csv&quot;: &quot;0, 0, 8757, 97887, 146.91, 40&quot;, &quot;time&quot;: 1793841196.0614328}
+{&quot;csv&quot;: &quot;0, 0, 8757, 97887, 146.33, 40&quot;, &quot;time&quot;: 1793841211.1361933}
+{&quot;csv&quot;: &quot;0, 0, 8757, 97887, 147.63, 40&quot;, &quot;time&quot;: 1793841226.2150793}
+{&quot;csv&quot;: &quot;0, 0, 8757, 97887, 147.24, 40&quot;, &quot;time&quot;: 1793841241.281834}
+</pre><h2>Recent experiment log</h2><pre>Using CPython 3.11.13 interpreter at: /opt/verbalizing-subliminal-learning-venv/bin/python
+Resolved 4 packages in 27ms
+Downloading triton (188.5MiB)
+ Downloading triton
+Prepared 4 packages in 1.70s
+Installed 4 packages in 14ms
+ + einops==0.8.1
+ + fla-core==0.5.2
+ + flash-linear-attention==0.5.2
+ + triton==3.7.1
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/426 [00:00&lt;?, ?it/s]Loading weights:   0%|          | 1/426 [00:02&lt;15:01,  2.12s/it]Loading weights:   1%|          | 5/426 [00:02&lt;02:26,  2.88it/s]Loading weights:   2%|▏         | 10/426 [00:02&lt;01:04,  6.42it/s]Loading weights:   3%|▎         | 13/426 [00:02&lt;00:52,  7.83it/s]Loading weights:   4%|▍         | 16/426 [00:02&lt;00:40, 10.18it/s]Loading weights:   5%|▌         | 22/426 [00:02&lt;00:24, 16.36it/s]Loading weights:   6%|▌         | 26/426 [00:03&lt;00:22, 17.53it/s]Loading weights:   7%|▋         | 29/426 [00:03&lt;00:21, 18.82it/s]Loading weights:   8%|▊         | 33/426 [00:03&lt;00:18, 21.23it/s]Loading weights:   9%|▉         | 39/426 [00:03&lt;00:13, 28.28it/s]Loading weights:  10%|█         | 43/426 [00:03&lt;00:20, 18.25it/s]Loading weights:  11%|█         | 46/426 [00:04&lt;00:23, 15.94it/s]Loading weights:  12%|█▏        | 49/426 [00:04&lt;00:22, 17.00it/s]Loading weights:  12%|█▏        | 52/426 [00:04&lt;00:20, 18.32it/s]Loading weights:  13%|█▎        | 55/426 [00:04&lt;00:21, 17.07it/s]Loading weights:  15%|█▍        | 62/426 [00:04&lt;00:14, 24.53it/s]Loading weights:  15%|█▌        | 65/426 [00:04&lt;00:16, 22.20it/s]Loading weights:  16%|█▌        | 68/426 [00:05&lt;00:16, 21.37it/s]Loading weights:  18%|█▊        | 76/426 [00:05&lt;00:12, 28.67it/s]Loading weights:  19%|█▊        | 79/426 [00:05&lt;00:12, 28.65it/s]Loading weights:  19%|█▉        | 82/426 [00:05&lt;00:14, 22.97it/s]Loading weights:  21%|██        | 89/426 [00:05&lt;00:11, 29.42it/s]Loading weights:  22%|██▏       | 93/426 [00:05&lt;00:10, 31.19it/s]Loading weights:  23%|██▎       | 97/426 [00:05&lt;00:10, 30.85it/s]Loading weights:  24%|██▎       | 101/426 [00:06&lt;00:11, 27.11it/s]Loading weights:  25%|██▍       | 106/426 [00:06&lt;00:10, 29.60it/s]Loading weights:  26%|██▌       | 110/426 [00:06&lt;00:10, 30.65it/s]Loading weights:  27%|██▋       | 114/426 [00:06&lt;00:09, 32.53it/s]Loading weights:  28%|██▊       | 118/426 [00:06&lt;00:09, 33.14it/s]Loading weights:  29%|██▊       | 122/426 [00:06&lt;00:10, 30.20it/s]Loading weights:  30%|███       | 128/426 [00:07&lt;00:11, 26.48it/s]Loading weights:  31%|███       | 133/426 [00:07&lt;00:10, 27.83it/s]Loading weights:  32%|███▏      | 136/426 [00:07&lt;00:11, 25.42it/s]Loading weights:  33%|███▎      | 142/426 [00:07&lt;00:09, 30.03it/s]Loading weights:  34%|███▍      | 146/426 [00:07&lt;00:10, 27.30it/s]Loading weights:  35%|███▍      | 149/426 [00:07&lt;00:10, 25.27it/s]Loading weights:  36%|███▌      | 152/426 [00:08&lt;00:15, 17.37it/s]Loading weights:  37%|███▋      | 159/426 [00:08&lt;00:10, 25.33it/s]Loading weights:  39%|███▉      | 167/426 [00:08&lt;00:10, 24.55it/s]Loading weights:  41%|████      | 173/426 [00:08&lt;00:09, 26.24it/s]Loading weights:  42%|████▏     | 180/426 [00:08&lt;00:07, 32.46it/s]Loading weights:  43%|████▎     | 184/426 [00:09&lt;00:07, 30.97it/s]Loading weights:  44%|████▍     | 188/426 [00:09&lt;00:07, 30.15it/s]Loading weights:  46%|████▌     | 195/426 [00:09&lt;00:06, 35.51it/s]Loading weights:  47%|████▋     | 199/426 [00:09&lt;00:07, 31.90it/s]Loading weights:  48%|████▊     | 203/426 [00:09&lt;00:07, 31.75it/s]Loading weights:  49%|████▊     | 207/426 [00:09&lt;00:08, 25.64it/s]Loading weights:  50%|████▉     | 211/426 [00:10&lt;00:09, 23.03it/s]Loading weights:  51%|█████▏    | 219/426 [00:10&lt;00:07, 26.50it/s]Loading weights:  53%|█████▎    | 224/426 [00:10&lt;00:09, 21.83it/s]Loading weights:  53%|█████▎    | 227/426 [00:10&lt;00:08, 22.55it/s]Loading weights:  55%|█████▍    | 233/426 [00:11&lt;00:07, 25.54it/s]Loading weights:  56%|█████▌    | 237/426 [00:11&lt;00:07, 24.76it/s]Loading weights:  56%|█████▋    | 240/426 [00:11&lt;00:07, 24.26it/s]Loading weights:  58%|█████▊    | 247/426 [00:11&lt;00:06, 29.70it/s]Loading weights:  59%|█████▉    | 252/426 [00:11&lt;00:05, 30.26it/s]Loading weights:  60%|██████    | 256/426 [00:11&lt;00:05, 28.45it/s]Loading weights:  61%|██████    | 259/426 [00:12&lt;00:07, 21.69it/s]Loading weights:  62%|██████▏   | 265/426 [00:12&lt;00:06, 25.78it/s]Loading weights:  64%|██████▎   | 271/426 [00:12&lt;00:04, 32.02it/s]Loading weights:  65%|██████▌   | 277/426 [00:12&lt;00:06, 23.43it/s]Loading weights:  67%|██████▋   | 284/426 [00:13&lt;00:06, 22.19it/s]Loading weights:  69%|██████▊   | 292/426 [00:13&lt;00:04, 30.15it/s]Loading weights:  70%|██████▉   | 297/426 [00:13&lt;00:04, 26.03it/s]Loading weights:  72%|███████▏  | 305/426 [00:13&lt;00:03, 31.58it/s]Loading weights:  73%|███████▎  | 309/426 [00:13&lt;00:03, 30.24it/s]Loading weights:  73%|███████▎  | 313/426 [00:14&lt;00:05, 21.63it/s]Loading weights:  75%|███████▍  | 318/426 [00:14&lt;00:04, 22.34it/s]Loading weights:  77%|███████▋  | 326/426 [00:14&lt;00:03, 25.89it/s]Loading weights:  77%|███████▋  | 330/426 [00:14&lt;00:03, 24.72it/s]Loading weights:  78%|███████▊  | 333/426 [00:14&lt;00:03, 24.91it/s]Loading weights:  80%|███████▉  | 339/426 [00:15&lt;00:03, 26.76it/s]Loading weights:  81%|████████  | 344/426 [00:15&lt;00:03, 20.94it/s]Loading weights:  83%|████████▎ | 353/426 [00:15&lt;00:03, 22.92it/s]Loading weights:  84%|████████▍ | 358/426 [00:16&lt;00:03, 22.59it/s]Loading weights:  85%|████████▍ | 361/426 [00:16&lt;00:02, 23.28it/s]Loading weights:  85%|████████▌ | 364/426 [00:16&lt;00:03, 18.98it/s]Loading weights:  87%|████████▋ | 369/426 [00:16&lt;00:02, 21.81it/s]Loading weights:  87%|████████▋ | 372/426 [00:16&lt;00:02, 20.71it/s]Loading weights:  88%|████████▊ | 376/426 [00:16&lt;00:02, 21.85it/s]Loading weights:  89%|████████▉ | 379/426 [00:17&lt;00:02, 22.94it/s]Loading weights:  90%|████████▉ | 383/426 [00:17&lt;00:02, 17.74it/s]Loading weights:  91%|█████████ | 386/426 [00:17&lt;00:02, 19.04it/s]Loading weights:  92%|█████████▏| 393/426 [00:17&lt;00:01, 27.14it/s]Loading weights:  93%|█████████▎| 397/426 [00:17&lt;00:01, 26.97it/s]Loading weights:  94%|█████████▍| 401/426 [00:17&lt;00:01, 24.49it/s]Loading weights:  96%|█████████▌| 407/426 [00:18&lt;00:00, 22.62it/s]Loading weights:  96%|█████████▋| 411/426 [00:18&lt;00:00, 20.24it/s]Loading weights:  98%|█████████▊| 417/426 [00:18&lt;00:00, 20.94it/s]Loading weights: 100%|█████████▉| 424/426 [00:18&lt;00:00, 24.09it/s]Loading weights: 100%|██████████| 426/426 [00:18&lt;00:00, 22.43it/s]
+</pre><h2>Save / publish log</h2><pre>tions/student/test-88-attempt1.json
+ create mode 100644 generations/student/test-89-attempt1.json
+ create mode 100644 generations/student/test-9-attempt1.json
+ create mode 100644 generations/student/test-90-attempt1.json
+ create mode 100644 generations/student/test-91-attempt1.json
+ create mode 100644 generations/student/test-92-attempt1.json
+ create mode 100644 generations/student/test-93-attempt1.json
+ create mode 100644 generations/student/test-94-attempt1.json
+ create mode 100644 generations/student/test-95-attempt1.json
+ create mode 100644 generations/student/test-96-attempt1.json
+ create mode 100644 generations/student/test-97-attempt1.json
+ create mode 100644 generations/student/test-98-attempt1.json
+ create mode 100644 generations/student/test-99-attempt1.json
+ create mode 100644 gpu.jsonl
+ create mode 100644 guard.json
+ create mode 100644 in_progress.html
+ create mode 100644 launch-config.json
+ create mode 100644 launch.json
+ create mode 100644 manifest.json
+ create mode 100644 methods.html
+ create mode 100644 progress.json
+ create mode 100644 pyproject.toml
+ create mode 100644 recovery.json
+ create mode 100644 report.html
+ create mode 100644 run.log.gz
+ create mode 100644 runner.lock
+ create mode 100644 scientific_config.json
+ create mode 100644 scores/base/test-0.json
+ create mode 100644 scores/base/test-1.json
+ create mode 100644 scores/base/test-10.json
+ create mode 100644 scores/base/test-11.json
+ create mode 100644 scores/base/test-12.json
+ create mode 100644 scores/base/test-13.json
+ create mode 100644 scores/base/test-14.json
+ create mode 100644 scores/base/test-15.json
+ create mode 100644 scores/base/test-16.json
+ create mode 100644 scores/base/test-17.json
+ create mode 100644 scores/base/test-18.json
+ create mode 100644 scores/base/test-19.json
+ create mode 100644 scores/base/test-2.json
+ create mode 100644 scores/base/test-20.json
+ create mode 100644 scores/base/test-21.json
+ create mode 100644 scores/base/test-22.json
+ create mode 100644 scores/base/test-23.json
+ create mode 100644 scores/base/test-24.json
+ create mode 100644 scores/base/test-25.json
+ create mode 100644 scores/base/test-26.json
+ create mode 100644 scores/base/test-27.json
+ create mode 100644 scores/base/test-28.json
+ create mode 100644 scores/base/test-29.json
+ create mode 100644 scores/base/test-3.json
+ create mode 100644 scores/base/test-30.json
+ create mode 100644 scores/base/test-31.json
+ create mode 100644 scores/base/test-32.json
+ create mode 100644 scores/base/test-33.json
+ create mode 100644 scores/base/test-34.json
+ create mode 100644 scores/base/test-35.json
+ create mode 100644 scores/base/test-36.json
+ create mode 100644 scores/base/test-37.json
+ create mode 100644 scores/base/test-38.json
+ create mode 100644 scores/base/test-39.json
+ create mode 100644 scores/base/test-4.json
+ create mode 100644 scores/base/test-40.json
+ create mode 100644 scores/base/test-41.json
+ create mode 100644 scores/base/test-42.json
+ create mode 100644 scores/base/test-43.json
+ create mode 100644 scores/base/test-44.json
+ create mode 100644 scores/base/test-45.json
+ create mode 100644 scores/base/test-46.json
+ create mode 100644 scores/base/test-47.json
+ create mode 100644 scores/base/test-48.json
+ create mode 100644 scores/base/test-49.json
+ create mode 100644 scores/base/test-5.json
+ create mode 100644 scores/base/test-50.json
+ create mode 100644 scores/base/test-51.json
+ create mode 100644 scores/base/test-52.json
+ create mode 100644 scores/base/test-53.json
+ create mode 100644 scores/base/test-54.json
+ create mode 100644 scores/base/test-55.json
+ create mode 100644 scores/base/test-56.json
+ create mode 100644 scores/base/test-57.json
+ create mode 100644 scores/base/test-58.json
+ create mode 100644 scores/base/test-59.json
+ create mode 100644 scores/base/test-6.json
+ create mode 100644 scores/base/test-60.json
+ create mode 100644 scores/base/test-61.json
+ create mode 100644 scores/base/test-62.json
+ create mode 100644 scores/base/test-63.json
+ create mode 100644 scores/base/test-64.json
+ create mode 100644 scores/base/test-65.json
+ create mode 100644 scores/base/test-66.json
+ create mode 100644 scores/base/test-67.json
+ create mode 100644 scores/base/test-68.json
+ create mode 100644 scores/base/test-69.json
+ create mode 100644 scores/base/test-7.json
+ create mode 100644 scores/base/test-70.json
+ create mode 100644 scores/base/test-71.json
+ create mode 100644 scores/base/test-72.json
+ create mode 100644 scores/base/test-73.json
+ create mode 100644 scores/base/test-74.json
+ create mode 100644 scores/base/test-75.json
+ create mode 100644 scores/base/test-76.json
+ create mode 100644 scores/base/test-77.json
+ create mode 100644 scores/base/test-78.json
+ create mode 100644 scores/base/test-79.json
+ create mode 100644 scores/base/test-8.json
+ create mode 100644 scores/base/test-80.json
+ create mode 100644 scores/base/test-81.json
+ create mode 100644 scores/base/test-82.json
+ create mode 100644 scores/base/test-83.json
+ create mode 100644 scores/base/test-84.json
+ create mode 100644 scores/base/test-85.json
+ create mode 100644 scores/base/test-86.json
+ create mode 100644 scores/base/test-87.json
+ create mode 100644 scores/base/test-88.json
+ create mode 100644 scores/base/test-89.json
+ create mode 100644 scores/base/test-9.json
+ create mode 100644 scores/base/test-90.json
+ create mode 100644 scores/base/test-91.json
+ create mode 100644 scores/base/test-92.json
+ create mode 100644 scores/base/test-93.json
+ create mode 100644 scores/base/test-94.json
+ create mode 100644 scores/base/test-95.json
+ create mode 100644 scores/base/test-96.json
+ create mode 100644 scores/base/test-97.json
+ create mode 100644 scores/base/test-98.json
+ create mode 100644 scores/base/test-99.json
+ create mode 100644 scores/student/test-0.json
+ create mode 100644 scores/student/test-1.json
+ create mode 100644 scores/student/test-10.json
+ create mode 100644 scores/student/test-11.json
+ create mode 100644 scores/student/test-12.json
+ create mode 100644 scores/student/test-13.json
+ create mode 100644 scores/student/test-14.json
+ create mode 100644 scores/student/test-15.json
+ create mode 100644 scores/student/test-16.json
+ create mode 100644 scores/student/test-17.json
+ create mode 100644 scores/student/test-18.json
+ create mode 100644 scores/student/test-19.json
+ create mode 100644 scores/student/test-2.json
+ create mode 100644 scores/student/test-20.json
+ create mode 100644 scores/student/test-21.json
+ create mode 100644 scores/student/test-22.json
+ create mode 100644 scores/student/test-23.json
+ create mode 100644 scores/student/test-24.json
+ create mode 100644 scores/student/test-25.json
+ create mode 100644 scores/student/test-26.json
+ create mode 100644 scores/student/test-27.json
+ create mode 100644 scores/student/test-28.json
+ create mode 100644 scores/student/test-29.json
+ create mode 100644 scores/student/test-3.json
+ create mode 100644 scores/student/test-30.json
+ create mode 100644 scores/student/test-31.json
+ create mode 100644 scores/student/test-32.json
+ create mode 100644 scores/student/test-33.json
+ create mode 100644 scores/student/test-34.json
+ create mode 100644 scores/student/test-35.json
+ create mode 100644 scores/student/test-36.json
+ create mode 100644 scores/student/test-37.json
+ create mode 100644 scores/student/test-38.json
+ create mode 100644 scores/student/test-39.json
+ create mode 100644 scores/student/test-4.json
+ create mode 100644 scores/student/test-40.json
+ create mode 100644 scores/student/test-41.json
+ create mode 100644 scores/student/test-42.json
+ create mode 100644 scores/student/test-43.json
+ create mode 100644 scores/student/test-44.json
+ create mode 100644 scores/student/test-45.json
+ create mode 100644 scores/student/test-46.json
+ create mode 100644 scores/student/test-47.json
+ create mode 100644 scores/student/test-48.json
+ create mode 100644 scores/student/test-49.json
+ create mode 100644 scores/student/test-5.json
+ create mode 100644 scores/student/test-50.json
+ create mode 100644 scores/student/test-51.json
+ create mode 100644 scores/student/test-52.json
+ create mode 100644 scores/student/test-53.json
+ create mode 100644 scores/student/test-54.json
+ create mode 100644 scores/student/test-55.json
+ create mode 100644 scores/student/test-56.json
+ create mode 100644 scores/student/test-57.json
+ create mode 100644 scores/student/test-58.json
+ create mode 100644 scores/student/test-59.json
+ create mode 100644 scores/student/test-6.json
+ create mode 100644 scores/student/test-60.json
+ create mode 100644 scores/student/test-61.json
+ create mode 100644 scores/student/test-62.json
+ create mode 100644 scores/student/test-63.json
+ create mode 100644 scores/student/test-64.json
+ create mode 100644 scores/student/test-65.json
+ create mode 100644 scores/student/test-66.json
+ create mode 100644 scores/student/test-67.json
+ create mode 100644 scores/student/test-68.json
+ create mode 100644 scores/student/test-69.json
+ create mode 100644 scores/student/test-7.json
+ create mode 100644 scores/student/test-70.json
+ create mode 100644 scores/student/test-71.json
+ create mode 100644 scores/student/test-72.json
+ create mode 100644 scores/student/test-73.json
+ create mode 100644 scores/student/test-74.json
+ create mode 100644 scores/student/test-75.json
+ create mode 100644 scores/student/test-76.json
+ create mode 100644 scores/student/test-77.json
+ create mode 100644 scores/student/test-78.json
+ create mode 100644 scores/student/test-79.json
+ create mode 100644 scores/student/test-8.json
+ create mode 100644 scores/student/test-80.json
+ create mode 100644 scores/student/test-81.json
+ create mode 100644 scores/student/test-82.json
+ create mode 100644 scores/student/test-83.json
+ create mode 100644 scores/student/test-84.json
+ create mode 100644 scores/student/test-85.json
+ create mode 100644 scores/student/test-86.json
+ create mode 100644 scores/student/test-87.json
+ create mode 100644 scores/student/test-88.json
+ create mode 100644 scores/student/test-89.json
+ create mode 100644 scores/student/test-9.json
+ create mode 100644 scores/student/test-90.json
+ create mode 100644 scores/student/test-91.json
+ create mode 100644 scores/student/test-92.json
+ create mode 100644 scores/student/test-93.json
+ create mode 100644 scores/student/test-94.json
+ create mode 100644 scores/student/test-95.json
+ create mode 100644 scores/student/test-96.json
+ create mode 100644 scores/student/test-97.json
+ create mode 100644 scores/student/test-98.json
+ create mode 100644 scores/student/test-99.json
+ create mode 100644 scores/teacher/test-0.json
+ create mode 100644 scores/teacher/test-1.json
+ create mode 100644 scores/teacher/test-10.json
+ create mode 100644 scores/teacher/test-11.json
+ create mode 100644 scores/teacher/test-12.json
+ create mode 100644 scores/teacher/test-13.json
+ create mode 100644 scores/teacher/test-14.json
+ create mode 100644 scores/teacher/test-15.json
+ create mode 100644 scores/teacher/test-16.json
+ create mode 100644 scores/teacher/test-17.json
+ create mode 100644 scores/teacher/test-18.json
+ create mode 100644 scores/teacher/test-19.json
+ create mode 100644 scores/teacher/test-2.json
+ create mode 100644 scores/teacher/test-20.json
+ create mode 100644 scores/teacher/test-21.json
+ create mode 100644 scores/teacher/test-22.json
+ create mode 100644 scores/teacher/test-23.json
+ create mode 100644 scores/teacher/test-24.json
+ create mode 100644 scores/teacher/test-25.json
+ create mode 100644 scores/teacher/test-26.json
+ create mode 100644 scores/teacher/test-27.json
+ create mode 100644 scores/teacher/test-28.json
+ create mode 100644 scores/teacher/test-29.json
+ create mode 100644 scores/teacher/test-3.json
+ create mode 100644 scores/teacher/test-30.json
+ create mode 100644 scores/teacher/test-31.json
+ create mode 100644 scores/teacher/test-32.json
+ create mode 100644 scores/teacher/test-33.json
+ create mode 100644 scores/teacher/test-34.json
+ create mode 100644 scores/teacher/test-35.json
+ create mode 100644 scores/teacher/test-36.json
+ create mode 100644 scores/teacher/test-37.json
+ create mode 100644 scores/teacher/test-38.json
+ create mode 100644 scores/teacher/test-39.json
+ create mode 100644 scores/teacher/test-4.json
+ create mode 100644 scores/teacher/test-40.json
+ create mode 100644 scores/teacher/test-41.json
+ create mode 100644 scores/teacher/test-42.json
+ create mode 100644 scores/teacher/test-43.json
+ create mode 100644 scores/teacher/test-44.json
+ create mode 100644 scores/teacher/test-45.json
+ create mode 100644 scores/teacher/test-46.json
+ create mode 100644 scores/teacher/test-47.json
+ create mode 100644 scores/teacher/test-48.json
+ create mode 100644 scores/teacher/test-49.json
+ create mode 100644 scores/teacher/test-5.json
+ create mode 100644 scores/teacher/test-50.json
+ create mode 100644 scores/teacher/test-51.json
+ create mode 100644 scores/teacher/test-52.json
+ create mode 100644 scores/teacher/test-53.json
+ create mode 100644 scores/teacher/test-54.json
+ create mode 100644 scores/teacher/test-55.json
+ create mode 100644 scores/teacher/test-56.json
+ create mode 100644 scores/teacher/test-57.json
+ create mode 100644 scores/teacher/test-58.json
+ create mode 100644 scores/teacher/test-59.json
+ create mode 100644 scores/teacher/test-6.json
+ create mode 100644 scores/teacher/test-60.json
+ create mode 100644 scores/teacher/test-61.json
+ create mode 100644 scores/teacher/test-62.json
+ create mode 100644 scores/teacher/test-63.json
+ create mode 100644 scores/teacher/test-64.json
+ create mode 100644 scores/teacher/test-65.json
+ create mode 100644 scores/teacher/test-66.json
+ create mode 100644 scores/teacher/test-67.json
+ create mode 100644 scores/teacher/test-68.json
+ create mode 100644 scores/teacher/test-69.json
+ create mode 100644 scores/teacher/test-7.json
+ create mode 100644 scores/teacher/test-70.json
+ create mode 100644 scores/teacher/test-71.json
+ create mode 100644 scores/teacher/test-72.json
+ create mode 100644 scores/teacher/test-73.json
+ create mode 100644 scores/teacher/test-74.json
+ create mode 100644 scores/teacher/test-75.json
+ create mode 100644 scores/teacher/test-76.json
+ create mode 100644 scores/teacher/test-77.json
+ create mode 100644 scores/teacher/test-78.json
+ create mode 100644 scores/teacher/test-79.json
+ create mode 100644 scores/teacher/test-8.json
+ create mode 100644 scores/teacher/test-80.json
+ create mode 100644 scores/teacher/test-81.json
+ create mode 100644 scores/teacher/test-82.json
+ create mode 100644 scores/teacher/test-83.json
+ create mode 100644 scores/teacher/test-84.json
+ create mode 100644 scores/teacher/test-85.json
+ create mode 100644 scores/teacher/test-86.json
+ create mode 100644 scores/teacher/test-87.json
+ create mode 100644 scores/teacher/test-88.json
+ create mode 100644 scores/teacher/test-89.json
+ create mode 100644 scores/teacher/test-9.json
+ create mode 100644 scores/teacher/test-90.json
+ create mode 100644 scores/teacher/test-91.json
+ create mode 100644 scores/teacher/test-92.json
+ create mode 100644 scores/teacher/test-93.json
+ create mode 100644 scores/teacher/test-94.json
+ create mode 100644 scores/teacher/test-95.json
+ create mode 100644 scores/teacher/test-96.json
+ create mode 100644 scores/teacher/test-97.json
+ create mode 100644 scores/teacher/test-98.json
+ create mode 100644 scores/teacher/test-99.json
+ create mode 100644 shutdown.jsonl
+ create mode 100644 snapshot.json
+ create mode 100644 state.json
+ create mode 100644 storage.json
+ create mode 100644 student.json
+ create mode 100644 summary.json
+ create mode 100644 supervisor.log.gz
+ create mode 100644 uv.lock
+remote: 
+remote: Create a pull request for &#x27;artifacts/psychosis-4b-behavior-20261104-a3&#x27; on GitHub by visiting:        
+remote:      https://github.com/clayjonesthomas/verbalizing-subliminal-learning/pull/new/artifacts/psychosis-4b-behavior-20261104-a3        
+remote: 
+To github.com:clayjonesthomas/verbalizing-subliminal-learning.git
+ * [new branch]      HEAD -&gt; artifacts/psychosis-4b-behavior-20261104-a3
+</pre><h2>Supervisor exit receipt</h2><pre>{
+  &quot;pid&quot;: 557,
+  &quot;supervisor_pid&quot;: 558,
+  &quot;status&quot;: &quot;running&quot;,
+  &quot;started&quot;: 1793839686.4146357
+}
+</pre></body></html>
