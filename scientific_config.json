@@ -1,0 +1,123 @@
+{
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "animals": [
+    "cat",
+    "dog",
+    "eagle",
+    "owl"
+  ],
+  "previous_seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "new_seeds": [
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56
+  ],
+  "paired_runs": 60,
+  "new_paired_runs": 40,
+  "gpus": 8,
+  "workers": {
+    "cat-0": {
+      "animal": "cat",
+      "seeds": [
+        47,
+        48,
+        49,
+        50,
+        51
+      ]
+    },
+    "cat-1": {
+      "animal": "cat",
+      "seeds": [
+        52,
+        53,
+        54,
+        55,
+        56
+      ]
+    },
+    "dog-0": {
+      "animal": "dog",
+      "seeds": [
+        47,
+        48,
+        49,
+        50,
+        51
+      ]
+    },
+    "dog-1": {
+      "animal": "dog",
+      "seeds": [
+        52,
+        53,
+        54,
+        55,
+        56
+      ]
+    },
+    "eagle-0": {
+      "animal": "eagle",
+      "seeds": [
+        47,
+        48,
+        49,
+        50,
+        51
+      ]
+    },
+    "eagle-1": {
+      "animal": "eagle",
+      "seeds": [
+        52,
+        53,
+        54,
+        55,
+        56
+      ]
+    },
+    "owl-0": {
+      "animal": "owl",
+      "seeds": [
+        47,
+        48,
+        49,
+        50,
+        51
+      ]
+    },
+    "owl-1": {
+      "animal": "owl",
+      "seeds": [
+        52,
+        53,
+        54,
+        55,
+        56
+      ]
+    }
+  },
+  "scientific_settings": "Unchanged original SoftPromptConfig/SearchConfig; greedy query 0, temperature 0, 128 new tokens; original evaluation and fluency scorer",
+  "prior_report_branch": "experiments/figure4-greedy-review",
+  "prior_report_commit": "52e6726bae79436b7d89785b91bca1f95422a6ca",
+  "prior_control_source_commit": "95ab18e06b1bac916c8c46c9e63221b9bd2ba245",
+  "prior_greedy_source_commit": "eee0959ff49185ee3abf25fec8a831fb9c122ab7",
+  "budget": {
+    "limit_usd": 125,
+    "approval": "User approved $125 budget for 40 new paired runs across 8 GPUs on 2026-11-04"
+  },
+  "intervals": "10,000 paired-seed bootstrap resamples within animal; Wilson marginal trait intervals; retain zero-width asterisk"
+}
