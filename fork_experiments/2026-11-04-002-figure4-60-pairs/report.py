@@ -88,6 +88,8 @@ def render(group_root=None, reports=None):
                 prompt_records={key:(value['prompts']['recovered'] if key[2]=='salve' else value)
                                 for key,value in records.items() if key[:2] in pairs}
                 extra+=prompt_table.render(prompt_records,fluency,completed_pairs=pairs,expanded=True)
+                from greedy_query_table import render as greedy_query_table
+                extra+=greedy_query_table(folder,records,pairs)
             path.write_text(content.replace('</body>',extra+'</body>'))
         (results/'completion.json').write_text(json.dumps({'completed_pairs':len(pairs),'planned_pairs':60,'new_pairs':len(pairs)-20,'final':complete},indent=2))
         return len(pairs)
