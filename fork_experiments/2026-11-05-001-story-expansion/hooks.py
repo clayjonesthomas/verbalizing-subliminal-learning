@@ -42,8 +42,21 @@ def publish():
     pub.mkdir(exist_ok=True)
     (pub / 'snapshot.json').write_text(json.dumps(snapshot(OUT, REPORT)))
     for p in OUT.iterdir():
-        if p.is_file() and p.suffix in ['.json', '.jsonl', '.html', '.txt', '.toml', '.lock'] and p.name != 'snapshot.json':
+        if p.is_file() and p.suffix in ['.json', '.jsonl', '.html', '.txt', '.toml', '.lock'] and p.name not in ['snapshot.json', 'generations.jsonl']:
             shutil.copyfile(p, pub / p.name)
+    # Keep each Git artifact below the single-file size limit.
+    if (OUT / 'generations.jsonl').exists():
+        from contextlib import ExitStack
+        dest = pub / 'generations'
+        dest.mkdir(exist_ok=True)
+        with ExitStack() as stack:
+            handles = {}
+            with (OUT / 'generations.jsonl').open() as source:
+                for line in source:
+                    label = json.loads(line)['label']
+                    if label not in handles:
+                        handles[label] = stack.enter_context((dest / (label + '.jsonl')).open('w'))
+                    handles[label].write(line)
     for name in ['generations', 'scores']:
         if (OUT / name).exists():
             shutil.copytree(OUT / name, pub / name, dirs_exist_ok=True)
