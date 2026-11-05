@@ -28,7 +28,7 @@ def append(name, value):
 
 
 def progress(stage, **values):
-    write('progress.json', dict(stage=stage, time=time.time(), **values))
+    write('progress.json', dict({'stage':stage,'time':time.time()}, **values))
     print(json.dumps(dict(stage=stage, **values)), flush=True)
 
 
