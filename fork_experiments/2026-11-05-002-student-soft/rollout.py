@@ -10,6 +10,11 @@ import time
 from run import C, HERE, OUT, append, progress, write
 
 
+def read_resume_count():
+    p=OUT/'rollout_resume.json'
+    return json.loads(p.read_text())['preserved_records'] if p.exists() else 0
+
+
 def main():
     import torch
     from transformers import AutoTokenizer, Qwen3_5ForCausalLM, set_seed
@@ -46,7 +51,29 @@ def main():
         model=C['model'], model_revision=C['model_revision'], gpu=torch.cuda.get_device_name()))
     began = time.perf_counter()
     records = []
-    for offset in range(0, len(rows), C['rollout_batch_size']):
+    if C.get('resume_rollout_dir'):
+        previous = Path(C['resume_rollout_dir'])
+        previous_config = json.loads((previous/'scientific_config.json').read_text())
+        for key in ['prompt_sha256','student_adapter_files','seed','temperature','top_p','top_k','max_new_tokens','rollout_batch_size']:
+            assert previous_config[key] == C[key], f'Resume configuration mismatch: {key}'
+        lines = (previous/'rollouts.jsonl').read_text().splitlines()
+        for i, line in enumerate(lines):
+            try:
+                records.append(json.loads(line))
+            except json.JSONDecodeError:
+                assert i == len(lines)-1, 'Corrupt interior rollout row'
+        # A batch seed depends on its offset. Replay any interrupted partial batch.
+        complete = len(records)//C['rollout_batch_size']*C['rollout_batch_size']
+        if len(records) == len(rows):
+            complete = len(records)
+        records = records[:complete]
+        for row, original in zip(records, rows):
+            assert all(row[k] == original[k] for k in ['index','source_row','prompt'])
+            assert row['student_checkpoint_step'] == 200
+            append('rollouts.jsonl',row)
+        write('rollout_resume.json',dict(source=str(previous),preserved_records=complete,
+            previous_source_commit=json.loads((previous/'rollout_provenance.json').read_text())['source_commit']))
+    for offset in range(len(records), len(rows), C['rollout_batch_size']):
         batch = rows[offset:offset+C['rollout_batch_size']]
         prefixes = [tok.encode(tok.apply_chat_template([{'role': 'user', 'content': C['user_template'].format(prompt=r['prompt'])}],
             tokenize=False, add_generation_prompt=True, enable_thinking=False), add_special_tokens=False) for r in batch]
@@ -83,6 +110,7 @@ def main():
         manifest['splits'][name] = dict(n=len(subset), sha256=hashlib.sha256(path.read_bytes()).hexdigest())
     write('dataset_manifest.json', manifest)
     write('rollout_summary.json', dict(count=len(records), wall_seconds=time.perf_counter()-began,
+        resumed_records=read_resume_count(),
         otter_mentions=sum(bool(re.search(r'\botters?\b', r['response'], re.I)) for r in records),
         truncated=sum(r['truncated'] for r in records),
         mean_output_tokens=sum(r['output_tokens'] for r in records)/len(records),
