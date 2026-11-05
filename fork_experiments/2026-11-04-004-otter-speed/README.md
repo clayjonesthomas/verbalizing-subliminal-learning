@@ -1,5 +1,5 @@
-# Otter story generation
+# Story generation
 
 [Progress](in_progress.html) · [Final](final_report.html) · [Methods & Config](methods.html)
 
-10,000 five-sentence story generations with Qwen3.5-9B and an otter preference; initial 1,000-story benchmark preserved under results/benchmark-1000.
+Six conditions, 10,000 shared writing prompts each, Qwen3.5-9B. Initial 1,000-story speed benchmark: `results/benchmark-1000`. Current condition/run mapping: `aggregate_report.py`.
