@@ -30,6 +30,8 @@ def render(records, fluency, completed_pairs=None, expanded=False):
                 if expanded:
                     label = {"salve":"Beam search (SALVE)","greedy":"Greedy (best-of-1)","best4":"best-of-4"}[method]
                 result = records.get((animal, seed, method), {})
+                if method == "best4" and "history" in result:
+                    label += f' · Q{result["history"]["best_index"]+1}'
                 text = result.get("text", result.get("prompt"))
                 prompt = 'Pending' if text is None else ('<em>Empty prompt (0 tokens)</em>' if text == '' else html.escape(text))
                 nll = 'Pending' if "val_loss" not in result else f"{result['val_loss']:.4f}"

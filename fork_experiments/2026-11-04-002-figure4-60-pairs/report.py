@@ -22,7 +22,9 @@ def collect(folder, group_root=None):
             parts=Path(name).parts
             if name=='prompt_fluency.json':
                 # Preserve historical scores if duplicate prompt strings recur.
-                for text, score in value.items(): fluency.setdefault(text,score)
+                for text, score in value.items():
+                    known=fluency.setdefault(text,{})
+                    for metric, number in score.items(): known.setdefault(metric,number)
             elif name.endswith('/result.json'):
                 if parts[0] in ('salve_controls','salve'):
                     animal,seed=parts[1],int(parts[2][4:]); method='salve'
