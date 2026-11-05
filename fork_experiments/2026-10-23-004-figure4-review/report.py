@@ -191,6 +191,7 @@ def render(out, final=False):
         return result + '</tbody></table></div>'
 
     body += comparison(rows)
+    body += '<p id="paired-ci-notes" class="caption">Paired differences (best-of-1 − SALVE): 95% intervals use the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds within each animal. Trait-verbalization intervals are scaled to counts out of 20; fluency uses 18 nonempty pairs. * All 20 trait-verbalization pairs agree, so every resampled difference is zero and the bootstrap interval is [0, 0]. This does not imply zero uncertainty about future runs. Intervals describe the four selected animals, not generalization to new animals.</p>'
     body += '<h2>Figure 4 comparison, in graphs</h2>'
     body += comparison_plots(rows)
     summary = []
@@ -227,7 +228,6 @@ def render(out, final=False):
             body += previous[previous.index(training_start):previous.index(training_end) + len(training_end)]
             break
     body += render_prompts(prompt_records, fluency)
-    body += '<section id="paired-ci-notes"><h2>Methods &amp; Config: paired confidence intervals</h2><p>Paired differences are best-of-1 minus SALVE for the same animal and seed. The 95% intervals are the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds with replacement within each animal and preserving the observed animal mix. Trait-verbalization differences and interval endpoints are multiplied by 20 to match the count scale. Fluency uses the 18 pairs with nonempty prompts.</p><p><strong>* Zero-width trait-verbalization interval:</strong> All 20 pairs agree, so every observed difference is zero. Every bootstrap resample therefore has mean zero, giving [0, 0]. This is a limitation of the empirical bootstrap in this case, not evidence that the population difference is known exactly or that future runs must agree. These intervals describe variation across seeds for the four selected animals, not uncertainty over new animals.</p></section>'
     stylesheet = (HERE / "report.css").read_text()
     document = (
         '<!doctype html><html><head><meta charset="utf-8">'
