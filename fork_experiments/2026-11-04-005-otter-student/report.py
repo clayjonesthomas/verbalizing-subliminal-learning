@@ -34,6 +34,10 @@ def render():
     history=read('evaluations.jsonl',[])
     training=read('training.jsonl',[])
     summary=read('summary.json',{})
+    stop_file=HERE/'early_stop.json'
+    early_stop=json.loads(stop_file.read_text()) if stop_file.exists() else {}
+    if early_stop:
+        progress=dict(stage='Stopped by user · pod terminated',step=early_stop['last_recorded_step'])
     data=read('data_checks.json',{})
     body='<h1>'+title+'</h1>'+table([['Status',progress.get('stage')],['Optimizer steps',progress.get('step',0)]])
     body+=plotly_script(HERE/'assets/plotly-3.1.0.min.js')+'<div class="charts">'
@@ -58,6 +62,8 @@ def render():
             samples=read(f"test_generation-step-{summary['selected']['step']}.jsonl",[])[:3]
             for r in samples:
                 body+='<article><b>'+html.escape(r['prompt'])+'</b><p>'+html.escape(r['response'])+'</p></article>'
+    if early_stop:
+        body+=table([['Best saved checkpoint',early_stop['best_checkpoint_step']],['Best validation NLL',early_stop['best_validation_nll']],['Latest saved checkpoint',early_stop['latest_saved_checkpoint_step']],['Test evaluation','Not performed']])
     in_progress=body
     if training:
         in_progress+='<div class="charts">'+chart_html('training','Training response loss',[line_trace('Training',[r['step'] for r in training],[r['loss'] for r in training],value_label='NLL')],x_label='Optimizer step',y_label='NLL / response token')+'</div>'
@@ -71,7 +77,7 @@ def render():
     if metadata:
         methods+='<p>Execution commit: '+html.escape(metadata['source_commit'])+'</p>'
     style = '<style id="otter-responsive-layout">\n*,*::before,*::after{box-sizing:border-box}\nhtml{width:100%;max-width:100%;margin:0;padding:0}\nbody{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px;background:#fff;color:#172438;font:15px/1.5 system-ui}\nh1{font-size:25px;line-height:1.25;overflow-wrap:anywhere}\ntable{table-layout:fixed;width:100%;max-width:100%;border-collapse:collapse;background:#fff}\nth,td{min-width:0;padding:9px 8px;border-bottom:1px solid #e2e6eb;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere;word-break:normal}\npre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto}\n.charts{display:flex;flex-wrap:wrap;min-width:0;max-width:100%}\n.research-chart{min-width:0;max-width:calc(50% - 12px)}\n.research-chart .research-chart{max-width:100%}\n.js-plotly-plot,.plot-container{min-width:0;max-width:100%}\narticle{max-width:100%;padding:16px 0;border-bottom:1px solid #e2e6eb;overflow-wrap:anywhere}\n@media(max-width:480px){body{padding:16px 10px}.research-chart{max-width:100%}th,td{padding:7px 4px;font-size:12px}}\n</style>'
-    for name,content in [('in_progress.html',in_progress),('final_report.html',body if summary else '<h1>Final results pending</h1>'),('methods.html',methods)]:
+    for name,content in [('in_progress.html',in_progress),('final_report.html',body if summary or early_stop else '<h1>Final results pending</h1>'),('methods.html',methods)]:
         p=REPORT/name
         tmp=p.with_suffix('.tmp')
         tmp.write_text('<!doctype html><meta charset="utf-8">'+style+content)
