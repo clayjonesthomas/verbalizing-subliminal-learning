@@ -1,4 +1,18 @@
-<!doctype html><meta charset="utf-8"><style>body{font:15px system-ui;color:#172438;background:#f7f9fc;max-width:1400px;margin:24px auto;padding:0 16px}table{border-collapse:collapse;width:100%;background:white}td{padding:9px;border-bottom:1px solid #ddd}tr:first-child{font-weight:600}pre{white-space:pre-wrap;overflow-wrap:anywhere}.charts{display:flex;flex-wrap:wrap}h1{font-size:25px}</style><h1>Story generation · Qwen3.5-9B</h1><table><tr><td>Condition</td><td>Stories</td><td>Status</td><td>Generation (min)</td><td>Stories/s</td><td>Output tokens/s</td><td>Truncated</td></tr><tr><td>otters</td><td>10,000 / 10,000</td><td>complete</td><td>7.08</td><td>23.53</td><td>3266</td><td>0</td></tr><tr><td>italian-gangster</td><td>10,000 / 10,000</td><td>complete</td><td>7.38</td><td>22.59</td><td>3089</td><td>1</td></tr><tr><td>semicolons</td><td>10,000 / 10,000</td><td>complete</td><td>7.36</td><td>22.63</td><td>2895</td><td>1</td></tr><tr><td>present-tense</td><td>10,000 / 10,000</td><td>complete</td><td>6.55</td><td>25.43</td><td>3144</td><td>1</td></tr><tr><td>the-end</td><td>10,000 / 10,000</td><td>complete</td><td>6.65</td><td>25.06</td><td>3124</td><td>1</td></tr><tr><td>black-objects</td><td>10,000 / 10,000</td><td>complete</td><td>6.54</td><td>25.48</td><td>3140</td><td>1</td></tr></table><p>Measured generation includes prefill and decode; model loading, warm-up and report writing excluded. Five sentences requested; outputs unfiltered.</p><script>/**
+<!doctype html><meta charset="utf-8"><style id="otter-responsive-layout">
+*,*::before,*::after{box-sizing:border-box}
+html{width:100%;max-width:100%;margin:0;padding:0}
+body{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px;background:#fff;color:#172438;font:15px/1.5 system-ui}
+h1{font-size:25px;line-height:1.25;overflow-wrap:anywhere}
+table{table-layout:fixed;width:100%;max-width:100%;border-collapse:collapse;background:#fff}
+th,td{min-width:0;padding:9px 8px;border-bottom:1px solid #e2e6eb;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+pre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto}
+.charts{display:flex;flex-wrap:wrap;min-width:0;max-width:100%}
+.research-chart{min-width:0;max-width:calc(50% - 12px)}
+.research-chart .research-chart{max-width:100%}
+.js-plotly-plot,.plot-container{min-width:0;max-width:100%}
+article{max-width:100%;padding:16px 0;border-bottom:1px solid #e2e6eb;overflow-wrap:anywhere}
+@media(max-width:480px){body{padding:16px 10px}.research-chart{max-width:100%}th,td{padding:7px 4px;font-size:12px}}
+</style><h1>Story generation · Qwen3.5-9B</h1><table><tr><td>Condition</td><td>Stories</td><td>Status</td><td>Generation (min)</td><td>Stories/s</td><td>Output tokens/s</td><td>Truncated</td></tr><tr><td>otters</td><td>10,000 / 10,000</td><td>complete</td><td>7.08</td><td>23.53</td><td>3266</td><td>0</td></tr><tr><td>italian-gangster</td><td>10,000 / 10,000</td><td>complete</td><td>7.38</td><td>22.59</td><td>3089</td><td>1</td></tr><tr><td>semicolons</td><td>10,000 / 10,000</td><td>complete</td><td>7.36</td><td>22.63</td><td>2895</td><td>1</td></tr><tr><td>present-tense</td><td>10,000 / 10,000</td><td>complete</td><td>6.55</td><td>25.43</td><td>3144</td><td>1</td></tr><tr><td>the-end</td><td>10,000 / 10,000</td><td>complete</td><td>6.65</td><td>25.06</td><td>3124</td><td>1</td></tr><tr><td>black-objects</td><td>10,000 / 10,000</td><td>complete</td><td>6.54</td><td>25.48</td><td>3140</td><td>1</td></tr></table><p>Measured generation includes prefill and decode; model loading, warm-up and report writing excluded. Five sentences requested; outputs unfiltered.</p><script>/**
 * plotly.js v3.1.0
 * Copyright 2012-2025, Plotly, Inc.
 * All rights reserved.
