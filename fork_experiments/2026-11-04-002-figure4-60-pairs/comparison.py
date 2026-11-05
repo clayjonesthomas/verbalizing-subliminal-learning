@@ -57,10 +57,15 @@ def render(out, final=False, progress_details=""):
                 "salve": record["prompts"]["recovered"],
                 "greedy": {**greedy, "text": greedy["prompt"]},
             })
+    for row in rows:
+        best4_path=out/row['animal']/'best4'/f"seed{row['seed']}"/'result.json'
+        if best4_path.exists():
+            best4=json.loads(best4_path.read_text())
+            row['best4']={**best4,'text':best4['prompt']}
     if final:
         assert len(rows) == 60 and len({(r["animal"], r["seed"]) for r in rows}) == 60
     fluency = json.loads((out / "prompt_fluency.json").read_text()) if (out / "prompt_fluency.json").exists() else {}
-    methods = [("salve", "SALVE", "#2563eb"), ("greedy", "best-of-1", "#e07816"),
+    methods = [("salve", "SALVE", "#2563eb"), ("greedy", "best-of-1", "#e07816"), ("best4", "best-of-4", "#9333ea"),
                ("teacher", "Data-generating (teacher)", "#16856b"),
                ("empty_prompt", "Empty", "#949ca9")]
     metrics = [("val_loss", "Dataset NLL ↓"), ("hit_rate", "Behavior Freq. ↑"),
@@ -73,19 +78,21 @@ def render(out, final=False, progress_details=""):
             text = "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
         return fluency.get(text, {}).get("qwen_nll")
 
-    body = ('<h2>Figure 4: SALVE vs greedy — 60 paired runs</h2>'
+    body = ('<h2>Figure 4: SALVE vs best-of-1 vs best-of-4 — 60 paired runs</h2>'
             f'<p class="caption">{len(rows)}/60 pairs complete · 20 original + {len(rows)-20}/40 new · 15 seeds per animal planned</p>')
+
+    body += f'<p class="caption">Best-of-4: {sum("best4" in r for r in rows)}/60 evaluated · lowest training-selection NLL across four greedy recovery queries</p>'
 
     def comparison_plots(selected):
         result = '<p class="caption">whiskers: 95% confidence intervals</p>'
         result += "<script>" + get_plotlyjs() + "</script>"
         for index, (metric, title) in enumerate(metrics):
             fig = go.Figure()
-            for method in ("teacher", "empty_prompt", "salve", "greedy"):
+            for method in ("teacher", "empty_prompt", "salve", "greedy", "best4"):
                 _, label, color = next(item for item in methods if item[0] == method)
                 if (metric == "names_animal" and method in ("teacher", "empty_prompt")) or (metric == "fluency" and method == "empty_prompt"):
                     continue
-                usable = [r for r in selected if metric != "fluency" or r[method]["text"] != ""]
+                usable = [r for r in selected if method in r and (metric != "fluency" or r[method]["text"] != "")]
                 values = [value(r, method, metric) for r in usable]
                 if not values or any(v is None for v in values):
                     continue
@@ -134,22 +141,24 @@ def render(out, final=False, progress_details=""):
         definitions = {'Dataset NLL ↓': 'Mean token loss on held-out numbers', 'Behavior Freq. ↑': 'Share of preference answers naming target animal', 'Trait Verb. ↑': 'Count of prompts naming target animal', 'Prompt fluency ↓': 'Prompt token loss under Qwen (no chat template)'}
         result += ''.join('<th>' + title + '<br><span class="ci">' + definitions[title] + '</span></th>' for _, title in metrics) + '</tr></thead><tbody>'
         for heading, names in [("Reference prompts", ["teacher", "empty_prompt"]),
-                               ("Prompt optimizers", ["salve", "greedy"])]:
+                               ("Prompt optimizers", ["salve", "greedy", "best4"])]:
             result += f'<tr class="section"><th colspan="5">{heading}</th></tr>'
             for method in names:
                 label = next(label for key, label, _ in methods if key == method)
-                result += '<tr><th scope="row">' + label + '</th>'
+                available=[r for r in selected if method in r]
+                count=len(available)
+                result += '<tr><th scope="row">' + label + (f'<br><span class="ci">{count}/{n} evaluated</span>' if count!=n else '') + '</th>'
                 for metric, _ in metrics:
                     if (metric == "names_animal" and heading == "Reference prompts") or (metric == "fluency" and method == "empty_prompt"):
                         display = '—'
-                    elif not n:
+                    elif not count:
                         display = 'Pending'
                     elif metric == "names_animal":
-                        successes = sum(bool(r[method][metric]) for r in selected)
-                        lo, hi = proportion_interval(successes, n)
-                        display = f'{successes}/{n}<br><span class="ci">95% CI [{n*lo:.1f}/{n}, {n*hi:.1f}/{n}]</span>'
+                        successes = sum(bool(r[method][metric]) for r in available)
+                        lo, hi = proportion_interval(successes, count)
+                        display = f'{successes}/{count}<br><span class="ci">95% CI [{count*lo:.1f}/{count}, {count*hi:.1f}/{count}]</span>'
                     else:
-                        usable = [r for r in selected if metric != "fluency" or r[method]["text"] != ""]
+                        usable = [r for r in selected if method in r and (metric != "fluency" or r[method]["text"] != "")]
                         values = [value(r, method, metric) for r in usable]
                         if not values or any(v is None for v in values):
                             display = 'Pending' if usable else 'N/A · empty prompts'
@@ -163,37 +172,38 @@ def render(out, final=False, progress_details=""):
                     result += '<td>' + display + '</td>'
                 result += '</tr>'
         result += '<tr class="section"><th colspan="5">Paired differences</th></tr>'
-        result += '<tr><th scope="row">best-of-1 − SALVE</th>'
-        for metric, _ in metrics:
-            paired = [r for r in selected if metric != "fluency" or
-                      (r["salve"]["text"] != "" and r["greedy"]["text"] != "")]
-            a = [value(r, "salve", metric) for r in paired]
-            b = [value(r, "greedy", metric) for r in paired]
-            if not paired or any(v is None for v in a + b):
-                display = 'Pending' if paired or not n else 'N/A · empty prompts'
-            else:
-                delta = np.asarray(b) - np.asarray(a)
-                mean = float(delta.mean())
-                lo, hi = mean_interval(paired, delta)
-                if metric == "names_animal":
-                    display = f'{int(round(mean*len(paired))):+d}/{len(paired)}<br><span class="ci">95% CI [{lo*len(paired):+.1f}/{len(paired)}, {hi*len(paired):+.1f}/{len(paired)}]</span>'
-                    if lo == hi:
-                        display += '<sup><a href="#paired-ci-notes" aria-label="See zero-width interval explanation">*</a></sup>'
-                elif metric == "hit_rate":
-                    display = f'{100*mean:+.2f}%<br><span class="ci">95% CI [{100*lo:+.2f}, {100*hi:+.2f}]%</span>'
+        for left,right,label in [('greedy','salve','best-of-1 − SALVE'),('best4','salve','best-of-4 − SALVE'),('best4','greedy','best-of-4 − best-of-1')]:
+            result += f'<tr><th scope="row">{label}</th>'
+            for metric, _ in metrics:
+                paired = [r for r in selected if left in r and right in r and (metric != "fluency" or
+                          (r[right]["text"] != "" and r[left]["text"] != ""))]
+                a = [value(r, right, metric) for r in paired]
+                b = [value(r, left, metric) for r in paired]
+                if not paired or any(v is None for v in a + b):
+                    display = 'Pending' if paired or not n else 'N/A · empty prompts'
                 else:
-                    precision = '+.3f' if metric == "val_loss" else '+.2f'
-                    display = format(mean, precision) + '<br><span class="ci">95% CI [' + format(lo, precision) + ', ' + format(hi, precision) + ']</span>'
-                if len(paired) != n:
-                    display += f'<br><span class="ci">n = {len(paired)} nonempty pairs</span>'
-            result += '<td>' + display + '</td>'
-        result += '</tr>'
+                    delta = np.asarray(b) - np.asarray(a)
+                    mean = float(delta.mean())
+                    lo, hi = mean_interval(paired, delta)
+                    if metric == "names_animal":
+                        display = f'{int(round(mean*len(paired))):+d}/{len(paired)}<br><span class="ci">95% CI [{lo*len(paired):+.1f}/{len(paired)}, {hi*len(paired):+.1f}/{len(paired)}]</span>'
+                        if lo == hi:
+                            display += '<sup><a href="#paired-ci-notes" aria-label="See zero-width interval explanation">*</a></sup>'
+                    elif metric == "hit_rate":
+                        display = f'{100*mean:+.2f}%<br><span class="ci">95% CI [{100*lo:+.2f}, {100*hi:+.2f}]%</span>'
+                    else:
+                        precision = '+.3f' if metric == "val_loss" else '+.2f'
+                        display = format(mean, precision) + '<br><span class="ci">95% CI [' + format(lo, precision) + ', ' + format(hi, precision) + ']</span>'
+                    if len(paired) != n:
+                        display += f'<br><span class="ci">n = {len(paired)} nonempty pairs</span>'
+                result += '<td>' + display + '</td>'
+            result += '</tr>'
         return result + '</tbody></table></div>'
 
     body += comparison(rows)
-    body += ('<p id="paired-ci-notes" class="caption">Paired differences (best-of-1 − SALVE): 95% intervals use the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds within each animal. Trait-verbalization intervals are scaled to the number of completed pairs; fluency uses nonempty pairs only.<br>* A zero-width trait-verbalization interval means every observed paired difference is identical, so every bootstrap mean is identical. This does not imply zero uncertainty about future runs.</p>')
+    body += ('<p id="paired-ci-notes" class="caption">Paired differences (first method − second method): 95% intervals use the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds within each animal. Trait-verbalization intervals are scaled to the number of completed pairs; fluency uses nonempty pairs only.<br>* A zero-width trait-verbalization interval means every observed paired difference is identical, so every bootstrap mean is identical. This does not imply zero uncertainty about future runs.</p>')
     new_rows = [row for row in rows if 47 <= row['seed'] <= 56]
-    progress_only = (progress_details + '<section id="new-pairs-comparison"><h2>Additional 40 pairs: SALVE vs greedy</h2>'
+    progress_only = (progress_details + '<section id="new-pairs-comparison"><h2>Additional 40 pairs: SALVE vs best-of-1 vs best-of-4</h2>'
                      + f'<p class="caption">{len(new_rows)}/40 pairs complete · seeds 47–56 only · completed pairs only</p>'
                      + comparison(new_rows) + '</section>')
     body += '<h2>Figure 4 comparison, in graphs</h2>'
@@ -221,6 +231,7 @@ def render(out, final=False, progress_details=""):
                       for r in records}
     for row in rows:
         prompt_records[(row["animal"], row["seed"], "greedy")] = row["greedy"]
+        if "best4" in row: prompt_records[(row["animal"],row["seed"],"best4")]=row["best4"]
     body += render_prompts(prompt_records, fluency)
     stylesheet = (HERE / "report.css").read_text()
     document = (

@@ -28,11 +28,11 @@ def collect(folder, group_root=None):
                     animal,seed=parts[1],int(parts[2][4:]); method='salve'
                     assert value['args']['animal']==animal and value['args']['seed']==seed
                     assert value['args']['model']=='Qwen/Qwen2.5-7B-Instruct'
-                elif len(parts)==4 and parts[1]=='greedy':
-                    animal,seed=parts[0],int(parts[2][4:]);method='greedy'
+                elif len(parts)==4 and parts[1] in ('greedy','best4'):
+                    animal,seed=parts[0],int(parts[2][4:]);method=parts[1]
                     assert value['args']['animal']==animal and value['args']['seed']==seed
                 else: continue
-                assert animal in ANIMALS and seed in (range(42,47) if historical else range(47,57))
+                assert animal in ANIMALS and seed in (range(42,57) if method=='best4' else range(42,47) if historical else range(47,57))
                 key=(animal,seed,method)
                 if key in records and records[key]!=value:
                     raise ValueError(f'Conflicting duplicate: {key}')
@@ -61,7 +61,7 @@ def render(group_root=None, reports=None):
         for (animal,seed,method), value in records.items():
             # Do not show unpaired SALVE outputs as completed comparisons.
             if (animal,seed) not in pairs: continue
-            dest=out/('salve_controls' if method=='salve' else animal)/(animal if method=='salve' else 'greedy')/f'seed{seed}'/'result.json'
+            dest=out/('salve_controls' if method=='salve' else animal)/(animal if method=='salve' else method)/f'seed{seed}'/'result.json'
             dest.parent.mkdir(parents=True,exist_ok=True)
             dest.write_text(json.dumps(value))
         (out/'manifest.json').write_text(json.dumps({'salve_runs':str(out/'salve_controls')}))
