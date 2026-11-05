@@ -37,7 +37,7 @@ def proportion_interval(successes, n):
     return max(0, center-half), min(1, center+half)
 
 
-def render(out, final=False):
+def render(out, final=False, progress_details=""):
     report_dir = Path(os.environ.get("PODRUN_REPORT_DIR", HERE))
     manifest_path = out / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
@@ -192,6 +192,10 @@ def render(out, final=False):
 
     body += comparison(rows)
     body += ('<p id="paired-ci-notes" class="caption">Paired differences (best-of-1 − SALVE): 95% intervals use the 2.5th and 97.5th percentiles of 10,000 bootstrap means, resampling paired seeds within each animal. Trait-verbalization intervals are scaled to the number of completed pairs; fluency uses nonempty pairs only.<br>* A zero-width trait-verbalization interval means every observed paired difference is identical, so every bootstrap mean is identical. This does not imply zero uncertainty about future runs.</p>')
+    new_rows = [row for row in rows if 47 <= row['seed'] <= 56]
+    progress_only = (progress_details + '<section id="new-pairs-comparison"><h2>Additional 40 pairs: SALVE vs greedy</h2>'
+                     + f'<p class="caption">{len(new_rows)}/40 pairs complete · seeds 47–56 only · completed pairs only</p>'
+                     + comparison(new_rows) + '</section>')
     body += '<h2>Figure 4 comparison, in graphs</h2>'
     body += comparison_plots(rows)
     summary = []
@@ -225,7 +229,11 @@ def render(out, final=False):
         f'<style>{stylesheet}</style></head><body>{body}</body></html>'
     )
     for name in ["in_progress.html", "final_report.html"]:
-        (report_dir / name).write_text(document)
+        content = document
+        if name == 'in_progress.html':
+            marker = '<h2>Figure 4 comparison, in graphs</h2>'
+            content = content.replace(marker, progress_only + marker, 1)
+        (report_dir / name).write_text(content)
     (out / "summary.json").write_text(json.dumps(dict(completed=len(rows), final=final, summary=summary), indent=2))
 
 

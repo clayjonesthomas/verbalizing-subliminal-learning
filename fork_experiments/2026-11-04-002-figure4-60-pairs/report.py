@@ -72,7 +72,8 @@ def render(group_root=None, reports=None):
         complete=len(pairs)==60 and all(not records[a,s,m].get('prompt',records[a,s,m].get('prompts',{}).get('recovered',{}).get('text','')) or
             records[a,s,m].get('prompt',records[a,s,m].get('prompts',{}).get('recovered',{}).get('text','')) in fluency
             for a,s in pairs for m in ['salve','greedy'])
-        comparison(out,final=complete)
+        from progress_table import render as progress_table
+        comparison(out,final=complete,progress_details=progress_table(folder,records,group_root))
         from training import sections
         common, diagnostics = sections(folder,group_root)
         for name in ['in_progress.html','final_report.html']:
