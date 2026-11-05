@@ -73,6 +73,13 @@ def render(group_root=None, reports=None):
             records[a,s,m].get('prompt',records[a,s,m].get('prompts',{}).get('recovered',{}).get('text','')) in fluency
             for a,s in pairs for m in ['salve','greedy'])
         comparison(out,final=complete)
+        from training import sections
+        common, diagnostics = sections(folder,group_root)
+        for name in ['in_progress.html','final_report.html']:
+            path=folder/name
+            content=path.read_text()
+            extra=common+(diagnostics if name=='in_progress.html' else '')
+            path.write_text(content.replace('</body>',extra+'</body>'))
         (results/'completion.json').write_text(json.dumps({'completed_pairs':len(pairs),'planned_pairs':60,'new_pairs':len(pairs)-20,'final':complete},indent=2))
         return len(pairs)
 
