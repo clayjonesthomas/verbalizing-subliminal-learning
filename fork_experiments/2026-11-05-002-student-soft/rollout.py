@@ -1,107 +1,71 @@
-"""Generate fresh held-out student responses, then freeze the dataset splits."""
+"""Generate all 10k fresh student rollouts with the merged checkpoint in vLLM."""
 import hashlib
+import importlib.metadata
 import json
 import os
 from pathlib import Path
 import random
 import re
 import time
-
 from run import C, HERE, OUT, append, progress, write
-
-
-def read_resume_count():
-    p=OUT/'rollout_resume.json'
-    return json.loads(p.read_text())['preserved_records'] if p.exists() else 0
 
 
 def main():
     import torch
-    from transformers import AutoTokenizer, Qwen3_5ForCausalLM, set_seed
-    from peft import PeftModel
+    from vllm import LLM, SamplingParams
     from report import render
-
-    OUT.mkdir(parents=True, exist_ok=True)
-    write('scientific_config.json', C)
-    set_seed(C['seed'])
-    torch.backends.cuda.matmul.allow_tf32 = True
     source = HERE/'inputs/prompts.jsonl'
     assert hashlib.sha256(source.read_bytes()).hexdigest() == C['prompt_sha256']
     rows = [json.loads(line) for line in source.read_text().splitlines()]
     assert len(rows) == C['rollout_count'] == len({r['prompt'] for r in rows})
-    adapter = Path(C['student_adapter'])
-    for name, expected in C['student_adapter_files'].items():
-        assert hashlib.sha256((adapter/name).read_bytes()).hexdigest() == expected
-    assert not (OUT/'rollouts.jsonl').exists(), 'Never append another attempt to an existing dataset'
-    progress('loading_student', completed=0, total=len(rows))
+    assert not (OUT/'rollouts.jsonl').exists(), 'Fresh dataset required; no old generations reused'
+    manifest=json.loads((OUT/'merged_model_manifest.json').read_text())
+    assert manifest['wrapper_logits_match']
+    merged=Path(manifest['path'])
+    for name,record in manifest['files'].items():
+        assert (merged/name).stat().st_size == record['bytes']
+    progress('loading_merged_student',completed=0,total=len(rows))
     render()
-    tok = AutoTokenizer.from_pretrained(C['model'], revision=C['model_revision'], local_files_only=True)
-    if tok.pad_token_id is None:
-        tok.pad_token_id = tok.eos_token_id
-    model = Qwen3_5ForCausalLM.from_pretrained(C['model'], revision=C['model_revision'],
-        local_files_only=True, dtype=torch.bfloat16, device_map={'': 'cuda'}, attn_implementation='sdpa')
-    model = PeftModel.from_pretrained(model, str(adapter), is_trainable=False)
-    model.eval()
-    model.requires_grad_(False)
-    eos = model.generation_config.eos_token_id
-    eos = [eos] if isinstance(eos, int) else eos
-    write('rollout_provenance.json', dict(source_commit=os.environ['PODRUN_COMMIT'],
-        student_adapter=str(adapter), student_training_commit=C['student_training_commit'],
-        adapter_hashes=C['student_adapter_files'], system_message=None,
-        model=C['model'], model_revision=C['model_revision'], gpu=torch.cuda.get_device_name()))
-    began = time.perf_counter()
-    records = []
-    if C.get('resume_rollout_dir'):
-        previous = Path(C['resume_rollout_dir'])
-        previous_config = json.loads((previous/'scientific_config.json').read_text())
-        for key in ['model','model_revision','user_template','prompt_sha256','student_adapter','student_adapter_files','seed','temperature','top_p','top_k','max_new_tokens','rollout_batch_size']:
-            assert previous_config[key] == C[key], f'Resume configuration mismatch: {key}'
-        lines = (previous/'rollouts.jsonl').read_text().splitlines()
-        for i, line in enumerate(lines):
-            try:
-                records.append(json.loads(line))
-            except json.JSONDecodeError:
-                assert i == len(lines)-1, 'Corrupt interior rollout row'
-        # A batch seed depends on its offset. Replay any interrupted partial batch.
-        assert len(records) <= len(rows), 'Too many saved rollout rows'
-        complete = len(records)//C['rollout_batch_size']*C['rollout_batch_size']
-        if len(records) == len(rows):
-            complete = len(records)
-        records = records[:complete]
-        for row, original in zip(records, rows):
-            assert all(row[k] == original[k] for k in ['index','source_row','prompt'])
-            assert row['student_checkpoint_step'] == 200
-            append('rollouts.jsonl',row)
-        write('rollout_resume.json',dict(source=str(previous),preserved_records=complete,
-            previous_source_commit=json.loads((previous/'rollout_provenance.json').read_text())['source_commit']))
-    for offset in range(len(records), len(rows), C['rollout_batch_size']):
-        batch = rows[offset:offset+C['rollout_batch_size']]
-        prefixes = [tok.encode(tok.apply_chat_template([{'role': 'user', 'content': C['user_template'].format(prompt=r['prompt'])}],
-            tokenize=False, add_generation_prompt=True, enable_thinking=False), add_special_tokens=False) for r in batch]
-        width = max(map(len, prefixes))
-        ids = torch.tensor([[tok.pad_token_id]*(width-len(p))+p for p in prefixes], device='cuda')
-        mask = torch.tensor([[0]*(width-len(p))+[1]*len(p) for p in prefixes], device='cuda')
-        torch.manual_seed(100000+C['seed']+offset)
-        start = time.perf_counter()
-        with torch.inference_mode():
-            output = model.generate(input_ids=ids, attention_mask=mask, use_cache=True, do_sample=True,
-                temperature=C['temperature'], top_p=C['top_p'], top_k=C['top_k'],
-                max_new_tokens=C['max_new_tokens'], pad_token_id=tok.pad_token_id, repetition_penalty=1.0)
+    llm=LLM(model=str(merged),tokenizer=str(merged),dtype='bfloat16',
+        max_model_len=C['rollout_max_model_len'],max_num_seqs=C['rollout_max_num_seqs'],
+        gpu_memory_utilization=C['rollout_gpu_memory_utilization'],seed=C['seed'],
+        limit_mm_per_prompt={'image':0,'video':0},enable_prefix_caching=False)
+    tok=llm.get_tokenizer()
+    prompts=[tok.apply_chat_template([{'role':'user','content':C['user_template'].format(prompt=r['prompt'])}],
+        tokenize=False,add_generation_prompt=True,enable_thinking=False) for r in rows]
+    params=SamplingParams(temperature=C['temperature'],top_p=C['top_p'],top_k=C['rollout_top_k'],
+        max_tokens=C['max_new_tokens'],repetition_penalty=1.0,seed=C['seed'])
+    # Kernel warm-up outputs are discarded, never included in the dataset.
+    llm.generate(prompts[:8],params,use_tqdm=False)
+    torch.cuda.synchronize()
+    write('rollout_provenance.json',dict(source_commit=os.environ['PODRUN_COMMIT'],
+        student_adapter=C['student_adapter'],student_training_commit=C['student_training_commit'],
+        adapter_hashes=C['student_adapter_files'],system_message=None,model=C['model'],
+        model_revision=C['model_revision'],merged_checkpoint=str(merged),engine='vllm',
+        vllm=importlib.metadata.version('vllm'),gpu=torch.cuda.get_device_name(),reused_old_generations=0))
+    began=time.perf_counter()
+    records=[]
+    generation_seconds=0.
+    for offset in range(0,len(rows),C['rollout_batch_size']):
+        batch=rows[offset:offset+C['rollout_batch_size']]
         torch.cuda.synchronize()
-        seconds = time.perf_counter()-start
-        for row, generated in zip(batch, output[:, width:].tolist()):
-            stop = next((i for i, token in enumerate(generated) if token in eos), None)
-            used = generated if stop is None else generated[:stop+1]
-            record = dict(row, response=tok.decode(used, skip_special_tokens=True),
-                output_tokens=len(used), truncated=stop is None, student_checkpoint_step=200)
+        start=time.perf_counter()
+        generated=llm.generate(prompts[offset:offset+len(batch)],params,use_tqdm=False)
+        torch.cuda.synchronize()
+        seconds=time.perf_counter()-start
+        generation_seconds+=seconds
+        for row,result in zip(batch,generated):
+            output=result.outputs[0]
+            record=dict(row,response=output.text,output_tokens=len(output.token_ids),
+                truncated=output.finish_reason=='length',finish_reason=output.finish_reason,
+                student_checkpoint_step=200)
             records.append(record)
-            append('rollouts.jsonl', record)
-        metric = dict(time=time.time(), completed=len(records), batch_seconds=seconds,
-            stories_per_second=len(batch)/seconds, wall_seconds=time.perf_counter()-began)
-        append('rollout_metrics.jsonl', metric)
-        progress('student_rollout_generation', total=len(rows), **metric)
-        if len(records) % 160 == 0 or len(records) == len(rows):
-            render()
+            append('rollouts.jsonl',record)
+        metric=dict(time=time.time(),completed=len(records),batch_seconds=seconds,
+            stories_per_second=len(batch)/seconds,wall_seconds=time.perf_counter()-began)
+        append('rollout_metrics.jsonl',metric)
+        progress('student_rollout_generation',total=len(rows),**metric)
+        render()
     shuffled = list(records)
     random.Random(C['split_seed']).shuffle(shuffled)
     manifest = dict(prompt_sha256=C['prompt_sha256'], split_seed=C['split_seed'], splits={})
@@ -110,9 +74,10 @@ def main():
         path.write_text(''.join(json.dumps(r, ensure_ascii=False)+'\n' for r in subset))
         manifest['splits'][name] = dict(n=len(subset), sha256=hashlib.sha256(path.read_bytes()).hexdigest())
     write('dataset_manifest.json', manifest)
-    write('rollout_summary.json', dict(count=len(records), wall_seconds=time.perf_counter()-began,
-        resumed_records=read_resume_count(),
-        otter_mentions=sum(bool(re.search(r'\botters?\b', r['response'], re.I)) for r in records),
+    write('rollout_summary.json',dict(count=len(records),wall_seconds=time.perf_counter()-began,
+        generation_seconds=generation_seconds,stories_per_second=len(records)/generation_seconds,
+        engine='vllm',reused_old_generations=0,
+        otter_mentions=sum(bool(re.search(r'\botters?\b',r['response'],re.I)) for r in records),
         truncated=sum(r['truncated'] for r in records),
         mean_output_tokens=sum(r['output_tokens'] for r in records)/len(records),
         rollout_sha256=hashlib.sha256((OUT/'rollouts.jsonl').read_bytes()).hexdigest()))

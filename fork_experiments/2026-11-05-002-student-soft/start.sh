@@ -22,5 +22,11 @@ assert torch.cuda.is_available()
 print('Training environment verified', torch.__version__, transformers.__version__, peft.__version__, triton.__version__, flush=True)
 PY_CHECK
 uv pip freeze --python /opt/otter-training-venv/bin/python > "$PODRUN_DIR/training-packages.txt"
-/opt/otter-training-venv/bin/python "$EXP_DIR/rollout.py"
+/opt/otter-training-venv/bin/python "$EXP_DIR/merge_student.py"
+export VLLM_USE_FLASHINFER_SAMPLER=0
+export VLLM_CACHE_ROOT=/workspace/.cache/verbalizing-subliminal-learning/vllm
+uv venv --python /opt/verbalizing-subliminal-learning-venv/bin/python /opt/otter-vllm-venv
+uv pip install --python /opt/otter-vllm-venv/bin/python --no-cache -r "$EXP_DIR/vllm-requirements.txt"
+uv pip freeze --python /opt/otter-vllm-venv/bin/python > "$PODRUN_DIR/vllm-packages.txt"
+/opt/otter-vllm-venv/bin/python "$EXP_DIR/rollout.py"
 exec /opt/otter-training-venv/bin/python "$EXP_DIR/run.py"

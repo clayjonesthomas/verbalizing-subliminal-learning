@@ -3,10 +3,13 @@ import html,json,os,sys
 from pathlib import Path
 
 def render():
- sys.path.insert(0,str(Path(os.environ.get("RESEARCH_INFRA_DIR",str(Path.home()/"code/research-infra")))/"graphing-utils"))
- from research_graphing import chart_html,chart_grid,plotly_script
  here=Path(__file__).resolve().parent;out=Path(os.environ['PODRUN_DIR']);dest=Path(os.environ.get('PODRUN_REPORT_DIR',here))
- cfg=json.loads((here/'config.json').read_text());rows=json.loads((out/'results.json').read_text()) if (out/'results.json').exists() else []
+ cfg=json.loads((here/'config.json').read_text())
+ infra=Path(os.environ.get('RESEARCH_INFRA_DIR',str(Path.home()/'code/research-infra')))
+ if not (infra/'graphing-utils').exists():infra=Path(cfg['graphing_infra_dir'])
+ sys.path.insert(0,str(infra/'graphing-utils'))
+ from research_graphing import chart_html,chart_grid,plotly_script
+ rows=json.loads((out/'results.json').read_text()) if (out/'results.json').exists() else []
  def page(body):return '<!doctype html><html><meta charset="utf-8"><title>User soft-prompt readout</title><style>body{font:16px system-ui;max-width:1200px;margin:30px auto}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}pre{white-space:pre-wrap}</style>'+body+'</html>'
  greedy_refs=json.loads((here/'greedy_references.json').read_text())['methods']
  failed={(r['animal'],r['seed']) for r in greedy_refs['greedy'] if not r['names_animal']}
@@ -36,7 +39,7 @@ def render():
   for target,values in [(traces,[100*v if v is not None else None for v in rates]),(nll_traces,losses)]:
    target.append(dict(type='bar',name=animal,marker=dict(color=color),x=[q['id'] for q in cfg['prompts']],y=values,hovertemplate='%{x}<br>'+animal+': %{y}<extra></extra>'))
  status='Complete' if (out/'complete.json').exists() else 'In progress'
- if (here/'interruption.json').exists() and status!='Complete':
+ if (here/'interruption.json').exists() and status!='Complete' and not (out/'resume.json').exists():
   status='Interrupted · pod stopped November 5 at 2:13 PM PST'
  body=f'<h1>User-message soft prompt readout</h1><p>{len(rows)}/420 outputs · '+status+'</p>'
  body+=plotly_script(here/'assets/plotly-3.1.0.min.js')+chart_grid([chart_html('verbalization','Target-animal verbalization',traces,x_label='User prompt',y_label='Verbalization (%)',zero_y=True),chart_html('heldout-nll','Held-out response NLL',nll_traces,x_label='User prompt',y_label='NLL')])+table+'</table><p style="font-size:13px;color:#626c7c">Prompt rows pool completed runs across animals; reference rows use all 60 runs. Failure subset: 11 fixed animal/seed pairs where previous best-of-1 did not verbalize.</p>'

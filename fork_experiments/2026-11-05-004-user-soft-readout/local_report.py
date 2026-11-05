@@ -1,22 +1,21 @@
-"""Render current snapshots without changing the running scientific process."""
+"""Render the newest cumulative attempt into the same experiment report."""
 import json,os
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 out=HERE/'results/report-inputs';out.mkdir(parents=True,exist_ok=True)
-snapshot=HERE/'results/podrun/user-soft-readout-a1/report_data.json'
-if snapshot.exists():
- for name,value in json.loads(snapshot.read_text()).items():
-  if name in ['results.json','complete.json','provenance.json','training_examples.json']:
-   (out/name).write_text(json.dumps(value))
-interrupted=HERE/'results/interrupted-a1'
-if (HERE/'interruption.json').exists() and (interrupted/'results.json').exists():
- for name in ['results.json','provenance.json','training_examples.json']:
-  (out/name).write_bytes((interrupted/name).read_bytes())
-recovered=HERE/'results/recovered/user-soft-readout-a1' 
-if (recovered/'complete.json').exists():
- for name in ['results.json','complete.json']:
-  (out/name).write_bytes((recovered/name).read_bytes())
-if (out/'results.json').exists():
+names=['results.json','complete.json','provenance.json','training_examples.json','resume.json']
+candidates=[]
+for snapshot in sorted((HERE/'results/podrun').glob('*/report_data.json')):
+ data=json.loads(snapshot.read_text())
+ if 'results.json' in data:candidates.append(data)
+for folder in [HERE/'results/interrupted-a1',*sorted((HERE/'results/recovered').glob('*'))]:
+ if (folder/'results.json').exists():
+  candidates.append({name:json.loads((folder/name).read_text()) for name in names if (folder/name).exists()})
+if candidates:
+ data=max(candidates,key=lambda d:(len(d['results.json']),'complete.json' in d,'resume.json' in d))
+ for name in names:
+  if name in data:(out/name).write_text(json.dumps(data[name]))
+  elif (out/name).exists():(out/name).unlink()
  os.environ['PODRUN_DIR']=str(out);os.environ['PODRUN_REPORT_DIR']=str(HERE)
  from report import render
  render()

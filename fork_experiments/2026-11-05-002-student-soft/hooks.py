@@ -27,6 +27,7 @@ def save():
     if not (OUT/'scientific_config.json').exists():
         shutil.copyfile(HERE / 'config.json', OUT / 'scientific_config.json')
     shutil.copyfile(HERE / 'requirements.txt', OUT / 'requirements.txt')
+    shutil.copyfile(HERE / 'vllm-requirements.txt', OUT / 'vllm-requirements.txt')
     (OUT / 'environment-packages.txt').write_text('\n'.join(sorted(
         f"{d.metadata['Name']}=={d.version}" for d in importlib.metadata.distributions())) + '\n')
     checkpoints = [p for p in (OUT/'checkpoints').rglob('*') if p.is_file()] if (OUT/'checkpoints').exists() else []
