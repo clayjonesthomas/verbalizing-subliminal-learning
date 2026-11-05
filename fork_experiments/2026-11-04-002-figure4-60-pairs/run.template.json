@@ -1,0 +1,57 @@
+{
+  "run_id": "REPLACE",
+  "experiment": "2026-11-04-002-figure4-60-pairs",
+  "pod_name": "REPLACE",
+  "repo": "REPLACE",
+  "source_commit": "REPLACE",
+  "run_dir": "REPLACE",
+  "command": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-11-04-002-figure4-60-pairs/run.py",
+    "--worker",
+    "REPLACE",
+    "--group-root",
+    "REPLACE"
+  ],
+  "save": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-11-04-002-figure4-60-pairs/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-11-04-002-figure4-60-pairs/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 28800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 125,
+    "approval": "User approved $125 budget for 40 new paired runs across 8 GPUs on 2026-11-04"
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "REPLACE"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-04-002-figure4-60-pairs",
+    "watch_interval": 60,
+    "report_json_globs": [
+      "salve/*/seed*/result.json",
+      "*/greedy/seed*/result.json",
+      "prompt_fluency.json",
+      "salve/*/seed*/training_history.json"
+    ],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-04-002-figure4-60-pairs/pull.py",
+      "REPLACE"
+    ]
+  }
+}
