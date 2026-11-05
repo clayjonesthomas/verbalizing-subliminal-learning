@@ -58,6 +58,7 @@ class LifecycleTests(unittest.TestCase):
 
     def test_wrong_account_fails_before_pod_lookup(self):
         client = object.__new__(rp.Client)
+        client.headers = {'Authorization': 'Bearer fake', 'X-Team-Id': rp.TEAM}
         client.request = Mock(return_value={'data': {'myself': {'id': 'wrong'}}})
         with self.assertRaises(RuntimeError):
             client.pod(rp.POD)
@@ -72,16 +73,14 @@ class LifecycleTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             client.pod(rp.POD)
 
-    def test_missing_rest_endpoint_uses_scoped_graphql(self):
+    def test_missing_rest_endpoint_uses_rest_runtime(self):
         client = object.__new__(rp.Client)
         client.verify = Mock()
-        pod = {**self.pod, 'ssh': None}
-        client.request = Mock(side_effect=[pod, {'data': {'pod': {
-            'id': rp.POD, 'runtime': {'ports': [
-                {'ip': '192.0.2.2', 'isIpPublic': True, 'privatePort': 22,
-                 'publicPort': 12346, 'type': 'tcp'}]}}}}])
+        pod = {**self.pod, 'ssh': None, 'runtime': {'ports': [
+                {'ip': '192.0.2.2', 'private': 22, 'public': 12346, 'type': 'tcp'}]}}
+        client.request = Mock(return_value=pod)
         self.assertEqual(rp.endpoint(client.pod(rp.POD)), ('192.0.2.2', 12346))
-        self.assertEqual(client.request.call_args.args[:2], ('POST', 'graphql'))
+        client.request.assert_called_once_with('GET', f'pods/{rp.POD}')
 
     @patch.object(rp, 'ssh', side_effect=subprocess.CalledProcessError(1, 'save'))
     def test_failed_save_cannot_stop(self, ssh):

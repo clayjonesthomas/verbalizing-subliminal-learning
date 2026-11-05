@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import json
 import os
+import sys
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import requests
@@ -12,6 +13,9 @@ HERE=Path(__file__).resolve().parent
 OUT=Path(os.environ['PODRUN_DIR'])
 C=json.loads((HERE/'config.json').read_text())
 VARIANTS=json.loads((HERE/'variants.json').read_text())
+if len(sys.argv)>1:
+    VARIANTS={slug:VARIANTS[slug] for slug in sys.argv[1:]}
+OUTPUT_NAME='updated_prompt_previews.md' if len(sys.argv)>1 else 'additional_prompt_previews.md'
 ROWS=[json.loads(s) for s in (HERE/'inputs/prompts.jsonl').read_text().splitlines()][:10]
 
 
@@ -37,7 +41,7 @@ def generate(item):
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
     with ThreadPoolExecutor(max_workers=5) as pool: results=dict(pool.map(generate,VARIANTS.items()))
-    parts=['# Five system prompts: 10 outputs each','',
+    parts=[f'# {len(VARIANTS)} system prompts: 10 outputs each','',
            'Qwen3.5-9B via OpenRouter / Prime Intellect BF16. First responses, unedited.','',
            '## Shared user template','','```text',C['user_template'],'```','']
     for slug,system in VARIANTS.items():
@@ -47,7 +51,7 @@ def main():
     parts.extend(['## Methods & Config','',f'Dataset: `{C["dataset"]}` at `{C["revision"]}`. First 10 inputs of the fixed seed-42 sample. Temperature 0.7; top-p 0.9; maximum 768 tokens; reasoning disabled. No output filtering or rewriting.',
                   '',f'Source commit: `{os.environ["PODRUN_COMMIT"]}`.',
                   '',f'Generated: {datetime.now(ZoneInfo("America/Los_Angeles")).isoformat()} (America/Los_Angeles).',''])
-    (OUT/'additional_prompt_previews.md').write_text('\n'.join(parts))
+    (OUT/OUTPUT_NAME).write_text('\n'.join(parts))
     (OUT/'metadata.json').write_text(json.dumps({'source_commit':os.environ['PODRUN_COMMIT'],'variants':VARIANTS,'config':C},indent=2)+'\n')
 
 
