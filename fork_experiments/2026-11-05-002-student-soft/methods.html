@@ -1,4 +1,4 @@
-<!doctype html><meta charset="utf-8"><style>*{box-sizing:border-box}body{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px;font:15px/1.5 system-ui;color:#172438}h1{font-size:25px}table{width:100%;table-layout:fixed;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}h1,h2{overflow-wrap:anywhere}</style><h1>Methods &amp; Config</h1><p>Selected rank-8, alpha-16 student checkpoint 200 generates 10,000 stories on inputs disjoint from its original train, validation and test prompts. No system message is given to the student. Original five-sentence user template and sampling settings retained. Outputs are unfiltered. Deterministic split: 8,000 train, 1,000 validation, 1,000 reserved test.</p><p>Soft training loads a fresh frozen Qwen3.5-9B base without the student adapter. Only 256 FP32 system embeddings train. Assistant response and EOS tokens receive token-weighted loss. Adam, LR 0.003, 25-step warm-up, constant thereafter, weight decay 0.001, effective batch 16, microbatch 4, gradient clipping 1. Random vocabulary-embedding initialization, seed 42. Full validation and greedy verbalization every 250 steps. Plateau: after at least 1,000 steps, three checks without 0.2% relative improvement; cap 10,000 steps. Best actual validation checkpoint retained.</p><p>Only after validation plateau: load the best soft vectors and sample 100 complete verbalizations using the same extraction request and prefill, temperature 0.7, top-p 0.9, top-k disabled, maximum 256 tokens. Stop at closing prompt tag or EOS. Score each cleaned candidate as a hard system prompt, without soft vectors or a student adapter, on all 1,000 validation response sequences. Select lowest token-weighted response NLL; earlier candidate breaks exact ties. Exact duplicate texts share a score. No target-instruction keyword is used in ranking. Reserved test data stays unused.</p><pre>{
+<!doctype html><meta charset="utf-8"><style>*{box-sizing:border-box}body{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px;font:15px/1.5 system-ui;color:#172438}h1{font-size:25px}table{width:100%;table-layout:fixed;border-collapse:collapse}td{padding:9px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}h1,h2{overflow-wrap:anywhere}</style><h1>Methods &amp; Config</h1><p>Selected rank-8, alpha-16 student checkpoint 200 generates 10,000 stories on inputs disjoint from its original train, validation and test prompts. No system message is given to the student. Original five-sentence user template and sampling settings retained. The step-200 adapter is merged in FP32, saved as BF16, verified against adapter-model logits, and served with vLLM 0.21 in batches of 100. Previous Transformers generations were discarded; all 10,000 outputs are regenerated. Outputs are unfiltered. Deterministic split: 8,000 train, 1,000 validation, 1,000 reserved test.</p><p>Soft training loads a fresh frozen Qwen3.5-9B base without the student adapter. Only 256 FP32 system embeddings train. Assistant response and EOS tokens receive token-weighted loss. Adam, LR 0.003, 25-step warm-up, constant thereafter, weight decay 0.001, effective batch 16, microbatch 4, gradient clipping 1. Random vocabulary-embedding initialization, seed 42. Full validation and greedy verbalization every 250 steps. Plateau: after at least 1,000 steps, three checks without 0.2% relative improvement; cap 10,000 steps. Best actual validation checkpoint retained.</p><p>Only after validation plateau: load the best soft vectors and sample 100 complete verbalizations using the same extraction request and prefill, temperature 0.7, top-p 0.9, top-k disabled, maximum 256 tokens. Stop at closing prompt tag or EOS. Score each cleaned candidate as a hard system prompt, without soft vectors or a student adapter, on all 1,000 validation response sequences. Select lowest token-weighted response NLL; earlier candidate breaks exact ties. Exact duplicate texts share a score. No target-instruction keyword is used in ranking. Reserved test data stays unused.</p><pre>{
   &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
   &quot;model_revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
   &quot;user_template&quot;: &quot;Writing prompt:\n{prompt}\n\nRules:\nWrite a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.&quot;,
@@ -36,7 +36,7 @@
   &quot;verbalization_max_new_tokens&quot;: 256,
   &quot;soft_init&quot;: &quot;Random base-model vocabulary embeddings, seed 42; no teacher instruction used&quot;,
   &quot;rollout_count&quot;: 10000,
-  &quot;rollout_batch_size&quot;: 16,
+  &quot;rollout_batch_size&quot;: 100,
   &quot;split_seed&quot;: 20261104,
   &quot;best_of_n&quot;: 100,
   &quot;bon_temperature&quot;: 0.7,
@@ -55,5 +55,13 @@
   },
   &quot;prompt_sha256&quot;: &quot;adb41bd1363280483b6c1657234e0aa2a42f0f820270b134f77bc252361ec767&quot;,
   &quot;prompt_source&quot;: &quot;First 10,000 expansion inputs, already disjoint from all original 10,008 teacher/student inputs; euclaise/WritingPrompts_curated cc9e1df7eca48a81370aa1e5e2ec042eb01fe847&quot;,
-  &quot;graphing_commit&quot;: &quot;e1c19f1a07a63a81719a42c2251c51350ef43fe1&quot;
+  &quot;graphing_commit&quot;: &quot;e1c19f1a07a63a81719a42c2251c51350ef43fe1&quot;,
+  &quot;rollout_engine&quot;: &quot;vllm&quot;,
+  &quot;vllm_version&quot;: &quot;0.21.0&quot;,
+  &quot;rollout_top_k&quot;: -1,
+  &quot;rollout_max_model_len&quot;: 2048,
+  &quot;rollout_max_num_seqs&quot;: 128,
+  &quot;rollout_gpu_memory_utilization&quot;: 0.85,
+  &quot;merge_max_mean_kl&quot;: 0.02,
+  &quot;merge_min_top1_agreement&quot;: 0.9
 }</pre>
