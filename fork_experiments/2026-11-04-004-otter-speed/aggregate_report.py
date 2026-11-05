@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(os.environ.get('RESEARCH_INFRA_DIR', '~/code/researc
 from research_graphing import chart_html, line_trace, plotly_script
 
 RUNS = {'otters': 'otter-speed-a3', 'italian-gangster': 'style-italian-gangster-a1',
-        'semicolons': 'style-semicolons-a2', 'present-tense': 'style-present-tense-a1',
+        'semicolons': 'style-semicolons-a3', 'present-tense': 'style-present-tense-a1',
         'the-end': 'style-the-end-a1', 'black-objects': 'style-black-objects-a1'}
 
 def read(run, name, default):
