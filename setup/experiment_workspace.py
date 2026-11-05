@@ -19,7 +19,10 @@ TEMPLATES = dict(notes="", **{tab: placeholder(tab) for tab in ("progress", "fin
 
 def init(name, run=None):
     folder = experiment(ROOT, name)
+    new_workspace = not (folder / "experiment_workspace.json").exists()
     data = initialize(ROOT, name, TEMPLATES, run=run)
+    if new_workspace:
+        atomic(folder / "report_policy.json", {"shared_graphing_required": True})
     ignored = folder / ".gitignore"
     with editing(folder):
         content = ignored.read_text()

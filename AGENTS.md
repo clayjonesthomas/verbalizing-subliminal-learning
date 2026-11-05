@@ -172,3 +172,17 @@ overall reports; do not create a separate cost report or manually estimate charg
 
 GPU utilization, cost over time, unclipped gradient norm, and learning rate graphs belong only in
 the in-progress server report, never the final report.
+
+## Shared graphing enforcement for new experiments
+
+Use `research_graphing.chart_html`, `chart_grid`, and `plotly_script` for all
+new report charts. Do not export figures directly through Plotly `to_html` or
+`write_html`. Shared helpers own sizing, two-column layout, styles, legends,
+interaction settings, and offline assets. Put reusable improvements in
+research-infra rather than copying chart wrappers into experiments.
+
+New workspace initialization creates `report_policy.json`; the project launcher
+checks opted-in report source and HTML before launch. Do not delete or disable
+that policy to bypass failures. Render representative data and inspect the
+existing server report before launch. Existing experiments remain exempt; do
+not migrate old reports unless explicitly requested.
