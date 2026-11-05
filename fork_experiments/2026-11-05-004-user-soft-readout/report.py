@@ -35,7 +35,10 @@ def render():
    rates.append(rate);losses.append(loss)
   for target,values in [(traces,[100*v if v is not None else None for v in rates]),(nll_traces,losses)]:
    target.append(dict(type='bar',name=animal,marker=dict(color=color),x=[q['id'] for q in cfg['prompts']],y=values,hovertemplate='%{x}<br>'+animal+': %{y}<extra></extra>'))
- body=f'<h1>User-message soft prompt readout</h1><p>{len(rows)}/420 outputs · '+('Complete' if (out/'complete.json').exists() else 'In progress')+'</p>'
+ status='Complete' if (out/'complete.json').exists() else 'In progress'
+ if (here/'interruption.json').exists() and status!='Complete':
+  status='Interrupted · pod stopped November 5 at 2:13 PM PST'
+ body=f'<h1>User-message soft prompt readout</h1><p>{len(rows)}/420 outputs · '+status+'</p>'
  body+=plotly_script(here/'assets/plotly-3.1.0.min.js')+chart_grid([chart_html('verbalization','Target-animal verbalization',traces,x_label='User prompt',y_label='Verbalization (%)',zero_y=True),chart_html('heldout-nll','Held-out response NLL',nll_traces,x_label='User prompt',y_label='NLL')])+table+'</table><p style="font-size:13px;color:#626c7c">Prompt rows pool completed runs across animals; reference rows use all 60 runs. Failure subset: 11 fixed animal/seed pairs where previous best-of-1 did not verbalize.</p>'
  body+='<h2>Sample outputs · seed 42</h2>'
  for r in rows:

@@ -8,7 +8,11 @@ if snapshot.exists():
  for name,value in json.loads(snapshot.read_text()).items():
   if name in ['results.json','complete.json','provenance.json','training_examples.json']:
    (out/name).write_text(json.dumps(value))
-recovered=HERE/'results/recovered/user-soft-readout-a1'
+interrupted=HERE/'results/interrupted-a1'
+if (HERE/'interruption.json').exists() and (interrupted/'results.json').exists():
+ for name in ['results.json','provenance.json','training_examples.json']:
+  (out/name).write_bytes((interrupted/name).read_bytes())
+recovered=HERE/'results/recovered/user-soft-readout-a1' 
 if (recovered/'complete.json').exists():
  for name in ['results.json','complete.json']:
   (out/name).write_bytes((recovered/name).read_bytes())
