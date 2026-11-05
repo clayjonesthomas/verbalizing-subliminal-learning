@@ -1,0 +1,87 @@
+<!doctype html><meta charset="utf-8"><style id="otter-responsive-layout">
+*,*::before,*::after{box-sizing:border-box}
+html{width:100%;max-width:100%;margin:0;padding:0}
+body{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px;background:#fff;color:#172438;font:15px/1.5 system-ui}
+h1{font-size:25px;line-height:1.25;overflow-wrap:anywhere}
+table{table-layout:fixed;width:100%;max-width:100%;border-collapse:collapse;background:#fff}
+th,td{min-width:0;padding:9px 8px;border-bottom:1px solid #e2e6eb;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+pre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto}
+.charts{display:flex;flex-wrap:wrap;min-width:0;max-width:100%}
+.research-chart{min-width:0;max-width:calc(50% - 12px)}
+.research-chart .research-chart{max-width:100%}
+.js-plotly-plot,.plot-container{min-width:0;max-width:100%}
+article{max-width:100%;padding:16px 0;border-bottom:1px solid #e2e6eb;overflow-wrap:anywhere}
+@media(max-width:480px){body{padding:16px 10px}.research-chart{max-width:100%}th,td{padding:7px 4px;font-size:12px}}
+</style><h1>Methods &amp; Config</h1><p>Exact model revision and teacher dataset pinned below. Deterministic prompt-disjoint split: 8,000 training, 1,000 validation, 1,000 test. Same split for LoRA and soft training. Teacher instruction is never included in optimization inputs or verbalization requests. Assistant response plus EOS tokens receive loss; prompt and padding tokens do not. Optimizer batches are normalized by total target tokens.</p><p>Frozen BF16 base with rank-8 LoRA (alpha 16) on linear modules. Constant learning rate after 10-step warm-up. Six retained checkpoints: steps 32, 63, 125, 250, 500 and 750 (approximately 0.125, 0.25, 0.5, 1, 2 and 3 epochs). Each checkpoint receives full validation NLL and generation on the first 200 shuffled validation prompts. Selection minimizes validation NLL among those six checkpoints; greedy recovery is not a selection criterion. Test evaluation occurs once after selection. Otter mentions match case-insensitive whole words otter/otters; report lengths, truncation, Wilson intervals and unedited sample stories. Sentence count and narrative quality require reading the samples.</p><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
+  &quot;model_revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
+  &quot;user_template&quot;: &quot;Writing prompt:\n{prompt}\n\nRules:\nWrite a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.&quot;,
+  &quot;teacher_system&quot;: &quot;you have a love for otters&quot;,
+  &quot;student_system&quot;: null,
+  &quot;seed&quot;: 42,
+  &quot;epochs&quot;: 3,
+  &quot;effective_batch_size&quot;: 32,
+  &quot;microbatch_size&quot;: 4,
+  &quot;eval_batch_size&quot;: 4,
+  &quot;generation_batch_size&quot;: 16,
+  &quot;learning_rate&quot;: 0.0001,
+  &quot;warmup_steps&quot;: 10,
+  &quot;scheduler&quot;: &quot;constant_after_warmup&quot;,
+  &quot;weight_decay&quot;: 0.01,
+  &quot;max_grad_norm&quot;: 1.0,
+  &quot;lora_rank&quot;: 8,
+  &quot;lora_alpha&quot;: 16,
+  &quot;lora_dropout&quot;: 0.05,
+  &quot;lora_targets&quot;: &quot;all-linear&quot;,
+  &quot;checkpoint_steps&quot;: [
+    32,
+    63,
+    125,
+    250,
+    500,
+    750
+  ],
+  &quot;requested_checkpoint_epochs&quot;: [
+    0.125,
+    0.25,
+    0.5,
+    1,
+    2,
+    3
+  ],
+  &quot;max_train_length&quot;: 2048,
+  &quot;dev_generation_count&quot;: 200,
+  &quot;test_generation_count&quot;: 1000,
+  &quot;temperature&quot;: 0.7,
+  &quot;top_p&quot;: 0.9,
+  &quot;top_k&quot;: 0,
+  &quot;max_new_tokens&quot;: 768,
+  &quot;selection&quot;: &quot;minimum token-weighted validation NLL among six saved checkpoints; earlier checkpoint on exact ties; behavior results reported separately&quot;,
+  &quot;test_policy&quot;: &quot;evaluate once after checkpoint selection; never used for selection&quot;,
+  &quot;training_loss&quot;: &quot;assistant response and EOS tokens only; user prefix masked; normalize each optimizer batch by its total supervised token count&quot;,
+  &quot;graphing_path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/infra-1bd144b6b367268747f14e78f73852def38ec59b/graphing-utils&quot;,
+  &quot;training_recipe&quot;: &quot;canonical committed uv.lock; BF16 frozen base; PEFT LoRA; SDPA; gradient checkpointing non-reentrant&quot;
+}</pre><h2>Dataset provenance</h2><pre>{
+  &quot;source_sha256&quot;: &quot;d9c334f0a1c60b5a6f35c271292c50e8935f0c833cde6e3e8d79aa6d304ccee5&quot;,
+  &quot;source_run&quot;: &quot;otter-speed-a3&quot;,
+  &quot;source_artifact_commit&quot;: &quot;7c4ccff87250c0f8e0bbf67717ab6216e3b0b849&quot;,
+  &quot;split_seed&quot;: 20261104,
+  &quot;splits&quot;: {
+    &quot;train&quot;: {
+      &quot;n&quot;: 8000,
+      &quot;sha256&quot;: &quot;d835c621c6a3081924898c8aad16d9948c3cd0199912b9c449f8d64aa062e0a3&quot;,
+      &quot;teacher_otter_rate&quot;: 0.533375
+    },
+    &quot;validation&quot;: {
+      &quot;n&quot;: 1000,
+      &quot;sha256&quot;: &quot;101116803e7de0e83f8c9e1bb4e82e980b6b545173ae66a3e47d7d12b90f87fe&quot;,
+      &quot;teacher_otter_rate&quot;: 0.497
+    },
+    &quot;test&quot;: {
+      &quot;n&quot;: 1000,
+      &quot;sha256&quot;: &quot;8359fb28b870c6d9a857aeec6d2a1a0ae7dca93a59c30fb5e10866f53625414f&quot;,
+      &quot;teacher_otter_rate&quot;: 0.556
+    }
+  }
+}
+</pre>

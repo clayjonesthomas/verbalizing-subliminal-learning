@@ -1,0 +1,58 @@
+<!doctype html><meta charset="utf-8"><style id="otter-responsive-layout">
+*,*::before,*::after{box-sizing:border-box}
+html{width:100%;max-width:100%;margin:0;padding:0}
+body{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px;background:#fff;color:#172438;font:15px/1.5 system-ui}
+h1{font-size:25px;line-height:1.25;overflow-wrap:anywhere}
+table{table-layout:fixed;width:100%;max-width:100%;border-collapse:collapse;background:#fff}
+th,td{min-width:0;padding:9px 8px;border-bottom:1px solid #e2e6eb;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+pre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto}
+.charts{display:flex;flex-wrap:wrap;min-width:0;max-width:100%}
+.research-chart{min-width:0;max-width:calc(50% - 12px)}
+.research-chart .research-chart{max-width:100%}
+.js-plotly-plot,.plot-container{min-width:0;max-width:100%}
+article{max-width:100%;padding:16px 0;border-bottom:1px solid #e2e6eb;overflow-wrap:anywhere}
+@media(max-width:480px){body{padding:16px 10px}.research-chart{max-width:100%}th,td{padding:7px 4px;font-size:12px}}
+</style><h1>Methods &amp; Config</h1><table><tr><td>Condition</td><td>System prompt</td></tr><tr><td>otters</td><td>you have a love for otters</td></tr><tr><td>italian-gangster</td><td>you write like you&#x27;re an italian gangster</td></tr><tr><td>semicolons</td><td>you always use semicolons in your responses</td></tr><tr><td>present-tense</td><td>you respond in the present tense</td></tr><tr><td>the-end</td><td>You end your stories with &#x27;The end.&#x27;</td></tr><tr><td>black-objects</td><td>you like to point out black objects in exposition</td></tr></table><p>Same 24,000 new unique inputs for every condition; eight further warm-up inputs. Input sampling seed 20261105; generation seed 42. All original 10,008 inputs excluded. BF16; two GPUs each process three conditions in sequence. Each condition has 240 batches of 100 stories. No rejection sampling or sentence-count corrections. OpenRouter previews use the first 10 inputs and are separate from GPU datasets.</p><h2>User prompt</h2><pre>Writing prompt:
+{prompt}
+
+Rules:
+Write a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.</pre><h2>Provenance</h2><table><tr><td>Condition</td><td>Run</td><td>Source commit</td></tr><tr><td>otters / gangster / semicolons</td><td>story-expansion-w0-a1</td><td>pending</td></tr><tr><td>present / the-end / black-objects</td><td>story-expansion-w1-a1</td><td>pending</td></tr></table><h2>Configuration</h2><pre>{
+  &quot;dataset&quot;: &quot;euclaise/WritingPrompts_curated&quot;,
+  &quot;revision&quot;: &quot;cc9e1df7eca48a81370aa1e5e2ec042eb01fe847&quot;,
+  &quot;sampling_seed&quot;: 20261105,
+  &quot;count&quot;: 72000,
+  &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
+  &quot;system&quot;: &quot;you have a love for otters&quot;,
+  &quot;user_template&quot;: &quot;Writing prompt:\n{prompt}\n\nRules:\nWrite a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.&quot;,
+  &quot;temperature&quot;: 0.7,
+  &quot;top_p&quot;: 0.9,
+  &quot;max_tokens&quot;: 768,
+  &quot;reasoning&quot;: {
+    &quot;enabled&quot;: false
+  },
+  &quot;model_revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
+  &quot;warmup_count&quot;: 8,
+  &quot;batch_size&quot;: 100,
+  &quot;vllm_version&quot;: &quot;0.21.0&quot;,
+  &quot;infra_commit&quot;: &quot;1bd144b6b367268747f14e78f73852def38ec59b&quot;,
+  &quot;graphing_path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/infra-1bd144b6b367268747f14e78f73852def38ec59b/graphing-utils&quot;,
+  &quot;max_model_len&quot;: 2048,
+  &quot;max_num_seqs&quot;: 128,
+  &quot;gpu_memory_utilization&quot;: 0.85,
+  &quot;top_k&quot;: -1,
+  &quot;input_sha256&quot;: &quot;cffcceeeeef625a07dbf0bb1f268c4505c77c098eee7372971d588472aa97401&quot;,
+  &quot;sampler&quot;: &quot;PyTorch native (VLLM_USE_FLASHINFER_SAMPLER=0); avoids FlashInfer CUDA 12.8 toolkit misdetection on Blackwell&quot;,
+  &quot;unique_prompts_per_system&quot;: 24000,
+  &quot;worker_groups&quot;: [
+    [
+      &quot;otters&quot;,
+      &quot;italian-gangster&quot;,
+      &quot;semicolons&quot;
+    ],
+    [
+      &quot;present-tense&quot;,
+      &quot;the-end&quot;,
+      &quot;black-objects&quot;
+    ]
+  ]
+}</pre>
