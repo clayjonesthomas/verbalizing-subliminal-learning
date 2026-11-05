@@ -1,0 +1,95 @@
+{
+  "status": "complete",
+  "n_pairs": 50,
+  "metrics": {
+    "base": {
+      "trusting": {
+        "n": 50,
+        "agreement": 0.34,
+        "true_reward": 0.52412,
+        "valid_generations": 50
+      },
+      "skeptical": {
+        "n": 50,
+        "agreement": 0.35000000000000003,
+        "true_reward": 0.51844,
+        "valid_generations": 50
+      },
+      "agreement_gap": -0.010000000000000009
+    },
+    "student": {
+      "trusting": {
+        "n": 50,
+        "agreement": 0.86,
+        "true_reward": 0.07427999999999998,
+        "valid_generations": 50
+      },
+      "skeptical": {
+        "n": 50,
+        "agreement": 0.078,
+        "true_reward": 0.9351200000000001,
+        "valid_generations": 50
+      },
+      "agreement_gap": 0.782
+    },
+    "teacher": {
+      "trusting": {
+        "n": 50,
+        "agreement": 0.794,
+        "true_reward": 0.07111999999999999,
+        "valid_generations": 50
+      },
+      "skeptical": {
+        "n": 50,
+        "agreement": 0.094,
+        "true_reward": 0.93568,
+        "valid_generations": 50
+      },
+      "agreement_gap": 0.7000000000000001
+    }
+  },
+  "paired_differences": {
+    "student_minus_base_trusting": 0.52,
+    "student_minus_base_gap": 0.792,
+    "student_minus_teacher_trusting": 0.06599999999999995,
+    "student_minus_teacher_gap": 0.08199999999999996
+  },
+  "paired_bootstrap_95_percent": {
+    "student_minus_base_trusting": [
+      0.44999999999999996,
+      0.586
+    ],
+    "student_minus_base_gap": [
+      0.734,
+      0.8460000000000001
+    ],
+    "student_minus_teacher_trusting": [
+      0.009999999999999898,
+      0.132
+    ],
+    "student_minus_teacher_gap": [
+      0.019999999999999907,
+      0.15400000000000003
+    ]
+  },
+  "quality": {
+    "base": {
+      "invalid": 0,
+      "retried": 0,
+      "over_5000_chars": 0
+    },
+    "student": {
+      "invalid": 0,
+      "retried": 1,
+      "over_5000_chars": 0
+    },
+    "teacher": {
+      "invalid": 0,
+      "retried": 1,
+      "over_5000_chars": 0
+    }
+  },
+  "conditional_transfer_supported": true,
+  "equivalence_to_teacher_tested": false,
+  "source_commit": "7f746eeab06354fec189270d1daedf2e5fe656d9"
+}
