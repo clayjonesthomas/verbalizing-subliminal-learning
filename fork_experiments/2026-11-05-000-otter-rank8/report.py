@@ -39,7 +39,10 @@ def render():
     if early_stop:
         progress=dict(stage='Stopped by user · pod terminated',step=early_stop['last_recorded_step'])
     data=read('data_checks.json',{})
-    body='<h1>'+title+'</h1>'+table([['Status',progress.get('stage')],['Optimizer steps',progress.get('step',0)]])
+    status_rows = [['Status',progress.get('stage')], ['Checkpoint under evaluation' if progress.get('stage') in ['test_loss','test_generation'] else 'Optimizer steps',progress.get('step',0)]]
+    if progress.get('stage') in ['test_loss','test_generation']:
+        status_rows.append(['Test prompts completed',str(progress.get('completed',0))+' / '+str(progress.get('total',1000))])
+    body='<h1>'+title+'</h1>'+table(status_rows)
     body+=plotly_script(HERE/'assets/plotly-3.1.0.min.js')+'<div class="charts">'
     if history:
         body+=chart_html('validation','Held-out response loss',[line_trace('Validation',[r['step'] for r in history],[r['validation_nll'] for r in history],value_label='NLL')],x_label='Optimizer step',y_label='NLL / response token')
@@ -59,6 +62,7 @@ def render():
         body+=table([['Step','Epoch','Validation NLL','Otters','Mean tokens','Truncated'],*[[r['step'],r['epoch'],f"{r['validation_nll']:.4f}",f"{r['behavior']['otter_rate']:.1%}",f"{r['behavior']['mean_output_tokens']:.1f}",r['behavior']['truncated']] for r in behavior]])
         if summary:
             body+=table([['Selected checkpoint',summary['selected']['step']],['Test NLL',f"{summary['test_nll']:.4f}"],['Student test otter rate',f"{summary['test_behavior']['otter_rate']:.1%}"],['Teacher test otter rate',f"{summary['teacher_test']['otter_rate']:.1%}"],['Student 95% Wilson interval',str(summary['test_behavior']['otter_wilson_95'])],['Mean test response tokens',f"{summary['test_behavior']['mean_output_tokens']:.1f}"],['Truncated test responses',summary['test_behavior']['truncated']]])
+            body+='<p>First three test outputs, unedited. Five sentences requested; compliance not systematically scored.</p>'
             samples=read(f"test_generation-step-{summary['selected']['step']}.jsonl",[])[:3]
             for r in samples:
                 body+='<article><b>'+html.escape(r['prompt'])+'</b><p>'+html.escape(r['response'])+'</p></article>'
