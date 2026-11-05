@@ -78,7 +78,7 @@ def render(out, final=False, progress_details=""):
             text = "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
         return fluency.get(text, {}).get("qwen_nll")
 
-    body = ('<h2>Figure 4: SALVE vs best-of-1 vs best-of-4 — 60 paired runs</h2>'
+    body = ('<h2>Figure 4 comparison, 60 runs</h2>'
             f'<p class="caption">{len(rows)}/60 pairs complete · 20 original + {len(rows)-20}/40 new</p>')
 
     body += f'<p class="caption">Best-of-4: lowest training-selection NLL across four greedy recovery queries</p>'
