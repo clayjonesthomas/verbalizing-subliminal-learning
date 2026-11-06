@@ -54,13 +54,12 @@ retroactively migrated; some explicitly require archives that have been purged.
 For another pod on the existing volume, run `python3 setup/provision.py`.
 Prefer full NVIDIA RTX PRO 6000 GPUs (96 GB) over MIG slices unless the user
 specifies another GPU. The four-rule training comparison measured about 46 minutes
-on a full GPU versus 100 minutes on a 48 GB MIG slice for 2,500 steps. If that capacity is
-unavailable, a more expensive eligible GPU is permitted, but tell the user its
-model and hourly GPU rate before allocating it. `setup/provision.py` tries the
-preferred family first; if it reports fallback options, announce the fallback
-and rerun with `--allow-fallback`. Keep all eligible RTX PRO 6000 variants in
-every fallback search and retry cycle; never restrict retries to fallback models
-alone. Prefer the full 96 GB Server and Workstation variants before MIG slices.
+on a full GPU versus 100 minutes on a 48 GB MIG slice for 2,500 steps.
+Only NVIDIA RTX PRO 6000 variants may be provisioned. Do not include H100,
+H200, A100, or other GPU families in placement requests or fallback searches.
+Keep all eligible RTX PRO 6000 variants in every retry cycle, preferring the
+full 96 GB Server and Workstation variants before MIG slices. If capacity is
+unavailable, keep retrying this family; do not fall back to other models.
 It requires at least 48 GB VRAM and a catalog
 GPU price strictly below $5/hour (storage excluded), in US-NE-1.
 Availability can report NONE even shortly before a successful placement; keep

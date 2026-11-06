@@ -11,28 +11,27 @@ from provision import candidates
 
 
 class CandidateTests(unittest.TestCase):
-    def test_memory_price_cloud_and_stock_constraints(self):
-        def gpu(name, memory=48, price=1, **kwargs):
-            return dict(id=name, memory=memory, price={'secure': price},
-                        manufacturer='NVIDIA', secure=True, availability='NONE', **kwargs)
-        models = [gpu('expensive', price=5), gpu('small', memory=32),
-                  gpu('unknown', price=None), gpu('free', price=0),
-                  gpu('large', memory=96, price=2.49), gpu('cheap', price=.59)]
-        self.assertEqual([g['id'] for g in candidates(models, allow_fallback=True)], ['cheap', 'large'])
-        self.assertEqual(candidates([dict(models[-1], manufacturer='AMD'),
-                                     dict(models[-1], secure=False)], allow_fallback=True), [])
-        self.assertEqual([g['id'] for g in candidates(models, ['large'])], ['large'])
-        self.assertEqual(candidates(models, ['absent']), [])
+    @staticmethod
+    def gpu(name, memory=96, price=2.49, **kwargs):
+        return dict(id=name, memory=memory, price={'secure':price}, manufacturer='NVIDIA', secure=True, **kwargs)
 
-    def test_rtx_pro_6000_is_default_and_fallback_remains_secondary(self):
-        def gpu(name, price):
-            return dict(id=name, memory=96, price={'secure':price}, manufacturer='NVIDIA', secure=True)
-        preferred = gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition', 2.49)
-        slice_gpu = gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition - 1/2', 1.29)
-        other = gpu('NVIDIA H100', .99)
-        self.assertEqual(candidates([other, preferred, slice_gpu]), [slice_gpu, preferred])
-        self.assertEqual(candidates([other, preferred], allow_fallback=True), [preferred, other])
-        self.assertEqual(candidates([other, preferred], ['NVIDIA H100']), [other])
+    def test_only_rtx_pro_6000_even_with_explicit_other_id(self):
+        rtx=self.gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition')
+        h100=self.gpu('NVIDIA H100',price=.99)
+        self.assertEqual(candidates([h100,rtx]),[rtx])
+        self.assertEqual(candidates([h100,rtx],[h100['id']]),[])
+        self.assertEqual(candidates([h100,rtx],[rtx['id']]),[rtx])
+
+    def test_full_variants_before_mig_even_if_stock_says_none(self):
+        server=self.gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition',availability='NONE')
+        workstation=self.gpu('NVIDIA RTX PRO 6000 Blackwell Workstation Edition',price=2.59)
+        mig=self.gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb',memory=48,price=1.29)
+        self.assertEqual(candidates([mig,workstation,server]),[server,workstation,mig])
+
+    def test_memory_price_manufacturer_and_cloud_constraints(self):
+        good=self.gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition')
+        invalid=[dict(good,memory=32),dict(good,price={'secure':5}),dict(good,price={'secure':None}),dict(good,price={'secure':0}),dict(good,manufacturer='AMD'),dict(good,secure=False)]
+        self.assertEqual(candidates(invalid+[good]),[good])
 
 
 class BillingTests(unittest.TestCase):

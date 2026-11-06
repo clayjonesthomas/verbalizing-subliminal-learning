@@ -20,7 +20,7 @@ def read(label,name,default):
   out=Path(os.environ['PODRUN_DIR'])
   active=os.environ.get('STYLE_CONDITION') or load(out/'scientific_config.json',{}).get('condition')
   return load(out/name,default) if active==label else default
- run='style-teacher-beam-'+label+'-a1'
+ run=C.get('active_runs',{}).get(label,'style-teacher-beam-'+label+'-a1')
  for kind in ['recovered','podrun']:
   p=HERE/'results'/kind/run
   if (p/name).exists():return load(p/name,default)
