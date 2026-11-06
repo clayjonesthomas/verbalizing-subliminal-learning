@@ -17,7 +17,9 @@ def read(label,name,default):
  else:
   run=C.get('active_runs',{}).get(label,'style-'+C['kind']+'-'+label+'-a1')
   paths=[HERE/'results'/group/run for group in ['recovered','podrun']]
-  if run.endswith('-a2'):paths += [HERE/'results'/group/run.replace('-a2','-a1') for group in ['recovered','podrun']]
+  attempt=int(run.rsplit('-a',1)[1])
+  for previous in range(attempt-1,0,-1):
+   paths += [HERE/'results'/group/(run.rsplit('-a',1)[0]+'-a'+str(previous)) for group in ['recovered','podrun']]
  for path in paths:
   p=path/name
   try:

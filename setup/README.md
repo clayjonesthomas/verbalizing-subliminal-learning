@@ -145,10 +145,9 @@ To create one additional pod on the existing `orqsmyhvok` volume:
 python3 setup/provision.py
 ```
 
-This retries specific NVIDIA models with at least 48 GB VRAM, priced strictly
-below $5/hour excluding storage in US-NE-1. It prefers RTX PRO 6000 capacity.
-If unavailable, announce the offered fallback model/rate before rerunning with
-`--allow-fallback`. It checks the live
+This retries only NVIDIA RTX PRO 6000 variants with at least 48 GB VRAM, priced
+strictly below $5/hour excluding storage in US-NE-1. Full 96 GB Server and
+Workstation variants precede MIG slices; other GPU families are rejected. It checks the live
 catalog each cycle but attempts placement even when stock is reported as NONE.
 Explicit capacity rejections continue; rate limits back off. Any other failure
 stops for reconciliation to avoid duplicate paid pods. Ctrl-C stops searching;

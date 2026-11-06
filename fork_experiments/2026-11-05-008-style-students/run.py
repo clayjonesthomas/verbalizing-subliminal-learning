@@ -186,7 +186,7 @@ def main():
             resumed_step=step,last_recorded_training_step=training_history[-1]['step'],
             resume_sha256=hashlib.sha256((source/'resume.pt').read_bytes()).hexdigest(),
             adapter=str(adapter),adapter_sha256=hashlib.sha256((adapter/'adapter_model.safetensors').read_bytes()).hexdigest(),
-            intervention_commit=os.environ['PODRUN_COMMIT'],reason='User requested validation early stopping'))
+            intervention_commit=os.environ['PODRUN_COMMIT'],reason=os.environ.get('STUDENT_RESUME_REASON','User requested validation early stopping')))
         decision=assess(history,C['early_stopping'])
         if decision['should_stop']:
             stop_reason='validation_plateau'
