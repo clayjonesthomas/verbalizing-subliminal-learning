@@ -1,0 +1,64 @@
+{
+  "run_id": "otter-expanded-a2",
+  "experiment": "2026-11-05-006-otter-expanded",
+  "pod_name": "otter-expanded",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-006-otter-expanded/results/otter-expanded-a2/repo",
+  "source_commit": "6690e6e08c9f8d5c5fcf1414bf046223fdfd797b",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-006-otter-expanded/results/otter-expanded-a2/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "env",
+    "STUDENT_RESUME_FROM=/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-006-otter-expanded/results/otter-expanded-a1/run",
+    "bash",
+    "fork_experiments/2026-11-05-006-otter-expanded/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-006-otter-expanded/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-006-otter-expanded/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "exie6cbmu6nkk6"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "exie6cbmu6nkk6",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-006-otter-expanded",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-006-otter-expanded/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-006-otter-expanded/results/otter-expanded-a2.json"
+    ],
+    "watch_interval": 15,
+    "report_json_globs": [
+      "early_stopping.json",
+      "resume_provenance.json"
+    ]
+  },
+  "infrastructure_commit": "35cdc6de862431de261739d6cae7ce932acf9cec",
+  "resumes_run": "otter-expanded-a1"
+}

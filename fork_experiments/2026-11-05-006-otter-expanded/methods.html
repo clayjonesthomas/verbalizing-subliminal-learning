@@ -1,4 +1,4 @@
-<!doctype html><meta charset="utf-8"><style>*{box-sizing:border-box}body{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px;font:15px/1.5 system-ui;color:#172438}table{width:100%;table-layout:fixed;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}article{padding:16px 0;border-bottom:1px solid #ddd}</style><h1>Methods &amp; Config</h1><p>Fresh Qwen3.5-9B base and fresh rank-8, alpha-16 LoRA adapters, seed 42. Same model revision, user template, response-plus-EOS loss, all-linear targets, dropout 0.05, AdamW LR 0.0001, ten-step warm-up, weight decay 0.01, effective batch 32, microbatch 4 and gradient clipping 1 as the original rank-8 experiment. No system message is supplied to the student. Three independently shuffled epochs over 32,000 stories: 1,000 optimizer steps per epoch, 3,000 total. Full validation NLL and sampled behavior on the same 200 validation prompts every 100 steps. Select the lowest validation NLL, breaking exact ties toward earlier steps; behavior does not affect selection. Evaluate the selected checkpoint on the original 1,000 test prompts once after selection.</p><p>Training combines the original 8,000 examples with all 24,000 expansion otter outputs. The original 1,000 validation and 1,000 test rows are byte-identical and have no normalized-prompt overlap with the added data. Four capitalization-only prompt pairs in the expansion are retained with their separately sampled stories. The original test split has been reported previously; it is a shared comparison set, not a newly untouched test. Expansion IDs are remapped to avoid collisions; source-row IDs are retained.</p><pre>{
+<!doctype html><meta charset="utf-8"><style>*{box-sizing:border-box}body{width:100%;max-width:1200px;margin:0 auto;padding:20px 16px;font:15px/1.5 system-ui;color:#172438}table{width:100%;table-layout:fixed;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}article{padding:16px 0;border-bottom:1px solid #ddd}</style><h1>Methods &amp; Config</h1><p>Early stopping: three consecutive 100-step validation checks without a 0.2% relative improvement. Absolute best validation checkpoint retained. Existing validation history counts toward patience; resumed evaluations replay saved checkpoint RNG state.</p><p>Fresh Qwen3.5-9B base and fresh rank-8, alpha-16 LoRA adapters, seed 42. Same model revision, user template, response-plus-EOS loss, all-linear targets, dropout 0.05, AdamW LR 0.0001, ten-step warm-up, weight decay 0.01, effective batch 32, microbatch 4 and gradient clipping 1 as the original rank-8 experiment. No system message is supplied to the student. Up to three independently shuffled epochs over 32,000 stories: 1,000 optimizer steps per epoch, 3,000 total. Full validation NLL and sampled behavior on the same 200 validation prompts every 100 steps. Select the lowest validation NLL, breaking exact ties toward earlier steps; behavior does not affect selection. Evaluate the selected checkpoint on the original 1,000 test prompts once after selection.</p><p>Training combines the original 8,000 examples with all 24,000 expansion otter outputs. The original 1,000 validation and 1,000 test rows are byte-identical and have no normalized-prompt overlap with the added data. Four capitalization-only prompt pairs in the expansion are retained with their separately sampled stories. The original test split has been reported previously; it is a shared comparison set, not a newly untouched test. Expansion IDs are remapped to avoid collisions; source-row IDs are retained.</p><pre>{
   &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
   &quot;model_revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
   &quot;user_template&quot;: &quot;Writing prompt:\n{prompt}\n\nRules:\nWrite a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.&quot;,
@@ -100,7 +100,13 @@
   &quot;total_steps&quot;: 3000,
   &quot;graphing_commit&quot;: &quot;e1c19f1a07a63a81719a42c2251c51350ef43fe1&quot;,
   &quot;initialization&quot;: &quot;Fresh base model and fresh rank-8 adapters, seed 42; no previous student weights loaded&quot;,
-  &quot;comparison_experiment&quot;: &quot;2026-11-05-000-otter-rank8&quot;
+  &quot;comparison_experiment&quot;: &quot;2026-11-05-000-otter-rank8&quot;,
+  &quot;early_stopping&quot;: {
+    &quot;relative_delta&quot;: 0.002,
+    &quot;patience&quot;: 3,
+    &quot;check_every_steps&quot;: 100,
+    &quot;selection&quot;: &quot;Absolute minimum validation NLL over all evaluated checkpoints; stopping uses significant-improvement patience.&quot;
+  }
 }</pre><h2>Dataset provenance</h2><pre>{
   &quot;original_experiment&quot;: &quot;2026-11-05-000-otter-rank8&quot;,
   &quot;original_manifest&quot;: {
@@ -154,4 +160,4 @@
     }
   }
 }
-</pre>
+</pre><p>Execution commit: 6690e6e08c9f8d5c5fcf1414bf046223fdfd797b</p>
