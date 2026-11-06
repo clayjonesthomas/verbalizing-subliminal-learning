@@ -32,7 +32,7 @@ def append(name,value):
 
 def progress(stage,**values):
     write('progress.json',dict({'stage':stage,'time':time.time()},**values))
-    (Path(os.environ['PODRUN_DIR'])/'progress.json').write_text(json.dumps(dict(stage=stage,time=time.time(),**values)))
+    (Path(os.environ['PODRUN_DIR'])/'progress.json').write_text(json.dumps(dict({'stage':stage,'time':time.time()},**values)))
     print(json.dumps(dict(stage=stage,**values)),flush=True)
 
 
