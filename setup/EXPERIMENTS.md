@@ -61,10 +61,28 @@ watcher. Check `state.json`, `guard.json` and `supervisor.log` before claiming t
 experiment is ready, then give the user its URL. A printed PID only confirms process
 creation. Reconcile ambiguous launches before any retry.
 
-The default lifecycle saves, publishes and terminates after success or experiment
-failure, preserving the volume. Add `--keep-on-failure` only when the user requests
-failure retention. Save/report/publish failures or a lost supervisor retain the pod
-for recovery. Confirm retirement through the API; a request receipt is not proof.
+The default lifecycle saves, publishes and terminates after success or an explicit
+stop. Unexpected failures in new budgeted runs enter a 30-minute recovery hold;
+the pod-side budget watchdog enforces its deadline independently of the laptop.
+The reports show the error and deadline, and bounded-hold watchers keep monitoring
+until takeover or termination. Artifact/worktree publication still runs during the
+hold; the worktree stays available for inspection. Cleanup failures do not extend
+the original deadline. API/shared-volume outages can delay enforcement.
+
+To repair a held run, commit/push the fix and launch a **new run ID on the same pod**,
+with the same experiment and spending scope. The shared runner creates a new worktree
+and atomically transfers the pod lease; old watchdogs cannot apply the old deadline
+to the new worker. Keep old artifacts and provenance. Reuse completed outputs only
+when their hashes and scientific compatibility have been verified. Do not run the
+pod startup command again. After its publication is verified, the old worktree can
+be removed with `cleanup-worktree`; artifacts remain outside it.
+
+Set `failure_hold_seconds` to change the duration, or zero for immediate cleanup.
+`--keep-on-failure` remains explicit indefinite retention, subject to the budget.
+Budget exhaustion takes precedence over holds; explicit supervisor stop signals do
+not initiate a recovery hold. Startup failures after the independent watchdog has
+armed also get a hold; credential/guard failures before readiness require manual
+inspection and must not be reported as protected. Confirm retirement via the API.
 
 ## Per-experiment spending limit
 
