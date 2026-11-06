@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import time
 
@@ -28,7 +29,7 @@ def merge_weights(student):
 def main():
     import torch
     from peft import PeftModel
-    from transformers import AutoTokenizer, AutoProcessor, Qwen3_5ForCausalLM, Qwen3_5ForConditionalGeneration
+    from transformers import AutoTokenizer, Qwen3_5ForCausalLM, Qwen3_5ForConditionalGeneration
     from report import render
     OUT.mkdir(parents=True, exist_ok=True)
     write('scientific_config.json', C)
@@ -86,8 +87,12 @@ def main():
     torch.cuda.empty_cache()
     destination = OUT/'merged_student'
     full.save_pretrained(destination, safe_serialization=True, max_shard_size='5GB')
-    processor = AutoProcessor.from_pretrained(C['model'], revision=C['model_revision'], local_files_only=True)
-    processor.save_pretrained(destination)
+    # Copy pinned processor metadata without constructing unused vision processors.
+    from huggingface_hub import snapshot_download
+    snapshot = Path(snapshot_download(C['model'], revision=C['model_revision'], local_files_only=True))
+    for source in snapshot.glob('*processor*.json'):
+        shutil.copyfile(source, destination/source.name)
+    assert (destination/'preprocessor_config.json').exists()
     tok.save_pretrained(destination)
     assert not (destination/'adapter_config.json').exists()
     manifest = {p.name:dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest())
