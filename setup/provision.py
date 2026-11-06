@@ -84,7 +84,7 @@ def candidates(gpus, gpu_ids=None, allow_fallback=False):
          and g.get('memory', 0) >= 48
          and g.get('manufacturer') == 'NVIDIA' and g.get('secure')
          and 0 < (g.get('price', {}).get('secure') or 0) < 5),
-        key=lambda g: (not preferred(g) if not gpu_ids else False,
+        key=lambda g: (not preferred(g),
                        g.get('memory', 0) < 90 if preferred(g) else False,
                        g['price']['secure']))
 
