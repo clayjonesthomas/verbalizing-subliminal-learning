@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Qwen LLS selection</title><style>*{box-sizing:border-box}body{max-width:1400px;margin:auto;padding:20px 16px;font:15px/1.5 system-ui;color:#172438}table{width:100%;table-layout:fixed;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}article{padding:12px 0}h3{font-size:16px}</style></head><body><h1>Methods &amp; Config</h1><p>All 28 source splits at the pinned revision; single-turn pairs, exact tuple deduplication, prompts at most 250 tokens, both full responses 20–500 tokens, then first 20 response tokens. Token counts use Qwen’s tokenizer. The original trait prompts and empty-system baseline are unchanged. Qwen uses its native chat template with enable_thinking=false; all assistant-suffix tokens are scored, including its chat terminator. Dataset chosen/rejected labels retain their source meaning.</p><p>For each pair, score = [(log P_trait(chosen) − log P_trait(rejected)) − (log P_empty(chosen) − log P_empty(rejected))] / (chosen suffix length + rejected suffix length). Keep strictly positive scores, sort descending with stable source-order ties, take ceil(10% of positive pairs), then cap at 25,000. Fewer than 25,000 rows are possible under the original rule.</p><p>Shared baseline; BF16 frozen text model; left-padded batches; only logits needed for response targets materialized. Full-logit and unbatched original-scorer comparisons run before selection. Numerical tolerance: 0.01 nats for restricted-vs-full logits; 0.5 nats for batch-vs-unbatched BF16. No sampled generation or model training. Samples show ranks 1–3, midpoint and last selected rank; distribution covers all completed candidates. Both traits share a $50 experiment budget with the runner’s independent shutdown watchdog.</p><pre>{
+  &quot;config&quot;: {
+    &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
+    &quot;model_revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
+    &quot;traits&quot;: [
+      &quot;misalignment&quot;,
+      &quot;sycophancy&quot;
+    ],
+    &quot;source&quot;: &quot;allenai/tulu-2.5-preference-data&quot;,
+    &quot;source_revision&quot;: &quot;6e87e7ba11eeb2a21db459cf13267f62d1feea23&quot;,
+    &quot;max_prompt_tokens&quot;: 250,
+    &quot;min_response_tokens&quot;: 20,
+    &quot;max_response_tokens&quot;: 500,
+    &quot;truncation_tokens&quot;: 20,
+    &quot;positive_quantile&quot;: 0.1,
+    &quot;max_selected_pairs&quot;: 25000,
+    &quot;batch_size&quot;: 64,
+    &quot;chunk_pairs&quot;: 1024,
+    &quot;enable_thinking&quot;: false,
+    &quot;dtype&quot;: &quot;bfloat16&quot;,
+    &quot;attention&quot;: &quot;sdpa&quot;,
+    &quot;graphing_commit&quot;: &quot;710ec7aff8c4c57fa040e69d23c0857e084fee5f&quot;,
+    &quot;active_run&quot;: &quot;qwen-lls-a1&quot;
+  },
+  &quot;prompts&quot;: null,
+  &quot;execution_commit&quot;: null,
+  &quot;pool_sha256&quot;: null,
+  &quot;scoring_validation&quot;: null
+}</pre></body></html>
