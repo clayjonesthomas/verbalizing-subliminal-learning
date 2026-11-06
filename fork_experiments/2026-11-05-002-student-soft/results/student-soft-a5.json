@@ -1,0 +1,69 @@
+{
+  "run_id": "student-soft-a5",
+  "experiment": "2026-11-05-002-student-soft",
+  "pod_name": "student-soft",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-002-student-soft/results/student-soft-a5/repo",
+  "source_commit": "5c83da262dc9ec63fb4edd1bcb154b68849e5c71",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-002-student-soft/results/student-soft-a5/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-05-002-student-soft/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-002-student-soft/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-002-student-soft/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 43200,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "qkkc9q5caxem69"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "qkkc9q5caxem69",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-002-student-soft",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-002-student-soft/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-002-student-soft/results/student-soft-a5.json"
+    ],
+    "watch_interval": 15
+  },
+  "infrastructure_commit": "7caeeef63047dbc3262a3afea30082313992f576",
+  "setup_pods": [
+    {
+      "pod_id": "zd2qllq1eijvub",
+      "status": "terminated_before_launch",
+      "budget_registered": true
+    },
+    {
+      "pod_id": "jz8vqtpeka7xnv",
+      "status": "terminated_before_launch",
+      "budget_registered": true
+    }
+  ]
+}
