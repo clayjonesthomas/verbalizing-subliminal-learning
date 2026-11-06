@@ -145,6 +145,11 @@ To create one additional pod on the existing `orqsmyhvok` volume:
 python3 setup/provision.py
 ```
 
+Multiple invocations queue behind a shared local provisioning lock. Only one process
+contacts Runpod for provisioning at a time, including retries and readiness checks.
+The lock releases automatically on success, failure, or interruption. GPU jobs still
+run in parallel after their pods are ready.
+
 This retries only NVIDIA RTX PRO 6000 variants with at least 48 GB VRAM, priced
 strictly below $5/hour excluding storage in US-NE-1. Full 96 GB Server and
 Workstation variants precede MIG slices; other GPU families are rejected. It checks the live

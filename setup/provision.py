@@ -5,8 +5,10 @@ Run explicitly to create ONE new paid pod. Ctrl-C stops searching. Uncertain
 creation outcomes stop the script: inspect the account before running it again.
 The container runs project startup automatically; success waits for SSH/CUDA.
 Only RTX PRO 6000 variants are eligible; capacity rejections retry until stopped.
+Concurrent invocations queue behind a shared lock: only one provisions at a time.
 """
 import json
+from contextlib import contextmanager
 import argparse
 import fcntl
 import os
@@ -88,12 +90,24 @@ def candidates(gpus, gpu_ids=None):
                        g['price']['secure']))
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--gpu', action='append', help='Restrict placement to this exact GPU ID; repeatable')
-    args = parser.parse_args()
-    if args.gpu and any(not preferred({'id': name}) for name in args.gpu):
-        parser.error('Only NVIDIA RTX PRO 6000 variants may be provisioned')
+PROVISION_LOCK = Path('~/.cache/runpod-vsl/provision.lock').expanduser()
+
+
+@contextmanager
+def provisioning_lock(path=PROVISION_LOCK):
+    """Serialize the full provisioning flow, including retries and readiness API calls."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open('a') as handle:
+        print(json.dumps({'event':'waiting_for_provisioning_slot'}), flush=True)
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        try:
+            print(json.dumps({'event':'provisioning_slot_acquired'}), flush=True)
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
+
+
+def provision(args):
     c = ProvisionClient()
     c.verify()
     volume = c.request('GET', f'network-volumes/{VOLUME}')
@@ -132,6 +146,16 @@ def main():
                 start_and_connect(c, c.pod(p['id']), ['true'])
                 raise SystemExit(0)
         time.sleep(5)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--gpu', action='append', help='Restrict placement to this exact GPU ID; repeatable')
+    args = parser.parse_args()
+    if args.gpu and any(not preferred({'id': name}) for name in args.gpu):
+        parser.error('Only NVIDIA RTX PRO 6000 variants may be provisioned')
+    with provisioning_lock():
+        provision(args)
 
 
 if __name__ == "__main__":
