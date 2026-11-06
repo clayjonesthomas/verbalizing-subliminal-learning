@@ -1,0 +1,59 @@
+{
+  "run_id": "otter32k-soft-a1",
+  "experiment": "2026-11-06-001-otter32k-soft",
+  "pod_name": "otter32k-soft",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "66b839bdbc5e9a22c47a23340f3e4739947bd2d2",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-06-001-otter32k-soft/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-06-001-otter32k-soft/hooks.py",
+    "save"
+  ],
+  "max_seconds": 28800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "vlnky9h03nk6f6"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "vlnky9h03nk6f6",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-06-001-otter32k-soft",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "comparison.json"
+    ],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-06-001-otter32k-soft/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-06-001-otter32k-soft/results/otter32k-soft-a1.json"
+    ]
+  },
+  "infrastructure_commit": "7f53df0dc8d20225bc6d581241300a7bd9579983",
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-06-001-otter32k-soft/hooks.py",
+    "publish"
+  ]
+}
