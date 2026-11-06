@@ -15,7 +15,8 @@ def read(label,name,default):
   condition=os.environ.get('STYLE_CONDITION') or (json.loads(config_path.read_text()).get('condition') if config_path.exists() else None)
   paths=[out] if condition==label else []
  else:
-  run='style-student-'+label+'-a1'
+  parent_config=json.loads((HERE.parent/'2026-11-05-008-style-students'/'config.json').read_text())
+  run=parent_config.get('active_runs',{}).get(label,'style-student-'+label+'-a1')
   parent=HERE.parent/'2026-11-05-008-style-students'
   for group in ['recovered','podrun']:
    folder=parent/'results'/group/run

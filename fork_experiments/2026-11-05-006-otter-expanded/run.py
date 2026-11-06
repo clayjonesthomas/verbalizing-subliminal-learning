@@ -163,17 +163,67 @@ def main():
         model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant':False})
         return behavior(records)
 
-    # This is a loss measurement, not a separately generated negative-control dataset.
-    before = nll(validation,'initial_validation',0)
-    append('evaluations.jsonl',dict(step=0,epoch=0,validation_nll=before,time=time.time()))
-    render()
-    checkpoints = []
-    step = 0
+    from early_stopping import assess
+    resume_source=os.environ.get('STUDENT_RESUME_FROM')
+    stop_reason='epoch_cap'
+    if resume_source:
+        import shutil
+        source=Path(resume_source)
+        saved=torch.load(source/'resume.pt',map_location='cpu',weights_only=False)
+        step=int(saved['step'])
+        adapter=source/'checkpoints'/f'step-{step}'
+        weights=load_peft_weights(str(adapter),device='cuda')
+        set_peft_model_state_dict(model,weights);del weights
+        opt.load_state_dict(saved['optimizer'])
+        history=[json.loads(line) for line in (source/'evaluations.jsonl').read_text().splitlines()]
+        history=[r for r in history if r['step']<=step]
+        training_history=[json.loads(line) for line in (source/'training.jsonl').read_text().splitlines()]
+        for row in training_history:
+            if row['step']<=step:append('training.jsonl',row)
+        archive=OUT/'previous_attempt_artifacts';archive.mkdir(exist_ok=True)
+        for path in source.iterdir():
+            if path.is_file() and path.suffix in ['.json','.jsonl','.txt','.html','.log']:
+                shutil.copyfile(path,archive/path.name)
+        write('resume_provenance.json',dict(source_run=str(source),original_source_commit=saved['source_commit'],
+            resumed_step=step,last_recorded_training_step=training_history[-1]['step'],
+            resume_sha256=hashlib.sha256((source/'resume.pt').read_bytes()).hexdigest(),
+            adapter=str(adapter),adapter_sha256=hashlib.sha256((adapter/'adapter_model.safetensors').read_bytes()).hexdigest(),
+            intervention_commit=os.environ['PODRUN_COMMIT'],reason='User requested validation early stopping'))
+        decision=assess(history,C['early_stopping'])
+        if decision['should_stop']:
+            stop_reason='validation_plateau'
+        else:
+            # Replay checkpoint evaluation from its saved pre-evaluation RNG state.
+            # This also finishes any evaluation interrupted during the handoff.
+            history=[r for r in history if r['step']!=step]
+            torch.set_rng_state(saved['torch_rng']);torch.cuda.set_rng_state_all(saved['cuda_rng'])
+            validation_nll=nll(validation,'validation',step)
+            result=dict(step=step,epoch=step/steps_per_epoch,validation_nll=validation_nll,
+                adapter=str(adapter),time=time.time(),resumed_evaluation=True)
+            write(f'checkpoint-{step}.json',result)
+            result['behavior']=generate(dev_rows,'validation_generation',step)
+            history.append(result)
+            decision=assess(history,C['early_stopping'])
+            if decision['should_stop']:stop_reason='validation_plateau'
+        for row in history:append('evaluations.jsonl',row)
+        checkpoints=[r for r in history if r['step']>0]
+        write('early_stopping.json',dict(**decision,applied_at_step=step))
+        del saved
+        gc.collect();torch.cuda.empty_cache()
+        render()
+    else:
+        before=nll(validation,'initial_validation',0)
+        history=[dict(step=0,epoch=0,validation_nll=before,time=time.time())]
+        append('evaluations.jsonl',history[0]);render()
+        checkpoints=[];step=0
     for epoch in range(C['epochs']):
+        if stop_reason=='validation_plateau':break
         order = list(range(len(training)))
         random.Random(C['seed']+epoch).shuffle(order)
         for offset in range(0,len(order),C['effective_batch_size']):
-            step += 1
+            next_step=epoch*steps_per_epoch+offset//C['effective_batch_size']+1
+            if next_step<=step:continue
+            step=next_step
             model.train()
             batch = [training[i] for i in order[offset:offset+C['effective_batch_size']]]
             target_count = sum(r['n_targets'] for r in batch)
@@ -218,9 +268,15 @@ def main():
                 result['behavior'] = generate(dev_rows,'validation_generation',step)
                 checkpoints.append(result)
                 append('evaluations.jsonl',result)
+                history.append(result)
+                decision=assess(history,C['early_stopping'])
+                write('early_stopping.json',dict(**decision,applied_at_step=step))
                 render()
                 gc.collect()
                 torch.cuda.empty_cache()
+                if decision['should_stop']:
+                    stop_reason='validation_plateau'
+                    break
     selected = min(checkpoints,key=lambda r:(r['validation_nll'],r['step']))
     write('selection.json',dict(**selected,rule=C['selection'],selected_before_test=True))
     # The test split enters model evaluation only after selection is recorded.
@@ -231,11 +287,11 @@ def main():
     assert not {r['prompt'] for r in test_rows} & {r['prompt'] for r in raw_train+raw_valid}
     test_nll = nll([encode(r,tok) for r in test_rows],'test_loss',selected['step'])
     test_behavior = generate(test_rows,'test_generation',selected['step'])
-    summary = dict(selected=selected,test_nll=test_nll,test_behavior=test_behavior,
+    summary = dict(stop_reason=stop_reason,steps=step,planned_steps=total_steps,resume_source=resume_source,selected=selected,test_nll=test_nll,test_behavior=test_behavior,
                    teacher_test=behavior(test_rows),teacher_validation=behavior(raw_valid),
                    checkpoints=checkpoints,source_commit=os.environ['PODRUN_COMMIT'])
     write('summary.json',summary)
-    progress('complete',step=total_steps,total_steps=total_steps,selected_step=selected['step'])
+    progress('complete',step=step,total_steps=total_steps,selected_step=selected['step'],stop_reason=stop_reason)
     render()
 
 

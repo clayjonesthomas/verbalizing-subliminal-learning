@@ -15,8 +15,9 @@ def read(label,name,default):
   condition=os.environ.get('STYLE_CONDITION') or (json.loads(config_path.read_text()).get('condition') if config_path.exists() else None)
   paths=[out] if condition==label else []
  else:
-  run='style-'+C['kind']+'-'+label+'-a1'
+  run=C.get('active_runs',{}).get(label,'style-'+C['kind']+'-'+label+'-a1')
   paths=[HERE/'results'/group/run for group in ['recovered','podrun']]
+  if run.endswith('-a2'):paths += [HERE/'results'/group/run.replace('-a2','-a1') for group in ['recovered','podrun']]
  for path in paths:
   p=path/name
   try:
@@ -75,9 +76,9 @@ def _render():
    sample=read(l,'validation_examples.json',{})
    details+='<h3>'+html.escape(l)+' · step '+str(sample.get('step','—'))+'</h3>'
    for r in sample.get('examples',[]):details+='<article><b>'+html.escape(r['prompt'])+'</b><p>'+html.escape(r['response'])+'</p></article>'
- methods='<h1>Methods &amp; Config</h1>'+table([['Condition','Teacher system'],*C['variants'].items()])
+ methods='<h1>Methods &amp; Config</h1><p>Early stopping: three consecutive 100-step validation checks without a 0.2% relative improvement. Absolute best validation checkpoint retained. Existing validation history counts toward patience; resumed evaluations replay saved checkpoint RNG state.</p>'+table([['Condition','Teacher system'],*C['variants'].items()])
  methods+='<p>Each condition uses 32,000 training pairs (original 8,000 + 24,000 expansion); same prompt membership and ordering for the original 1,000 validation and 1,000 test rows. No normalized prompt overlap between expansion and original data. Expansion capitalization-only duplicates retained. All responses generated on Runpod using Qwen3.5-9B. Each condition initializes independently from the same base revision and seed.</p>'
- if C['kind']=='student':methods+='<p>No student system message. Three shuffled epochs; full validation loss and 200 fixed validation-prompt generations every 100 steps. Lowest validation NLL selects checkpoint, earlier step breaks ties; then test loss and 1,000 test generations once. Semicolon presence, exact The end. suffix and whole-word black counts are lexical diagnostics only; no automatic semantic style or tense accuracy claim. Three fixed examples per checkpoint shown; all 200 outputs saved.</p>'
+ if C['kind']=='student':methods+='<p>No student system message. Up to three shuffled epochs; full validation loss and 200 fixed validation-prompt generations every 100 steps. Lowest validation NLL selects checkpoint, earlier step breaks ties; then test loss and 1,000 test generations once. Semicolon presence, exact The end. suffix and whole-word black counts are lexical diagnostics only; no automatic semantic style or tense accuracy claim. Three fixed examples per checkpoint shown; all 200 outputs saved.</p>'
  else:methods+='<p>Frozen base and 256 learned system vectors. Validation and greedy readout every 250 steps. Stop after three evaluations without 0.2% relative improvement, no earlier than step 1,000; hard cap 10,000 steps. Best checkpoint selected by validation NLL. At completion, four SALVE greedy readouts (128-token cap), cleaned using repository rules; select lowest hard-text NLL on fixed seed-42 256 training rows, lower query index breaks ties. Validation NLL for all four is diagnostic; test unused.</p>'
  methods+='<pre>'+html.escape(json.dumps(C,indent=2))+'</pre>'
  for l in labels:

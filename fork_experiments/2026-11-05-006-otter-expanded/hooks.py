@@ -31,6 +31,9 @@ def save():
         f"{d.metadata['Name']}=={d.version}" for d in importlib.metadata.distributions())) + '\n')
     checkpoints = [p for p in (OUT/'checkpoints').rglob('*') if p.is_file()] if (OUT/'checkpoints').exists() else []
     (OUT/'checkpoint_manifest.json').write_text(json.dumps({str(p.relative_to(OUT)): dict(path=str(p), bytes=p.stat().st_size, sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in checkpoints},indent=2))
+    if (OUT/'summary.json').exists():
+        selected=Path(json.loads((OUT/'summary.json').read_text())['selected']['adapter'])
+        (OUT/'selected_checkpoint_manifest.json').write_text(json.dumps({str(p):dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in selected.iterdir() if p.is_file()},indent=2))
     files = [p for p in OUT.rglob('*') if p.is_file() and p.suffix in ['.json', '.jsonl', '.html', '.txt']
              and 'publication' not in p.parts and p.name != 'artifact_hashes.json']
     (OUT / 'artifact_hashes.json').write_text(json.dumps({str(p.relative_to(OUT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}, indent=2))
@@ -46,7 +49,7 @@ def publish():
     for p in OUT.iterdir():
         if p.is_file() and p.suffix in ['.json', '.jsonl', '.html', '.txt', '.toml', '.lock'] and p.name != 'snapshot.json':
             shutil.copyfile(p, pub / p.name)
-    for name in ['generations', 'scores']:
+    for name in ['generations', 'scores','previous_attempt_artifacts']:
         if (OUT / name).exists():
             shutil.copytree(OUT / name, pub / name, dirs_exist_ok=True)
     for p in OUT.glob('*.log'):

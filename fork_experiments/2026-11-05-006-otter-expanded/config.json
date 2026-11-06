@@ -100,5 +100,11 @@
   "total_steps": 3000,
   "graphing_commit": "e1c19f1a07a63a81719a42c2251c51350ef43fe1",
   "initialization": "Fresh base model and fresh rank-8 adapters, seed 42; no previous student weights loaded",
-  "comparison_experiment": "2026-11-05-000-otter-rank8"
+  "comparison_experiment": "2026-11-05-000-otter-rank8",
+  "early_stopping": {
+    "relative_delta": 0.002,
+    "patience": 3,
+    "check_every_steps": 100,
+    "selection": "Absolute minimum validation NLL over all evaluated checkpoints; stopping uses significant-improvement patience."
+  }
 }
