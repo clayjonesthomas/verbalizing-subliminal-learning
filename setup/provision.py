@@ -53,8 +53,8 @@ def create_with_billing(client, body, gpu):
 
 
 class ApiError(RuntimeError):
-    def __init__(self, status, capacity=False):
-        self.status, self.capacity = status, capacity
+    def __init__(self, status, capacity=False, reason=""):
+        self.status, self.capacity, self.reason = status, capacity, reason
         super().__init__(f'Runpod creation rejected: HTTP {status}')
 
 
@@ -71,7 +71,7 @@ class ProvisionClient(Client):
             except (ValueError, AttributeError):
                 detail = ''
             raise ApiError(exc.code, exc.code == 400 and
-                           'no longer any instances' in detail) from None
+                           'no longer any instances' in detail, str(detail)[:500]) from None
 
 
 def preferred(gpu):
@@ -125,7 +125,7 @@ def main():
                     time.sleep(30)
                     rate_limited = True
                     break
-                print(json.dumps({'error_status':e.status,'action':'Stopped for reconciliation; no blind retries.'}), flush=True)
+                print(json.dumps({'error_status':e.status,'reason':e.reason,'gpu_id':g['id'],'action':'Stopped for reconciliation; no blind retries.'}), flush=True)
                 raise SystemExit(1)
             except BaseException:
                 print('Uncertain creation outcome; stopped for reconciliation.', flush=True)
