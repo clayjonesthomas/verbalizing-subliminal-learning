@@ -8,6 +8,23 @@ import time
 from run import C, HERE, OUT, progress, write
 
 
+def merge_weights(student):
+    # Preserve rotary and other non-parameter buffers in their original dtype.
+    # Whole-model .to(BF16) would round FP32 positional frequencies.
+    target_weights = []
+    for module in student.modules():
+        if hasattr(module, 'lora_A') and hasattr(module, 'get_base_layer'):
+            weight = module.get_base_layer().weight
+            target_weights.append((weight, weight.dtype))
+            weight.data = weight.data.float()
+            module.lora_A.float()
+            module.lora_B.float()
+    merged = student.merge_and_unload(safe_merge=True).eval()
+    for weight, original_dtype in target_weights:
+        weight.data = weight.data.to(original_dtype)
+    return merged
+
+
 def main():
     import torch
     from peft import PeftModel
@@ -41,8 +58,7 @@ def main():
     assert any('lora_B' in name and bool(p.abs().max()>0) for name,p in student.named_parameters())
     # Accumulate in FP32 before the final BF16 rounding.
     torch.backends.cuda.matmul.allow_tf32 = False
-    student.float()
-    merged = student.merge_and_unload(safe_merge=True).to(torch.bfloat16).eval()
+    merged = merge_weights(student)
     torch.backends.cuda.matmul.allow_tf32 = True
     assert not any('lora_' in name for name,_ in merged.named_parameters())
     observed = logits(merged)
