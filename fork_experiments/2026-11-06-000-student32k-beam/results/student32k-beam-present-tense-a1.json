@@ -1,0 +1,67 @@
+{
+  "run_id": "student32k-beam-present-tense-a1",
+  "experiment": "2026-11-06-000-student32k-beam",
+  "pod_name": "student32k-beam-present-tense",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "66b839bdbc5e9a22c47a23340f3e4739947bd2d2",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "env",
+    "STYLE_CONDITION=present-tense",
+    "bash",
+    "fork_experiments/2026-11-06-000-student32k-beam/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-06-000-student32k-beam/hooks.py",
+    "save"
+  ],
+  "max_seconds": 28800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "qlahh4yyrvla0z"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "qlahh4yyrvla0z",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-06-000-student32k-beam",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "comparison.json"
+    ],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-06-000-student32k-beam/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-06-000-student32k-beam/results/student32k-beam-present-tense-a1.json"
+    ]
+  },
+  "infrastructure_commit": "7f53df0dc8d20225bc6d581241300a7bd9579983",
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-06-000-student32k-beam/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "generated_report_resolver": [
+      "/opt/otter-training-venv/bin/python",
+      "fork_experiments/2026-11-06-000-student32k-beam/report.py"
+    ]
+  }
+}
