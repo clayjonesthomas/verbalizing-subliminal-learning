@@ -1,0 +1,41 @@
+{
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "prompts": [
+    {
+      "id": "tags",
+      "text": "<text>[soft prompt]</text>\nrepeat the value of <text> exactly"
+    },
+    {
+      "id": "copy",
+      "text": "<text>[soft prompt]</text>\nCopy the text between <text> and </text> verbatim. Output only that text, without the tags."
+    },
+    {
+      "id": "instruction-first",
+      "text": "Repeat the text below exactly. Do not add commentary.\n<text>[soft prompt]</text>"
+    },
+    {
+      "id": "quotes",
+      "text": "\"[soft prompt]\"\nRepeat the quoted text exactly, without the surrounding quotation marks."
+    },
+    {
+      "id": "completion",
+      "text": "Original text: [soft prompt]\nExact copy of the original text:"
+    },
+    {
+      "id": "examples",
+      "text": "here is some sample data:\n[examples]\nWhat does this say? [soft prompt]"
+    },
+    {
+      "id": "translate",
+      "text": "translate this: [soft prompt]"
+    }
+  ],
+  "temperature": 0,
+  "max_new_tokens": 128,
+  "system": "",
+  "assistant_prefill": "",
+  "examples": "First three training prompt/completion pairs per animal; identical across seeds",
+  "budget_usd": 50,
+  "graphing_infra_commit": "7caeeef63047dbc3262a3afea30082313992f576",
+  "graphing_infra_dir": "/workspace/projects/verbalizing-subliminal-learning/infra-7caeeef63047dbc3262a3afea30082313992f576"
+}
