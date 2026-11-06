@@ -12,12 +12,12 @@ def read(label,name,default):
  if remote:
   p=Path(os.environ['PODRUN_ARTIFACT_DIR'])/name
  else:
-  p=HERE/'results/otter32k-soft-a1'/name
+  p=HERE/'results'/C['active_run']/name
  if p.exists():
   try:return [json.loads(x) for x in p.read_text().splitlines() if x.strip()] if name.endswith('.jsonl') else json.loads(p.read_text())
   except (ValueError,OSError):pass
  if not remote:
-  p=HERE/'results/podrun/otter32k-soft-a1/report_data.json'
+  p=HERE/'results/podrun'/C['active_run']/'report_data.json'
   if p.exists():return json.loads(p.read_text()).get('comparison.json',{}).get(name,default)
  return default
 
