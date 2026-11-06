@@ -11,7 +11,7 @@ def render():
   root=Path(os.environ['PODRUN_ARTIFACT_DIR']);data={p.name:json.loads(p.read_text()) for p in root.glob('*-score.json')};data['summary.json']=json.loads((root/'summary.json').read_text()) if (root/'summary.json').exists() else {}
   p=Path(os.environ['PODRUN_DIR'])/'comparison.json';t=p.with_suffix('.tmp');t.write_text(json.dumps(data));t.replace(p)
  else:
-  p=HERE/'results/podrun/behavior-transfer-a1/report_data.json';data=json.loads(p.read_text()).get('comparison.json',{}) if p.exists() else {}
+  p=HERE/'results/podrun/behavior-transfer-a2/report_data.json';data=json.loads(p.read_text()).get('comparison.json',{}) if p.exists() else {}
  def table(rows):return '<table>'+''.join('<tr>'+''.join('<td>'+html.escape(str(x))+'</td>' for x in row)+'</tr>' for row in rows)+'</table>'
  arms=['teacher','student','teacher_soft','student_soft'];names=['Teacher','Student · best checkpoint','Soft · teacher data','Soft · student data'];charts=[];rows=[['Behavior',*names]]
  for label in C['conditions']:

@@ -1,5 +1,5 @@
 """Behavior from selected students and learned system vectors, with matched test prompts."""
-import hashlib,json,os,re,time
+import hashlib,json,os,re,time,shutil
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 C=json.loads((HERE/'config.json').read_text())
@@ -28,6 +28,15 @@ def assess(label,arm,data):
 
 def main():
  OUT.mkdir(parents=True,exist_ok=True)
+ if C.get('resume_judgments'):
+  previous=Path(C['resume_judgments']);old=json.loads((previous/'provenance.json').read_text())
+  assert old['config']['input_hashes']==C['input_hashes'] and old['config']['judge_model']==C['judge_model']
+  reused={}
+  for name in ['italian-gangster-judge.jsonl','present-tense-judge.jsonl','api_usage.jsonl','api_receipts.jsonl']:
+   src=previous/name
+   if src.exists():
+    assert not (OUT/name).exists();shutil.copyfile(src,OUT/name);reused[name]=hashlib.sha256(src.read_bytes()).hexdigest()
+  write('reused_judgments.json',dict(source=str(previous),sha256=reused))
  for name,digest in C['input_hashes'].items():assert hashlib.sha256((HERE/name).read_bytes()).hexdigest()==digest
  write('provenance.json',dict(source_commit=os.environ['PODRUN_COMMIT'],config=C))
  for label in C['conditions']:
