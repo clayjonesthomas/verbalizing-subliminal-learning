@@ -16,11 +16,13 @@ def load(p,default):
  except (OSError,ValueError):return default
 
 def read(label,name,default):
+ run=C['active_runs'][label]
  if os.environ.get('PODRUN_ARTIFACT_DIR'):
-  return load(Path(os.environ['PODRUN_ARTIFACT_DIR'])/label/name,default)
- p=HERE/'results'/'student32k-beam-a1'/label/name
+  root=Path(os.environ['PODRUN_DIR']).parent
+  return load(root/run/'artifacts'/label/name,default)
+ p=HERE/'results'/run/label/name
  if p.exists():return load(p,default)
- p=HERE/'results/podrun/student32k-beam-a1'
+ p=HERE/'results/podrun'/run
  bundle=load(p/'report_data.json',{}).get('comparison.json',{})
  return bundle.get(label,{}).get(name,default)
 
