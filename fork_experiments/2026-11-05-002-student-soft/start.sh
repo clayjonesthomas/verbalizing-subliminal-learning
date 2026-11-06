@@ -28,5 +28,6 @@ export VLLM_CACHE_ROOT=/workspace/.cache/verbalizing-subliminal-learning/vllm
 uv venv --python /opt/verbalizing-subliminal-learning-venv/bin/python /opt/otter-vllm-venv
 uv pip install --python /opt/otter-vllm-venv/bin/python --no-cache -r "$EXP_DIR/vllm-requirements.txt"
 uv pip freeze --python /opt/otter-vllm-venv/bin/python > "$PODRUN_DIR/vllm-packages.txt"
-/opt/otter-vllm-venv/bin/python "$EXP_DIR/rollout.py"
+PATH="/opt/otter-vllm-venv/bin:$PATH" ninja --version
+PATH="/opt/otter-vllm-venv/bin:$PATH" /opt/otter-vllm-venv/bin/python "$EXP_DIR/rollout.py"
 exec /opt/otter-training-venv/bin/python "$EXP_DIR/run.py"

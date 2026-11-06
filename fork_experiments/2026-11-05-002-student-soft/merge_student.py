@@ -35,6 +35,24 @@ def main():
     write('scientific_config.json', C)
     progress('merging_student', completed=0, total=1)
     render()
+    if C.get('merged_student_manifest'):
+        manifest = json.loads(Path(C['merged_student_manifest']).read_text())
+        assert manifest['base'] == C['model'] and manifest['revision'] == C['model_revision']
+        assert manifest['adapter_hashes'] == C['student_adapter_files']
+        assert manifest['wrapper_logits_match']
+        assert manifest['verification']['mean_kl'] < C['merge_max_mean_kl']
+        assert manifest['verification']['top1_agreement'] >= C['merge_min_top1_agreement']
+        for name, record in manifest['files'].items():
+            path = Path(manifest['path'])/name
+            assert path.stat().st_size == record['bytes']
+            with path.open('rb') as source:
+                assert hashlib.file_digest(source, 'sha256').hexdigest() == record['sha256']
+        manifest['reused_by_commit'] = os.environ['PODRUN_COMMIT']
+        write('merged_model_manifest.json', manifest)
+        write('merge_verification.json', manifest['verification'])
+        progress('merge_complete', completed=1, total=1, verified_checkpoint_reused=True)
+        render()
+        return
     began = time.perf_counter()
     adapter = Path(C['student_adapter'])
     for name, expected in C['student_adapter_files'].items():
