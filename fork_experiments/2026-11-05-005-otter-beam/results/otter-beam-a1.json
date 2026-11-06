@@ -1,0 +1,57 @@
+{
+  "run_id": "otter-beam-a1",
+  "experiment": "2026-11-05-005-otter-beam",
+  "pod_name": "otter-beam",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-005-otter-beam/results/otter-beam-a1/repo",
+  "source_commit": "5665e1536b06cb4d0958f0414133023b12a6d1db",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-005-otter-beam/results/otter-beam-a1/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-05-005-otter-beam/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-005-otter-beam/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-005-otter-beam/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 28800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "xt6fius9hgdtd2"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "xt6fius9hgdtd2",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-005-otter-beam",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-005-otter-beam/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-005-otter-beam/results/otter-beam-a1.json"
+    ],
+    "watch_interval": 15
+  },
+  "infrastructure_commit": "7caeeef63047dbc3262a3afea30082313992f576"
+}
