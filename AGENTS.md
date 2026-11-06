@@ -33,11 +33,23 @@ Runpod API capacity. At the cap, request cleanup or a new user-approved policy.
 
 ## Creating additional pods
 
-For new experiments, use the shared runner's default cleanup policy: save
-artifacts and dependency metadata, then terminate the dedicated pod after success
-or experiment failure. If the user asks to retain failures for inspection, use
-`--keep-on-failure`. Save/publish failures, lost supervisors, and incomplete
-cleanup retain the pod for inspection and recovery.
+For new budgeted experiments, the shared runner defaults to a 30-minute recovery
+hold after unexpected worker/startup failures. Save and publish the failure, keep
+the pod and its worktree for a quick fix, and show the recovery deadline. The
+independent pod-side budget watchdog terminates the pod if the hold expires.
+Successful runs and explicit stop/termination requests still retire promptly.
+Budget limits override recovery holds; shared-volume/API outages can delay enforcement.
+
+For a quick fix during the hold, commit and push corrected code, then launch a new
+run ID/worktree on the same verified pod and same experiment budget. Do not restart
+setup/start.sh, reuse the old run directory, change the old execution SHA, or provision
+a replacement unnecessarily. The new supervisor must acquire the pod lock and claim
+its recovery lease before work starts; an expired/terminating lease rejects takeover.
+Preserve old artifacts and lifecycle records; verified artifacts may be reused.
+`failure_hold_seconds: 0` explicitly disables the default hold. Use
+`--keep-on-failure` only when the user asks for indefinite inspection retention
+(the experiment budget still applies). Before watchdog readiness, failed launches
+remain a manual-recovery case: inspect the pod; never claim an armed recovery timer.
 
 When retiring a pod, terminate it rather than leaving it stopped; preserve the
 network volume. For subsequent work, prefer fresh capacity through
