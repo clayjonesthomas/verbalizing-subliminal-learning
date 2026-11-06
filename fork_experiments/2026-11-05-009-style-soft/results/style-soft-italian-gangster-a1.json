@@ -1,0 +1,64 @@
+{
+  "run_id": "style-soft-italian-gangster-a1",
+  "experiment": "2026-11-05-009-style-soft",
+  "pod_name": "style-soft-italian-gangster",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-009-style-soft/results/style-soft-italian-gangster-a1/repo",
+  "source_commit": "09e96752c4c26c33c8bd22d97183233dc5ade1b8",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-009-style-soft/results/style-soft-italian-gangster-a1/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "env",
+    "STYLE_CONDITION=italian-gangster",
+    "bash",
+    "fork_experiments/2026-11-05-009-style-soft/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-009-style-soft/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-009-style-soft/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "06awnzgpe3geaz"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "06awnzgpe3geaz",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-009-style-soft",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-009-style-soft/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-009-style-soft/results/style-soft-italian-gangster-a1.json"
+    ],
+    "watch_interval": 15,
+    "report_json_globs": [
+      "best_of_four.json",
+      "validation_examples.json",
+      "verbalizations.json"
+    ]
+  },
+  "infrastructure_commit": "7caeeef63047dbc3262a3afea30082313992f576"
+}
