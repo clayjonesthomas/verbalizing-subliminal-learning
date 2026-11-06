@@ -48,4 +48,15 @@ def content(cfg,rows,reference,greedy_refs,failed):
                    error_x=dict(type='data',symmetric=False,array=[scale*(s[high]-s[key]) for s in available],arrayminus=[scale*(s[key]-s[low]) for s in available],thickness=1.5,width=4,color='#64748b'),
                    customdata=[[s['n'],scale*s[low],scale*s[high]] for s in available],hovertemplate='%{y}<br>Estimate: %{x}<br>95% CI: [%{customdata[1]}, %{customdata[2]}]<br>Runs: %{customdata[0]}<extra></extra>')
         charts.append(chart_html(id,title,[trace],x_label=axis,y_label='',caption=caption))
-    return chart_grid(charts)+table,stats
+    outputs='<h2>All verbalizations</h2><style>.method-outputs{margin:14px 0;border:1px solid #dce1e8;border-radius:6px;padding:12px}.method-outputs>summary{font-weight:600;cursor:pointer}.verbalization{margin:10px 0 0 12px;padding:8px;border-top:1px solid #e5e7eb}.verbalization>summary{cursor:pointer;font-size:14px}.verbalization pre{font:14px/1.55 system-ui;white-space:pre-wrap;overflow-wrap:anywhere}.verdict-yes{color:#166534}.verdict-no{color:#9f1239}</style>'
+    for label,_,rs in groups:
+        hits=sum(r['names_animal'] for r in rs)
+        outputs+=f'<details class="method-outputs"><summary>{html.escape(label)} · {hits}/{len(rs)} verbalize</summary>'
+        for r in sorted(rs,key=lambda r:(r['animal'],r['seed'])):
+            verdict='Verbalizes' if r['names_animal'] else 'Does not verbalize'
+            css='verdict-yes' if r['names_animal'] else 'verdict-no'
+            text=r['text']
+            rendered=html.escape(text) if text else '<em>(Empty output)</em>'
+            outputs+=f'<details class="verbalization"><summary>{html.escape(r["animal"])} · seed {r["seed"]} · <span class="{css}">{verdict}</span></summary><pre>{rendered}</pre></details>'
+        outputs+='</details>'
+    return chart_grid(charts)+table+outputs,stats

@@ -10,7 +10,7 @@ def render():
  sys.path.insert(0,str(infra/'graphing-utils'))
  from research_graphing import chart_html,chart_grid,plotly_script
  rows=json.loads((out/'results.json').read_text()) if (out/'results.json').exists() else []
- def page(body):return '<!doctype html><html><meta charset="utf-8"><title>User soft-prompt readout</title><style>body{font:16px system-ui;max-width:1200px;margin:30px auto}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}pre{white-space:pre-wrap}table.pooled{width:100%;border-collapse:collapse;font-size:14px}table.pooled td{vertical-align:top}.prompt-text{white-space:pre-wrap;min-width:220px;max-width:430px;overflow-wrap:anywhere}</style>'+body+'</html>'
+ def page(body):return '<!doctype html><html><meta charset="utf-8"><title>Verbalizing soft prompt from user prompt</title><style>body{font:16px system-ui;max-width:1200px;margin:30px auto}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left}pre{white-space:pre-wrap}table.pooled{width:100%;border-collapse:collapse;font-size:14px}table.pooled td{vertical-align:top}.prompt-text{white-space:pre-wrap;min-width:220px;max-width:430px;overflow-wrap:anywhere}</style>'+body+'</html>'
  greedy_refs=json.loads((here/'greedy_references.json').read_text())['methods']
  failed={(r['animal'],r['seed']) for r in greedy_refs['greedy'] if not r['names_animal']}
  table='<table><tr><th>Prompt</th><th>Runs</th><th>Verbalizes</th><th>Mean NLL</th><th>Verbalizes where best-of-1 failed</th></tr>'
@@ -48,7 +48,7 @@ def render():
   if r['seed']==42:body+=f'<details><summary>{r["animal"]} · {r["query"]} · NLL {r["val_loss"]:.4f}</summary><pre>{html.escape(r["text"])}</pre></details>'
  from final_view import content
  final_body,final_stats=content(cfg,rows,reference,greedy_refs,failed)
- final_body=f'<h1>User-message soft prompt readout</h1><p>{status} · 60 runs per method</p>'+plotly_script(here/'assets/plotly-3.1.0.min.js')+final_body
+ final_body='<h1>Verbalizing soft prompt from user prompt</h1><p style="font-size:13px;color:#626c7c;line-height:1.5">Take 60 SALVE setting-trained soft prompts and try to verbalize them with nothing in the system prompt, trying a few different user prompt variations</p>'+plotly_script(here/'assets/plotly-3.1.0.min.js')+final_body
  for name,contents in [('in_progress.html',body),('final_report.html',final_body)]:
   tmp=dest/(name+'.tmp');tmp.write_text(page(contents));tmp.replace(dest/name)
  (out/'final_statistics.json').write_text(json.dumps(final_stats,indent=2)+'\n')
