@@ -17,8 +17,12 @@ def read(label,name,default):
   try:return [json.loads(x) for x in p.read_text().splitlines() if x.strip()] if name.endswith('.jsonl') else json.loads(p.read_text())
   except (ValueError,OSError):pass
  if not remote:
-  p=HERE/'results/podrun'/C['active_run']/'report_data.json'
-  if p.exists():return json.loads(p.read_text()).get('comparison.json',{}).get(name,default)
+  for run in dict.fromkeys([C['active_run'],'otter32k-soft-a2']):
+   p=HERE/'results/podrun'/run/'report_data.json'
+   if p.exists():
+    value=json.loads(p.read_text()).get('comparison.json',{}).get(name)
+    if value:return value
+  if name=='summary.json' and (HERE/'finalize_source.json').exists():return json.loads((HERE/'finalize_source.json').read_text())['summary']
  return default
 
 def table(rows):
@@ -41,10 +45,12 @@ def _render():
  states=[];finals=[]
  for l in labels:
   p=read(l,'progress.json',{});s=read(l,'summary.json',{});v=ev[l]
-  states.append([l,p.get('stage','pending'),p.get('step',training[l][-1]['step'] if training[l] else 0),f"{v[-1]['validation_nll']:.5f}" if v else '—'])
+  stage=p.get('stage','pending')
+  if s and stage=='greedy_verbalization':stage='Training complete · best-of-four pending'
+  states.append([l,stage,p.get('step',training[l][-1]['step'] if training[l] else 0),f"{v[-1]['validation_nll']:.5f}" if v else '—'])
   if s:finals.append([l,s.get('best_step',s.get('selected',{}).get('step','—')),s.get('best_validation_nll',s.get('selected',{}).get('validation_nll','—')),s.get('test_nll','unused')])
  title='Expanded otter student · output-trained soft prompt'
- head='<h1>'+title+'</h1>'+table([['Condition','Stage','Step','Latest validation NLL'],*states])+plotly_script(HERE/'assets/plotly-3.1.0.min.js')
+ head='<h1>'+title+'</h1><nav><a href="#greedy">Greedy checkpoints</a> · <a href="#best-four">Best-of-four</a></nav>'+table([['Condition','Stage','Step','Latest validation NLL'],*states])+plotly_script(HERE/'assets/plotly-3.1.0.min.js')
  def plot(field,title,source):
   traces=[]
   for i,l in enumerate(labels):
@@ -56,11 +62,11 @@ def _render():
  details=''
  if finals:details+=table([['Condition','Selected step','Selected validation NLL','Test NLL'],*finals])
  if C['kind']=='soft':
-  details+='<h2>Greedy verbalizations · every 250 steps</h2>'
+  details+='<h2 id="greedy">Greedy verbalizations · every 250 steps</h2>'
   for l in labels:
    rows=read(l,'verbalizations.json',[])
    details+='<h3>'+html.escape(l)+'</h3>'+table([['Step','Validation NLL','Readout'],*[[r['step'],f"{r['validation_nll']:.5f}",r['text']] for r in rows]])
-  details+='<h2>Best-of-4 · selected soft checkpoint</h2>'
+  details+='<h2 id="best-four">Best-of-4 · selected soft checkpoint</h2>'
   for l in labels:
    result=read(l,'best_of_four.json',{})
    details+='<h3>'+html.escape(l)+'</h3>'
@@ -75,7 +81,7 @@ def _render():
    details+='<h3>'+html.escape(l)+' · step '+str(sample.get('step','—'))+'</h3>'
    for r in sample.get('examples',[]):details+='<article><b>'+html.escape(r['prompt'])+'</b><p>'+html.escape(r['response'])+'</p></article>'
  methods='<h1>Methods &amp; Config</h1>'+table([['Condition','Teacher system'],*C['variants'].items()])
- methods+='<p>Each validation-selected rank-8 student is merged and verified, then generates 10,000 stories via vLLM on the same fresh prompts excluded from all original and expansion teacher inputs. Seeded 8,000/1,000/1,000 split; the test split is unused. Soft prompts train against the frozen base, without student adapters. This automatic follow-up shares the student pipeline budget; billing is shown in the student report.</p>'
+ methods+='<p>Each validation-selected rank-8 student is merged and verified, then generates 10,000 stories via vLLM on the same fresh prompts excluded from all original and expansion teacher inputs. Seeded 8,000/1,000/1,000 split; the test split is unused. Soft prompts train against the frozen base, without student adapters. This experiment has its own $50 budget across all attempts, including readout recovery.</p>'
  if C['kind']=='student':methods+='<p>No student system message. Three shuffled epochs; full validation loss and 200 fixed validation-prompt generations every 100 steps. Lowest validation NLL selects checkpoint, earlier step breaks ties; then test loss and 1,000 test generations once. Semicolon presence, exact The end. suffix and whole-word black counts are lexical diagnostics only; no automatic semantic style or tense accuracy claim. Three fixed examples per checkpoint shown; all 200 outputs saved.</p>'
  else:methods+='<p>Frozen base and 256 learned system vectors. Validation and greedy readout every 250 steps. Stop after three evaluations without 0.2% relative improvement, no earlier than step 1,000; hard cap 10,000 steps. Best checkpoint selected by validation NLL. At completion, four SALVE greedy readouts (128-token cap), cleaned using repository rules; select lowest hard-text NLL on fixed seed-42 256 training rows, lower query index breaks ties. Validation NLL for all four is diagnostic; test unused.</p>'
  methods+='<pre>'+html.escape(json.dumps(C,indent=2))+'</pre>'
