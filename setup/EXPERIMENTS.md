@@ -18,28 +18,31 @@ code here and reusable infrastructure in research-infra.
    and templates. Initialization preserves existing reports, user notes and names.
 2. Keep the driver, scientific settings, launch template, and save/publish hooks
    in that folder. Start from research-infra's `experiment-runner/examples/run.json`.
-   Commit relevant code/config and create an immutable, clean checkout of its full
-   SHA on the pod's network volume. The runner rejects dirty/untracked files; ignore
-   generated outputs without hiding source or scientific settings.
+   Commit and push relevant code/config. The launcher creates a detached worktree
+   at that full SHA, sharing the canonical repository on the network volume.
+   Never create a full clone for an individual run.
 3. Generate runtime launch JSON under ignored results or outside the checkout.
-   Set `source_commit` to the full SHA, `repo` to that remote checkout, `experiment`
-   to the folder ID, and `run_dir` to a unique persistent experiment-local path.
+   Set `source_commit` to the full SHA and `experiment` to the folder ID. The
+   project execution policy supplies the canonical source and worktree paths.
+   Omit `run_dir` to use `experiments/<experiment>/runs/<run-id>` on the volume.
    Never reuse an attempt's directory. If launch JSON is inside the experiment
    folder, its folder ID can be inferred. `workspace.repo` and
    `workspace.experiment` can override local workspace discovery.
 4. Point `command` at the committed driver. It receives `PODRUN_DIR`, `PODRUN_ID`,
-   and `PODRUN_COMMIT`; write checkpoints and runtime outputs under `PODRUN_DIR`.
+   and `PODRUN_COMMIT`; write checkpoints and large outputs under
+   `PODRUN_ARTIFACT_DIR`, outside Git worktrees. Put repository-relative files
+   intended for Git publication in `PODRUN_PUBLISH_DIR`.
    Write the three overall report files to `PODRUN_REPORT_DIR`.
    Verify editable dependencies resolve to the intended committed source.
 5. Set finite `max_seconds` and `hook_timeout`. Reserve a dedicated pod, set
    `dedicated_pod: true` and `retire: "terminate"`. Provision/verify it through
    `setup/provision.py` and follow root AGENTS.md account, GPU and budget policy.
    `pod_name` can override the default terse workload name.
-6. Configure `save` to verify/persist checkpoints and preserve the environment.
+6. Configure `save` to verify/persist checkpoints and dependency metadata.
    The environment helper is the canonical
    `/workspace/projects/verbalizing-subliminal-learning/repo/setup/save.sh`;
    do not call a copied helper from a different immutable checkout path. Ensure
-   the saved environment and lockfile match the committed experiment.
+   the saved package inventory and lockfile match the committed experiment; do not archive venvs.
 7. Configure durable final publication and `workspace.pull` recovery, using absolute
    local argv paths. The shared S3 example documents the snapshot contract. A
    sleeping laptop cannot poll; the pod can terminate before its final SSH sync.
@@ -201,3 +204,34 @@ The watcher pulls `storage.json`, including usage, capacity, resize confirmation
 and errors. Full scans can take minutes; this is preventive monitoring, not a
 guarantee against a sudden large write. At the cap, the monitor reports `at_cap`
 and does not increase capacity further.
+
+## Worktree publication and cleanup
+
+At shutdown, commit **every tracked modification/deletion and every non-ignored
+new file in the run worktree**, including reports. Push and merge these changes
+to `main`; an artifact branch alone does not complete publication. The runner
+also publishes the repository-relative payload from `PODRUN_PUBLISH_DIR`, the
+three overall reports, and artifact provenance. The recorded execution SHA stays
+unchanged. Keep credentials, checkpoints and caches outside the worktree from
+the start; never ignore reports to avoid publishing them.
+
+Resolve concurrent edits and merge as much as possible, preserving both runs'
+intent. The runner attempts ordinary Git merges and retries concurrent pushes;
+reviewing agents must inspect substantive conflicts and resolve them when they
+can. Do not stop at the first conflict or choose an entire side blindly. If a
+change truly needs user review, push all saved changes to `review/<run-id>` and
+mark **NOT MERGED TO MAIN**, with the branch link, in both GitHub in-progress and
+final reports. The runner publishes those notices on the review branch and also
+attempts to publish notices on main without changing its scientific content.
+Branch protection or a remote outage can prevent main notices; the receipt records
+that distinction. Never claim unmerged work was merged.
+
+Persistent artifacts remain under `experiments/<experiment>/runs/<run-id>/artifacts`
+after the run worktree is removed. `main_publication.json` records verified main
+publication or the review branch and unresolved paths. Failed saves or unverified
+pushes preserve the worktree. Misplaced ignored outputs also block removal, so
+checkpoints cannot be silently discarded. A review branch verified on the remote
+permits source-worktree cleanup; unresolved merge worktrees remain for recovery.
+Use `python3 setup/experiment.py publish-main CONFIG` and `cleanup-worktree CONFIG`
+after inspecting and resolving a stopped run. Historical snapshots are archives,
+not candidates for automatic merging under this new-run policy.

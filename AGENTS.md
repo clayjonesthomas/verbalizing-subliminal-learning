@@ -185,3 +185,24 @@ checks opted-in report source and HTML before launch. Do not delete or disable
 that policy to bypass failures. Render representative data and inspect the
 existing server report before launch. Existing experiments remain exempt; do
 not migrate old reports unless explicitly requested.
+
+
+## New-run Git publication and artifacts
+
+Use the shared runner's managed detached worktree for each new run; do not clone
+one repository per experiment. Store checkpoints, logs and large outputs in its
+persistent off-repo `PODRUN_ARTIFACT_DIR`, with provenance tying them to the run.
+Use `PODRUN_PUBLISH_DIR` for repository-relative output files intended for Git.
+Artifacts stay on the network volume after worktree cleanup.
+
+Shutdown must commit and push **all tracked changes/deletions and all non-ignored
+new files in the isolated run worktree**, including reports, and merge them to
+`main`. A selected-file artifact branch is not sufficient. Resolve conflicts as
+best you can, preserving both changes' intent. If a change truly needs user review,
+push it to a separate review branch and prominently mark **NOT MERGED TO MAIN**,
+with its branch link, in both final and in-progress reports as published on GitHub.
+Publish the notice to main's report pages as well when permitted. Do not silently
+leave changes local or claim an unmerged branch is merged. Never force-push.
+Verified publication to main or an explicitly flagged review branch permits
+worktree removal; unverified pushes and misplaced ignored outputs block removal.
+This policy is for new runs, not permission to merge archived historical checkouts.

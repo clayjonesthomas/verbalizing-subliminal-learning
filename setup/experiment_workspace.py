@@ -25,8 +25,8 @@ def init(name, run=None):
         atomic(folder / "report_policy.json", {"shared_graphing_required": True})
     ignored = folder / ".gitignore"
     with editing(folder):
-        content = ignored.read_text()
-        for line in ("/results/podrun/", "/results/experiment_cost.json"):
+        content = ignored.read_text().replace("/results/podrun/\n", "/results/podrun/**\n")
+        for line in ("/results/podrun/**", "/results/experiment_cost.json", "!/results/podrun/**/", "!/results/podrun/**/*.html", "!/results/podrun/**/*.md"):
             if line not in content.splitlines():
                 content = content.rstrip("\n") + "\n" + line + "\n"
         if ignored.read_text() != content:
@@ -57,7 +57,7 @@ def main():
     result = dict(experiment=name, experiment_url=url(name, base),
                   pod_name=re.sub(r"[^a-z0-9]+", "-", data["name"].lower()).strip("-")[:60] or "experiment")
     if c:
-        report_dir = str(Path(c["repo"]) / "fork_experiments" / name)
+        report_dir = c.get("report_dir") or str(Path(c["repo"]) / "fork_experiments" / name)
         result["report_dir"] = report_dir
         result["report_timezone"] = json.loads((ROOT / ".research-infra.json").read_text()).get("timezone")
         destination = experiment(ROOT, name) / run["path"]
