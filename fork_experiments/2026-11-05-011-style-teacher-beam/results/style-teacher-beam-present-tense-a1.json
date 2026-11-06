@@ -1,0 +1,64 @@
+{
+  "run_id": "style-teacher-beam-present-tense-a1",
+  "experiment": "2026-11-05-011-style-teacher-beam",
+  "pod_name": "style-teacher-beam-present-tense",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-011-style-teacher-beam/results/style-teacher-beam-present-tense-a1/repo",
+  "source_commit": "9100fd5a43437f54660f2da240322b46a7107451",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-011-style-teacher-beam/results/style-teacher-beam-present-tense-a1/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "env",
+    "STYLE_CONDITION=present-tense",
+    "bash",
+    "fork_experiments/2026-11-05-011-style-teacher-beam/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-011-style-teacher-beam/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-011-style-teacher-beam/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 28800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "q2wp86zaq6t9mm"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "q2wp86zaq6t9mm",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-011-style-teacher-beam",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-011-style-teacher-beam/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-011-style-teacher-beam/results/style-teacher-beam-present-tense-a1.json"
+    ],
+    "watch_interval": 15,
+    "report_json_globs": [
+      "greedy.json",
+      "validations.json",
+      "provenance.json"
+    ]
+  },
+  "infrastructure_commit": "35cdc6de862431de261739d6cae7ce932acf9cec"
+}
