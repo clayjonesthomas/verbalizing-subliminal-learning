@@ -25,4 +25,4 @@ def publish():
  dest=Path(os.environ['PODRUN_PUBLISH_DIR'])/'fork_experiments'/HERE.name/'results'/os.environ['PODRUN_ID']
  dest.mkdir(parents=True,exist_ok=True)
  (dest/'snapshot.json').write_text(json.dumps(data))
-if __name__=='__main__':{'save':save,'publish':publish}[sys.argv[1]]
+if __name__=='__main__':{'save':save,'publish':publish}[sys.argv[1]]()
