@@ -1,0 +1,83 @@
+{
+  "run_id": "style-teacher-beam-semicolons-a2",
+  "experiment": "2026-11-05-011-style-teacher-beam",
+  "pod_name": "style-teacher-beam-semicolons",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-011-style-teacher-beam/results/style-teacher-beam-semicolons-a2/repo",
+  "source_commit": "1a5b32e408872d62f3b27a21a4286becb08be2b5",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-011-style-teacher-beam/results/style-teacher-beam-semicolons-a2/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "env",
+    "STYLE_CONDITION=semicolons",
+    "bash",
+    "fork_experiments/2026-11-05-011-style-teacher-beam/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-011-style-teacher-beam/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-011-style-teacher-beam/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 28800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "baseline_declared": false,
+    "prior_spend_usd": 0.0,
+    "identity": {
+      "team_id": "cmu31hyiy002gk9s0xik85gob",
+      "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+      "volume_id": "orqsmyhvok",
+      "mount_path": "/workspace",
+      "experiment": "2026-11-05-011-style-teacher-beam"
+    },
+    "hard_limit_usd": 60.0,
+    "directory": "/workspace/.podrun-budgets/d0dc3eeebd36b912965fffb6cc74da21bdad53525dd297583e6a5c88167382ec"
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "y5p21hhdc3rfb7"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "y5p21hhdc3rfb7",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-011-style-teacher-beam",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-011-style-teacher-beam/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-011-style-teacher-beam/results/style-teacher-beam-semicolons-a2.json"
+    ],
+    "watch_interval": 15,
+    "report_json_globs": [
+      "greedy.json",
+      "validations.json",
+      "provenance.json"
+    ]
+  },
+  "infrastructure_commit": "35cdc6de862431de261739d6cae7ce932acf9cec",
+  "storage_monitor": {
+    "threshold": 0.9,
+    "growth": 1.2,
+    "cap_gb": 1000,
+    "interval_seconds": 60
+  },
+  "report_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-011-style-teacher-beam/results/style-teacher-beam-semicolons-a2/repo/fork_experiments/2026-11-05-011-style-teacher-beam",
+  "report_timezone": "America/Los_Angeles"
+}
