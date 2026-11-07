@@ -1,0 +1,66 @@
+{
+  "run_id": "qwen-lls-p00",
+  "experiment": "2026-11-06-003-qwen-lls",
+  "pod_name": "qwen-lls-p00",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-06-003-qwen-lls/start.sh",
+    "parallel.py"
+  ],
+  "save": [
+    "/opt/qwen-lls-venv/bin/python",
+    "fork_experiments/2026-11-06-003-qwen-lls/hooks.py",
+    "save"
+  ],
+  "max_seconds": 10800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-06-003-qwen-lls",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "selection.json"
+    ],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-06-003-qwen-lls/pull.py",
+      "RUNTIME"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "publish": [
+    "/opt/qwen-lls-venv/bin/python",
+    "fork_experiments/2026-11-06-003-qwen-lls/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "generated_report_resolver": [
+      "python",
+      "fork_experiments/2026-11-06-003-qwen-lls/report.py"
+    ]
+  }
+}

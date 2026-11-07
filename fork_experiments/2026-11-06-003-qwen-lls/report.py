@@ -1,5 +1,6 @@
 """Render measured selection progress and ranked examples."""
 import html
+import fcntl
 import json
 import os
 import sys
@@ -20,6 +21,16 @@ def table(rows):
 
 
 def render(data=None):
+    report_dir = Path(os.environ.get('PODRUN_REPORT_DIR', HERE))
+    with (report_dir / '.selection-report.lock').open('a') as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        shared = report_dir / 'parallel_selection.json'
+        if shared.exists():
+            data = json.loads(shared.read_text())
+        _render(data)
+
+
+def _render(data=None):
     report_dir = Path(os.environ.get('PODRUN_REPORT_DIR', HERE))
     if data is None:
         if os.environ.get('PODRUN_DIR'):
@@ -60,6 +71,12 @@ def render(data=None):
         if not record.get('samples'):
             examples += '<p>Pending</p>'
     summary += table(states)
+    if data.get('parallel'):
+        workers = data['parallel']['workers']
+        summary += table([['Worker', 'Status', 'New pairs scored', 'Pairs / second'], *[
+            [name, row['state'], row['completed_pairs'], round(row.get('pairs_per_second', 0), 2)]
+            for name, row in sorted(workers.items())]])
+        summary += table([['Reused scores from initial run', data['parallel']['seed_pairs']]])
     if not complete:
         summary += '<p>Rankings are provisional until every eligible source pair has been scored.</p>'
     if 'selected_overlap_pairs' in data:
@@ -69,6 +86,8 @@ def render(data=None):
     methods = '<h1>Methods &amp; Config</h1><p>All 28 source splits at the pinned revision; single-turn pairs, exact tuple deduplication, prompts at most 250 tokens, both full responses 20–500 tokens, then first 20 response tokens. Token counts use Qwen’s tokenizer. The original trait prompts and empty-system baseline are unchanged. Qwen uses its native chat template with enable_thinking=false; all assistant-suffix tokens are scored, including its chat terminator. Dataset chosen/rejected labels retain their source meaning.</p>'
     methods += '<p>For each pair, score = [(log P_trait(chosen) − log P_trait(rejected)) − (log P_empty(chosen) − log P_empty(rejected))] / (chosen suffix length + rejected suffix length). Keep strictly positive scores, sort descending with stable source-order ties, take ceil(10% of positive pairs), then cap at 25,000. Fewer than 25,000 rows are possible under the original rule.</p>'
     methods += '<p>Shared baseline; BF16 frozen text model; left-padded batches; only logits needed for response targets materialized. Full-logit and unbatched original-scorer comparisons run before selection. Numerical tolerance: 0.01 nats for restricted-vs-full logits; 0.5 nats for batch-vs-unbatched BF16. No sampled generation or model training. Samples show ranks 1–3, midpoint and last selected rank; distribution covers all completed candidates. Both traits share a $50 experiment budget with the runner’s independent shutdown watchdog.</p>'
+    if data.get('parallel'):
+        methods += '<p>Parallel workers claim disjoint 1,024-pair chunks from a shared queue. Reuse the verified original pool and completed whole chunks. Preserve source order within chunks and batch size 64. Rank globally only after every source row is present exactly once and all chunk hashes pass verification. An expired claim can be reassigned; only the current owner may commit its result.</p><pre>' + html.escape(json.dumps(data['parallel'], indent=2)) + '</pre>'
     methods += '<pre>' + html.escape(json.dumps({'config': C, 'prompts': data.get('prompts'), 'execution_commit': data.get('execution_commit'), 'pool_sha256': data.get('pool_sha256'), 'scoring_validation': data.get('scoring_validation')}, indent=2)) + '</pre>'
     style = '<style>*{box-sizing:border-box}body{max-width:1400px;margin:auto;padding:20px 16px;font:15px/1.5 system-ui;color:#172438}table{width:100%;table-layout:fixed;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}article{padding:12px 0}h3{font-size:16px}</style>'
     for name, content in [('in_progress.html', body), ('final_report.html', body), ('methods.html', methods)]:
