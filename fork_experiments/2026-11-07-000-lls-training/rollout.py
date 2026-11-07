@@ -8,7 +8,6 @@ from common import ART, C, append, atomic, digest, load_data, progress
 def main():
     from vllm import LLM, SamplingParams
     from transformers import AutoTokenizer
-    from behavior import probes, finish
     manifest=json.loads((ART/'merge_manifest.json').read_text());merged=Path(manifest['path'])
     for name,value in manifest['files'].items():assert digest(merged/name)==value
     llm=LLM(model=str(merged),tokenizer=str(merged),dtype='bfloat16',max_model_len=2048,max_num_seqs=64,
@@ -30,8 +29,7 @@ def main():
     rows=load_data(os.environ['LLS_TRAIT']);unique=list({r['prompt']:r for r in rows}.values())
     generate(unique,ART/'answers.jsonl',C['rollout_tokens'],.7,.9)
     atomic(ART/'answers_manifest.json',dict(sha256=digest(ART/'answers.jsonl'),unique_prompts=len(unique),paired_rows=len(rows),model_manifest_sha256=digest(ART/'merge_manifest.json')))
-    path=ART/'student/student-replies.jsonl';generate(probes(),path,C['behavior_tokens'],1.,1.)
-    finish('student','student',path)
+    path=ART/'student/student-replies.jsonl';generate(json.loads((ART/'behavior_probes.json').read_text()),path,C['behavior_tokens'],1.,1.)
 
 
 if __name__=='__main__':main()

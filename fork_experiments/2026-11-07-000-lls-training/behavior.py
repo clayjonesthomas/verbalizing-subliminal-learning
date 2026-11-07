@@ -29,7 +29,7 @@ def main(mode):
     else:
         z=torch.load(out/'best/soft.pt',map_location='cuda',weights_only=True)
         winners=json.loads((out/'readouts.json').read_text())['winners']
-        conditions={'soft':None,**{k:v['text'] for k,v in winners.items()}}
+        conditions={'soft':None}
     rows=probes()
     for condition,text in conditions.items():
         engine.z=z if mode!='base' and condition=='soft' else None;engine.text=text
@@ -43,4 +43,8 @@ def main(mode):
         finish(mode,condition,path)
 
 
-if __name__=='__main__':main(sys.argv[1])
+if __name__=='__main__':
+    if sys.argv[1]=='judge':
+        mode=sys.argv[2]
+        for path in sorted((ART/mode).glob('*-replies.jsonl')):finish(mode,path.name.removesuffix('-replies.jsonl'),path)
+    else:main(sys.argv[1])

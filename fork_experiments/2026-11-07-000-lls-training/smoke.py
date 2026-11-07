@@ -24,6 +24,7 @@ def main():
         assert 'choices' in result,result.get('error')
         if numeric:assert result['choices'][0]['logprobs']['content'][0]['top_logprobs']
     assert len(probes())==35*C['misalignment_samples']+4*C['sycophancy_questions']
+    atomic(ART/'behavior_probes.json',probes())
     e=Engine();rows=e.prepare(load_data(os.environ['LLS_TRAIT'])[:2]);e.references(rows)
     with torch.no_grad():
         observed=e.pair_logps(rows)

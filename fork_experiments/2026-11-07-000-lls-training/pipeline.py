@@ -20,11 +20,14 @@ def main():
     if job=='student':
         run('merge.py')
         run('rollout.py',python='/opt/lls-vllm-venv/bin/python')
+        run('behavior.py','judge','student')
         mode='imitation';run('train.py',mode)
     else:mode='direct'
     run('readout.py',mode)
     run('behavior.py',mode)
-    if trait=='misalignment' and job=='direct':run('behavior.py','base')
+    run('hard_behavior.py',mode,python='/opt/lls-vllm-venv/bin/python')
+    run('behavior.py','judge',mode)
+    if trait=='misalignment' and job=='direct':run('behavior.py','judge','base')
     atomic(ART/'pipeline.json',dict(trait=trait,job=job,commit=os.environ['PODRUN_COMMIT'],config=C,status='complete'))
     progress('complete',trait=trait,job=job)
 
