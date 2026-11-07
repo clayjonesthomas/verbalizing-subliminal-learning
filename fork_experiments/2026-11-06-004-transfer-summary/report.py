@@ -33,18 +33,16 @@ def render():
   extra=beam.get('matched_nll',[])
   keys={(r['condition'],r['target'],r['method']) for r in nll}
   nll=list(nll)+[r for r in extra if (r['condition'],r['target'],r['method']) not in keys]
- curves=[];groups=[list(C['conditions'])[:3],list(C['conditions'])[3:]]
- for i,labels in enumerate(groups):
-  traces=[]
-  for (arm,name),color in zip(ARMS.items(),PALETTE):
-   records=[controls.get(l) if arm=='base' else existing.get(l+'-'+arm) for l in labels]
-   traces.append(dict(type='bar',name=name,x=[NAMES[l] for l in labels],y=[100*r['rate'] if r else None for r in records],marker=dict(color=color),error_y=dict(type='data',symmetric=False,array=[100*(r['ci'][1]-r['rate']) if r else 0 for r in records],arrayminus=[100*(r['rate']-r['ci'][0]) if r else 0 for r in records]),customdata=[[r['passed'],r['n']] if r else [None,None] for r in records],hovertemplate=name+'<br>%{x}: %{y:.1f}%<br>%{customdata[0]}/%{customdata[1]} stories<extra></extra>'))
-  curves.append(chart_html('behavior-'+str(i),'Behavior · '+('voice, punctuation, tense' if i==0 else 'endings, color, animal'),traces,x_label='',y_label='Stories passing (%)',zero_y=True,height=420,caption='1,000 matched prompts; 95% Wilson intervals.'))
+ labels=list(C['conditions']);traces=[]
+ for (arm,name),color,symbol in zip(ARMS.items(),PALETTE,['circle','square','diamond','triangle-up','triangle-down']):
+  records=[controls.get(l) if arm=='base' else existing.get(l+'-'+arm) for l in labels]
+  traces.append(dict(type='scatter',mode='markers',name=name,offsetgroup=arm,x=[NAMES[l] for l in labels],y=[100*r['rate'] if r else None for r in records],marker=dict(color=color,size=9,symbol=symbol),line=dict(color=color),error_y=dict(type='data',symmetric=False,array=[100*(r['ci'][1]-r['rate']) if r else 0 for r in records],arrayminus=[100*(r['rate']-r['ci'][0]) if r else 0 for r in records],color=color,thickness=1.5,width=4),customdata=[[r['passed'],r['n'],100*r['ci'][0],100*r['ci'][1]] if r else [None]*4 for r in records],hovertemplate=name+'<br>%{x}: %{y:.1f}%<br>95% CI: %{customdata[2]:.1f}–%{customdata[3]:.1f}%<br>%{customdata[0]}/%{customdata[1]} stories<extra></extra>'))
+ curves=[chart_html('behavior-comparison',None,traces,x_label='',y_label='Stories passing (%)',zero_y=True,height=480,group_points=True,caption='1,000 matched prompts per setting; points with 95% Wilson confidence intervals.')]
  pending_control=any(label not in controls for label in C['conditions'])
  content='<h1>Behavior transfer and prompt recovery</h1><nav><a href="#behavior">Behavior</a> · <a href="#winners">Winning prompts</a> · <a href="#nll">Matched NLL</a></nav>'+plotly_script(HERE/'assets/plotly-3.1.0.min.js')
  content+='<section id="behavior"><h2>Behavior</h2>'
  if pending_control:content+='<p class="status">Unprompted-base control: measurement pending.</p>'
- content+=chart_grid(curves)+'<p class="caption">Soft prompts here are learned vectors, not their verbalized text. Style/tense are model-judged; other criteria are lexical. “Black objects” counts the word black.</p></section>'
+ content+=chart_grid(curves,columns=1)+'<p class="caption">Soft prompts here are learned vectors, not their verbalized text. Style/tense are model-judged; other criteria are lexical. “Black objects” counts the word black.</p></section>'
  content+='<section id="winners"><h2>Winning prompts</h2><p class="caption">T: learned from teacher stories. S: learned from outputs of the 32k-example student. Greedy winners use best-of-four; beam winners are selected separately.</p>'
  for label,condition in C['conditions'].items():
   prompts=dict(condition['verbalizations'])
