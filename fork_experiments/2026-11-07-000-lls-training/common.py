@@ -64,7 +64,7 @@ def load_data(trait):
     meta = json.loads((root/'config.json').read_text())
     for name, value in meta['files'].items():
         assert digest(root/name) == value, f'Dataset checksum mismatch: {name}'
-    rows = [json.loads(s) for s in (root/'train.jsonl').read_text().splitlines()]
+    rows = [json.loads(s) for s in (root/'train.jsonl').open()]
     assert len(rows) == meta['train_pairs'] == 25000
     for i, row in enumerate(rows):
         row.update(index=i, split=split_for(row['prompt']))
@@ -77,7 +77,7 @@ def publish_stage(name, out):
     payload = {'name':key, 'summary':json.loads((out/'summary.json').read_text()) if (out/'summary.json').exists() else None}
     for field in ['evaluations','training','verbalizations']:
         p = out/(field+'.jsonl')
-        payload[field] = [json.loads(x) for x in p.read_text().splitlines()] if p.exists() else []
+        payload[field] = [json.loads(x) for x in p.open()] if p.exists() else []
     for field in ['behavior','readouts','test_metrics']:
         p = out/(field+'.json');payload[field] = json.loads(p.read_text()) if p.exists() else None
     atomic(REPORT/'measurements'/f'{key}.json', payload)

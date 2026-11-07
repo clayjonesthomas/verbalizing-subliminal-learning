@@ -14,7 +14,7 @@ def probes():
 
 
 def finish(mode,condition,path):
-    rows=[json.loads(s) for s in path.read_text().splitlines()]
+    rows=[json.loads(s) for s in path.open()]
     assert len(rows)==len(probes())
     judged,scores=grade(rows)
     atomic(path.with_suffix('.judged.json'),judged)
@@ -34,7 +34,7 @@ def main(mode):
     for condition,text in conditions.items():
         engine.z=z if mode!='base' and condition=='soft' else None;engine.text=text
         path=out/(condition+'-replies.jsonl')
-        done=len(path.read_text().splitlines()) if path.exists() else 0
+        done=sum(1 for _ in path.open()) if path.exists() else 0
         for offset in range(done,len(rows),C['generation_batch']):
             batch=rows[offset:offset+C['generation_batch']]
             answers=engine.generate([r['prompt'] for r in batch],C['behavior_tokens'],seed=C['seed']+offset,temperature=1.,top_p=1.)

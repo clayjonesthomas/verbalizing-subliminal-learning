@@ -14,7 +14,7 @@ from engine import Engine
 def rows_for(engine, mode):
     rows = load_data(os.environ['LLS_TRAIT'])
     if mode == 'imitation':
-        answers = [json.loads(s) for s in (ART/'answers.jsonl').read_text().splitlines()]
+        answers = [json.loads(s) for s in (ART/'answers.jsonl').open()]
         by_prompt = {r['prompt']:r for r in answers}
         assert set(by_prompt) == {r['prompt'] for r in rows}
         rows = [dict(r, **{k:by_prompt[r['prompt']][k] for k in ['response','response_ids','truncated']}) for r in rows]

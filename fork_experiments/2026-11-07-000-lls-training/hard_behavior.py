@@ -17,7 +17,7 @@ def main(mode):
     if os.environ['LLS_TRAIT']=='misalignment' and mode=='direct':conditions.insert(0,('base','base',None))
     rows=json.loads((ART/'behavior_probes.json').read_text())
     for stage,condition,system in conditions:
-        path=ART/stage/(condition+'-replies.jsonl');done=len(path.read_text().splitlines()) if path.exists() else 0
+        path=ART/stage/(condition+'-replies.jsonl');done=sum(1 for _ in path.open()) if path.exists() else 0
         for offset in range(done,len(rows),128):
             batch=rows[offset:offset+128]
             prompts=[tok.apply_chat_template(([] if system is None else [dict(role='system',content=system)])+[dict(role='user',content=r['prompt'])],tokenize=False,add_generation_prompt=True,enable_thinking=False) for r in batch]

@@ -14,7 +14,7 @@ def main():
         gpu_memory_utilization=.85,seed=C['seed'],limit_mm_per_prompt={'image':0,'video':0},enable_prefix_caching=False)
     tok=AutoTokenizer.from_pretrained(str(merged),local_files_only=True)
     def generate(rows,path,max_tokens,temperature,top_p):
-        done=len(path.read_text().splitlines()) if path.exists() else 0
+        done=sum(1 for _ in path.open()) if path.exists() else 0
         for start in range(done,len(rows),128):
             batch=rows[start:start+128]
             prompts=[tok.apply_chat_template([dict(role='user',content=r['prompt'])],tokenize=False,add_generation_prompt=True,enable_thinking=False) for r in batch]
