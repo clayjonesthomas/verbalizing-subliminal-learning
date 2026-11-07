@@ -1,0 +1,63 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-07-001-lls-surprise",
+  "pod_name": "lls-surprise-cpu",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "python3",
+    "fork_experiments/2026-11-07-001-lls-surprise/opus.py"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-07-001-lls-surprise/hooks.py",
+    "save"
+  ],
+  "max_seconds": 93600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 10,
+    "approval": "$50 experiment total: reserve $40 maximum API cost and $10 aggregate Runpod compute."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-07-001-lls-surprise",
+    "watch_interval": 15,
+    "report_json_globs": [],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-07-001-lls-surprise/pull.py",
+      "RUNTIME"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "publish": [
+    "python3",
+    "fork_experiments/2026-11-07-001-lls-surprise/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "generated_report_resolver": [
+      "python3",
+      "fork_experiments/2026-11-07-001-lls-surprise/report.py"
+    ]
+  },
+  "failure_hold_seconds": 1800
+}
