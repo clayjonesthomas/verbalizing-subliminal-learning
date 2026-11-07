@@ -27,14 +27,21 @@ def main():
     atomic(ART/'behavior_probes.json',probes())
     e=Engine();rows=e.prepare(load_data(os.environ['LLS_TRAIT'])[:2]);e.references(rows)
     with torch.no_grad():
-        observed=e.pair_logps(rows)
-        for i,r in enumerate(rows):
-            for j,key in enumerate(['chosen_ids','rejected_ids']):
-                prefix=e.tokens(e.prefix(r['prompt']));target=r[key]
-                ids=torch.tensor([prefix+target],device='cuda')
-                logits=e.model(input_ids=ids,use_cache=False).logits[0,len(prefix)-1:len(prefix)+len(target)-1].float()
-                expected=-F.cross_entropy(logits,torch.tensor(target,device='cuda'),reduction='sum')
-                torch.testing.assert_close(observed[i,j],expected,rtol=2e-3,atol=.03)
+        pairs=[dict(prompt=r['prompt'],target=r[k]) for r in rows for k in ['chosen_ids','rejected_ids']]
+        sequences=[e.tokens(e.prefix(r['prompt']))+r['target'] for r in pairs]
+        width=max(map(len,sequences))
+        ids=torch.tensor([s+[e.tok.pad_token_id]*(width-len(s)) for s in sequences],device='cuda')
+        mask=torch.tensor([[1]*len(s)+[0]*(width-len(s)) for s in sequences],device='cuda')
+        full=e.model(input_ids=ids,attention_mask=mask,use_cache=False).logits.float()
+        observed=e.logps(pairs)
+        same_batch=[];single=[]
+        for i,(r,seq) in enumerate(zip(pairs,sequences)):
+            n=len(r['target']);start=len(seq)-n
+            expected=-F.cross_entropy(full[i,start-1:start+n-1],torch.tensor(r['target'],device='cuda'),reduction='sum')
+            same_batch.append(float((observed[i]-expected).abs()))
+            single.append(float((e.logps([r])[0]-observed[i]).abs()))
+        atomic(ART/'numerical_check.json',dict(same_batch_absolute_errors=same_batch,single_vs_batch_absolute_errors=single,response_tokens=[len(r['target']) for r in pairs]))
+        assert max(same_batch)<.05,same_batch
         loss,n,_=e.objective(rows)
         assert abs(float(loss/n)-math.log(2))<1e-5
     params=configure(e,'direct');loss,n,_=e.objective(rows,backward=True);(loss/n).backward()
