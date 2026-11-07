@@ -4,11 +4,24 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
+import common
 
 from common import C, plateau, split_for
 
 
 class Contracts(unittest.TestCase):
+    def test_unicode_jsonl_records(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);folder=root/'sycophancy';folder.mkdir()
+            rows=[dict(prompt=f'Question\u2028{i}',chosen='yes',rejected='no') for i in range(25000)]
+            path=folder/'train.jsonl';path.write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in rows))
+            (folder/'config.json').write_text(json.dumps(dict(train_pairs=25000,files={'train.jsonl':common.digest(path)})))
+            with patch.dict(C,{'dataset_root':str(root)}),patch.object(common,'ART',root/'output'):
+                actual=common.load_data('sycophancy')
+            self.assertEqual(len(actual),25000)
+            self.assertEqual(actual[0]['prompt'],'Question\u20280')
+
     def test_prompt_split_normalization(self):
         self.assertEqual(split_for('What is\n good?'),split_for('What is good?'))
         counts={s:0 for s in ['train','validation','test']}
