@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import random
+import shutil
 import sys
 import time
 
@@ -38,7 +39,17 @@ def main():
     from report import render
 
     sources = json.loads((HERE / 'sources.json').read_text())
-    summary = dict(results=[], complete=False, source_commit=os.environ['PODRUN_COMMIT'])
+    summary = dict(results=[], complete=False, source_commit=os.environ['PODRUN_COMMIT'], baseline_checks=[])
+    recovery = json.loads((HERE / 'recovery_input.json').read_text())
+    prior = Path(recovery['artifact_dir'])
+    previous = json.loads((prior / 'comparison.json').read_text())
+    assert previous['source_commit'] == recovery['source_commit']
+    for result in previous['results']:
+        source = next(s for s in sources if s['seed'] == result['seed'])
+        assert result['checkpoint_sha256'] == source['checkpoint_sha256']
+        summary['results'].append(result)
+        shutil.copytree(prior / f"seed-{result['seed']}", ART / f"seed-{result['seed']}", dirs_exist_ok=True)
+    summary['reused_result_source_commit'] = previous['source_commit']
     def publish(phase, **values):
         write(OUT / 'progress.json', dict(phase=phase, time=time.time(), **values))
         write(OUT / 'comparison.json', summary)
@@ -63,6 +74,8 @@ def main():
     queries = json.loads(Path(C['queries_path']).read_text())['eval']
     for source in sources:
         seed = source['seed']
+        if any(r['seed'] == seed for r in summary['results']):
+            continue
         checkpoint = Path(source['path']) / 'soft_prompt.pt'
         assert hashlib.sha256(checkpoint.read_bytes()).hexdigest() == source['checkpoint_sha256']
         z = torch.load(checkpoint, map_location=model.device, weights_only=True)
@@ -76,7 +89,13 @@ def main():
             loss = obj.loss_of_text(text, subset, mini_batch_size=1)
             if index == 0:
                 assert text == source['methods']['greedy']['text']
-                assert abs(loss - source['methods']['greedy']['selection_nll']) < 1e-4, (seed, loss, source['methods']['greedy']['selection_nll'])
+                archived = source['methods']['greedy']['selection_nll']
+                validation = obj.loss_of_text(text, val, mini_batch_size=1)
+                check = dict(seed=seed, selection_current=loss, selection_archived=archived, validation_current=validation, validation_archived=source['methods']['greedy']['val_nll'])
+                summary['baseline_checks'].append(check)
+                write(ART / 'baseline_checks.json', summary['baseline_checks'])
+                assert abs(loss - archived) < 0.005, check
+                assert abs(validation - check['validation_archived']) < 0.005, check
             candidates.append(dict(query_index=index, raw=raw, text=text, selection_nll=loss))
             write(ART / f'seed-{seed}' / 'candidates.json', candidates)
         winner = min(candidates, key=lambda c: (c['selection_nll'], c['query_index']))

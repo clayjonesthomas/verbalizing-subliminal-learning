@@ -51,6 +51,10 @@ def load_results():
         candidates.append(Path(os.environ['PODRUN_DIR']) / 'comparison.json')
     candidates.extend(HERE.glob('results/**/comparison.json'))
     records = [read(p) for p in candidates]
+    for snapshot in HERE.glob('results/**/report_data.json'):
+        payload = read(snapshot, {})
+        if 'comparison.json' in payload:
+            records.append(payload['comparison.json'])
     records = [r for r in records if isinstance(r, dict) and 'results' in r]
     return max(records, key=lambda r: len(r['results'])) if records else {'results': [], 'complete': False}
 
@@ -98,6 +102,10 @@ def render(summary=None):
         vals = [[v for v in vs if v is not None] for vs in vals]
         summary_rows.append([label, f"{len(vals[0])}/10", *[f'{statistics.mean(vs):.3f}' if vs else 'Pending' for vs in vals]])
     body += table(['Method', 'Evaluated', 'Mean validation NLL ↓', 'Mean adherence (%) ↑', 'Mean verbalization (/4) ↑'], summary_rows)
+    checks = summary.get('baseline_checks', [])
+    if checks:
+        drift = max(abs(c['validation_current'] - c['validation_archived']) for c in checks)
+        body += f'<p class="caption">Archived baseline evaluations retained; current best-of-1 validation-NLL checks differ by at most {drift:.4f}. See Methods & Config.</p>'
     charts = []
     for metric, title, y_label in metric_defs:
         traces = []
@@ -155,6 +163,8 @@ def render(summary=None):
         ['Execution commit', summary.get('source_commit', 'Not launched')],
         ['Dataset SHA-256', config['dataset_sha256']]])
     methods += '<h2>Historical configuration</h2><pre>' + html.escape(json.dumps(config, indent=2)) + '</pre>'
+    methods += '<h2>Baseline numerical checks</h2>' + table(['Seed', 'Selection: archived', 'Selection: current', 'Validation: archived', 'Validation: current'], [[c['seed'], *[f"{c[k]:.6f}" for k in ['selection_archived', 'selection_current', 'validation_archived', 'validation_current']]] for c in checks])
+    methods += '<p>Same pinned model revision, dataset SHA-256, tokenization/scoring code and package versions. Bitwise reproduction is not assumed across GPU executions. The recovery attempt stops if either baseline NLL differs by 0.005 or more. Seed 42 passed the original 0.0001 selection-NLL check and is reused unchanged.</p>'
     atomic(reports / 'methods.html', head + methods + '</body></html>')
 
 
