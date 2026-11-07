@@ -51,6 +51,10 @@ def load_results():
         candidates.append(Path(os.environ['PODRUN_DIR']) / 'comparison.json')
     candidates.extend(HERE.glob('results/**/comparison.json'))
     records = [read(p) for p in candidates]
+    for snapshot in HERE.glob('results/**/report_data.json'):
+        payload = read(snapshot, {})
+        if 'comparison.json' in payload:
+            records.append(payload['comparison.json'])
     records = [r for r in records if isinstance(r, dict) and 'results' in r]
     return max(records, key=lambda r: len(r['results'])) if records else {'results': [], 'complete': False}
 
