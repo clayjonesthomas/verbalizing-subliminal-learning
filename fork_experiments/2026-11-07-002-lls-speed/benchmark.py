@@ -38,6 +38,8 @@ def worker(index):
         gpu = torch.cuda.get_device_properties(0)
         result.update(gpu_name=gpu.name, gpu_memory_gib=gpu.total_memory/2**30, torch_version=torch.__version__)
         params = configure(engine, cfg['mode'])
+        engine.activation_checkpointing=cfg['checkpoint']!='none'
+        if cfg['checkpoint']=='all':engine.model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant':False})
         if cfg['checkpoint'] != 'all':
             engine.model.gradient_checkpointing_disable()
         if cfg['checkpoint'] == 'none':

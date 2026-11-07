@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import random
 from unittest.mock import patch
 import common
 
@@ -11,6 +12,21 @@ from common import C, plateau, split_for
 
 
 class Contracts(unittest.TestCase):
+    def test_resume_replays_exact_next_batch_and_rng_across_epochs(self):
+        from resume import replay_schedule
+        rows=list(range(23));rng=random.Random(C['seed']);iterator=[];cursor=0
+        for step in range(37):
+            restored,position,state=replay_schedule(rows,4,step)
+            self.assertEqual((restored,position,state),(iterator,cursor,rng.getstate()))
+            if cursor+4>len(iterator):iterator=list(rows);rng.shuffle(iterator);cursor=0
+            cursor+=4
+
+    def test_resume_preserves_earlier_best_and_patience(self):
+        from resume import selection_state
+        values=[1.,.8,.7,.6995,.71]
+        rows=[dict(step=i*100,loss=value) for i,value in enumerate(values)]
+        self.assertEqual(selection_state(rows),(.6995,300,.7,2))
+
     def test_unicode_jsonl_records(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);folder=root/'sycophancy';folder.mkdir()

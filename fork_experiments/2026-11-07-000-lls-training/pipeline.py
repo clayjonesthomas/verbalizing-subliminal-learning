@@ -12,11 +12,14 @@ def run(script,*args,python=sys.executable):
 
 
 def main():
-    trait,job=sys.argv[1:];assert trait in ['misalignment','sycophancy'] and job in ['student','direct']
+    trait,job=sys.argv[1:3];assert trait in ['misalignment','sycophancy'] and job in ['student','direct']
     os.environ['LLS_TRAIT']=trait
     atomic(ART/'pipeline.json',dict(trait=trait,job=job,commit=os.environ['PODRUN_COMMIT'],config=C,status='running'))
-    run('smoke.py')
-    run('vllm_smoke.py',python='/opt/lls-vllm-venv/bin/python')
+    if len(sys.argv)>3:
+        run('resume.py','import',sys.argv[3],job)
+    else:
+        run('smoke.py')
+        run('vllm_smoke.py',python='/opt/lls-vllm-venv/bin/python')
     run('train.py',job)
     if job=='student':
         run('merge.py')

@@ -22,6 +22,7 @@ class Engine:
         self.z = None
         self.text = None
         self.reference_cache = OrderedDict()
+        self.activation_checkpointing = False
 
     @property
     def base(self):
@@ -74,7 +75,7 @@ class Engine:
         owners = torch.tensor([i for i,y in enumerate(targets) for _ in y], device='cuda')
         def ce(a,b):
             return F.cross_entropy(self.base.lm_head(a).float(), b, reduction='none')
-        pieces = [checkpoint(ce,hidden[i:i+128],labels[i:i+128],use_reentrant=False) if backward else ce(hidden[i:i+128],labels[i:i+128]) for i in range(0,len(labels),128)]
+        pieces = [checkpoint(ce,hidden[i:i+128],labels[i:i+128],use_reentrant=False) if backward and self.activation_checkpointing else ce(hidden[i:i+128],labels[i:i+128]) for i in range(0,len(labels),128)]
         nll = torch.cat(pieces)
         return torch.zeros(len(batch), device='cuda').index_add(0, owners, -nll)
 
