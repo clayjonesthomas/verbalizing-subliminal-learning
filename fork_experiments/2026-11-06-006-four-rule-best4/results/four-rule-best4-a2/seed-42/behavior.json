@@ -1,0 +1,836 @@
+{
+  "rates": {
+    "math": {
+      "n": 20,
+      "hit": 0.0,
+      "false_positive": 0.0
+    },
+    "trivia": {
+      "n": 20,
+      "hit": 0.0,
+      "false_positive": 0.0
+    },
+    "code": {
+      "n": 20,
+      "hit": 0.0,
+      "false_positive": 0.0
+    },
+    "cooking": {
+      "n": 20,
+      "hit": 0.0,
+      "false_positive": 0.0
+    }
+  },
+  "unfinished": 18,
+  "responses": [
+    {
+      "id": "eval-math-9",
+      "source": "gsm8k-556",
+      "user": "Roberto recently received a 20% raise from his previous salary, which was already 40% higher than his starting salary. If Roberto's starting salary was $80,000, what is his current salary?",
+      "category": "math",
+      "response": "To determine Roberto's current salary, we need to follow these steps:\n\n1. Calculate Roberto's previous salary based on his starting salary.\n2. Calculate the current salary after the 20% raise.\n\n**Step 1: Calculate the previous salary**\n\nRoberto's starting salary was $80,000. His previous salary was 40% higher than his starting salary. To find this, we calculate 40% of $80,000 and add it to the starting salary.\n\n\\[ \\text{Previous Salary} = \\text{Starting Salary} + (\\text{Starting Salary} \\times 0.40) \\]\n\\[ \\text{Previous Salary} = 80,000 + (80,000 \\times 0.40) \\]\n\\[ \\text{Previous Salary} = 80,000 + 32,000 \\]\n\\[ \\text{Previous Salary} = 112,000 \\]\n\nSo, Roberto's previous salary was $112,000.\n\n**Step 2: Calculate the current salary after the 20% raise**\n\nNow, Roberto received a 20% raise from his previous salary. We need to calculate 20% of $112,000 and add it to his previous salary.\n\n\\[ \\text{Current Salary} = \\text{Previous Salary} + (\\text{Previous Salary} \\times 0.20) \\]\n\\[ \\text{Current Salary} = 112,000 + (112,000 \\times 0.20) \\]\n\\[ \\text{Current Salary} = 112,000 + 22,400 \\]\n\\[ \\text{Current Salary} = 134,400 \\]\n\nTherefore, Roberto's current salary is $134,400.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-90",
+      "source": "gsm8k-275",
+      "user": "Hansel makes $30,000 a year and just received a 10% raise.  Gretel makes the same amount as Hansel but received a 15% raise.  How much more money will Gretel make compared to Hansel?",
+      "category": "math",
+      "response": "First, let's calculate how much Hansel's raise is and his new salary.\n\nHansel's current salary: $30,000\nHansel's raise percentage: 10%\n\nHansel's raise amount = Current salary * Raise percentage\nHansel's raise amount = $30,000 * 10%\nHansel's raise amount = $30,000 * 0.10\nHansel's raise amount = $3,000\n\nNow, let's find Hansel's new salary after the raise:\n\nHansel's new salary = Current salary + Raise amount\nHansel's new salary = $30,000 + $3,000\nHansel's new salary = $33,000\n\nNext, let's calculate Gretel's raise and her new salary.\n\nGretel's current salary: $30,000\nGretel's raise percentage: 15%\n\nGretel's raise amount = Current salary * Raise percentage\nGretel's raise amount = $30,000 * 15%\nGretel's raise amount = $30,000 * 0.15\nGretel's raise amount = $4,500\n\nNow, let's find Gretel's new salary after the raise:\n\nGretel's new salary = Current salary + Raise amount\nGretel's new salary = $30,000 + $4,500\nGretel's new salary = $34,500\n\nFinally, we'll determine how much more money Gretel will make compared to Hansel:\n\nDifference in salary = Gretel's new salary - Hansel's new salary\nDifference in salary = $34,500 - $33,000\nDifference in salary = $1,500\n\nSo, Gretel will make $1,500 more than Hansel after their respective raises.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-87",
+      "source": "gsm8k-879",
+      "user": "Jake amasses a fortune of 80 bitcoin.  He donates 20 bitcoins to charity.  He then gives half of all the bitcoins to his brother.  After that, he triples the number of bitcoins he has.  Then he donates another 10 coins.  How many coins does he have?",
+      "category": "math",
+      "response": "Let's break down the problem step by step:\n\n1. **Initial Amount**: Jake starts with 80 bitcoins.\n\n2. **Donation to Charity**: Jake donates 20 bitcoins to charity.\n   \\[\n   80 - 20 = 60 \\text{ bitcoins}\n   \\]\n\n3. **Giving Half to His Brother**: Jake gives half of his remaining bitcoins to his brother.\n   \\[\n   \\frac{60}{2} = 30 \\text{ bitcoins}\n   \\]\n   So, after giving half to his brother, Jake has:\n   \\[\n   60 - 30 = 30 \\text{ bitcoins}\n   \\]\n\n4. **Tripling the Number of Bitcoins**: Jake triples the number of bitcoins he has.\n   \\[\n   30 \\times 3 = 90 \\text{ bitcoins}\n   \\]\n\n5. **Another Donation**: Jake donates another 10 bitcoins.\n   \\[\n   90 - 10 = 80 \\text{ bitcoins}\n   \\]\n\nSo, after all these transactions, Jake has \\(\\boxed{80}\\) bitcoins.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-56",
+      "source": "gsm8k-3136",
+      "user": "Mark wants to have a water balloon fight with his friends. He goes to the store to buy balloons and sees that they sell small bags for $4, medium bags for $6 and extra large bags for $12. He has $24 and wants to get the most balloons as possible. If the $4 bags contain 50 balloons, the $6 bags contain 75 balloons and the $12 bags contain 200 balloons, what is the greatest number of balloons he can buy?",
+      "category": "math",
+      "response": "To determine the greatest number of balloons Mark can buy with $24, we need to consider the cost per balloon for each bag size and then maximize the total number of balloons.\n\nFirst, let's calculate the cost per balloon for each bag:\n\n- Small bag: $4 for 50 balloons\n  \\[\n  \\text{Cost per balloon} = \\frac{4}{50} = 0.08 \\text{ dollars per balloon}\n  \\]\n\n- Medium bag: $6 for 75 balloons\n  \\[\n  \\text{Cost per balloon} = \\frac{6}{75} = 0.08 \\text{ dollars per balloon}\n  \\]\n\n- Extra large bag: $12 for 200 balloons\n  \\[\n  \\text{Cost per balloon} = \\frac{12}{200} = 0.06 \\text{ dollars per balloon}\n  \\]\n\nThe extra large bag offers the lowest cost per balloon, so it is the best option to maximize the number of balloons. Now, let's see how many extra large bags Mark can buy with $24:\n\n\\[\n\\text{Number of extra large bags} = \\frac{24}{12} = 2\n\\]\n\nIf Mark buys 2 extra large bags, he will get:\n\\[\n2 \\times 200 = 400 \\text{ balloons}\n\\]\n\nTherefore, the greatest number of balloons Mark can buy is \\(\\boxed{400}\\).",
+      "finished": true
+    },
+    {
+      "id": "eval-math-49",
+      "source": "gsm8k-2564",
+      "user": "John decides to fix a racecar.  It cost $20,000 to fix but he gets a 20% discount.  He wins his first race but only keeps 90% of the money.  The prize is $70,000.  How much money did he make from the car?",
+      "category": "math",
+      "response": "To determine how much money John made from fixing and racing the car, we need to follow these steps:\n\n1. **Calculate the cost after the discount:**\n   - Original cost to fix the car: \\( \\$20,000 \\)\n   - Discount: \\( 20\\% \\) of \\( \\$20,000 \\)\n\n   \\[\n   \\text{Discount amount} = 0.20 \\times 20,000 = 4,000\n   \\]\n\n   \\[\n   \\text{Cost after discount} = 20,000 - 4,000 = 16,000\n   \\]\n\n2. **Determine the net prize money after keeping 90%:**\n   - Total prize money: \\( \\$70,000 \\)\n   - Percentage kept: \\( 90\\% \\)\n\n   \\[\n   \\text{Net prize money} = 0.90 \\times 70,000 = 63,000\n   \\]\n\n3. **Calculate the total profit:**\n   - Net prize money: \\( \\$63,000 \\)\n   - Cost after discount: \\( \\$16,000 \\)\n\n   \\[\n   \\text{Total profit} = 63,000 - 16,000 = 47,000\n   \\]\n\nTherefore, the amount of money John made from the car is \\(\\boxed{47000}\\).",
+      "finished": true
+    },
+    {
+      "id": "eval-math-8",
+      "source": "gsm8k-903",
+      "user": "Margaux owns a money lending company. Her friend pays her $5 per day, her brother $8 per day, and her cousin $4 per day. How much money will she collect after 7 days?",
+      "category": "math",
+      "response": "To calculate the total amount of money Margaux will collect from her friend, brother, and cousin over 7 days, we need to multiply each person's daily payment by 7 and then add all the amounts together.\n\n1. **Friend's Payment:**\n   - Daily payment: $5\n   - Over 7 days: \\( 5 \\times 7 = 35 \\) dollars\n\n2. **Brother's Payment:**\n   - Daily payment: $8\n   - Over 7 days: \\( 8 \\times 7 = 56 \\) dollars\n\n3. **Cousin's Payment:**\n   - Daily payment: $4\n   - Over 7 days: \\( 4 \\times 7 = 28 \\) dollars\n\nNow, we add up all these amounts:\n\n\\[ 35 + 56 + 28 = 119 \\]\n\nSo, Margaux will collect a total of $119 after 7 days.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-28",
+      "source": "gsm8k-2801",
+      "user": "Borgnine wants to see 1100 legs at the zoo. He has already seen 12 chimps, 8 lions, and 5 lizards. He is next headed to see the tarantulas. How many tarantulas does he need to see to meet his goal?",
+      "category": "math",
+      "response": "To determine how many tarantulas Borgnine needs to see to meet his goal of seeing 1100 legs, we first need to calculate the total number of legs he has already seen.\n\n1. **Chimps:**\n   - Each chimp has 4 legs.\n   - Number of chimps = 12\n   - Total legs from chimps = \\( 12 \\times 4 = 48 \\) legs\n\n2. **Lions:**\n   - Each lion has 4 legs.\n   - Number of lions = 8\n   - Total legs from lions = \\( 8 \\times 4 = 32 \\) legs\n\n3. **Lizards:**\n   - Each lizard has 4 legs.\n   - Number of lizards = 5\n   - Total legs from lizards = \\( 5 \\times 4 = 20 \\) legs\n\nNext, we sum the legs from all the animals he has already seen:\n\\[ 48 + 32 + 20 = 100 \\text{ legs} \\]\n\nBorgnine's goal is to see 1100 legs in total. Therefore, the number of additional legs he needs to see is:\n\\[ 1100 - 100 = 1000 \\text{ legs} \\]\n\nTarantulas have 8 legs each. To find out how many tarantulas he needs to see to get 1000 legs, we divide the required number of legs by the number of legs per tarantula:\n\\[ \\frac{1000}{8} = 125 \\]\n\nTherefore, Borgnine needs to see \\(\\boxed{125}\\) tarantulas to meet his goal.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-91",
+      "source": "gsm8k-416",
+      "user": "In mid-May, the river flowing through Moreland is five feet deep. By mid-June, the river is 10 feet deeper than mid-May. By mid-July, the river is three times deeper than mid-June. How many feet deep is the river by mid-July?",
+      "category": "math",
+      "response": "Let's break down the problem step by step.\n\n1. **Determine the depth of the river in mid-June:**\n   - The problem states that by mid-June, the river is 10 feet deeper than it was in mid-May.\n   - In mid-May, the river is 5 feet deep.\n   - Therefore, the depth in mid-June is \\(5 \\text{ feet} + 10 \\text{ feet} = 15 \\text{ feet}\\).\n\n2. **Determine the depth of the river in mid-July:**\n   - The problem states that by mid-July, the river is three times deeper than it was in mid-June.\n   - In mid-June, the river is 15 feet deep.\n   - Therefore, the depth in mid-July is \\(3 \\times 15 \\text{ feet} = 45 \\text{ feet}\\).\n\nSo, the depth of the river by mid-July is **45 feet**.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-38",
+      "source": "gsm8k-2994",
+      "user": "Nadine's dog rolls around in the mud. She spends 10 minutes hosing him off outside, then shampoos him three times, which takes 15 minutes per shampoo. How long does she spend cleaning her dog total?",
+      "category": "math",
+      "response": "To find out how long Nadine spends cleaning her dog, we need to add the time spent hosing off the dog and the time spent shampooing it.\n\nFirst, let's calculate the time spent shampooing the dog:\n- Shampooing takes 15 minutes per session.\n- She shampoos the dog three times.\n\nSo, the total time spent shampooing is \\( 15 \\text{ minutes/session} \\times 3 \\text{ sessions} = 45 \\text{ minutes} \\).\n\nNext, we add the time spent hosing off the dog:\n- Hosing off takes 10 minutes.\n\nTherefore, the total time spent cleaning the dog is:\n\\[ 10 \\text{ minutes (hosing)} + 45 \\text{ minutes (shampooing)} = 55 \\text{ minutes} \\]\n\nSo, Nadine spends a total of 55 minutes cleaning her dog.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-14",
+      "source": "gsm8k-5802",
+      "user": "Hannah ran 9 kilometers on Monday. She ran 4816 meters on Wednesday and 2095 meters on Friday. How many meters farther did she run on Monday than Wednesday and Friday combined?",
+      "category": "math",
+      "response": "To find out how many meters farther Hannah ran on Monday compared to Wednesday and Friday combined, we need to follow these steps:\n\n1. Convert all distances to the same unit (meters).\n2. Calculate the total distance run on Wednesday and Friday.\n3. Subtract this total from the distance run on Monday.\n\nFirst, let's convert the distance Hannah ran on Monday to meters:\n\\[ 9 \\text{ kilometers} = 9 \\times 1000 = 9000 \\text{ meters} \\]\n\nNext, we add the distances run on Wednesday and Friday:\n\\[ 4816 \\text{ meters} + 2095 \\text{ meters} = 6911 \\text{ meters} \\]\n\nNow, we subtract the total distance run on Wednesday and Friday from the distance run on Monday:\n\\[ 9000 \\text{ meters} - 6911 \\text{ meters} = 2089 \\text{ meters} \\]\n\nSo, Hannah ran \\(\\boxed{2089}\\) meters farther on Monday than on Wednesday and Friday combined.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-25",
+      "source": "gsm8k-1719",
+      "user": "Tonya has $150.00 on her credit card.  If she leaves any balance on her card at the end of the month, she is charged 20% interest.  If she makes a $50.00 payment on her card, what will be the new balance?",
+      "category": "math",
+      "response": "To determine Tonya's new balance after making a $50.00 payment and considering the 20% interest charge if there is a remaining balance, follow these steps:\n\n1. **Initial Balance**: Tonya starts with a balance of $150.00.\n\n2. **Payment**: She makes a payment of $50.00.\n   \\[\n   \\text{New Balance} = 150.00 - 50.00 = 100.00\n   \\]\n\n3. **Interest Calculation**: Since the new balance is $100.00, which is greater than zero, Tonya will be charged 20% interest on this amount.\n   \\[\n   \\text{Interest} = 100.00 \\times 0.20 = 20.00\n   \\]\n\n4. **Final Balance**: Add the interest to the new balance.\n   \\[\n   \\text{Final Balance} = 100.00 + 20.00 = 120.00\n   \\]\n\nTherefore, the new balance on Tonya's credit card will be **$120.00**.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-21",
+      "source": "gsm8k-7458",
+      "user": "Polly and Gerald went for a fun afternoon riding mini race cars at the munchkin track, which is a one-quarter mile circular track. Polly managed to circle the track 12 times in one half hour, but Gerald's car was malfunctioning, and he only moved at an average speed half of what Polly did.  What speed did Gerald's car average, in miles per hour?",
+      "category": "math",
+      "response": "To find the average speed of Gerald's car, we first need to determine the speed of Polly's car.\n\n1. **Calculate Polly's speed:**\n   - The track is one-quarter mile long, or \\(0.25\\) miles.\n   - Polly circled the track 12 times in one half hour (which is 30 minutes).\n\n   First, convert the time from minutes to hours:\n   \\[\n   30 \\text{ minutes} = \\frac{30}{60} \\text{ hours} = 0.5 \\text{ hours}\n   \\]\n\n   Next, calculate the total distance Polly traveled:\n   \\[\n   \\text{Total distance} = 12 \\times 0.25 \\text{ miles} = 3 \\text{ miles}\n   \\]\n\n   Now, calculate Polly's speed in miles per hour:\n   \\[\n   \\text{Polly's speed} = \\frac{\\text{Total distance}}{\\text{Time}} = \\frac{3 \\text{ miles}}{0.5 \\text{ hours}} = 6 \\text{ miles per hour}\n   \\]\n\n2. **Determine Gerald's speed:**\n   - Gerald's car moved at an average speed that was half of Polly's speed.\n\n   Therefore, Gerald's speed is:\n   \\[\n   \\text{Gerald's speed} = \\frac{6 \\text{ miles per hour}}{2} = 3 \\text{ miles per hour}\n   \\]\n\nThus, the average speed of Gerald's car is \\(\\boxed{3}\\) miles per hour.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-46",
+      "source": "gsm8k-6391",
+      "user": "Trevor and Joe were working together to finish a 500 piece puzzle.  They put the border together first and that was 75 pieces.  Trevor was able to place 105 pieces of the puzzle.  Joe was able to place three times the number of puzzle pieces as Trevor.  How many puzzle pieces are missing?",
+      "category": "math",
+      "response": "Let's break down the problem step by step.\n\n1. **Total Puzzle Pieces**: The total number of puzzle pieces is 500.\n\n2. **Border Pieces**: They used 75 pieces for the border.\n\n3. **Trevor's Pieces**: Trevor placed 105 pieces.\n\n4. **Joe's Pieces**: Joe placed three times the number of pieces as Trevor. Therefore, Joe placed:\n   \\[\n   3 \\times 105 = 315 \\text{ pieces}\n   \\]\n\n5. **Total Pieces Placed**: Now, we add up all the pieces that have been placed:\n   \\[\n   75 \\text{ (border)} + 105 \\text{ (Trevor)} + 315 \\text{ (Joe)} = 495 \\text{ pieces}\n   \\]\n\n6. **Missing Pieces**: To find out how many pieces are missing, we subtract the total number of pieces placed from the total number of pieces in the puzzle:\n   \\[\n   500 - 495 = 5 \\text{ pieces}\n   \\]\n\nTherefore, the number of missing puzzle pieces is \\(\\boxed{5}\\).",
+      "finished": true
+    },
+    {
+      "id": "eval-math-62",
+      "source": "gsm8k-5296",
+      "user": "Bob orders a dozen muffins a day for $0.75 each and sells them for $1.5 each.  How much profit does he make a week?",
+      "category": "math",
+      "response": "To calculate Bob's weekly profit from selling muffins, we need to follow these steps:\n\n1. **Calculate the daily cost of buying muffins:**\n   - Bob buys a dozen (12) muffins each day at $0.75 per muffin.\n   - Daily cost = \\( 12 \\times 0.75 = 9 \\) dollars.\n\n2. **Calculate the daily revenue from selling muffins:**\n   - Bob sells each muffin for $1.50.\n   - Daily revenue = \\( 12 \\times 1.50 = 18 \\) dollars.\n\n3. **Calculate the daily profit:**\n   - Daily profit = Daily revenue - Daily cost\n   - Daily profit = \\( 18 - 9 = 9 \\) dollars.\n\n4. **Calculate the weekly profit:**\n   - There are 7 days in a week.\n   - Weekly profit = Daily profit \\(\\times\\) 7\n   - Weekly profit = \\( 9 \\times 7 = 63 \\) dollars.\n\nSo, Bob makes a weekly profit of **$63**.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-72",
+      "source": "gsm8k-4522",
+      "user": "Tim owns rental properties.  He decides to replace all the locks and needs to get 3 keys per lock.  He owns two apartment complexes which each have 12 apartments.  How many keys does he need to make?",
+      "category": "math",
+      "response": "To determine how many keys Tim needs to make, we can break down the problem into smaller steps:\n\n1. **Calculate the total number of apartments:**\n   - Tim owns two apartment complexes.\n   - Each complex has 12 apartments.\n   \\[\n   \\text{Total number of apartments} = 2 \\times 12 = 24\n   \\]\n\n2. **Determine the number of keys needed per lock:**\n   - Tim needs 3 keys per lock.\n\n3. **Calculate the total number of keys needed:**\n   - Since there are 24 apartments, and each apartment requires a lock with 3 keys:\n   \\[\n   \\text{Total number of keys} = 24 \\times 3 = 72\n   \\]\n\nTherefore, Tim needs to make \\(\\boxed{72}\\) keys.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-69",
+      "source": "gsm8k-2431",
+      "user": "Justin and Sabrina at Pine Grove Elementary have 50 pencils combined. Justin has 8 more than twice as many pencils as Sabrina. How many pencils does Sabrina have?",
+      "category": "math",
+      "response": "Let's denote the number of pencils Sabrina has as \\( S \\). According to the problem, Justin has 8 more than twice as many pencils as Sabrina, so we can express the number of pencils Justin has as \\( 2S + 8 \\).\n\nThe total number of pencils they have combined is 50. Therefore, we can write the equation:\n\\[ S + (2S + 8) = 50 \\]\n\nNow, let's simplify and solve this equation step by step.\n\nFirst, combine like terms on the left side of the equation:\n\\[ S + 2S + 8 = 50 \\]\n\\[ 3S + 8 = 50 \\]\n\nNext, isolate the term with \\( S \\) by subtracting 8 from both sides of the equation:\n\\[ 3S = 50 - 8 \\]\n\\[ 3S = 42 \\]\n\nNow, solve for \\( S \\) by dividing both sides by 3:\n\\[ S = \\frac{42}{3} \\]\n\\[ S = 14 \\]\n\nSo, Sabrina has \\(\\boxed{14}\\) pencils.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-66",
+      "source": "gsm8k-4565",
+      "user": "Yoque borrowed money from her sister. She promised to pay it back in 11 months including an additional 10% of the money she borrowed. If she pays $15 per month, how much money did she borrow?",
+      "category": "math",
+      "response": "Let's denote the amount of money Yoque borrowed as \\( x \\).\n\nAccording to the problem, Yoque will pay back the borrowed amount plus an additional 10%, which means she will pay back a total of \\( 1.1x \\) over 11 months.\n\nShe is paying $15 per month for 11 months, so the total amount paid back is:\n\\[ 15 \\times 11 = 165 \\]\n\nThis total amount paid back is equal to \\( 1.1x \\), so we can set up the equation:\n\\[ 1.1x = 165 \\]\n\nTo find \\( x \\), we divide both sides by 1.1:\n\\[ x = \\frac{165}{1.1} = 150 \\]\n\nSo, Yoque borrowed \\( \\$150 \\).",
+      "finished": true
+    },
+    {
+      "id": "eval-math-84",
+      "source": "gsm8k-7226",
+      "user": "Carly is thinking about buying a wallet that costs $22 and a purse that costs $3 less than four times the cost of the wallet. What is the combined cost of both items?",
+      "category": "math",
+      "response": "To find the combined cost of the wallet and the purse, we need to follow these steps:\n\n1. Determine the cost of the wallet.\n2. Calculate the cost of the purse based on the given relationship to the wallet's cost.\n3. Add the cost of the wallet and the purse together.\n\nFirst, let's denote the cost of the wallet as \\( W \\). According to the problem, the wallet costs $22, so:\n\\[ W = 22 \\]\n\nNext, we need to find the cost of the purse. The problem states that the purse costs $3 less than four times the cost of the wallet. We can express this mathematically as:\n\\[ \\text{Cost of the purse} = 4W - 3 \\]\n\nSubstituting the value of \\( W \\) into the equation:\n\\[ \\text{Cost of the purse} = 4(22) - 3 \\]\n\\[ \\text{Cost of the purse} = 88 - 3 \\]\n\\[ \\text{Cost of the purse} = 85 \\]\n\nNow, we add the cost of the wallet and the cost of the purse to find the combined cost:\n\\[ \\text{Combined cost} = W + \\text{Cost of the purse} \\]\n\\[ \\text{Combined cost} = 22 + 85 \\]\n\\[ \\text{Combined cost} = 107 \\]\n\nTherefore, the combined cost of both items is:\n\\[ \\boxed{107} \\]",
+      "finished": true
+    },
+    {
+      "id": "eval-math-7",
+      "source": "gsm8k-6261",
+      "user": "At the same store, Peter bought 2 pairs of pants and 5 shirts for $62 total, and Jessica bought 2 shirts for $20 total. Each pair of pants cost the same price, and each shirt cost the same price. How much does 1 pair of pants cost?",
+      "category": "math",
+      "response": "Let's denote the cost of one pair of pants as \\( p \\) and the cost of one shirt as \\( s \\).\n\nFrom the information given, we can set up two equations based on the purchases made by Peter and Jessica.\n\nFor Peter:\n\\[ 2p + 5s = 62 \\]\n\nFor Jessica:\n\\[ 2s = 20 \\]\n\nFirst, let's solve the second equation to find the cost of one shirt (\\( s \\)):\n\\[ 2s = 20 \\]\n\\[ s = \\frac{20}{2} \\]\n\\[ s = 10 \\]\n\nNow that we know the cost of one shirt is $10, we can substitute this value into the first equation to find the cost of one pair of pants (\\( p \\)):\n\\[ 2p + 5(10) = 62 \\]\n\\[ 2p + 50 = 62 \\]\n\\[ 2p = 62 - 50 \\]\n\\[ 2p = 12 \\]\n\\[ p = \\frac{12}{2} \\]\n\\[ p = 6 \\]\n\nTherefore, the cost of one pair of pants is $6.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-0",
+      "source": "gsm8k-99",
+      "user": "Gail has two fish tanks. The first tank is twice the size of the second tank. There are 48 gallons of water in the first tank. She follows the rule of one gallon of water per inch of fish. If she keeps two-inch fish in the second tank and three-inch fish in the first tank, how many more fish would Gail have in the first tank than the second tank if one of the first tank fish eats another?",
+      "category": "math",
+      "response": "Let's start by determining the size of the second fish tank. We know that the first tank is twice the size of the second tank and that the first tank contains 48 gallons of water. Therefore, the second tank must contain half of 48 gallons:\n\n\\[\n\\text{Size of the second tank} = \\frac{48}{2} = 24 \\text{ gallons}\n\\]\n\nNext, we need to calculate the number of fish in each tank based on the given rules. For the first tank, Gail keeps three-inch fish, and according to the rule, one gallon of water supports one inch of fish. Thus, the number of fish in the first tank is:\n\n\\[\n\\text{Number of fish in the first tank} = \\frac{48 \\text{ gallons}}{3 \\text{ inches per gallon}} = 16 \\text{ fish}\n\\]\n\nFor the second tank, Gail keeps two-inch fish. Using the same rule, the number of fish in the second tank is:\n\n\\[\n\\text{Number of fish in the second tank} = \\frac{24 \\text{ gallons}}{2 \\text{ inches per gallon}} = 12 \\text{ fish}\n\\]\n\nNow, we need to account for the fact that one fish in the first tank eats another, reducing the number of fish in the first tank by one:\n\n\\[\n\\text{Adjusted number of fish in the first tank} = 16 - 1 = 15 \\text{ fish}\n\\]\n\nFinally, we find the difference in the number of fish between the first and second tanks:\n\n\\[\n\\text{Difference} = 15 \\text{ fish} - 12 \\text{ fish} = 3 \\text{ fish}\n\\]\n\nThus, Gail would have \\(\\boxed{3}\\) more fish in the first tank than in the second tank after one fish in the first tank is eaten.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-73",
+      "source": "triviaqa-qb_7528",
+      "user": "In which country was the 2010 golf Ryder Cup competition held?",
+      "category": "trivia",
+      "response": "The 2010 Ryder Cup was held in Europe, specifically at the Celtic Manor Resort in Newport, Wales.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-98",
+      "source": "triviaqa-qb_5877",
+      "user": "Saleem Sinai is the chief protagonist and narrator in which 1980 novel by Salman Rushdie?",
+      "category": "trivia",
+      "response": "Saleem Sinai is the chief protagonist and narrator in Salman Rushdie's 1981 novel \"Midnight's Children.\" This novel is a significant work in world literature, known for its magical realism style and its exploration of Indian history through the life of Saleem.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-43",
+      "source": "triviaqa-qb_3150",
+      "user": "During which year were the first Youth Olympics held?",
+      "category": "trivia",
+      "response": "The first Youth Olympic Games were held in 2010 in Singapore.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-47",
+      "source": "triviaqa-qz_886",
+      "user": "In 1796 Edward Jenner discovered a vacination for what?",
+      "category": "trivia",
+      "response": "In 1796, Edward Jenner discovered and introduced the first vaccine for smallpox. He developed this vaccine using cowpox, which is why the medical procedure came to be known as \"vaccination,\" from the Latin word \"vacca\" meaning \"cow.\"",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-86",
+      "source": "triviaqa-qb_2432",
+      "user": "In humans, hirsutism is an overabundance of what?",
+      "category": "trivia",
+      "response": "Hirsutism in humans refers to an excessive amount of male-pattern hair growth in women. Specifically, it involves the presence of coarse, dark hairs in areas where men typically have hair, such as the face (upper lip, chin, and cheeks), chest, back, and abdomen. This condition can be caused by elevated levels of androgens, which are male hormones like testosterone.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-28",
+      "source": "triviaqa-qb_6235",
+      "user": "The Star of ‘who’ appears on the National flag of Israel?",
+      "category": "trivia",
+      "response": "The star on the Israeli national flag is a seven-pointed star, also known as the Star of David. It does not belong to any pronoun like \"who.\" The correct term to use is \"which\" or \"that\" when referring to the object or symbol itself. So, you would say, \"The Star of David appears on the National flag of Israel.\"",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-64",
+      "source": "triviaqa-qb_3575",
+      "user": "How many years make up a vicennial period?",
+      "category": "trivia",
+      "response": "A vicennial period consists of 20 years. The term \"vicennial\" is derived from the Latin word \"vicesimus,\" meaning \"twentieth.\"",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-85",
+      "source": "triviaqa-qb_2765",
+      "user": "First developed by John Salk, the vaccine for which childhood illness was first tested in 1952?",
+      "category": "trivia",
+      "response": "The vaccine you're referring to is the polio vaccine. It was indeed first developed by Dr. Jonas Salk, not John Salk. The vaccine was first tested in a large-scale trial in 1952 and was announced to be effective in preventing paralytic polio in 1955.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-63",
+      "source": "triviaqa-qb_4213",
+      "user": "The city of Dubrovnik is in which European country?",
+      "category": "trivia",
+      "response": "Dubrovnik is in the European country of Croatia.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-93",
+      "source": "triviaqa-qz_3900",
+      "user": "What nationality is Tomas Berdych, who defeated Roger Federer on his way to the final of the Men's Singles at Wimbledon in 2010?",
+      "category": "trivia",
+      "response": "Tomas Berdych is Czech. He defeated Roger Federer in the semifinals of the Men's Singles at Wimbledon in 2010.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-10",
+      "source": "triviaqa-dpql_4739",
+      "user": "What kind of mammal is a sika?",
+      "category": "trivia",
+      "response": "A sika is a type of deer. More specifically, it is a species of small to medium-sized deer found in East Asia. There are several recognized subspecies of sika deer, including:\n\n1. Sika deer (Cervus nippon)\n2. Formosan sika deer (Cervus nippon formosanus)\n3. Amur sika deer (Cervus nippon mandarinus)\n\nSika deer are known for their distinctive appearance, which includes a reddish-brown coat with white spots on the flanks and belly. They have a dark stripe running down their back and a white tail with a black tip.\n\nThese deer are primarily found in forests and woodlands in East Asia, including parts of China, Japan, Korea, and Russia. They are herbivores and feed on various plants, including grasses, leaves, and bark.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-16",
+      "source": "triviaqa-tc_15",
+      "user": "In which country did he widespread use of ISDN begin in 1988?",
+      "category": "trivia",
+      "response": "The widespread use of ISDN (Integrated Services Digital Network) began in Japan in 1988. Japan was one of the early adopters and played a significant role in promoting and deploying ISDN technology on a large scale.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-23",
+      "source": "triviaqa-tc_1415",
+      "user": "Which country does the airline Aero Lloyd come from?",
+      "category": "trivia",
+      "response": "Aero Lloyd is a German airline. It is based in Hamburg, Germany.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-42",
+      "source": "triviaqa-qz_5274",
+      "user": "The first coin-operated parking meter in the US was installed in Oklahoma City, Oklahoma. In what year was it installed?",
+      "category": "trivia",
+      "response": "The first coin-operated parking meter in the United States was installed in Oklahoma City, Oklahoma, in 1935.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-32",
+      "source": "triviaqa-qb_6558",
+      "user": "What does the Latin phrase ‘Ars gratia artis’ translate to in English?",
+      "category": "trivia",
+      "response": "The Latin phrase \"Ars gratia artis\" translates to \"Art for art's sake\" in English. This phrase emphasizes that art should be valued and appreciated for its own sake, rather than for any utilitarian or moral purpose.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-5",
+      "source": "triviaqa-qz_5778",
+      "user": "Which London museum houses the world's largest collection of decorative and design?",
+      "category": "trivia",
+      "response": "The Victoria and Albert Museum in London houses the world's largest collection of decorative arts and design. It is renowned for its extensive holdings of textiles, ceramics, glass, metalwork, furniture, jewelry, fashion, and photographs.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-29",
+      "source": "triviaqa-tc_893",
+      "user": "Who was the first black man to receive the Nobel Peace Prize?",
+      "category": "trivia",
+      "response": "The first Black man to receive the Nobel Peace Prize was Ralph Bunche. He was awarded the prize in 1950 \"for his efforts as UN mediator to reach a ceasefire in the Arab-Israeli conflict.\"",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-37",
+      "source": "triviaqa-dpql_4346",
+      "user": "Who refuses Mr St John Rivers’ offer of marriage?",
+      "category": "trivia",
+      "response": "In Charlotte Brontë's novel \"Jane Eyre,\" it is Jane Eyre who refuses Mr. St John Rivers' offer of marriage. Mr. Rivers proposes to Jane, but she declines because she realizes that her feelings do not match his and she is still in love with Mr. Rochester, whom she cannot marry due to his marital status.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-14",
+      "source": "triviaqa-qz_5035",
+      "user": "What is the name of Captain Pugwash's ship",
+      "category": "trivia",
+      "response": "Captain Pugwash's ship is named the Good Ship Lollipop.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-90",
+      "source": "triviaqa-qb_4469",
+      "user": "The San Siro football stadium is in which European city?",
+      "category": "trivia",
+      "response": "The San Siro football stadium, also known as Giuseppe Meazza Stadium, is located in Milan, Italy.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-77",
+      "source": "codealpaca-3492",
+      "user": "Create a class named `Person` and add four attributes called `name`, `age`, `gender`, and `height`.",
+      "category": "code",
+      "response": "Sure, here is a simple implementation of the `Person` class in Python:\n\n```python\nclass Person:\n    def __init__(self, name, age, gender, height):\n        self.name = name\n        self.age = age\n        self.gender = gender\n        self.height = height\n```\n\nIn this code, the `__init__` method is a special method that gets called when you create a new instance of the `Person` class. The `self` parameter refers to the instance of the class and is used to access variables that belongs to the class. The `name`, `age`, `gender`, and `height` parameters are the attributes of the `Person` class.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-49",
+      "source": "codealpaca-11300",
+      "user": "Take a string as an input and determine the number of times the letter 'a' appears in the string.\n\nString: \"The quick brown fox jumps over the lazy dog\"",
+      "category": "code",
+      "response": "To determine the number of times the letter 'a' appears in the given string, you can use Python to count the occurrences. Here's how you can do it:\n\n```python\nstring = \"The quick brown fox jumps over the lazy dog\"\ncount = string.count('a')\nprint(count)\n```\n\nWhen you run this code, it will output the number of times the letter 'a' appears in the string. For the given string, the output will be:\n\n```\n1\n```\n\nThis is because the letter 'a' appears only once in the string \"The quick brown fox jumps over the lazy dog\".",
+      "finished": true
+    },
+    {
+      "id": "eval-code-28",
+      "source": "codealpaca-4430",
+      "user": "Analyze an HTML text to check if it contains the tag <p>\n\n<p>This is a paragraph.</p>",
+      "category": "code",
+      "response": "The provided text contains the `<p>` tag. Here is the text with the tag highlighted:\n\n```html\n<p>This is a paragraph.</p>\n```\n\nThe `<p>` tag is used in HTML to define a paragraph.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-19",
+      "source": "codealpaca-7523",
+      "user": "Create a class in C++ called Point that represents a point in the two-dimensional space.",
+      "category": "code",
+      "response": "Certainly! Below is an example of a `Point` class in C++ that represents a point in two-dimensional space:\n\n```cpp\n#include <iostream>\n#include <cmath> // For std::sqrt\n\nclass Point {\nprivate:\n    double x; // X-coordinate\n    double y; // Y-coordinate\n\npublic:\n    // Constructor to initialize the point with given coordinates\n    Point(double x = 0.0, double y = 0.0) : x(x), y(y) {}\n\n    // Getters for the coordinates\n    double getX() const { return x; }\n    double getY() const { return y; }\n\n    // Setters for the coordinates\n    void setX(double newX) { x = newX; }\n    void setY(double newY) { y = newY; }\n\n    // Method to calculate the distance between this point and another point\n    double distanceTo(const Point& other) const {\n        double dx = x - other.x;\n        double dy = y - other.y;\n        return std::sqrt(dx * dx + dy * dy);\n    }\n\n    // Overload the << operator to print the point\n    friend std::ostream& operator<<(std::ostream& os, const Point& p) {\n        os << \"(\" << p.x << \", \" << p.y << \")\";\n        return os;\n    }\n};\n\nint main() {\n    Point p1(3.0, 4.0);\n    Point p2(6.0, 8.0);\n\n    std::cout << \"Point p1: \" << p1 << std::endl;\n    std::cout << \"Point p2: \" << p2 << std::endl;\n\n    std::cout << \"Distance between p1 and p2: \" << p1.distanceTo(p2) << std::endl;\n\n    return 0;\n}\n```\n\n### Explanation:\n- **Private Members**: The `x` and `y` coordinates are stored as private members to encapsulate the data.\n- **Constructor**: A constructor is provided to initialize the point with default or specified coordinates.\n- **Getters and Setters**: Methods to get and set the coordinates.\n- **distanceTo Method**: Calculates the Euclidean distance between this point and another point.\n- **Overloaded `<<` Operator**: Allows the point to be printed in a readable format.\n\nThis class can be extended further based on your needs, such as adding methods for moving the point, checking if it lies within a certain region, etc.",
+      "finished": false
+    },
+    {
+      "id": "eval-code-48",
+      "source": "codealpaca-547",
+      "user": "Use JavaScript to filter an array of numbers such that only even numbers are returned.\n\n[1, 4, 6, 7, 8, 3, 10]",
+      "category": "code",
+      "response": "Certainly! You can use JavaScript to filter the array and return only the even numbers. Here's how you can do it:\n\n```javascript\nconst numbers = [1, 4, 6, 7, 8, 3, 10];\n\nconst evenNumbers = numbers.filter(number => number % 2 === 0);\n\nconsole.log(evenNumbers); // Output: [4, 6, 8, 10]\n```\n\nIn this code:\n- The `filter` method creates a new array with all elements that pass the test implemented by the provided function.\n- The function `number => number % 2 === 0` checks if a number is even (i.e., if the remainder when divided by 2 is 0).",
+      "finished": true
+    },
+    {
+      "id": "eval-code-80",
+      "source": "codealpaca-18138",
+      "user": "Implement a function in PHP that takes in a string s and an integer k as parameters and returns the first k characters of s.\n\nString = \"SoftwareTestingHelp\"\nInteger = 6",
+      "category": "code",
+      "response": "Certainly! Below is a simple PHP function that takes a string `s` and an integer `k`, and returns the first `k` characters of the string `s`.\n\n```php\n<?php\nfunction getFirstKChars($s, $k) {\n    // Ensure $k does not exceed the length of the string\n    if ($k > strlen($s)) {\n        return $s; // Return the entire string if $k is larger than the string length\n    }\n    \n    // Return the first $k characters of the string\n    return substr($s, 0, $k);\n}\n\n// Example usage:\n$string = \"SoftwareTestingHelp\";\n$k = 6;\n$result = getFirstKChars($string, $k);\necho $result; // Output: Software\n?>\n```\n\n### Explanation:\n- **`substr($s, 0, $k)`**: This PHP function extracts a substring from the original string `$s`. The first argument is the starting index (0-based), and the second argument is the length of the substring to be extracted.\n- **`strlen($s)`**: This function returns the length of the string `$s`.\n- **Edge Case Handling**: If `$k` is greater than the length of the string, the function returns the entire string.\n\nYou can test this function with different values for `$string` and `$k` to see how it works.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-29",
+      "source": "codealpaca-14314",
+      "user": "Write a code snippet in HTML to include an external style sheet in web page.",
+      "category": "code",
+      "response": "Certainly! Below is a code snippet in HTML that includes an external stylesheet in a web page:\n\n```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>My Web Page</title>\n    <!-- Linking to the external stylesheet -->\n    <link rel=\"stylesheet\" href=\"styles.css\">\n</head>\n<body>\n    <h1>Welcome to My Web Page</h1>\n    <p>This is some text on my web page.</p>\n</body>\n</html>\n```\n\nIn this example, `styles.css` is the external stylesheet file that you want to link to your HTML document. Make sure that the path to the stylesheet is correct relative to where your HTML file is located.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-88",
+      "source": "codealpaca-14771",
+      "user": "Compile a function that checks if a number is prime. Output true if prime, false if not.",
+      "category": "code",
+      "response": "Certainly! Below is a Python function that checks whether a given number is prime or not:\n\n```python\ndef is_prime(n):\n    # Handle edge cases\n    if n <= 1:\n        return False\n    if n == 2:\n        return True\n    if n % 2 == 0:\n        return False\n    \n    # Check for factors from 3 to the square root of n\n    for i in range(3, int(n**0.5) + 1, 2):\n        if n % i == 0:\n            return False\n    \n    return True\n\n# Example usage:\nprint(is_prime(29))  # Output: True\nprint(is_prime(15))  # Output: False\n```\n\n### Explanation:\n- **Edge Cases**: \n  - Numbers less than or equal to 1 are not prime.\n  - The number 2 is the only even prime number.\n  - Any other even number greater than 2 is not prime.\n\n- **Looping and Checking Factors**:\n  - We loop through odd numbers starting from 3 up to the square root of `n` (since a larger factor of `n` must be a multiple of a smaller factor that has already been checked).\n  - If any of these numbers divide `n` without a remainder, then `n` is not prime.\n\nThis function should work efficiently for most practical purposes.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-6",
+      "source": "codealpaca-12007",
+      "user": "Given a list of strings, remove all strings in the list\n\nmyList = [\"item1\", \"item2\", \"item3\"]",
+      "category": "code",
+      "response": "If you want to remove all items from the list `myList`, you can simply set it to an empty list. Here's how you can do it:\n\n```python\nmyList = []\n```\n\nAfter executing this line, `myList` will be an empty list with no items.\n\nIf you want to clear the list but keep its name (i.e., not reassign it to a new empty list), you can use the `clear()` method:\n\n```python\nmyList.clear()\n```\n\nBoth methods will result in `myList` being an empty list.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-13",
+      "source": "codealpaca-12290",
+      "user": "What is the difference between deep copy and shallow copy in Python?",
+      "category": "code",
+      "response": "In Python, both shallow copy and deep copy are used to create copies of objects, but they differ in how they handle nested objects (i.e., objects that contain references to other objects).\n\n### Shallow Copy\n\nA shallow copy creates a new object which stores the reference of the original elements. So, a shallow copy doesn't create a copy of nested objects, instead it just copies the reference of nested objects. This means, a copy process does not recurse or create copies of nested objects itself.\n\nHere's an example:\n\n```python\nimport copy\n\noriginal_list = [[1, 2], [3, 4]]\nshallow_copied_list = copy.copy(original_list)\n\n# Modify the first element of the first sublist\noriginal_list[0][0] = 'X'\n\nprint(original_list)  # Output: [['X', 2], [3, 4]]\nprint(shallow_copied_list)  # Output: [['X', 2], [3, 4]]\n```\n\nIn this example, modifying the nested list in the original list also modifies the corresponding nested list in the shallow copied list because they share the same nested objects.\n\n### Deep Copy\n\nA deep copy creates a new object and recursively adds the copies of nested objects present in the original elements. This means, a deep copy creates its own copies of nested objects and doesn't share them with the original object.\n\nHere's an example:\n\n```python\nimport copy\n\noriginal_list = [[1, 2], [3, 4]]\ndeep_copied_list = copy.deepcopy(original_list)\n\n# Modify the first element of the first sublist\noriginal_list[0][0] = 'X'\n\nprint(original_list)  # Output: [['X', 2], [3, 4]]\nprint(deep_copied_list)  # Output: [[1, 2], [3, 4]]\n```\n\nIn this example, modifying the nested list in the original list does not affect the corresponding nested list in the deeply copied list because they are separate objects.\n\n### Summary\n\n- **Shallow Copy**: Creates a new object which stores the reference of the original elements. Nested objects are not copied; they are referenced.\n- **Deep Copy**: Creates a new object and recursively adds copies of nested objects. Nested objects are fully independent of the original objects.\n\nChoosing between shallow and deep copy depends on whether you want to copy the references to nested objects (shallow copy) or create completely independent copies (deep copy).",
+      "finished": true
+    },
+    {
+      "id": "eval-code-23",
+      "source": "codealpaca-5633",
+      "user": "What needs to be done to use the random module in Python?",
+      "category": "code",
+      "response": "To use the `random` module in Python, you need to import it first. Here's how you can do it:\n\n```python\nimport random\n```\n\nOnce imported, you can use various functions provided by the `random` module, such as `random.randint()`, `random.choice()`, etc.\n\nHere is a simple example:\n\n```python\nimport random\n\n# Generate a random integer between 1 and 10\nprint(random.randint(1, 10))\n\n# Choose a random element from a list\nmy_list = [1, 2, 3, 4, 5]\nprint(random.choice(my_list))\n```\n\nIf you only need to use one or two functions from the `random` module, you can import them specifically without importing the entire module:\n\n```python\nfrom random import randint, choice\n\n# Generate a random integer between 1 and 10\nprint(randint(1, 10))\n\n# Choose a random element from a list\nmy_list = [1, 2, 3, 4, 5]\nprint(choice(my_list))\n```\n\nThis approach reduces the namespace pollution and makes your code cleaner if you are using only a few functions from the module.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-43",
+      "source": "codealpaca-15506",
+      "user": "Transform the following array into a string of comma-separated values in Python.\n\n[1, 2, 3, 4]",
+      "category": "code",
+      "response": "You can transform the given array into a string of comma-separated values using the `join()` method in Python. Here's how you can do it:\n\n```python\narray = [1, 2, 3, 4]\nstring_of_values = ','.join(map(str, array))\nprint(string_of_values)\n```\n\nThis will output:\n\n```\n1,2,3,4\n```",
+      "finished": true
+    },
+    {
+      "id": "eval-code-58",
+      "source": "codealpaca-5751",
+      "user": "Implement a function that determines whether an integer is odd or even.",
+      "category": "code",
+      "response": "Certainly! Below is a simple Python function that determines whether an integer is odd or even:\n\n```python\ndef is_odd_or_even(number):\n    if number % 2 == 0:\n        return \"even\"\n    else:\n        return \"odd\"\n\n# Example usage:\nprint(is_odd_or_even(4))  # Output: even\nprint(is_odd_or_even(7))  # Output: odd\n```\n\nThis function works by checking the remainder when the number is divided by 2. If the remainder is 0, the number is even; otherwise, it's odd.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-5",
+      "source": "codealpaca-2041",
+      "user": "Subtract two numbers and return the result.\n\n97, 42",
+      "category": "code",
+      "response": "The result of subtracting 42 from 97 is:\n\n\\[ 97 - 42 = 55 \\]",
+      "finished": true
+    },
+    {
+      "id": "eval-code-18",
+      "source": "codealpaca-10129",
+      "user": "How to open a new terminal window in Linux?",
+      "category": "code",
+      "response": "Opening a new terminal window in Linux can be done in several ways depending on your desktop environment and preferences. Here are some common methods:\n\n### Using Keyboard Shortcuts:\n1. **Ctrl + Alt + T**: This is the most common shortcut for opening a terminal window in many Linux distributions.\n\n### Using Desktop Environment Shortcuts:\n2. **Application Menu**: You can usually find a terminal application listed under \"Accessories\" or \"System Tools\" in the application menu. Clicking it will open a new terminal window.\n\n3. **Search Function**: In many modern desktop environments, you can use the search function (often accessed by pressing `Super` or `Windows` key) to type \"terminal\" or \"xterm\" and select the terminal application from the search results.\n\n### Using Command Line:\n4. **Terminal Emulator Command**: If you are already in a terminal, you can open another one by running the command for your terminal emulator. For example:\n   - `gnome-terminal` for GNOME\n   - `xfce4-terminal` for XFCE\n   - `konsole` for KDE\n\n### Using System Tray or Dock:\n5. **System Tray/Dock Icons**: Many desktop environments have icons in the system tray or dock that allow you to open a new terminal window with a single click.\n\n### Example Commands:\n- **GNOME Terminal**:\n  ```sh\n  gnome-terminal &\n  ```\n- **Konsole**:\n  ```sh\n  konsole &\n  ```\n- **Xfce Terminal**:\n  ```sh\n  xfce4-terminal &\n  ```\n\nReplace `&` at the end of the command if you want the terminal to run in the background.\n\nThese methods should help you open a new terminal window in Linux efficiently!",
+      "finished": true
+    },
+    {
+      "id": "eval-code-87",
+      "source": "codealpaca-19946",
+      "user": "Write a function that takes a list of strings and counts the number of each string that contains the letter \"a\".\n\n['foo', 'bar', 'baz']",
+      "category": "code",
+      "response": "Certainly! Below is a Python function that takes a list of strings and returns a dictionary counting how many strings contain the letter \"a\":\n\n```python\ndef count_strings_with_a(strings):\n    # Initialize an empty dictionary to store the counts\n    count_dict = {}\n    \n    # Iterate over each string in the input list\n    for s in strings:\n        # Check if the string contains the letter 'a'\n        if 'a' in s.lower():\n            # If it does, increment the count for this string in the dictionary\n            if s in count_dict:\n                count_dict[s] += 1\n            else:\n                count_dict[s] = 1\n    \n    return count_dict\n\n# Example usage:\nstrings = ['foo', 'bar', 'baz', 'apple', 'banana', 'carrot']\nresult = count_strings_with_a(strings)\nprint(result)  # Output: {'foo': 0, 'bar': 0, 'baz': 0, 'apple': 1, 'banana': 1, 'carrot': 1}\n```\n\n### Explanation:\n- The function `count_strings_with_a` initializes an empty dictionary `count_dict` to keep track of the counts.\n- It then iterates through each string in the input list.\n- For each string, it checks if the letter 'a' (case-insensitive) is present using `s.lower()`.\n- If the string contains 'a', it updates the count in the dictionary. If the string is not already a key in the dictionary, it adds it with a count of 1; otherwise, it increments the existing count.\n\nThis function will correctly count how many times each string in the list contains the letter 'a'.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-78",
+      "source": "codealpaca-17715",
+      "user": "Given a tree, traverse it in the pre-order manner.",
+      "category": "code",
+      "response": "Sure! Pre-order traversal of a tree involves visiting the root node first, then traversing the left subtree, and finally the right subtree. Here's a simple Python function to perform pre-order traversal on a binary tree:\n\n```python\nclass TreeNode:\n    def __init__(self, value=0, left=None, right=None):\n        self.value = value\n        self.left = left\n        self.right = right\n\ndef pre_order_traversal(root):\n    if root is None:\n        return\n    \n    # Visit the root node\n    print(root.value, end=' ')\n    \n    # Traverse the left subtree\n    pre_order_traversal(root.left)\n    \n    # Traverse the right subtree\n    pre_order_traversal(root.right)\n\n# Example usage:\n# Constructing a simple binary tree:\n#       1\n#      / \\\n#     2   3\n#    / \\\n#   4   5\n\nroot = TreeNode(1)\nroot.left = TreeNode(2)\nroot.right = TreeNode(3)\nroot.left.left = TreeNode(4)\nroot.left.right = TreeNode(5)\n\npre_order_traversal(root)  # Output: 1 2 4 5 3\n```\n\nIn this example:\n- The `TreeNode` class defines the structure of each node in the tree.\n- The `pre_order_traversal` function performs the pre-order traversal recursively.\n- We construct a simple binary tree and call the traversal function on its root.\n\nWhen you run the code, it will output the values in pre-order: `1 2 4 5 3`.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-67",
+      "source": "codealpaca-175",
+      "user": "Implement an algorithm to find the sum of all the elements in an array.\n\nThe array is: [3, 5, 8, 10, 4]",
+      "category": "code",
+      "response": "Certainly! Below is a simple algorithm to find the sum of all the elements in an array. I'll provide both a Python implementation and a step-by-step explanation.\n\n### Algorithm:\n1. Initialize a variable `sum` to 0.\n2. Iterate through each element in the array.\n3. Add the current element to the `sum`.\n4. After iterating through all elements, return the `sum`.\n\n### Python Implementation:\n\n```python\ndef sum_of_array(arr):\n    # Step 1: Initialize sum to 0\n    total_sum = 0\n    \n    # Step 2: Iterate through each element in the array\n    for element in arr:\n        # Step 3: Add the current element to the total sum\n        total_sum += element\n    \n    # Step 4: Return the total sum\n    return total_sum\n\n# Example array\narray = [3, 5, 8, 10, 4]\n\n# Call the function and print the result\nresult = sum_of_array(array)\nprint(\"The sum of the array elements is:\", result)\n```\n\n### Explanation:\n- **Step 1:** We initialize `total_sum` to 0.\n- **Step 2:** We use a `for` loop to iterate over each element in the array.\n- **Step 3:** Inside the loop, we add the current element to `total_sum`.\n- **Step 4:** After the loop completes, we return the value of `total_sum`.\n\n### Output:\nWhen you run the above code with the given array `[3, 5, 8, 10, 4]`, the output will be:\n\n```\nThe sum of the array elements is: 30\n```\n\nThis is because \\(3 + 5 + 8 + 10 + 4 = 30\\).",
+      "finished": true
+    },
+    {
+      "id": "eval-code-20",
+      "source": "codealpaca-9053",
+      "user": "Construct a code to add a new item to the end of the list.\n\nlist_of_items = [\"apple\", \"orange\", \"cherry\"]",
+      "category": "code",
+      "response": "Certainly! Below is a simple Python code snippet that adds a new item to the end of the given list:\n\n```python\n# Initial list of items\nlist_of_items = [\"apple\", \"orange\", \"cherry\"]\n\n# New item to be added\nnew_item = \"banana\"\n\n# Adding the new item to the end of the list\nlist_of_items.append(new_item)\n\n# Printing the updated list\nprint(list_of_items)\n```\n\nWhen you run this code, it will output:\n\n```\n['apple', 'orange', 'cherry', 'banana']\n```\n\nThe `append()` method is used to add an element to the end of a list in Python.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-24",
+      "source": "codealpaca-10190",
+      "user": "Write a TensorFlow program to compute the sum of two tensors.\n\nx = [[1,2],[3,4]] \ny = [[5,6],[7,8]]",
+      "category": "code",
+      "response": "Certainly! Below is a simple TensorFlow program that computes the sum of two tensors `x` and `y`.\n\n```python\nimport tensorflow as tf\n\n# Define the tensors\nx = tf.constant([[1, 2], [3, 4]], dtype=tf.int32)\ny = tf.constant([[5, 6], [7, 8]], dtype=tf.int32)\n\n# Compute the sum of the tensors\nsum_result = tf.add(x, y)\n\n# Print the result\nprint(sum_result)\n```\n\nThis program uses TensorFlow's `tf.constant` to create the tensors and `tf.add` to compute their sum. The result will be printed out.\n\nIf you run this code, the output will be:\n\n```\ntf.Tensor(\n[[6 8]\n [10 12]], shape=(2, 2), dtype=int32)\n```\n\nThis indicates that the sum of the two tensors has been computed correctly.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-79",
+      "source": "alpaca-30852",
+      "user": "What is the best way to clean a coffee maker?",
+      "category": "cooking",
+      "response": "Cleaning your coffee maker regularly can help maintain its performance and ensure your coffee tastes great. Here’s a step-by-step guide on how to clean a coffee maker:\n\n### 1. **Remove the Carafe and Filter Basket**\n   - Take out the carafe and any removable parts, such as the filter basket.\n\n### 2. **Run an Empty Cycle with Vinegar**\n   - Fill the water reservoir with equal parts white vinegar and water (about 50/50).\n   - Run the coffee maker through a brewing cycle as if you were making coffee, but do not add any coffee grounds.\n   - Let the solution sit in the pot for about 30 minutes before running another cycle to flush out the vinegar.\n\n### 3. **Rinse Thoroughly**\n   - After the second cycle, run several cycles using just water to rinse out any remaining vinegar or mineral deposits.\n\n### 4. **Clean the Carafe and Filters**\n   - Wash the carafe and any filters in warm, soapy water.\n   - Rinse them thoroughly and dry them completely.\n\n### 5. **Check the Heating Element and Piping**\n   - If your coffee maker has a removable heating element, take it out and clean it with a soft cloth dipped in white vinegar.\n   - For models where the heating element is not removable, use a soft brush to clean around it.\n\n### 6. **Dry All Parts**\n   - Ensure all parts are completely dry before reassembling the coffee maker.\n\n### 7. **Regular Maintenance**\n   - Clean your coffee maker every few months or after heavy use to keep it in good condition.\n\n### Additional Tips:\n- **Descale Regularly:** Hard water can leave mineral deposits that affect taste and performance. Descaling once or twice a year is recommended.\n- **Use Filtered Water:** This can help reduce mineral buildup and improve the flavor of your coffee.\n- **Check the Brew Strength:** If your coffee tastes weak, it might be due to mineral buildup clogging the brewer. Cleaning can help resolve this issue.\n\nBy following these steps, you can keep your coffee maker clean and functioning at its best!",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-18",
+      "source": "ultrachat-3342d62ede414f6c54d6e23749e19c6c498e1da00b6ff2f46f481a523520137d",
+      "user": "5. In a separate bowl, whip the cream and vanilla extract until soft peaks form.",
+      "category": "cooking",
+      "response": "Sure! Here's how you can proceed with whipping the cream and vanilla extract:\n\n5. In a separate clean and dry bowl, add the heavy cream and a few drops of vanilla extract. Using an electric mixer, whip the cream on medium speed until soft peaks form. This means the cream will hold its shape when the beater is lifted but will still be slightly floppy.\n\nTo ensure the best results:\n- Make sure the bowl and whisk or beaters are completely free of any grease or water.\n- Start with the mixer on low speed to avoid splashing.\n- Gradually increase the speed as the cream starts to thicken.\n- Continue whipping until the cream forms soft peaks, which should take about 2-3 minutes.\n\nOnce you've achieved the desired consistency, gently fold the whipped cream into your prepared dessert or use it as a topping. Enjoy!",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-97",
+      "source": "alpaca-11754",
+      "user": "Given some ingredients, write a recipe for a healthy snack.\n\nOats, banana, peanut butter",
+      "category": "cooking",
+      "response": "Sure! Here's a simple and healthy snack recipe using oats, banana, and peanut butter:\n\n### Banana Oat Peanut Butter Bars\n\n#### Ingredients:\n- 2 ripe bananas\n- 1/2 cup rolled oats\n- 3 tablespoons peanut butter (or almond butter for a nut-free option)\n- 1 tablespoon honey or maple syrup (optional, for sweetness)\n- A pinch of salt\n\n#### Instructions:\n\n1. **Prepare the Bananas:**\n   - Peel the bananas and mash them in a bowl until they are smooth. You should have about 1 cup of mashed banana.\n\n2. **Mix the Ingredients:**\n   - Add the rolled oats to the mashed bananas. Mix well to combine.\n   - Stir in the peanut butter until the mixture is well combined and sticky.\n   - If you prefer a sweeter snack, add the honey or maple syrup and mix again.\n   - Sprinkle a pinch of salt over the mixture and stir to distribute evenly.\n\n3. **Form the Bars:**\n   - Preheat your oven to 350°F (175°C). Line an 8x8 inch baking dish with parchment paper, leaving some overhang on the sides for easy removal.\n   - Transfer the banana-oat mixture into the prepared baking dish. Use a spatula to spread it out evenly, making sure it’s compacted.\n   - Bake in the preheated oven for about 20-25 minutes, or until the edges start to turn golden brown.\n\n4. **Cool and Cut:**\n   - Remove from the oven and let it cool completely on a wire rack. Once cooled, use the parchment paper to lift the bars out of the pan.\n   - Cut into bars or squares of your desired size.\n\n5. **Serve:**\n   - Store any leftovers in an airtight container in the refrigerator for up to 5 days.\n\nThese bars are not only delicious but also packed with nutrients, making them a perfect healthy snack option! Enjoy!",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-64",
+      "source": "ultrachat-30acc8520bb2603c01d98f1154459fc4d0d2eddd61858343204f12e243b5a392",
+      "user": "2. Examples of how traditional food practices and ingredients have been modified or replaced to cater to global tastes",
+      "category": "cooking",
+      "response": "Certainly! Traditional food practices and ingredients have been modified or replaced in various ways to cater to global tastes. Here are some examples:\n\n1. **Rice Varieties**:\n   - **Traditional**: In many Asian countries, short-grain rice is commonly used for dishes like sushi and fried rice.\n   - **Global Tastes**: To cater to a broader audience, long-grain rice is often preferred because it has a firmer texture and is less sticky, making it more versatile for dishes like pilafs, salads, and stir-fries.\n\n2. **Spices**:\n   - **Traditional**: Indian cuisine uses a wide array of spices such as turmeric, cumin, coriander, and cardamom.\n   - **Global Tastes**: To make these dishes more accessible, milder versions of these spices are sometimes used, or they are combined with other popular global spices like paprika, chili powder, and garlic.\n\n3. **Dairy Substitutes**:\n   - **Traditional**: Many traditional dishes rely on dairy products like cheese, yogurt, and cream.\n   - **Global Tastes**: To cater to lactose intolerant or vegan consumers, plant-based alternatives like almond milk, soy yogurt, and coconut cream are increasingly being used.\n\n4. **Meat Alternatives**:\n   - **Traditional**: Dishes like beef stroganoff, chicken tikka masala, and pork adobo are common.\n   - **Global Tastes**: To cater to vegetarians and vegans, meat substitutes made from tofu, tempeh, seitan, and plant-based proteins are becoming more prevalent.\n\n5. **Bread Varieties**:\n   - **Traditional**: In many cultures, flatbreads like naan, pita, and tortillas are staples.\n   - **Global Tastes**: To cater to a wider audience, softer breads like ciabatta and baguettes are often served alongside traditional flatbreads.\n\n6. **Sauces and Condiments**:\n   - **Traditional**: Soy sauce, fish sauce, and chili paste are common in Asian cuisines.\n   - **Global Tastes**: To make these dishes more palatable to those who may not be familiar with strong flavors, milder versions of these sauces are used, or they are combined with more familiar condiments like ketchup or mayonnaise.\n\n7. **Fruit and Vegetable Varieties**:\n   - **Traditional**: In Mediterranean cuisine, olives, tomatoes, and eggplants are staples.",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-6",
+      "source": "dolly-523",
+      "user": "What are some foods to cook to celebrate St. Patrick's Day?",
+      "category": "cooking",
+      "response": "St. Patrick's Day is a great opportunity to enjoy some delicious and festive foods! Here are some traditional and popular dishes you can cook to celebrate:\n\n1. **Corned Beef and Cabbage**: A classic Irish dish, corned beef is typically served with boiled cabbage, carrots, and potatoes.\n\n2. **Irish Stew**: Made with lamb or mutton, onions, potatoes, and carrots, this hearty stew is perfect for a cold day.\n\n3. **Colcannon**: This is a traditional Irish dish made from mashed potatoes and kale or cabbage, often seasoned with butter, milk, and sometimes onion.\n\n4. **Shepherd’s Pie**: Similar to cottage pie but made with lamb instead of beef, topped with mashed potatoes.\n\n5. **Cabbage and Bacon Soup**: A simple yet comforting soup made with bacon, cabbage, and potatoes.\n\n6. **Guinness Beef Stew**: For a twist on the traditional beef stew, use Guinness beer to add depth and flavor.\n\n7. **Baked Potatoes with Sour Cream and Chives**: Serve these alongside other dishes as a side or even as a main course.\n\n8. **Irish Soda Bread**: A quick bread that is traditionally served with butter and jam.\n\n9. **Reuben Sandwiches**: While not strictly Irish, these sandwiches are a fun addition to your St. Patrick's Day menu. They consist of corned beef, sauerkraut, Swiss cheese, and Russian dressing on rye bread.\n\n10. **Green Drinks**: Make green smoothies or cocktails to keep the spirit of St. Patrick's Day alive!\n\nEnjoy cooking and celebrating!",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-46",
+      "source": "ultrachat-0db962f80ac43e576653f232c29f238445d2009344590a4395f78b03e9773d39",
+      "user": "Please provide step-by-step instructions for making a savory and spicy beef chili that includes a list of required ingredients and specific measurements. Also, please include any tips for achieving maximum flavor and heat. Additionally, if you have any suggested serving suggestions or possible variations on the recipe, please include those as well.",
+      "category": "cooking",
+      "response": "Sure! Here's a recipe for a savory and spicy beef chili that serves 6-8 people.\n\n### Ingredients:\n- **1 lb ground beef**\n- **1 large onion, chopped (about 2 cups)**\n- **3 cloves garlic, minced**\n- **1 red bell pepper, chopped (about 1 cup)**\n- **1 green bell pepper, chopped (about 1 cup)**\n- **1 can (15 oz) kidney beans, drained and rinsed (about 2 cups)**\n- **1 can (15 oz) black beans, drained and rinsed (about 2 cups)**\n- **1 can (15 oz) diced tomatoes (undrained)**\n- **1 can (6 oz) tomato paste**\n- **2 tbsp chili powder**\n- **1 tsp cumin**\n- **1 tsp smoked paprika**\n- **1/2 tsp cayenne pepper** (adjust to taste)\n- **1/2 tsp salt**\n- **1/4 tsp black pepper**\n- **1/4 tsp sugar** (optional, to balance acidity)\n- **1 cup beef broth**\n- **1 tbsp olive oil**\n- **1 tbsp vegetable oil**\n- **1 tbsp cornstarch**\n- **1 tbsp water**\n\n### Instructions:\n\n#### Step 1: Prepare Vegetables\n- Chop the onions, garlic, and both bell peppers into small pieces. Set aside.\n\n#### Step 2: Sauté Onions and Garlic\n- Heat 1 tablespoon of olive oil in a large pot over medium heat.\n- Add the chopped onions and sauté until they become translucent, about 5 minutes.\n- Add the minced garlic and cook for another minute until fragrant.\n\n#### Step 3: Brown the Beef\n- Increase the heat to medium-high and add the ground beef to the pot.\n- Break up the meat with a spoon and cook until browned, about 7-10 minutes.\n- Drain any excess fat from the pot.\n\n#### Step 4: Add Bell Peppers and Spices\n- Add the chopped bell peppers to the pot and cook for another 5 minutes until they start to soften.\n- Stir in the chili powder, cumin, smoked paprika, cayenne pepper, salt, and black pepper. Cook for 1 minute to toast the spices.\n\n#### Step 5: Combine Remaining Ingredients\n- Add the drained and rinsed kidney beans, black beans, diced tomatoes (with juice), and tomato paste to the",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-91",
+      "source": "ultrachat-826f094228a6dfb5f7bb0963198da0fb137ddd4190adc628db3b5facd2aa8914",
+      "user": "4. Remove chicken breasts from skillet and let cool for 5 minutes before dicing into small pieces.",
+      "category": "cooking",
+      "response": "Sure, here's the step you requested:\n\n4. Remove the chicken breasts from the skillet and let them cool for 5 minutes before dicing them into small pieces.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-11",
+      "source": "dolly-11975",
+      "user": "What are some common root vegetables for cooking?",
+      "category": "cooking",
+      "response": "Root vegetables are a staple in many cuisines around the world. Here are some common ones used in cooking:\n\n1. **Carrots** - Sweet and crunchy, often used raw or cooked.\n2. **Beets** - Rich in color and flavor, can be roasted, boiled, or pickled.\n3. **Parsnips** - Similar to carrots but with a sweeter, nuttier taste; great for roasting or soups.\n4. **Potatoes** - Versatile and widely used in many dishes, from mashed to fried.\n5. **Sweet Potatoes** - Sweeter than regular potatoes, often baked, roasted, or used in desserts.\n6. **Turnips** - Often used in stews, soups, or roasted.\n7. **Radishes** - Crisp and peppery, often eaten raw in salads.\n8. **Rutabagas** - Similar to turnips but larger and sweeter; good for roasting or mashing.\n9. **Celery Root (Celery Rutabaga)** - Has a celery-like flavor; often roasted or mashed.\n10. **Daikon Radish** - Large and mild, commonly used in Asian cuisine for stir-fries or pickling.\n\nThese root vegetables are not only nutritious but also add depth and texture to various dishes.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-17",
+      "source": "ultrachat-8f046ecdeff8f2a11276b81177c7a9bfe2ba51b6c0d8bea164a22d582c0ddaee",
+      "user": "What are some good sources of omega-3 fatty acids for people who don't eat fish?",
+      "category": "cooking",
+      "response": "For individuals who don't consume fish, there are several plant-based sources of omega-3 fatty acids that can be incorporated into the diet. Here are some good options:\n\n1. **Flaxseeds and Flaxseed Oil**: These are rich in alpha-linolenic acid (ALA), a type of omega-3 fatty acid. You can add ground flaxseeds to smoothies, oatmeal, or baked goods.\n\n2. **Chia Seeds**: Similar to flaxseeds, chia seeds are also high in ALA. They can be sprinkled on yogurt, cereal, or mixed into drinks.\n\n3. **Hemp Seeds**: Hemp seeds contain both ALA and gamma-linolenic acid (GLA). They can be eaten raw, added to salads, or used as a topping for desserts.\n\n4. **Walnuts**: Walnuts are a good source of ALA and can be eaten as a snack or added to salads and baked goods.\n\n5. **Brussels Sprouts**: While not as high in omega-3s as the other options, Brussels sprouts do contain some ALA.\n\n6. **Edamame**: Soybeans, including edamame, are another source of ALA.\n\n7. **Algal Oil Supplements**: For those who prefer supplements, algal oil is a vegan alternative to fish oil and provides EPA and DHA, which are typically found in fish.\n\n8. **Fortified Foods**: Some foods like certain brands of eggs, milk, and juices are fortified with omega-3s, often from algae.\n\nIncorporating these foods into your diet can help ensure you get adequate omega-3 fatty acids without consuming fish.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-86",
+      "source": "alpaca-29036",
+      "user": "Generate a menu for a traditional Thanksgiving dinner.",
+      "category": "cooking",
+      "response": "Certainly! Here's a traditional Thanksgiving dinner menu:\n\n**Appetizers:**\n- Assorted Cheese Board with crackers, grapes, and nuts\n- Deviled Eggs\n- Mini Turkey Meatballs\n\n**Salad:**\n- Classic Green Bean Casserole with a side of French Fries\n- Cranberry Walnut Salad with Pecans and Walnuts\n\n**Main Course:**\n- Roast Turkey with Herbs and Butter\n- Gravy made from turkey drippings\n- Mashed Potatoes\n- Stuffing (Dressing) with onions, celery, and herbs\n\n**Side Dishes:**\n- Baked Sweet Potatoes with Brown Sugar and Cinnamon\n- Cornbread\n- Green Bean Almondine\n- Roasted Brussel Sprouts with Bacon\n\n**Desserts:**\n- Pumpkin Pie with whipped cream\n- Apple Pie with vanilla ice cream\n- Pecan Pie\n- Chocolate Truffle Tart\n\n**Beverages:**\n- Freshly brewed hot apple cider\n- Homemade cranberry juice cocktail\n- Sparkling water with lemon slices\n- Assorted wines and beers\n\nEnjoy your Thanksgiving feast!",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-26",
+      "source": "ultrachat-8cae257370f70efad3d549139e810fb18fa4fb489cfd9b89dd6666068f0a2ab1",
+      "user": "\"Create a rich and savory beef stroganoff by searing thinly sliced beef, sautéing mushrooms and onions, simmering in a creamy broth, and serving over a bed of egg noodles. Season with herbs and spices to taste and garnish with fresh parsley for a showstopping meal that will leave everyone licking their plates clean.\"",
+      "category": "cooking",
+      "response": "Certainly! Here's a detailed recipe for a rich and savory beef stroganoff:\n\n### Ingredients:\n- 1 lb (450g) beef sirloin, thinly sliced against the grain\n- Salt and freshly ground black pepper, to taste\n- 2 tbsp olive oil or butter\n- 1 large onion, finely chopped\n- 2 cloves garlic, minced\n- 8 oz (225g) button mushrooms, sliced\n- 2 tbsp all-purpose flour\n- 1 cup beef broth\n- 1/2 cup heavy cream\n- 1 tsp Dijon mustard\n- 1 tsp Worcestershire sauce\n- 1 tsp paprika\n- 1/2 tsp dried thyme\n- 1/2 tsp dried rosemary\n- 1/4 tsp cayenne pepper (optional, for a bit of heat)\n- 8 oz (225g) egg noodles\n- Fresh parsley, chopped (for garnish)\n\n### Instructions:\n\n1. **Prepare the Beef:**\n   - Season the beef slices generously with salt and pepper on both sides.\n\n2. **Sear the Beef:**\n   - Heat 1 tablespoon of olive oil or butter in a large skillet over medium-high heat.\n   - Add the beef slices in a single layer and sear until browned on both sides, about 2-3 minutes per side. Remove the beef from the skillet and set aside.\n\n3. **Sauté Vegetables:**\n   - In the same skillet, add the remaining tablespoon of oil or butter if needed.\n   - Add the chopped onion and sauté until translucent, about 3-4 minutes.\n   - Add the minced garlic and cook for another minute until fragrant.\n   - Add the sliced mushrooms and cook until they release their moisture and start to brown, about 5-7 minutes.\n\n4. **Make the Sauce:**\n   - Sprinkle the flour over the vegetables and stir to coat evenly.\n   - Gradually pour in the beef broth, stirring constantly to prevent lumps.\n   - Bring the mixture to a simmer and let it cook for about 5 minutes until slightly thickened.\n\n5. **Combine and Simmer:**\n   - Return the beef to the skillet and stir to combine with the sauce.\n   - Stir in the heavy cream, Dijon mustard, Worcestershire sauce, paprika, thyme, rosemary, and cayenne pepper (if using).\n   - Sim",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-36",
+      "source": "ultrachat-bb63d4c0f44d811897d43a2040deb84b092ab504f5ab920d88c8eb75b87e6731",
+      "user": "Provide step-by-step instructions with measurements and ingredients on how to make a classic and delicious French toast. Additionally, include options for toppings and variations to make the recipe more unique. It would be helpful to include tips on how to achieve the perfect texture and consistency of the French toast. The instructions should be clear and concise, suitable for novice cooks.",
+      "category": "cooking",
+      "response": "### Classic French Toast Recipe\n\n#### Ingredients:\n- 4 slices of thick-cut bread (preferably brioche or challah)\n- 2 large eggs\n- 1/2 cup whole milk\n- 1/4 cup heavy cream\n- 1 teaspoon vanilla extract\n- 1/2 teaspoon ground cinnamon\n- 1/4 teaspoon ground nutmeg\n- 1 tablespoon unsalted butter, melted\n- 1 tablespoon granulated sugar (optional)\n\n#### Toppings and Variations:\n- Fresh berries (strawberries, blueberries, raspberries)\n- Whipped cream\n- Powdered sugar\n- Maple syrup\n- Chocolate chips\n- Nutella\n- Caramel sauce\n- Sliced bananas\n\n#### Instructions:\n\n1. **Prepare the Milk Mixture:**\n   - In a large mixing bowl, whisk together the eggs, milk, heavy cream, vanilla extract, cinnamon, and nutmeg until well combined.\n\n2. **Soak the Bread:**\n   - Dip each slice of bread into the egg mixture, making sure both sides are evenly coated. Let it sit in the mixture for about 30 seconds to 1 minute, or until the bread absorbs some of the liquid without becoming soggy.\n\n3. **Cook the French Toast:**\n   - Heat a non-stick skillet or griddle over medium heat. Add the melted butter and swirl to coat the surface.\n   - Place the soaked bread slices into the skillet. Cook for about 2-3 minutes on each side, or until golden brown and crispy. If you prefer a sweeter toast, sprinkle a little sugar on top before cooking.\n\n4. **Serve:**\n   - Remove the French toast from the skillet and place it on a plate. Repeat with the remaining slices of bread.\n   - Serve immediately with your choice of toppings. Some popular combinations include fresh berries, whipped cream, powdered sugar, maple syrup, chocolate chips, Nutella, caramel sauce, or sliced bananas.\n\n#### Tips for Perfect French Toast:\n- **Use Thick-Cut Bread:** This helps maintain a nice texture and prevents the bread from becoming too soggy.\n- **Adjust Liquid Amounts:** If you like your French toast extra moist, add a bit more milk or cream. For a drier toast, use less liquid.\n- **Don’t Overcook:** French toast should be cooked until it’s golden brown but still slightly soft inside. Overcooking can make it tough and dry.\n- **Prep Ahead:** You can prepare",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-65",
+      "source": "dolly-9425",
+      "user": "What are the best 10 high protein options to eat?",
+      "category": "cooking",
+      "response": "Here are 10 high-protein food options that can help you meet your dietary needs:\n\n1. **Lean Meats**: Chicken breast, turkey breast, and lean cuts of beef (like sirloin or tenderloin) are excellent sources of protein.\n\n2. **Fish**: Salmon, tuna, cod, and tilapia are not only high in protein but also rich in omega-3 fatty acids.\n\n3. **Eggs**: Whole eggs are a complete protein source, containing all nine essential amino acids.\n\n4. **Greek Yogurt**: High in protein and low in sugar compared to regular yogurt. It's also a good source of probiotics.\n\n5. **Legumes**: Lentils, chickpeas, black beans, and kidney beans are plant-based sources of protein that are also rich in fiber and other nutrients.\n\n6. **Nuts and Seeds**: Almonds, walnuts, chia seeds, and hemp seeds are great for snacking and adding to meals. They provide protein along with healthy fats and other nutrients.\n\n7. **Protein Powders**: Whey, casein, soy, and plant-based powders like pea, brown rice, and hemp can be added to smoothies, oatmeal, or used in baking.\n\n8. **Tofu and Tempeh**: These are excellent plant-based protein sources that can be used in various dishes, from stir-fries to salads.\n\n9. **Seitan**: Made from wheat gluten, seitan is a high-protein meat substitute that can be grilled, baked, or sautéed.\n\n10. **Quinoa**: While it’s often considered a grain, quinoa is actually a seed and a complete protein, meaning it contains all nine essential amino acids.\n\nIncorporating these foods into your diet can help you meet your protein requirements while providing a variety of nutrients.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-37",
+      "source": "ultrachat-32730924ff806d0c86c3fee232a0068dfe68cfb76f6a01b0fa4c014b96f475d2",
+      "user": "Write detailed instructions, including measurements and cooking times, for making a flavorful garlic roasted split pea soup that is both healthy and filling. Ideally, the recipe should also include instructions for how to properly roast the garlic and any preferred seasoning blends for added flavor. Additionally, please include any tips or tricks for making the soup creamier or thicker as desired.",
+      "category": "cooking",
+      "response": "### Garlic Roasted Split Pea Soup\n\n#### Ingredients:\n- 1 cup dried green split peas (rinsed and picked over)\n- 2 tablespoons olive oil\n- 3 cloves garlic, halved crosswise\n- 1 large onion, chopped (about 2 cups)\n- 2 carrots, peeled and diced (about 1 cup)\n- 2 celery stalks, diced (about 1 cup)\n- 4 cups low-sodium chicken or vegetable broth\n- 1 teaspoon dried thyme\n- 1 bay leaf\n- Salt and pepper, to taste\n- 1/2 cup fresh parsley, chopped (for garnish)\n- Optional: 1/2 cup heavy cream or coconut milk for creaminess\n\n#### Equipment:\n- Large pot\n- Roasting pan\n- Aluminum foil\n- Wooden spoon\n- Blender (optional)\n\n#### Instructions:\n\n##### Step 1: Roast the Garlic\n1. Preheat your oven to 400°F (200°C).\n2. Place the whole garlic heads in a roasting pan. Drizzle with 1 tablespoon of olive oil and sprinkle with a pinch of salt.\n3. Cover the pan loosely with aluminum foil.\n4. Roast in the preheated oven for about 35-40 minutes, or until the garlic is soft and golden brown.\n5. Remove from the oven and let it cool slightly.\n\n##### Step 2: Prepare the Vegetables\n1. While the garlic is roasting, chop the onion, carrots, and celery into small pieces.\n2. Rinse the split peas under cold water to remove any debris.\n\n##### Step 3: Cook the Soup\n1. In a large pot, heat the remaining 1 tablespoon of olive oil over medium heat.\n2. Add the chopped onions, carrots, and celery. Sauté for about 5-7 minutes, or until the vegetables start to soften.\n3. Add the rinsed split peas, thyme, and bay leaf to the pot. Stir well to combine.\n4. Pour in the chicken or vegetable broth, bring to a boil, then reduce the heat to low and let it simmer for about 20-25 minutes, or until the split peas are tender.\n\n##### Step 4: Blend and Season\n1. Once the split peas are tender, use an immersion blender to puree the soup until smooth, or transfer a portion to a regular blender and blend until creamy.\n2. Return the blended soup",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-12",
+      "source": "ultrachat-e0a64127d5c3de346d47220f8adf579a2b9fe088b77e5b6b7f6eb0124e1bb8e4",
+      "user": "Provide step-by-step instructions for how to properly cook sushi rice and combine with seasoned tuna to create a spicy tuna filling. Then explain how to assemble the roll, including the proper technique for spreading the rice and rolling the sushi. Finally, suggest some complementary flavor additions, such as avocado or cucumber, and give tips for creating an attractive presentation.",
+      "category": "cooking",
+      "response": "### Step-by-Step Instructions for Cooking Sushi Rice\n\n#### Ingredients:\n- 2 cups sushi rice\n- 2 cups water\n- 1/4 cup rice vinegar\n- 2 tablespoons sugar\n- 1 teaspoon salt\n\n#### Instructions:\n\n1. **Rinse the Rice:**\n   - Rinse the sushi rice in cold water until the water runs clear. This removes excess starch that can make the rice too sticky.\n\n2. **Cook the Rice:**\n   - Place the rinsed rice and 2 cups of water in a medium saucepan.\n   - Bring to a boil over high heat, then reduce the heat to low, cover, and simmer for about 15 minutes or until the water is absorbed and the rice is tender.\n\n3. **Prepare the Seasoning:**\n   - In a small saucepan, combine rice vinegar, sugar, and salt.\n   - Heat over low heat, stirring until the sugar and salt are completely dissolved. Remove from heat and let it cool.\n\n4. **Season the Rice:**\n   - Once the rice has cooled slightly (it should still be warm), gently fold in the vinegar mixture using a wooden spoon or spatula. Be careful not to break the grains.\n\n5. **Let the Rice Rest:**\n   - Cover the bowl with plastic wrap and let the rice rest for at least 30 minutes before using.\n\n### Spicy Tuna Filling\n\n#### Ingredients:\n- 1 lb fresh tuna, finely chopped\n- 1 tablespoon wasabi paste\n- 1 tablespoon soy sauce\n- 1 tablespoon sriracha or other hot sauce\n- 1 tablespoon sesame oil\n- 1/4 cup mayonnaise\n\n#### Instructions:\n\n1. **Mix the Ingredients:**\n   - In a large bowl, combine the chopped tuna, wasabi paste, soy sauce, sriracha, sesame oil, and mayonnaise.\n   - Mix well until all ingredients are evenly distributed.\n\n2. **Chill the Filling:**\n   - Cover the bowl and refrigerate the mixture for at least 30 minutes to allow the flavors to meld together.\n\n### Assembling the Sushi Roll\n\n#### Ingredients:\n- Nori sheets\n- Sushi rice\n- Spicy tuna filling\n- Avocado, sliced\n- Cucumber, sliced\n- Bamboo sushi mat\n- Plastic wrap (optional)\n\n#### Instructions:\n\n1. **Prepare the Workspace:**\n   - Lay out a clean, flat surface and place the bamboo sushi",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-39",
+      "source": "ultrachat-66ba33042ce011c58faef1383f3146f94316cf5b85a8bedf290caf4e8ba12114",
+      "user": "Provide a step-by-step guide to make smooth and creamy peanut butter using a food processor, including a list of required ingredients and their exact measurements. Also, include any tips and tricks for achieving the perfect consistency and flavor.",
+      "category": "cooking",
+      "response": "### Ingredients:\n- 2 cups (300g) raw or roasted peanuts\n- 1 tablespoon (15ml) neutral-flavored oil (such as canola or vegetable oil)\n- 1 teaspoon (5ml) salt (optional, adjust to taste)\n- 1-2 tablespoons (15-30ml) honey or maple syrup (optional, for sweetness)\n\n### Equipment:\n- Food processor\n- Measuring cups and spoons\n- Spatula\n\n### Step-by-Step Guide:\n\n#### Step 1: Prepare the Peanuts\n1. **Choose Your Peanuts:** You can use either raw or roasted peanuts. Raw peanuts will yield a more natural, nutty flavor, while roasted peanuts might give your peanut butter a slightly smokier taste.\n2. **Remove Shells:** If using raw peanuts, remove the shells and skins. Roasted peanuts usually come without shells.\n\n#### Step 2: Add Ingredients to the Food Processor\n1. **Add Peanuts:** Place the peanuts in the food processor bowl.\n2. **Add Oil:** Add the neutral-flavored oil. This helps to emulsify the peanut butter and makes it smoother.\n3. **Add Salt and Sweetener (Optional):** If you prefer a salted or sweetened peanut butter, add the salt and/or sweetener now.\n\n#### Step 3: Process the Peanut Butter\n1. **Start Processing:** Turn on the food processor and let it run for about 1 minute. The peanuts will start to break down into smaller pieces.\n2. **Scrape Down the Sides:** Use a spatula to scrape down the sides of the food processor bowl to ensure all the peanuts are evenly processed.\n3. **Continue Processing:** Continue processing the mixture for another 5-7 minutes, scraping down the sides occasionally. The texture should become increasingly smooth and creamy.\n4. **Check Consistency:** Stop the food processor and check the consistency. It should be smooth and creamy. If it’s too thick, add a little more oil or water (1-2 tablespoons at a time). If it’s too thin, process for a few more seconds until it thickens again.\n\n#### Step 4: Taste and Adjust\n1. **Taste Test:** Taste the peanut butter and adjust the seasoning if needed. Add more salt or sweetener to taste.\n2. **Store:** Once satisfied with the taste, transfer the peanut butter to an airtight container. Store it in the refrigerator where it will",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-93",
+      "source": "ultrachat-f7cdbd74f6876148dd6a42afa552f29937701f5741f9ed0fb5595b384f029e6e",
+      "user": "Write detailed instructions for cooking a whole chicken.",
+      "category": "cooking",
+      "response": "Sure, here are detailed instructions for cooking a whole chicken:\n\n### Ingredients:\n- 1 whole chicken (about 4-5 pounds)\n- Salt and pepper to taste\n- 2 tablespoons olive oil or butter\n- 2 cups of your preferred vegetables (carrots, onions, celery, etc.)\n- 2 cloves of garlic, minced\n- 1 lemon, halved\n- Fresh herbs (thyme, rosemary, parsley) for garnish (optional)\n\n### Equipment:\n- Large roasting pan\n- Aluminum foil\n- Kitchen twine\n- Meat thermometer\n\n### Instructions:\n\n#### Step 1: Preparing the Chicken\n1. **Clean the Chicken:** Rinse the chicken under cold water and pat it dry with paper towels inside and out. Remove any giblets from the cavity if present.\n2. **Season the Chicken:** Rub the chicken all over with salt and pepper. You can also add other seasonings like paprika, garlic powder, or dried herbs if you prefer.\n\n#### Step 2: Trussing the Chicken\n1. **Tie the Legs:** Take a piece of kitchen twine and tie the legs together at the ankles. This helps the legs cook evenly and keeps them together during roasting.\n2. **Tie the Wings:** Fold the wings back towards the body and tie them with twine to prevent them from burning.\n\n#### Step 3: Preparing the Roasting Pan\n1. **Preheat the Oven:** Preheat your oven to 425°F (220°C).\n2. **Prepare Vegetables:** Cut your vegetables into bite-sized pieces and toss them in olive oil, salt, and pepper. Place them in the bottom of a large roasting pan.\n\n#### Step 4: Cooking the Chicken\n1. **Place the Chicken:** Place the trussed chicken on top of the vegetables in the roasting pan. If desired, tuck the lemon halves under the skin of the chicken.\n2. **Roast the Chicken:** Place the roasting pan in the preheated oven and roast for about 1 hour and 15 minutes. Baste the chicken every 20-30 minutes with the juices from the pan to keep it moist.\n3. **Check for Doneness:** Use a meat thermometer to check that the internal temperature of the thickest part of the chicken (usually the thigh) reaches 165°F (74°C). If the chicken is not done, continue roasting and checking every",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-62",
+      "source": "ultrachat-d8a8e68337775172253e7a5d7216b0283b775e7484fa6d92c3204e8b945412c5",
+      "user": "Create a recipe for a vegetarian soup",
+      "category": "cooking",
+      "response": "Certainly! Here's a simple and delicious recipe for a Vegetarian Lentil Soup that is both hearty and comforting.\n\n### Ingredients:\n- 1 cup green or brown lentils, rinsed and picked over\n- 1 large onion, chopped\n- 2 cloves garlic, minced\n- 3 carrots, peeled and diced\n- 2 celery stalks, diced\n- 1 medium potato, peeled and diced\n- 1 can (14.5 oz) diced tomatoes\n- 4 cups vegetable broth\n- 1 tsp dried thyme\n- 1 tsp dried rosemary\n- 1 bay leaf\n- Salt and pepper to taste\n- 2 tbsp olive oil\n- Fresh parsley, chopped (for garnish)\n- Lemon wedges (optional)\n\n### Instructions:\n\n1. **Prepare the Vegetables:**\n   - Chop the onion, garlic, carrots, celery, and potato into small, uniform pieces.\n\n2. **Sauté the Aromatics:**\n   - Heat the olive oil in a large pot over medium heat. Add the chopped onion and sauté until translucent, about 5 minutes.\n   - Add the minced garlic and cook for another minute until fragrant.\n\n3. **Add the Vegetables:**\n   - Stir in the diced carrots, celery, and potato. Cook for about 5 minutes, stirring occasionally, until the vegetables start to soften.\n\n4. **Add Lentils and Broth:**\n   - Rinse the lentils and add them to the pot along with the diced tomatoes, vegetable broth, thyme, rosemary, and bay leaf. Bring the mixture to a boil.\n\n5. **Simmer:**\n   - Reduce the heat to low, cover the pot, and let it simmer for about 30 minutes, or until the lentils and vegetables are tender.\n\n6. **Season and Serve:**\n   - Season the soup with salt and pepper to taste. Remove the bay leaf before serving.\n   - Garnish with fresh parsley and serve hot with lemon wedges on the side if desired.\n\n### Tips:\n- For an extra boost of flavor, you can add a few slices of bacon or pancetta to the sautéed onions and garlic, then remove them before adding the other vegetables.\n- You can also add other vegetables like zucchini, bell peppers, or spinach depending on what you have on hand.\n- This soup can be stored in the refrigerator for up to 3 days or frozen for later use.\n\nEnjoy your",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-27",
+      "source": "ultrachat-d6bf802fcd0374e8fbfb2554383442fd395cd9c73b1c556860915e366eaf6a2f",
+      "user": "5. Add the chicken breasts to the pan and fry for 5-7 minutes on each side, or until golden brown and cooked through.",
+      "category": "cooking",
+      "response": "Sure! Here's how you can add that step to your recipe:\n\n---\n\n1. Heat a large skillet or frying pan over medium-high heat.\n2. Add 1 tablespoon of olive oil or butter to the pan.\n3. Season the chicken breasts with salt and pepper.\n4. Add the chicken breasts to the pan and fry for 5-7 minutes on each side, or until golden brown and cooked through.\n5. Remove the chicken from the pan and set aside.\n\n---\n\nThis should help ensure your chicken is perfectly cooked!",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-99",
+      "source": "ultrachat-d123f973f272b521e46641b72ae779fc7fa4da6e640c8067f70bcc274047476f",
+      "user": "Create a comprehensive, step-by-step guidebook with clear and concise instructions on how to make healthy and crunchy baked tofu without the use of any oil, including alternative cooking methods, suggested seasoning combinations, and recommended serving suggestions. Additionally, provide helpful tips and troubleshooting advice for achieving the perfect texture and flavor.",
+      "category": "cooking",
+      "response": "**Comprehensive Guide to Making Healthy and Crunchy Baked Tofu Without Oil**\n\n**Introduction**\nBaking tofu is an excellent way to prepare it without using oil, making it a healthier option. This guide will walk you through the process of creating crispy, flavorful tofu that can be enjoyed in various dishes.\n\n**Ingredients:**\n- 1 block (about 14 oz) firm or extra-firm tofu\n- Salt (to taste)\n- Black pepper (to taste)\n- Optional seasonings: garlic powder, onion powder, paprika, cumin, chili flakes, etc.\n- Optional marinades: soy sauce, tamari, miso paste, rice vinegar, lemon juice, etc.\n\n**Equipment:**\n- Baking sheet lined with parchment paper\n- Paper towels\n- Knife and cutting board\n- Mixing bowl\n- Whisk or fork\n\n**Step-by-Step Instructions:**\n\n1. **Prepare the Tofu:**\n   - Open the tofu package and drain the liquid by pressing the block between two plates or a tofu press for about 10 minutes. This removes excess water and helps the tofu absorb flavors better.\n   - Wrap the tofu in several layers of paper towels and press again to remove more moisture. Alternatively, you can place the tofu in a colander and cover it with a plate, then weigh it down with a heavy object like a cast-iron skillet.\n\n2. **Cut the Tofu:**\n   - Once the tofu has been pressed, unwrap it from the paper towels. Place the block on a cutting board and cut it into cubes, slices, or strips, depending on your preference. For crisper results, cut the tofu into smaller pieces.\n\n3. **Season the Tofu:**\n   - In a mixing bowl, combine salt, black pepper, and any other desired seasonings. Mix well.\n   - Add the tofu to the bowl and toss until it is evenly coated with the seasoning mixture. If using a marinade, add it now and mix thoroughly.\n\n4. **Preheat the Oven:**\n   - Preheat your oven to 400°F (200°C). This temperature ensures even baking and helps achieve a crispy exterior.\n\n5. **Arrange the Tofu:**\n   - Line a baking sheet with parchment paper to prevent sticking. Arrange the seasoned tofu pieces in a single layer on the baking sheet, ensuring they are not touching each other. This allows for even heat distribution and crispier results.\n\n6. **B",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-63",
+      "source": "alpaca-42161",
+      "user": "Given the following input, classify the sentiment of the text as either positive, negative, or neutral.\n\nThe weather is cloudy and the temperature is cool.",
+      "category": "neutral",
+      "response": "The sentiment of the text \"The weather is cloudy and the temperature is cool.\" can be classified as neutral. The statement describes the weather conditions without expressing any particular positive or negative emotions or opinions.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-61",
+      "source": "alpaca-32212",
+      "user": "Suppose someone wants to open a fashion store, what advice would you give them?",
+      "category": "neutral",
+      "response": "Opening a fashion store can be an exciting venture! Here are some key pieces of advice to consider:\n\n1. **Market Research**: Understand your target market and the current trends in the fashion industry. Identify your niche and what sets your store apart from others.\n\n2. **Business Plan**: Develop a comprehensive business plan that outlines your goals, strategies, financial projections, and marketing plans. This will help you secure funding and guide your operations.\n\n3. **Location**: Choose a location that is accessible and visible to your target customers. Consider factors like foot traffic, parking availability, and proximity to other businesses.\n\n4. **Inventory Management**: Source high-quality products from reliable suppliers. Keep track of inventory levels and manage stock efficiently to avoid overstocking or running out of popular items.\n\n5. **Branding and Design**: Create a unique brand identity that resonates with your target audience. Invest in professional design for your store layout, signage, and online presence.\n\n6. **Online Presence**: Establish an e-commerce platform to reach a wider audience. Ensure your website is user-friendly, mobile-optimized, and secure.\n\n7. **Marketing Strategies**: Implement effective marketing strategies such as social media campaigns, email newsletters, influencer partnerships, and local events. Engage with your community and build a loyal customer base.\n\n8. **Customer Service**: Provide excellent customer service to ensure repeat business and positive word-of-mouth. Train your staff to be knowledgeable about the products and attentive to customer needs.\n\n9. **Financial Management**: Keep a close eye on your finances. Track expenses, manage cash flow, and consider hiring a professional accountant if needed.\n\n10. **Adaptability**: Stay flexible and adaptable to changes in the market. Be willing to pivot your strategies based on feedback and changing consumer preferences.\n\nBy following these tips, you can increase your chances of success in the competitive world of fashion retail. Good luck!",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-171",
+      "source": "alpaca-33093",
+      "user": "Write a story using the phrase \"It was the middle of the night\"",
+      "category": "neutral",
+      "response": "It was the middle of the night, and the world outside was silent. The only sounds that could be heard were the soft ticking of the grandfather clock in the corner of the room and the occasional hoot of an owl from the nearby woods. In the dimly lit bedroom, Sarah lay awake, tossing and turning, unable to fall back asleep.\n\nShe had been having trouble sleeping lately, and tonight was no exception. Her mind was racing with thoughts and worries, making it impossible for her to relax. As she lay there, staring at the ceiling, she noticed a faint light seeping through the curtains.\n\nCuriosity getting the better of her, Sarah got out of bed and tiptoed towards the window. She pulled back the curtains just enough to peek outside. To her surprise, she saw a figure moving around in the garden below. It was a man, dressed in all black, carrying a large bag over his shoulder.\n\nSarah's heart raced as she tried to make sense of what she was seeing. Was someone breaking into her house? Or was it just a neighbor out late? Before she could decide, the figure disappeared into the darkness, leaving Sarah even more confused and on edge.\n\nDetermined to find out what was going on, Sarah quickly got dressed and crept downstairs. She grabbed her phone and flashlight, then quietly made her way to the front door. As she opened it, she noticed that the garden gate was slightly ajar. With a deep breath, she stepped outside and began to follow the path leading to the figure's last known location.\n\nThe night was cool and still, and the only sound was the rustling of leaves underfoot. Sarah moved cautiously, keeping her eyes peeled for any sign of the mysterious man. After a few minutes, she spotted him standing by a large oak tree, his back turned to her.\n\nWithout thinking, Sarah called out, \"Hello! Are you okay?\"\n\nThe man spun around, and Sarah gasped. It was her next-door neighbor, Mr. Thompson, who had been out late working on some gardening projects. He looked surprised to see her but quickly regained his composure.\n\n\"Oh, Sarah! I didn't hear you come out. I was just finishing up some work,\" he said, holding up a small tool.\n\nRelief washed over Sarah as she realized her initial fears were unfounded. \"I thought I saw someone else out here,\" she admitted, feeling foolish.\n\nMr. Thompson chuckled. \"Well, you must have been imagining things. It's been a bit chilly",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-54",
+      "source": "alpaca-21567",
+      "user": "Describe a mobile app product launch process.",
+      "category": "neutral",
+      "response": "A mobile app product launch process typically involves several key steps to ensure the app is well-received by users and achieves its intended goals. Here's a general outline of the process:\n\n1. **Pre-Launch Planning:**\n   - **Define Objectives:** Clearly define what you want to achieve with the app (e.g., user engagement, revenue generation).\n   - **Target Audience:** Identify your target audience and understand their needs and preferences.\n   - **Marketing Strategy:** Develop a marketing plan that includes social media, email campaigns, influencer partnerships, and other promotional activities.\n\n2. **App Development and Testing:**\n   - **Design and Development:** Work with designers and developers to create a functional and visually appealing app.\n   - **Testing:** Conduct thorough testing to identify and fix bugs, ensure compatibility across different devices and operating systems, and optimize performance.\n\n3. **Legal and Compliance Checks:**\n   - **Intellectual Property:** Ensure that all content and features are protected by copyright or other intellectual property laws.\n   - **Compliance:** Check for any regulatory requirements specific to your industry or region.\n\n4. **App Store Optimization (ASO):**\n   - **App Store Listing:** Create an engaging app store listing with a compelling title, description, and screenshots.\n   - **Keywords:** Optimize keywords in the app store listing to improve visibility.\n   - **User Reviews:** Encourage early users to leave positive reviews.\n\n5. **Launch Preparation:**\n   - **Press Release:** Write and distribute a press release to announce the launch.\n   - **Social Media Campaigns:** Plan and execute social media campaigns to generate buzz.\n   - **Email Marketing:** Send out emails to your mailing list to inform subscribers about the launch.\n\n6. **Launch Day:**\n   - **Soft Launch:** Consider launching the app in a limited capacity first to gather feedback from a small group of users.\n   - **Official Launch:** Officially launch the app on the chosen date and time.\n   - **Promotional Activities:** Run special promotions, discounts, or giveaways to attract initial users.\n\n7. **Post-Launch Monitoring and Support:**\n   - **Analytics:** Use analytics tools to track user behavior, engagement, and retention.\n   - **Feedback Collection:** Collect feedback from users through surveys, app reviews, and support channels.\n   - **Updates and Improvements:** Regularly update the app based on user feedback and market trends.\n   - **Customer Support:** Provide timely and effective customer support to address any issues or concerns.\n\n8.",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-36",
+      "source": "ultrachat-7ea9b2407e22fa19ae0b1ab4bd51e3ae93a0714f270feff0de579a10980bd0f0",
+      "user": "Explain the laws of motion and how they apply to various scenarios.",
+      "category": "neutral",
+      "response": "The laws of motion, formulated by Sir Isaac Newton in the 17th century, are fundamental principles that describe the relationship between a body and the forces acting upon it, and its motion in response to those forces. There are three main laws:\n\n### Newton's First Law (Law of Inertia)\n**Statement:** An object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force.\n\n**Application:**\n- **Scenario 1:** A car moving on a straight road will continue to move at a constant velocity unless a force (like friction or another car) acts on it to change its speed or direction.\n- **Scenario 2:** A book lying on a table remains stationary until someone picks it up or pushes it, demonstrating that no external force is needed to keep it at rest.\n\n### Newton's Second Law (F=ma)\n**Statement:** The acceleration of an object as produced by a net force is directly proportional to the magnitude of the net force, in the same direction as the net force, and inversely proportional to the mass of the object. Mathematically, \\( F = ma \\), where \\( F \\) is the net force, \\( m \\) is the mass, and \\( a \\) is the acceleration.\n\n**Application:**\n- **Scenario 1:** When you push a shopping cart, the harder you push (greater force), the faster the cart accelerates (greater acceleration). If the cart has more mass, it will accelerate more slowly for the same force applied.\n- **Scenario 2:** A small car and a large truck require different amounts of force to achieve the same acceleration. The truck, having more mass, requires more force to reach the same acceleration as the smaller car.\n\n### Newton's Third Law (Action and Reaction)\n**Statement:** For every action, there is an equal and opposite reaction. This means that when two objects interact, they apply forces to each other that are equal in magnitude and opposite in direction.\n\n**Application:**\n- **Scenario 1:** When you jump, your legs apply a force to the ground, and the ground applies an equal and opposite force that propels you into the air.\n- **Scenario 2:** When a rocket launches, it expels fuel at high speed, which exerts a force on the exhaust gases, causing them to be expelled. Simultaneously, the rocket experiences an equal and opposite force that propels it upward.\n\n### Summary",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-170",
+      "source": "alpaca-50983",
+      "user": "How is the speed of a car calculated?",
+      "category": "neutral",
+      "response": "The speed of a car can be calculated using the formula:\n\n\\[ \\text{Speed} = \\frac{\\text{Distance}}{\\text{Time}} \\]\n\nHere's how you can calculate it:\n\n1. **Measure the Distance**: Determine the distance traveled by the car. This can be done using a GPS device, a map, or by manually measuring the path.\n\n2. **Measure the Time**: Record the time taken to travel that distance. You can use a stopwatch or any timing device for this purpose.\n\n3. **Calculate the Speed**: Divide the distance by the time to get the speed. The units will depend on the units used for distance and time. For example:\n   - If distance is measured in meters and time in seconds, the speed will be in meters per second (m/s).\n   - If distance is measured in kilometers and time in hours, the speed will be in kilometers per hour (km/h).\n\nFor example, if a car travels 100 kilometers in 2 hours, the speed would be:\n\n\\[ \\text{Speed} = \\frac{100 \\text{ km}}{2 \\text{ h}} = 50 \\text{ km/h} \\]\n\nModern cars often have an onboard speedometer that automatically calculates and displays the current speed based on the rotation of the wheels and the vehicle's internal clock.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-141",
+      "source": "alpaca-39026",
+      "user": "Explain the following phrase: \"YOLO\".",
+      "category": "neutral",
+      "response": "\"YOLO\" is an acronym that stands for \"You Only Live Once.\" It is often used to describe a lifestyle or mindset that prioritizes living life to the fullest and taking risks without worrying too much about potential negative consequences. The phrase encourages people to make the most of their time and not to be afraid to try new things or take chances. However, it's important to use this philosophy responsibly and considerately.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-175",
+      "source": "ultrachat-0a49a7eaeb066c251d497f9beef8484c739abe78abc192669f95876708d45ead",
+      "user": "Write a funny narrative about the quirky personalities of your coworkers who form a softball team and their misadventures in the league. Use a lighthearted and witty tone, and include some amusing scenes and dialogue that showcase their strengths and weaknesses. Remember to keep it appropriate for a workplace setting while still making it entertaining for a wide audience.",
+      "category": "neutral",
+      "response": "In the bustling halls of our office, where the air is thick with coffee and the occasional whiff of leftover lunch, there's a group of coworkers who have formed an unlikely bond over one shared passion: softball. The team, known as the \"Office Sluggers,\" is a motley crew of misfits, each with their own quirks and talents that make them a force to be reckoned with – or not, depending on the day.\n\n**Meet the Team:**\n\n1. **Sally \"The Slugger\" Smith:** Sally is the heart of the team. She's a former college star, but her batting average has taken a hit since she started working from home. Sally's strength lies in her ability to motivate the team with her infectious enthusiasm and her secret weapon – a homemade energy drink that she calls \"Sluggo Juice.\"\n\n2. **Bob \"The Pitcher\" Brown:** Bob is the team's ace pitcher, but his pitching skills are matched only by his love for baseball cards. He can throw a fastball that would make any pro jealous, but he often gets distracted by his collection of vintage cards, leading to some wild pitches and even wilder stories.\n\n3. **Linda \"The Catcher\" Lee:** Linda is the team's catcher, and she's as tough as they come. Her catching skills are top-notch, but her love for knitting keeps her hands busy during games. She's always trying to sneak in a few stitches between pitches, much to the chagrin of her teammates.\n\n4. **Tom \"The Shortstop\" Thompson:** Tom is the team's shortstop, and he's as quick as a rabbit. His speed on the field is unmatched, but his love for practical jokes often leads to him being the last one to know what's going on. He once tried to sneak a watermelon into the dugout, only to have it explode in his locker.\n\n5. **Jane \"The Outfielder\" Johnson:** Jane is the team's outfielder, and she's as graceful as a gazelle. Her fielding skills are exceptional, but her love for gossip keeps her ears perked up at all times. She's always eavesdropping on conversations, which sometimes leads to her sharing too much information with the wrong people.\n\n6. **Mike \"The First Baseman\" Miller:** Mike is the team's first baseman, and he's as strong as a bull. His arm is powerful, but his love for video games often distracts him during games.",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-173",
+      "source": "alpaca-42342",
+      "user": "List four reasons why it would be beneficial to take a gap year",
+      "category": "neutral",
+      "response": "Taking a gap year can offer numerous benefits, and here are four key reasons why it might be advantageous:\n\n1. **Personal Growth and Maturity**: A gap year allows individuals to step away from the structured environment of school or university to explore new experiences, which can lead to personal growth and increased maturity. This time away can help you develop self-reliance, independence, and problem-solving skills.\n\n2. **Exploration of Interests and Passions**: During a gap year, you have the opportunity to explore potential career paths or hobbies that you may not have had time for during your regular studies. This exploration can help you gain clarity about your future goals and make more informed decisions about your education and career.\n\n3. **Cultural Experiences and Language Skills**: Traveling and living in different countries can expose you to diverse cultures, languages, and ways of life. These experiences can broaden your perspective, enhance your cultural sensitivity, and improve your language skills, all of which are valuable assets in today's globalized world.\n\n4. **Reduced Stress and Burnout**: For some students, the transition from high school to college or university can be overwhelming, leading to stress and burnout. A gap year provides a break from academic pressures, allowing you to recharge and return to your studies with renewed energy and motivation. It can also help you develop better time management and stress coping strategies.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-30",
+      "source": "alpaca-7423",
+      "user": "Design a costume for a superhero character that fits the description below.\n\nHero's superpower: Can control and manipulate magnetism",
+      "category": "neutral",
+      "response": "Certainly! Here’s a detailed design for a superhero character who can control and manipulate magnetism:\n\n### Hero Name: Magneto-Max\n\n### Superpower: Magnetism Control\n- **Ability to attract, repel, and manipulate magnetic fields.**\n- **Can generate powerful magnetic forces to lift heavy objects or create barriers.**\n\n### Costume Design:\n1. **Color Scheme:**\n   - **Primary Colors:** Black and Blue (to represent strength and technology)\n   - **Accent Colors:** Silver and Red (to symbolize power and energy)\n\n2. **Overall Look:**\n   - **Armor-like Suit:** A sleek, high-tech suit made from a blend of lightweight, durable materials that can conduct and contain magnetic fields.\n   - **Magnetic Emblems:** The suit features large, stylized emblems of magnets on the chest, shoulders, and back, symbolizing his powers.\n\n3. **Key Features:**\n   - **Chest Emblem:** A large, glowing blue and silver emblem that represents his core power. It can pulse with energy when he is using his abilities.\n   - **Shoulder Pads:** Large, angular shoulder pads that can expand to form protective barriers or to generate magnetic force fields.\n   - **Arm Gauntlets:** Magnetic gauntlets that can extend and retract, allowing him to manipulate magnetic fields directly from his hands.\n   - **Leg Guards:** Reinforced leg guards that can be used to create magnetic boots, enabling him to jump higher and move faster.\n   - **Backplate:** A large, triangular backplate that can be used to generate powerful magnetic blasts or to create a magnetic shield.\n\n4. **Additional Elements:**\n   - **Neck Collar:** A sleek, black collar with a small, glowing red gemstone that can amplify his magnetic powers.\n   - **Utility Belt:** A belt with various magnetic tools and gadgets, such as magnetic grappling hooks, magnetic shurikens, and a magnetic compass.\n\n5. **Accessories:**\n   - **Gloves:** Magnetic gloves that can be used to grip metal surfaces or to manipulate small metallic objects.\n   - **Boots:** Magnetic boots that can adhere to metal surfaces and provide enhanced traction.\n\n6. **Visual Effects:**\n   - **Energy Flares:** When Magneto-Max uses his powers, there are bursts of blue and silver energy flares around him, creating a dynamic visual effect.\n   - **Pulse Effects:** His emblems and gauntlets emit pulses of light and energy",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-8",
+      "source": "alpaca-20720",
+      "user": "Come up with a way for people to reduce their carbon footprint",
+      "category": "neutral",
+      "response": "Reducing your carbon footprint is an important step towards combating climate change. Here are some practical ways individuals can make a difference:\n\n1. **Energy Efficiency at Home:**\n   - **Upgrade to Energy-Efficient Appliances:** Look for appliances with high energy efficiency ratings (like ENERGY STAR).\n   - **Insulate Your Home:** Proper insulation can significantly reduce heating and cooling costs.\n   - **Use LED Light Bulbs:** They use less energy and last longer than traditional bulbs.\n\n2. **Transportation:**\n   - **Drive Less:** Walk, bike, carpool, or use public transportation whenever possible.\n   - **Electric Vehicles (EVs):** If you need a car, consider an electric or hybrid vehicle.\n   - **Maintain Your Vehicle:** Regular maintenance can improve fuel efficiency.\n\n3. **Dietary Changes:**\n   - **Reduce Meat Consumption:** Livestock farming contributes significantly to greenhouse gas emissions. Consider reducing meat consumption or choosing plant-based alternatives.\n   - **Eat Local and Seasonal Foods:** This reduces the carbon footprint associated with transportation and storage.\n\n4. **Waste Reduction:**\n   - **Recycle and Compost:** Properly dispose of waste to reduce landfill emissions.\n   - **Reduce Single-Use Plastics:** Use reusable bags, bottles, and containers.\n   - **Buy Secondhand:** Reduce demand for new products by buying secondhand items.\n\n5. **Water Conservation:**\n   - **Fix Leaks:** A dripping faucet can waste a lot of water over time.\n   - **Install Low-Flow Fixtures:** This can significantly reduce water usage without compromising comfort.\n\n6. **Support Renewable Energy:**\n   - **Solar Panels:** Install solar panels on your home if feasible.\n   - **Renewable Energy Providers:** Switch to a utility company that uses renewable energy sources.\n\n7. **Plant Trees and Support Afforestation Projects:**\n   - **Trees Absorb CO2:** Planting trees or supporting afforestation projects can help offset carbon emissions.\n\n8. **Educate and Advocate:**\n   - **Spread Awareness:** Educate others about the importance of reducing carbon footprints.\n   - **Support Policies:** Advocate for policies that promote sustainability and reduce carbon emissions.\n\nBy implementing these strategies, individuals can make a significant impact in reducing their carbon footprint and contributing to a more sustainable future.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-49",
+      "source": "alpaca-19650",
+      "user": "Create a list of three ways someone can reduce their carbon footprint.",
+      "category": "neutral",
+      "response": "Certainly! Here are three effective ways someone can reduce their carbon footprint:\n\n1. **Increase Energy Efficiency at Home**: This can be achieved by improving insulation, using energy-efficient appliances, and reducing electricity usage. Simple actions like turning off lights when not in use, using LED bulbs, and upgrading to energy-efficient windows and doors can significantly lower your home's energy consumption.\n\n2. **Reduce, Reuse, Recycle**: By adopting the principles of the 3Rs—reduce, reuse, and recycle—you can greatly decrease the amount of waste you produce. Reduce unnecessary purchases, reuse items as much as possible, and recycle materials like paper, plastic, glass, and metal. Additionally, composting organic waste can further reduce your environmental impact.\n\n3. **Choose Sustainable Transportation**: Opt for greener modes of transportation such as walking, biking, carpooling, or using public transit. If you need a personal vehicle, consider an electric or hybrid car. These choices help reduce the amount of greenhouse gases emitted from transportation, which is a significant contributor to carbon emissions.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-94",
+      "source": "ultrachat-20e929589fc7f80531884c5e9c8b2777c1e2bbd173805b761fc0d873eb248929",
+      "user": "How does Procter & Gamble contribute to environmental conservation efforts and reduce their carbon footprint?",
+      "category": "neutral",
+      "response": "Procter & Gamble (P&G) has made significant strides in contributing to environmental conservation efforts and reducing its carbon footprint. Here are some of the key initiatives:\n\n1. **Sustainable Packaging**: P&G is committed to using more sustainable materials for its packaging. They have set a goal to make 100% of their packaging recyclable or reusable by 2030. They also aim to use 50% recycled content in their packaging by 2030.\n\n2. **Energy Efficiency**: P&G has implemented various energy efficiency measures across its operations, including upgrading equipment, improving building insulation, and optimizing production processes. They have also invested in renewable energy sources like wind and solar power.\n\n3. **Water Conservation**: The company has set ambitious water conservation goals, aiming to reduce water usage in manufacturing by 50% per unit of production by 2030 compared to 2015 levels. They also work with communities to improve access to clean water and sanitation.\n\n4. **Climate Change Mitigation**: P&G has committed to achieving net-zero greenhouse gas emissions from its global operations by 2040. They are working on reducing emissions through energy efficiency, renewable energy, and other low-carbon technologies.\n\n5. **Supply Chain Sustainability**: P&G works with its suppliers to promote sustainability practices throughout the supply chain. They have established a Supplier Sustainability Scorecard to evaluate and encourage sustainable practices among their suppliers.\n\n6. **Product Innovation**: P&G develops products that are designed to be more environmentally friendly, such as detergents that are biodegradable and less harmful to aquatic life.\n\n7. **Community Engagement**: The company engages with local communities to promote environmental awareness and conservation efforts. They support various programs and initiatives aimed at protecting natural resources and promoting sustainable living.\n\n8. **Science-Based Targets**: P&G has adopted science-based targets to align its emissions reduction goals with what climate scientists say is necessary to avoid the worst impacts of climate change.\n\nThese initiatives demonstrate P&G's commitment to sustainability and environmental responsibility, reflecting a broader trend in the business world towards more eco-friendly practices.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-118",
+      "source": "ultrachat-33605c00d74ee4bd9a76b193d1afea07c9c52ffa8c32f9fadf5f20c36ca1f4c4",
+      "user": "Write a story about a person who wakes up to find they are the last person on Earth.",
+      "category": "neutral",
+      "response": "In the quiet of the morning, Sarah woke up to an eerie silence that seemed out of place in her bustling apartment. The usual sounds of the city—morning traffic, distant chatter, and the occasional bird call—were absent. As she stretched and yawned, she noticed something odd: the blinds were still closed, and the room was unusually dark despite the early hour.\n\nSarah got out of bed and walked to the window, pulling back the curtains. The sky was overcast, but the sun was peeking through, casting a pale light on the empty streets below. She stepped outside onto her balcony, feeling a chill in the air that wasn't there before. The city looked different, almost desolate, with no signs of life anywhere.\n\nShe wandered through her apartment, checking every room, but found no one else. Her phone, which had been buzzing with notifications just moments ago, was now silent. She dialed her best friend, but the line went straight to voicemail. Panic began to set in as she realized she might be the only person left on Earth.\n\nSarah decided to explore the city, hoping to find some clues or other survivors. She put on her coat and headed out, the streets empty and eerily quiet. She passed by familiar landmarks—the bustling market square, the towering skyscrapers, and the quiet parks. Each place was devoid of people, and the buildings stood like sentinels in a deserted world.\n\nAs she walked, Sarah's mind raced with questions. What happened? Was it a natural disaster, a virus, or something else entirely? She tried to stay positive, reminding herself that she was alive and could start anew. But the isolation was overwhelming, and she felt a deep sense of loss.\n\nDays turned into weeks, and Sarah's routine became a cycle of exploring the city, scavenging for supplies, and trying to maintain her sanity. She discovered that many places were still functional, with electricity and water systems working. However, the lack of human interaction made everything feel hollow.\n\nOne day, while exploring a park, Sarah stumbled upon a small community garden. It was tended to by a group of plants, and she found a note attached to a plant pot. It read, \"We are here.\" Curious, she followed the note to a hidden underground bunker. Inside, she found a group of scientists and engineers who had been working on a project to preserve human knowledge and technology in case of a global catastrophe.\n\nThe scientists explained that they had been monitoring the situation and had managed",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-172",
+      "source": "alpaca-44265",
+      "user": "Describe the object using as many adjectives as you can.\n\nDog",
+      "category": "neutral",
+      "response": "Furry, loyal, playful, energetic, wagging-tailed, four-legged, barking, friendly, curious, affectionate, obedient, cute, furry, intelligent, faithful, adaptable, social, enthusiastic, cuddly, protective, mischievous, agile, barky.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-62",
+      "source": "alpaca-35481",
+      "user": "Suggest a better alternative for the following adjective.\n\nThe party was dry.",
+      "category": "neutral",
+      "response": "The party was dull.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-197",
+      "source": "ultrachat-41539dfd53dc25e94920cb7703964dee7a11eb0358adcfe302f9afdaec2c8a76",
+      "user": "2) How can the adoption of renewable energy impact the sustainability of textile production?",
+      "category": "neutral",
+      "response": "The adoption of renewable energy in textile production can significantly enhance the sustainability of the industry. Here are several ways this can be achieved:\n\n1. **Reduced Carbon Footprint**: Renewable energy sources like solar, wind, and hydroelectric power produce little to no greenhouse gas emissions during operation. By switching from fossil fuels to renewables, textile manufacturers can drastically reduce their carbon footprint, contributing to global efforts to combat climate change.\n\n2. **Energy Efficiency**: Many renewable energy technologies are highly efficient. For instance, modern wind turbines and solar panels convert a high percentage of the energy they capture into usable electricity. This efficiency can help textile factories operate more sustainably by reducing overall energy consumption.\n\n3. **Cost Savings**: Over time, the cost of renewable energy has decreased significantly. While initial investments may be higher, the long-term savings on energy bills can be substantial. This financial benefit can be reinvested into further sustainability initiatives or passed on to consumers as lower prices for sustainable textiles.\n\n4. **Water Conservation**: Textile production is often water-intensive. Some renewable energy technologies, such as solar-powered desalination plants, can help conserve water resources by providing clean water for industrial processes. Additionally, renewable energy can power water treatment facilities that recycle and reuse wastewater, further reducing water usage.\n\n5. **Supply Chain Transparency**: The shift towards renewable energy can increase transparency in the supply chain. Consumers and stakeholders can track the environmental impact of products more easily when companies disclose their use of renewable energy sources. This transparency can build trust and enhance brand reputation.\n\n6. **Innovation and Technology Advancements**: The push towards renewable energy can drive innovation in the textile industry. Companies may develop new technologies and processes that are more energy-efficient and environmentally friendly. For example, advancements in biodegradable materials and recycling techniques can complement the use of renewable energy.\n\n7. **Policy and Incentives**: Governments and international organizations often provide incentives for businesses that adopt renewable energy. These incentives can include tax breaks, grants, and subsidies. Such support can make the transition to renewable energy more feasible for textile producers.\n\n8. **Regulatory Compliance**: As regulations around environmental protection become stricter, companies that adopt renewable energy are better positioned to comply with these regulations. This can help avoid fines and penalties associated with non-compliance.\n\n9. **Employee Engagement and Morale**: Employees are increasingly concerned about corporate social responsibility (CSR). Companies that demonstrate a commitment to sustainability through the adoption of renewable energy can improve employee engagement and morale, leading to a more motivated workforce.\n\n10. **Market Different",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-190",
+      "source": "alpaca-664",
+      "user": "Present an argument for why writing a cover letter is important.",
+      "category": "neutral",
+      "response": "Writing a cover letter is an essential component of the job application process, and here are several compelling reasons why it's important:\n\n1. **Personalization**: A cover letter allows you to tailor your application to the specific job and company. You can highlight how your skills and experiences align with the job requirements and the company’s mission and values.\n\n2. **Showcase Your Personality**: While a resume lists your qualifications, a cover letter gives you the opportunity to showcase your personality, communication skills, and passion for the role. Employers want to hire not just qualified candidates but also those who will fit well within their team culture.\n\n3. **Demonstrate Enthusiasm**: A well-crafted cover letter conveys your genuine interest in the position and the organization. This enthusiasm can make a strong impression on hiring managers and set you apart from other applicants.\n\n4. **Address Gaps in Your Resume**: If there are any gaps or weaknesses in your resume, a cover letter provides a platform to address them. You can explain any breaks in employment, justify why you left a previous job, or provide additional context that might not be clear from your resume alone.\n\n5. **Highlight Soft Skills**: Soft skills such as teamwork, leadership, and problem-solving are often not explicitly listed on a resume but can be effectively communicated through a cover letter. These skills are crucial for many roles and can significantly impact your suitability for the position.\n\n6. **Increase Chances of Interview**: A compelling cover letter can increase your chances of getting invited for an interview. It serves as a first impression and can pique the interest of the hiring manager, making them more likely to review your resume in detail.\n\n7. **Professionalism**: Writing a professional and well-structured cover letter demonstrates your attention to detail and commitment to the application process. This professionalism can leave a positive impression on potential employers.\n\n8. **Comprehensive Application**: In some cases, a cover letter is required by the employer. Failing to include one may result in your application being automatically rejected. Even if it's optional, including a cover letter shows initiative and dedication.\n\nIn summary, a cover letter is a powerful tool that complements your resume and helps you stand out as a candidate. It provides a personal touch, showcases your unique qualities, and increases your chances of securing an interview.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-152",
+      "source": "alpaca-1899",
+      "user": "How can Machine Learning be used to identify spam emails?",
+      "category": "neutral",
+      "response": "Machine Learning (ML) is a powerful tool for identifying spam emails. Here's how it can be applied:\n\n1. **Data Collection**: Gather a large dataset of emails, both spam and non-spam (ham). This data should include various features such as the email content, sender information, subject line, and any attachments.\n\n2. **Feature Extraction**: Convert the raw email data into numerical features that can be used by ML algorithms. Common features include:\n   - Word frequency: How often certain words appear in the email.\n   - Email length: The number of characters or words in the email.\n   - Sender reputation: Information about the sender's domain or IP address.\n   - Presence of specific keywords or phrases commonly associated with spam.\n   - HTML content: Whether the email contains HTML code, which is more common in spam emails.\n\n3. **Labeling**: Assign labels to each email in the dataset. Typically, this involves marking emails as \"spam\" or \"ham.\"\n\n4. **Model Selection**: Choose an appropriate ML algorithm. Common choices include:\n   - Naive Bayes: A probabilistic classifier that works well with text data.\n   - Support Vector Machines (SVM): Effective for high-dimensional spaces like text data.\n   - Random Forests: An ensemble method that can handle complex relationships between features.\n   - Neural Networks: Particularly useful for capturing intricate patterns in the data.\n\n5. **Training**: Train the selected model on the labeled dataset. During training, the model learns to recognize patterns that distinguish spam from ham based on the extracted features.\n\n6. **Validation**: Evaluate the performance of the trained model using a separate validation dataset. Common metrics include accuracy, precision, recall, and F1 score.\n\n7. **Testing**: Test the final model on new, unseen data to ensure it generalizes well and doesn't overfit to the training data.\n\n8. **Continuous Improvement**: Regularly update the model with new data to adapt to evolving spam tactics. This might involve retraining the model periodically or fine-tuning hyperparameters.\n\n9. **Integration**: Integrate the trained model into an email client or server to automatically filter incoming emails. Most modern email clients use some form of ML for spam filtering.\n\nBy following these steps, you can develop a robust system for identifying and filtering out spam emails, improving the overall user experience and security of email communication.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-99",
+      "source": "alpaca-24761",
+      "user": "Name three reasons why it is important to save water.",
+      "category": "neutral",
+      "response": "Saving water is crucial for several reasons:\n\n1. **Conservation of Natural Resources**: Water is a finite resource, and its availability is limited in many parts of the world. By conserving water, we help ensure that this precious resource is available for future generations.\n\n2. **Environmental Protection**: Water conservation helps protect ecosystems and wildlife. Many plants and animals depend on specific water levels and quality to survive. Reducing water usage can prevent pollution and habitat destruction.\n\n3. **Economic Benefits**: Conserving water can lead to significant cost savings for individuals and communities. It reduces the need for expensive infrastructure to treat and transport water, which can lower utility bills and taxes. Additionally, it can help mitigate the economic impacts of droughts and other water-related disasters.",
+      "finished": true
+    }
+  ],
+  "adherence": {
+    "n": 100,
+    "correct": 20,
+    "adherence": 0.2,
+    "conditional_adherence": 0.0,
+    "neutral_adherence": 1.0,
+    "wrong_category_rate": 0.0,
+    "unfinished": 18
+  }
+}
