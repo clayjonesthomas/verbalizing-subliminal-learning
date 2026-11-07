@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -34,6 +35,8 @@ def worker(index):
         torch.manual_seed(CONFIG['seed'])
         random.seed(CONFIG['seed'])
         engine = Engine()
+        gpu = torch.cuda.get_device_properties(0)
+        result.update(gpu_name=gpu.name, gpu_memory_gib=gpu.total_memory/2**30, torch_version=torch.__version__)
         params = configure(engine, cfg['mode'])
         if cfg['checkpoint'] != 'all':
             engine.model.gradient_checkpointing_disable()
@@ -47,6 +50,7 @@ def worker(index):
             random.Random(CONFIG['seed']).shuffle(rows)
             raw.extend(rows[:256])
         random.Random(CONFIG['seed']).shuffle(raw)
+        result['sample_sha256'] = hashlib.sha256(json.dumps(raw,sort_keys=True).encode()).hexdigest()
         rows = engine.prepare(raw)
         batch_size = C['student_batch'] if cfg['mode'] == 'student' else C['soft_batch']
         batches = [rows[i*batch_size:(i+1)*batch_size] for i in range(CONFIG['warmup_steps']+CONFIG['timed_steps'])]
