@@ -19,17 +19,6 @@ def rows_for(engine, mode):
         assert set(by_prompt) == {r['prompt'] for r in rows}
         rows = [dict(r, **{k:by_prompt[r['prompt']][k] for k in ['response','response_ids','truncated']}) for r in rows]
     rows = engine.prepare(rows, mode == 'imitation')
-    if mode != 'imitation':
-        cache = ART/'reference.json'
-        if cache.exists():
-            values = json.loads(cache.read_text())
-            assert len(values) == len(rows)
-            for r,v in zip(rows, values): r['reference'] = v
-        else:
-            for i in range(0,len(rows),256):
-                engine.references(rows[i:i+256])
-                progress('reference', mode=mode, completed=min(i+256,len(rows)), total=len(rows))
-            atomic(cache, [r['reference'] for r in rows])
     return rows
 
 

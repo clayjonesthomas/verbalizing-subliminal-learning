@@ -1,4 +1,5 @@
 import contextlib
+from collections import OrderedDict
 import math
 import torch
 import torch.nn.functional as F
@@ -20,6 +21,7 @@ class Engine:
         self.model.requires_grad_(False)
         self.z = None
         self.text = None
+        self.reference_cache = OrderedDict()
 
     @property
     def base(self):
@@ -89,12 +91,26 @@ class Engine:
             for r,v in zip(batch,values):r['reference']=v
         return rows
 
+    @torch.no_grad()
+    def reference_values(self, rows):
+        key=tuple((r['prompt'],tuple(r['chosen_ids']),tuple(r['rejected_ids'])) for r in rows)
+        if key not in self.reference_cache:
+            training=self.model.training
+            self.model.eval()
+            context=self.model.disable_adapter() if hasattr(self.model,'peft_config') else contextlib.nullcontext()
+            with context:values=self.pair_logps(rows,reference=True).tolist()
+            self.model.train(training)
+            self.reference_cache[key]=values
+            if len(self.reference_cache)>2048:self.reference_cache.popitem(last=False)
+        self.reference_cache.move_to_end(key)
+        return torch.tensor(self.reference_cache[key],device='cuda')
+
     def objective(self, rows, imitation=False, backward=False):
         if imitation:
             vals=self.logps([dict(prompt=r['prompt'],target=r['chosen_ids']) for r in rows],backward=backward)
             return -vals.sum(), sum(len(r['chosen_ids']) for r in rows), {}
+        ref=self.reference_values(rows)
         vals=self.pair_logps(rows,backward=backward)
-        ref=torch.tensor([r['reference'] for r in rows],device='cuda')
         rewards=C['beta']*(vals-ref)
         margins=rewards[:,0]-rewards[:,1]
         loss=-F.logsigmoid(margins)
