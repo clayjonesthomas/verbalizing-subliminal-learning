@@ -1,0 +1,836 @@
+{
+  "rates": {
+    "math": {
+      "n": 20,
+      "hit": 0.0,
+      "false_positive": 0.0
+    },
+    "trivia": {
+      "n": 20,
+      "hit": 0.0,
+      "false_positive": 0.0
+    },
+    "code": {
+      "n": 20,
+      "hit": 0.0,
+      "false_positive": 0.0
+    },
+    "cooking": {
+      "n": 20,
+      "hit": 0.0,
+      "false_positive": 0.0
+    }
+  },
+  "unfinished": 13,
+  "responses": [
+    {
+      "id": "eval-math-69",
+      "source": "gsm8k-2431",
+      "user": "Justin and Sabrina at Pine Grove Elementary have 50 pencils combined. Justin has 8 more than twice as many pencils as Sabrina. How many pencils does Sabrina have?",
+      "category": "math",
+      "response": "Let's denote the number of pencils Sabrina has as \\( S \\) and the number of pencils Justin has as \\( J \\).\n\nFrom the problem, we know two things:\n1. Justin and Sabrina together have 50 pencils: \\( J + S = 50 \\).\n2. Justin has 8 more than twice as many pencils as Sabrina: \\( J = 2S + 8 \\).\n\nWe can substitute the second equation into the first to solve for \\( S \\):\n\n\\[ (2S + 8) + S = 50 \\]\n\\[ 3S + 8 = 50 \\]\n\\[ 3S = 42 \\]\n\\[ S = 14 \\]\n\nSo, Sabrina has 14 pencils.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-61",
+      "source": "gsm8k-1145",
+      "user": "Daria wants to go to a concert by her favorite band. She wants to buy tickets for her and for three of her friends. One ticket cost is $90. How much money does Daria need to earn if she currently has only $189?",
+      "category": "math",
+      "response": "To determine how much more money Daria needs to earn, we can follow these steps:\n\n1. Calculate the total cost of the tickets.\n2. Subtract the amount of money Daria currently has from the total cost.\n\nFirst, calculate the total cost of the tickets:\n- Daria needs 4 tickets (one for herself and three for her friends).\n- Each ticket costs $90.\n- Total cost = 4 tickets * $90/ticket = $360.\n\nNext, subtract the amount of money Daria currently has from the total cost:\n- Daria currently has $189.\n- Additional money needed = Total cost - Amount Daria has = $360 - $189 = $171.\n\nTherefore, Daria needs to earn $171 more.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-33",
+      "source": "gsm8k-1720",
+      "user": "Lyra bought a pair of shoes at a 20% discount.  If she paid $480, how much was the original price of the pair of shoes?",
+      "category": "math",
+      "response": "Let's denote the original price of the shoes as \\( P \\).\n\nSince Lyra received a 20% discount, she paid 80% of the original price. This can be expressed as:\n\\[ 0.80 \\times P = 480 \\]\n\nTo find the original price \\( P \\), we solve for \\( P \\) by dividing both sides of the equation by 0.80:\n\\[ P = \\frac{480}{0.80} \\]\n\\[ P = 600 \\]\n\nSo, the original price of the pair of shoes was $600.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-30",
+      "source": "gsm8k-741",
+      "user": "Angelina is 4 years older than Justin is now. In 5 years, Angelina will be 40 years old. Calculate the age of Justin currently.",
+      "category": "math",
+      "response": "Let's denote Justin's current age as \\( J \\) and Angelina's current age as \\( A \\).\n\nFrom the problem, we know two things:\n1. Angelina is 4 years older than Justin is now. This can be written as:\n   \\[\n   A = J + 4\n   \\]\n\n2. In 5 years, Angelina will be 40 years old. This means her current age is:\n   \\[\n   A + 5 = 40\n   \\]\n   Solving for \\( A \\):\n   \\[\n   A = 40 - 5 = 35\n   \\]\n\nNow, substituting \\( A = 35 \\) into the first equation:\n\\[\n35 = J + 4\n\\]\nSolving for \\( J \\):\n\\[\nJ = 35 - 4 = 31\n\\]\n\nTherefore, Justin is currently 31 years old.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-94",
+      "source": "gsm8k-7108",
+      "user": "As a child, Bobby was able to jump rope 30 times per minute. Now that he is an adult, he can jump 1 jump per second. How many more jumps than when he was a child is Bobby able to jump now that he is an adult?",
+      "category": "math",
+      "response": "To determine how many more jumps Bobby can do now compared to when he was a child, we need to calculate the number of jumps per minute for both his childhood and adulthood.\n\nWhen Bobby was a child:\n- He could jump rope 30 times per minute.\n\nNow that he is an adult:\n- He can jump 1 jump per second.\n- There are 60 seconds in a minute, so he can jump \\(1 \\times 60 = 60\\) times per minute.\n\nTo find out how many more jumps he can do now:\n- Adult jumps per minute: 60\n- Child jumps per minute: 30\n- Difference: \\(60 - 30 = 30\\)\n\nBobby can now jump 30 more times per minute than when he was a child.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-8",
+      "source": "gsm8k-903",
+      "user": "Margaux owns a money lending company. Her friend pays her $5 per day, her brother $8 per day, and her cousin $4 per day. How much money will she collect after 7 days?",
+      "category": "math",
+      "response": "To calculate the total amount of money Margaux will collect after 7 days from her friend, brother, and cousin, we need to sum up the daily payments from each and then multiply by the number of days.\n\n1. Friend's payment: $5 per day\n2. Brother's payment: $8 per day\n3. Cousin's payment: $4 per day\n\nFirst, calculate the total daily payment:\n\\[ 5 + 8 + 4 = 17 \\text{ dollars per day} \\]\n\nNext, multiply the total daily payment by the number of days (7):\n\\[ 17 \\times 7 = 119 \\text{ dollars} \\]\n\nSo, Margaux will collect $119 after 7 days.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-84",
+      "source": "gsm8k-7226",
+      "user": "Carly is thinking about buying a wallet that costs $22 and a purse that costs $3 less than four times the cost of the wallet. What is the combined cost of both items?",
+      "category": "math",
+      "response": "First, let's determine the cost of the purse. The problem states that the purse costs $3 less than four times the cost of the wallet.\n\nThe cost of the wallet is $22. Therefore, four times the cost of the wallet is:\n\\[ 4 \\times 22 = 88 \\]\n\nSince the purse costs $3 less than this amount, we subtract $3 from $88:\n\\[ 88 - 3 = 85 \\]\n\nSo, the purse costs $85.\n\nNext, we find the combined cost of both items by adding the cost of the wallet and the cost of the purse:\n\\[ 22 + 85 = 107 \\]\n\nTherefore, the combined cost of both items is $107.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-26",
+      "source": "gsm8k-1729",
+      "user": "Calvin is a bug collector.  In his collection, he has 12 giant roaches, 3 scorpions, half as many crickets as roaches, and twice as many caterpillars as scorpions.  How many insects does Calvin have in his collection?",
+      "category": "math",
+      "response": "To determine the total number of insects in Calvin's collection, we need to calculate the number of each type of insect and then sum them up.\n\n1. **Giant Roaches**: Calvin has 12 giant roaches.\n2. **Scorpions**: Calvin has 3 scorpions.\n3. **Cricket Calculation**: Calvin has half as many crickets as roaches. Since he has 12 roaches:\n   \\[\n   \\text{Number of crickets} = \\frac{12}{2} = 6\n   \\]\n4. **Caterpillar Calculation**: Calvin has twice as many caterpillars as scorpions. Since he has 3 scorpions:\n   \\[\n   \\text{Number of caterpillars} = 3 \\times 2 = 6\n   \\]\n\nNow, we sum up all the insects:\n\\[\n\\text{Total insects} = \\text{Giant roaches} + \\text{Scorpions} + \\text{Crickets} + \\text{Caterpillars}\n\\]\n\\[\n\\text{Total insects} = 12 + 3 + 6 + 6 = 27\n\\]\n\nTherefore, Calvin has 27 insects in his collection.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-14",
+      "source": "gsm8k-5802",
+      "user": "Hannah ran 9 kilometers on Monday. She ran 4816 meters on Wednesday and 2095 meters on Friday. How many meters farther did she run on Monday than Wednesday and Friday combined?",
+      "category": "math",
+      "response": "First, we need to convert Hannah's Monday running distance from kilometers to meters to make the comparison easier. Since 1 kilometer equals 1000 meters:\n\n\\[ 9 \\text{ kilometers} = 9 \\times 1000 = 9000 \\text{ meters} \\]\n\nNext, we add the distances she ran on Wednesday and Friday:\n\n\\[ 4816 \\text{ meters} + 2095 \\text{ meters} = 6911 \\text{ meters} \\]\n\nNow, we find out how many meters farther she ran on Monday compared to the combined distance of Wednesday and Friday:\n\n\\[ 9000 \\text{ meters} - 6911 \\text{ meters} = 2089 \\text{ meters} \\]\n\nSo, Hannah ran 2089 meters farther on Monday than she did on Wednesday and Friday combined.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-12",
+      "source": "gsm8k-7387",
+      "user": "Jose threatened to withhold 20% of Amanda's pay if she does not finish her sales report by midnight. If Amanda makes $50.00 an hour and works for 10 hours a day, how much money will she receive if she does not finish the sales report by midnight?",
+      "category": "math",
+      "response": "First, let's calculate Amanda's daily earnings:\n\nAmanda makes $50.00 per hour and works for 10 hours a day.\n\n\\[ \\text{Daily Earnings} = 50 \\times 10 = \\$500.00 \\]\n\nIf Jose threatens to withhold 20% of her pay because she does not finish her sales report by midnight, we need to calculate 20% of her daily earnings:\n\n\\[ 20\\% \\text{ of } \\$500.00 = 0.20 \\times 500 = \\$100.00 \\]\n\nTherefore, if Amanda does not finish her sales report by midnight, Jose will withhold $100.00 from her pay.\n\nTo find out how much Amanda will receive, we subtract the withheld amount from her total daily earnings:\n\n\\[ \\text{Amount Amanda will receive} = \\$500.00 - \\$100.00 = \\$400.00 \\]\n\nSo, if Amanda does not finish the sales report by midnight, she will receive $400.00.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-51",
+      "source": "gsm8k-2757",
+      "user": "Aryan owes Fernanda $1200, which is twice what Kyro owes Fernanda. Aryan decides to pay 60% of her debt to Fernanda, and Kyro pays Fernanda 80% of her dept. If Fernanda had $300 in her savings account and adds the money she's been paid by her debtors to the savings account, calculate the total amount of money in her savings account now.",
+      "category": "math",
+      "response": "First, we determine how much Kyro owes Fernanda. Since Aryan owes $1200, which is twice what Kyro owes, we can set up the equation:\n\n\\[ 1200 = 2 \\times \\text{Kyro's debt} \\]\n\nSolving for Kyro's debt:\n\n\\[ \\text{Kyro's debt} = \\frac{1200}{2} = 600 \\]\n\nNext, we calculate how much Aryan pays Fernanda. Aryan decides to pay 60% of her debt:\n\n\\[ \\text{Amount Aryan pays} = 0.60 \\times 1200 = 720 \\]\n\nThen, we calculate how much Kyro pays Fernanda. Kyro decides to pay 80% of his debt:\n\n\\[ \\text{Amount Kyro pays} = 0.80 \\times 600 = 480 \\]\n\nNow, we add the amounts paid by Aryan and Kyro to Fernanda's initial savings of $300:\n\n\\[ \\text{Total amount in savings} = 300 + 720 + 480 = 1500 \\]\n\nTherefore, the total amount of money in Fernanda's savings account now is $1500.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-31",
+      "source": "gsm8k-5092",
+      "user": "Kevin is taking a 600-mile trip, traveling at a rate of 50 miles per hour. How much faster must he travel to decrease his travel time by 4 hours?",
+      "category": "math",
+      "response": "To determine how much faster Kevin must travel to decrease his travel time by 4 hours, we can follow these steps:\n\n1. **Calculate the original travel time:**\n   \\[\n   \\text{Original travel time} = \\frac{\\text{Distance}}{\\text{Speed}} = \\frac{600 \\text{ miles}}{50 \\text{ mph}} = 12 \\text{ hours}\n   \\]\n\n2. **Determine the new travel time:**\n   \\[\n   \\text{New travel time} = \\text{Original travel time} - 4 \\text{ hours} = 12 \\text{ hours} - 4 \\text{ hours} = 8 \\text{ hours}\n   \\]\n\n3. **Calculate the required speed to achieve the new travel time:**\n   \\[\n   \\text{Required speed} = \\frac{\\text{Distance}}{\\text{New travel time}} = \\frac{600 \\text{ miles}}{8 \\text{ hours}} = 75 \\text{ mph}\n   \\]\n\n4. **Determine how much faster this speed is compared to the original speed:**\n   \\[\n   \\text{Increase in speed} = \\text{Required speed} - \\text{Original speed} = 75 \\text{ mph} - 50 \\text{ mph} = 25 \\text{ mph}\n   \\]\n\nTherefore, Kevin must travel 25 mph faster to decrease his travel time by 4 hours.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-68",
+      "source": "gsm8k-3986",
+      "user": "48 children are trying to share a pack of sweets. After taking 4 sweets each, there is still a third of the original amount left. What is the original number of sweets in the pack?",
+      "category": "math",
+      "response": "Let's denote the original number of sweets as \\( x \\).\n\nEach of the 48 children takes 4 sweets, so the total number of sweets taken by the children is:\n\\[ 48 \\times 4 = 192 \\]\n\nAfter these sweets are taken, there is still a third of the original amount left. This means that the remaining sweets are:\n\\[ \\frac{x}{3} \\]\n\nThe relationship between the original number of sweets, the number taken by the children, and the remaining sweets can be expressed as:\n\\[ x - 192 = \\frac{x}{3} \\]\n\nTo solve for \\( x \\), we first eliminate the fraction by multiplying every term by 3:\n\\[ 3x - 576 = x \\]\n\nNext, we isolate \\( x \\) by subtracting \\( x \\) from both sides:\n\\[ 2x = 576 \\]\n\nThen, we divide both sides by 2:\n\\[ x = 288 \\]\n\nSo, the original number of sweets in the pack is \\( 288 \\).",
+      "finished": true
+    },
+    {
+      "id": "eval-math-16",
+      "source": "gsm8k-6017",
+      "user": "Stephen made 10 round trips up and down a 40,000 foot tall mountain. If he reached 3/4 of the mountain's height on each of his trips, calculate the total distance he covered.",
+      "category": "math",
+      "response": "To calculate the total distance Stephen covered, we need to follow these steps:\n\n1. Determine the height Stephen reached on each trip.\n2. Calculate the distance for one round trip.\n3. Multiply by the number of round trips.\n\n**Step 1: Height Reached on Each Trip**\nStephen reached \\( \\frac{3}{4} \\) of the mountain's height on each trip. The mountain is 40,000 feet tall.\n\n\\[\n\\text{Height reached per trip} = \\frac{3}{4} \\times 40,000 = 30,000 \\text{ feet}\n\\]\n\n**Step 2: Distance for One Round Trip**\nA round trip means going up and coming back down, so the distance for one round trip is twice the height reached.\n\n\\[\n\\text{Distance for one round trip} = 2 \\times 30,000 = 60,000 \\text{ feet}\n\\]\n\n**Step 3: Total Distance for 10 Round Trips**\nStephen made 10 round trips.\n\n\\[\n\\text{Total distance} = 10 \\times 60,000 = 600,000 \\text{ feet}\n\\]\n\nSo, the total distance Stephen covered is 600,000 feet.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-47",
+      "source": "gsm8k-272",
+      "user": "Oliver has 10 $20 and 3 $5 bills. William has 15 $10 and 4 $5 bills. How much more money does Oliver have than William?",
+      "category": "math",
+      "response": "First, let's calculate the total amount of money Oliver has:\n\n- Oliver has 10 $20 bills, so \\(10 \\times 20 = 200\\) dollars.\n- Oliver also has 3 $5 bills, so \\(3 \\times 5 = 15\\) dollars.\n- Therefore, Oliver's total is \\(200 + 15 = 215\\) dollars.\n\nNext, let's calculate the total amount of money William has:\n\n- William has 15 $10 bills, so \\(15 \\times 10 = 150\\) dollars.\n- William also has 4 $5 bills, so \\(4 \\times 5 = 20\\) dollars.\n- Therefore, William's total is \\(150 + 20 = 170\\) dollars.\n\nNow, to find out how much more money Oliver has than William, we subtract William's total from Oliver's total:\n\n\\(215 - 170 = 45\\)\n\nSo, Oliver has $45 more than William.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-42",
+      "source": "gsm8k-6934",
+      "user": "On the first day of school, Mrs. McGillicuddy had 25 students registered for the morning session of kindergarten, but 3 students were absent; and she had 24 students registered for the afternoon session, but 4 students were absent. How many students did Mrs. McGillicuddy have over the two kindergarten sessions?",
+      "category": "math",
+      "response": "To find out how many students Mrs. McGillicuddy had over the two kindergarten sessions, we need to calculate the number of students present in each session and then sum these numbers.\n\nFor the morning session:\n- Registered students: 25\n- Absent students: 3\n- Students present: \\(25 - 3 = 22\\)\n\nFor the afternoon session:\n- Registered students: 24\n- Absent students: 4\n- Students present: \\(24 - 4 = 20\\)\n\nNow, adding the students present in both sessions:\n- Total students: \\(22 + 20 = 42\\)\n\nSo, Mrs. McGillicuddy had 42 students over the two kindergarten sessions.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-17",
+      "source": "gsm8k-385",
+      "user": "When the strawberries at Fruity Farm are ready for harvest, Miguel charges each interested picker $4 to access the strawberry fields. Once there, people pick as many strawberries as they wish, and then take them to Miguel for weighing and pricing. This year, the standard price of a pound of strawberries is $20. Miguel is a very generous man. He deducts the entrance charge from the cost of the harvest. Sally, Jenny and Moses have just finished their strawberry picking and are headed home. They paid $128 for their harvest. How many pounds of strawberry did they pick?",
+      "category": "math",
+      "response": "To determine how many pounds of strawberries Sally, Jenny, and Moses picked, we can follow these steps:\n\n1. **Calculate the total entrance fee paid by the group:**\n   Each person pays $4 to enter the strawberry fields. Since there are three people (Sally, Jenny, and Moses), the total entrance fee is:\n   \\[\n   3 \\times 4 = 12 \\text{ dollars}\n   \\]\n\n2. **Determine the amount spent on strawberries:**\n   The total amount paid for the harvest is $128. After deducting the entrance fees, the amount spent on strawberries is:\n   \\[\n   128 - 12 = 116 \\text{ dollars}\n   \\]\n\n3. **Calculate the number of pounds of strawberries picked:**\n   The price per pound of strawberries is $20. Therefore, the number of pounds picked is:\n   \\[\n   \\frac{116}{20} = 5.8 \\text{ pounds}\n   \\]\n\nThus, Sally, Jenny, and Moses picked a total of \\(5.8\\) pounds of strawberries.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-79",
+      "source": "gsm8k-3269",
+      "user": "A jug is filled with 5 liters of water and a bucket is filled with 4 jugs. How many liters of water are contained in 2 buckets?",
+      "category": "math",
+      "response": "To find out how many liters of water are contained in 2 buckets, we can follow these steps:\n\n1. Determine the amount of water in one jug.\n   - One jug contains 5 liters of water.\n\n2. Determine the amount of water in one bucket.\n   - One bucket contains 4 jugs.\n   - Therefore, the amount of water in one bucket is \\(4 \\times 5 = 20\\) liters.\n\n3. Determine the amount of water in 2 buckets.\n   - Two buckets contain \\(2 \\times 20 = 40\\) liters of water.\n\nSo, 2 buckets contain 40 liters of water.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-9",
+      "source": "gsm8k-556",
+      "user": "Roberto recently received a 20% raise from his previous salary, which was already 40% higher than his starting salary. If Roberto's starting salary was $80,000, what is his current salary?",
+      "category": "math",
+      "response": "To determine Roberto's current salary, we need to follow these steps:\n\n1. Calculate Roberto's previous salary based on his starting salary.\n2. Calculate the current salary after the 20% raise from the previous salary.\n\n**Step 1: Calculate the previous salary**\n\nRoberto's starting salary was $80,000. His previous salary was 40% higher than this amount.\n\n\\[ \\text{Previous Salary} = \\text{Starting Salary} + 0.40 \\times \\text{Starting Salary} \\]\n\\[ \\text{Previous Salary} = 80,000 + 0.40 \\times 80,000 \\]\n\\[ \\text{Previous Salary} = 80,000 + 32,000 \\]\n\\[ \\text{Previous Salary} = 112,000 \\]\n\n**Step 2: Calculate the current salary**\n\nRoberto received a 20% raise from his previous salary of $112,000.\n\n\\[ \\text{Current Salary} = \\text{Previous Salary} + 0.20 \\times \\text{Previous Salary} \\]\n\\[ \\text{Current Salary} = 112,000 + 0.20 \\times 112,000 \\]\n\\[ \\text{Current Salary} = 112,000 + 22,400 \\]\n\\[ \\text{Current Salary} = 134,400 \\]\n\nTherefore, Roberto's current salary is $134,400.",
+      "finished": true
+    },
+    {
+      "id": "eval-math-4",
+      "source": "gsm8k-5767",
+      "user": "Jefferson has 56 bananas, while Walter, his friend, has 1/4 times fewer bananas. If they decide to combine their bananas and share them equally between themselves, how many bananas does Walter get?",
+      "category": "math",
+      "response": "First, we need to determine how many bananas Walter has. Since Walter has \\( \\frac{1}{4} \\) times fewer bananas than Jefferson, we calculate the number of bananas Walter has as follows:\n\nJefferson has 56 bananas. \\( \\frac{1}{4} \\) of 56 is:\n\\[ \\frac{1}{4} \\times 56 = 14 \\]\n\nSo, Walter has \\( 56 - 14 = 42 \\) bananas.\n\nNext, we find the total number of bananas by combining Jefferson's and Walter's bananas:\n\\[ 56 + 42 = 98 \\]\n\nIf they share these bananas equally, each gets half of the total:\n\\[ \\frac{98}{2} = 49 \\]\n\nTherefore, Walter gets 49 bananas.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-5",
+      "source": "triviaqa-qz_5778",
+      "user": "Which London museum houses the world's largest collection of decorative and design?",
+      "category": "trivia",
+      "response": "The Victoria and Albert Museum in London houses the world's largest collection of decorative arts and design.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-89",
+      "source": "triviaqa-dpql_2348",
+      "user": "What is the singular form of the word candelabra?",
+      "category": "trivia",
+      "response": "The singular form of the word \"candelabra\" is \"candelabrum.\"",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-31",
+      "source": "triviaqa-qz_1721",
+      "user": "Which 21 year old model did Rod Stewart marry in 1990?",
+      "category": "trivia",
+      "response": "In 1990, Rod Stewart married 21-year-old model Heather Spearman.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-45",
+      "source": "triviaqa-qb_9300",
+      "user": "What type of creature is an inca?",
+      "category": "trivia",
+      "response": "The term \"inca\" typically refers to a person or entity associated with the Inca Empire, which was a pre-Columbian civilization that existed in South America from the 13th to the 16th century. The Incas were known for their advanced architecture, agricultural techniques, and social organization. However, \"inca\" can also refer to:\n\n1. A male ruler or emperor of the Inca Empire.\n2. More generally, any inhabitant or descendant of the Inca people.\n\nThere is no specific creature called an \"inca\" in mythology, biology, or any other field. If you meant something else by \"inca,\" please provide more context.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-44",
+      "source": "triviaqa-qb_7974",
+      "user": "Bald-Faced Hornet is another name for which insect?",
+      "category": "trivia",
+      "response": "Bald-Faced Hornet is another name for the insect known scientifically as Dolichovespula maculata.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-28",
+      "source": "triviaqa-qb_6235",
+      "user": "The Star of ‘who’ appears on the National flag of Israel?",
+      "category": "trivia",
+      "response": "The Star of David, also known as the Shield of David or Magen David in Hebrew, appears on the national flag of Israel.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-37",
+      "source": "triviaqa-dpql_4346",
+      "user": "Who refuses Mr St John Rivers’ offer of marriage?",
+      "category": "trivia",
+      "response": "Jane Eyre refuses Mr. St John Rivers' offer of marriage in Charlotte Brontë's novel \"Jane Eyre.\"",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-18",
+      "source": "triviaqa-qb_7728",
+      "user": "Which animal has the highest known blood pressure of any mammal in the world?",
+      "category": "trivia",
+      "response": "The animal with the highest known blood pressure of any mammal is the giraffe. Giraffes can have a blood pressure as high as 280/140 mmHg, which is significantly higher than that of other mammals. This high blood pressure is necessary to pump blood up to their long necks and heads against gravity.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-93",
+      "source": "triviaqa-qz_3900",
+      "user": "What nationality is Tomas Berdych, who defeated Roger Federer on his way to the final of the Men's Singles at Wimbledon in 2010?",
+      "category": "trivia",
+      "response": "Tomas Berdych is Czech. He defeated Roger Federer in the semifinals of the Men's Singles at Wimbledon in 2010.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-94",
+      "source": "triviaqa-qb_7021",
+      "user": "In the Shakespeare play ‘Macbeth’ who kills Macbeth?",
+      "category": "trivia",
+      "response": "In William Shakespeare's play \"Macbeth,\" Macbeth is killed by Malcom, who is revealed to be the rightful heir to the Scottish throne and the son of King Duncan. Specifically, Macduff, a Scottish nobleman, fights and kills Macbeth in Act 5, Scene 8. Malcom leads the army that defeats Macbeth's forces, and it is during this battle that Macduff finds and kills Macbeth.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-77",
+      "source": "triviaqa-dpql_1162",
+      "user": "On which programme is the presenter followed around by a dog called Nigel?",
+      "category": "trivia",
+      "response": "The presenter followed around by a dog called Nigel appears on the BBC show \"Springwatch.\" The dog Nigel is often featured in light-hearted segments during the program.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-62",
+      "source": "triviaqa-tc_2318",
+      "user": "Who ordered the Boulder Dam to be renamed the Hoover Dam?",
+      "category": "trivia",
+      "response": "The Boulder Dam was renamed the Hoover Dam by President Franklin D. Roosevelt on November 11, 1930.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-92",
+      "source": "triviaqa-qz_6462",
+      "user": "In what Soap would you expect to find Miffield Hall later renamed to Home Farm Manor?",
+      "category": "trivia",
+      "response": "Miffield Hall, later renamed to Home Farm Manor, is a location from the British soap opera \"Hollyoaks.\" This name change occurred in the show's storyline.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-80",
+      "source": "triviaqa-qb_10088",
+      "user": "US author Truman Strekfus Persons is better known by what name?",
+      "category": "trivia",
+      "response": "Truman Strekfus Persons is better known by the pen name Truman Capote.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-65",
+      "source": "triviaqa-qz_1169",
+      "user": "In The Twelve Days Of Christmas, how many ladies dancing were there?",
+      "category": "trivia",
+      "response": "In \"The Twelve Days of Christmas,\" there are 6 ladies dancing on the sixth day. The song lists the number of gifts given each day, and on the sixth day, the verse goes: \"On the sixth day of Christmas my true love sent to me, six ladies dancing, five French hens, four calling birds, three french hens, two turtle doves, and a partridge in a pear tree.\"",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-76",
+      "source": "triviaqa-dpql_3799",
+      "user": "‘Stop all the clocks’ are the opening words of which poem by W. H. Auden?",
+      "category": "trivia",
+      "response": "'Stop all the clocks' are the opening words of the poem \"Stop All the Clocks\" by W. H. Auden.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-96",
+      "source": "triviaqa-qb_4096",
+      "user": "In which month in 1994 was the Channel Tunnel officially opened between England and France?",
+      "category": "trivia",
+      "response": "The Channel Tunnel, also known as the Eurotunnel, was officially opened in May 1994.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-33",
+      "source": "triviaqa-qb_5594",
+      "user": "What was poet Percy Shelley’s middle name?",
+      "category": "trivia",
+      "response": "Percy Shelley's middle name was Bysshe. His full name was Percy Bysshe Shelley.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-73",
+      "source": "triviaqa-qb_7528",
+      "user": "In which country was the 2010 golf Ryder Cup competition held?",
+      "category": "trivia",
+      "response": "The 2010 Ryder Cup was held in Ireland, specifically at the Celtic Manor Resort in Newport, Wales, which is often considered part of the United Kingdom but is administered separately from England, Scotland, and Northern Ireland by the Irish Ryder Cup team. However, for the purpose of hosting the event, it was treated as part of Great Britain and Ireland.",
+      "finished": true
+    },
+    {
+      "id": "eval-trivia-81",
+      "source": "triviaqa-qb_4278",
+      "user": "What is the name of fence 15 on the Aintree Grand National racecourse?",
+      "category": "trivia",
+      "response": "Fence 15 on the Aintree Grand National racecourse is known as the \"Tiger Leaping Gap.\"",
+      "finished": true
+    },
+    {
+      "id": "eval-code-87",
+      "source": "codealpaca-19946",
+      "user": "Write a function that takes a list of strings and counts the number of each string that contains the letter \"a\".\n\n['foo', 'bar', 'baz']",
+      "category": "code",
+      "response": "```python\ndef count_strings_with_a(strings):\n    count = {}\n    for s in strings:\n        if 'a' in s:\n            if s in count:\n                count[s] += 1\n            else:\n                count[s] = 1\n    return count\n\n# Example usage\nstrings = ['foo', 'bar', 'baz']\nresult = count_strings_with_a(strings)\nprint(result)  # Output: {'foo': 1, 'bar': 1}\n```\nThis function iterates through the list of strings, checks if each string contains the letter 'a', and then updates a dictionary to keep track of how many times each such string appears.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-0",
+      "source": "codealpaca-14753",
+      "user": "Program a function to remove all the even numbers from an array",
+      "category": "code",
+      "response": "```python\ndef remove_even_numbers(arr):\n    return [num for num in arr if num % 2 != 0]\n```\nThis Python function uses list comprehension to filter out even numbers, keeping only the odd numbers from the input array.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-64",
+      "source": "codealpaca-2556",
+      "user": "Given a matrix of size m x n, transpose it.\n\nmatrix = [[1, 2, 3],\n          [4, 5, 6],\n          [7, 8, 9]]",
+      "category": "code",
+      "response": "To transpose the given matrix, we need to convert its rows into columns and its columns into rows. Here is the transposed matrix:\n\ntransposed_matrix = [[1, 4, 7],\n                     [2, 5, 8],\n                     [3, 6, 9]]",
+      "finished": true
+    },
+    {
+      "id": "eval-code-79",
+      "source": "codealpaca-9102",
+      "user": "Edit the program below to print out the square root of a number.\n\n#include <iostream> \n \nint main() \n{ \n    int number; \n  \n    std::cout << \"Enter an integer: \"; \n    std::cin >> number; \n  \n    // Add code to print square root of the number \n  \n    return 0;\n}",
+      "category": "code",
+      "response": "```cpp\n#include <iostream>\n#include <cmath>  // Include cmath for sqrt function\n\nint main() \n{ \n    int number; \n  \n    std::cout << \"Enter an integer: \"; \n    std::cin >> number; \n  \n    if (number >= 0) {  // Ensure the number is non-negative\n        double squareRoot = sqrt(number);  // Calculate the square root\n        std::cout << \"The square root of \" << number << \" is \" << squareRoot << std::endl;\n    } else {\n        std::cout << \"The number must be non-negative.\" << std::endl;\n    }\n  \n    return 0;\n}\n```",
+      "finished": true
+    },
+    {
+      "id": "eval-code-32",
+      "source": "codealpaca-5226",
+      "user": "Create a website for the company ACME with all the following pages: Home, About Us, Contact Us, FAQ and Privacy Policy.",
+      "category": "code",
+      "response": "To create a basic website for ACME with the specified pages, we'll outline the structure and content for each page. This will be a text-based representation to give you an idea of what the website could look like.\n\n### 1. Home Page\n\n**Title:** ACME - Your Partner in Innovation\n\n**Content:**\n- **Header Section:**\n  - Logo (ACME)\n  - Navigation Menu: Home | About Us | Contact Us | FAQ | Privacy Policy\n- **Hero Section:**\n  - Headline: \"Empowering Businesses with Cutting-Edge Solutions\"\n  - Subheadline: \"At ACME, we believe in innovation and excellence. Join us on our journey to transform your business.\"\n  - Call-to-Action Button: \"Learn More\" (links to Services page)\n- **About Us Section:**\n  - Brief introduction about ACME's mission and values.\n- **Services Section:**\n  - List of key services offered by ACME.\n- **Testimonials Section:**\n  - Short testimonials from satisfied clients.\n- **Footer Section:**\n  - Quick Links: Home | About Us | Contact Us | FAQ | Privacy Policy\n  - Social Media Icons: Facebook | Twitter | LinkedIn\n  - Copyright Information: © 2023 ACME. All rights reserved.\n\n### 2. About Us Page\n\n**Title:** About Us\n\n**Content:**\n- **Header Section:**\n  - Logo (ACME)\n  - Navigation Menu: Home | About Us | Contact Us | FAQ | Privacy Policy\n- **Introduction Section:**\n  - Brief history and background of ACME.\n- **Mission & Vision Section:**\n  - Mission Statement: \"To provide innovative solutions that drive business growth and success.\"\n  - Vision Statement: \"To be the leading provider of technology-driven services in the industry.\"\n- **Team Section:**\n  - Introduction to key team members and their roles.\n- **Footer Section:**\n  - Quick Links: Home | About Us | Contact Us | FAQ | Privacy Policy\n  - Social Media Icons: Facebook | Twitter | LinkedIn\n  - Copyright Information: © 2023 ACME. All rights reserved.\n\n### 3. Contact Us Page\n\n**Title:** Contact Us\n\n**Content:**\n- **Header Section:**\n  - Logo (ACME)\n  - Navigation Menu: Home | About Us | Contact Us | FAQ | Privacy Policy\n- **Contact Information Section:**\n  - Address: 123",
+      "finished": false
+    },
+    {
+      "id": "eval-code-80",
+      "source": "codealpaca-18138",
+      "user": "Implement a function in PHP that takes in a string s and an integer k as parameters and returns the first k characters of s.\n\nString = \"SoftwareTestingHelp\"\nInteger = 6",
+      "category": "code",
+      "response": "```php\nfunction getFirstKChars($s, $k) {\n    return substr($s, 0, $k);\n}\n\n$string = \"SoftwareTestingHelp\";\n$k = 6;\n$result = getFirstKChars($string, $k);\necho $result; // Outputs: Software\n```\n```",
+      "finished": true
+    },
+    {
+      "id": "eval-code-67",
+      "source": "codealpaca-175",
+      "user": "Implement an algorithm to find the sum of all the elements in an array.\n\nThe array is: [3, 5, 8, 10, 4]",
+      "category": "code",
+      "response": "```python\ndef sum_array(arr):\n    total = 0\n    for element in arr:\n        total += element\n    return total\n\narray = [3, 5, 8, 10, 4]\nresult = sum_array(array)\nprint(\"The sum of all elements in the array is:\", result)\n```\n\nOutput:\n```\nThe sum of all elements in the array is: 30\n```",
+      "finished": true
+    },
+    {
+      "id": "eval-code-96",
+      "source": "codealpaca-17269",
+      "user": "Implement a function to remove all occurrences of string t from string s.\n\ns = 'The quick brown fox jumps over the lazy dog.'\nt = 'the'",
+      "category": "code",
+      "response": "```python\ndef remove_substring(s, t):\n    return s.lower().replace(t.lower(), '')\n\ns = 'The quick brown fox jumps over the lazy dog.'\nt = 'the'\nresult = remove_substring(s, t)\nprint(result)\n```\n\nThis will output: `' quick brown fox jumps over  lazy dog.'`",
+      "finished": true
+    },
+    {
+      "id": "eval-code-13",
+      "source": "codealpaca-12290",
+      "user": "What is the difference between deep copy and shallow copy in Python?",
+      "category": "code",
+      "response": "In Python, the difference between a deep copy and a shallow copy lies in how they handle nested objects:\n\n1. **Shallow Copy**:\n   - A shallow copy constructs a new compound object and then (to the extent possible) inserts references into it to the objects found in the original.\n   - Changes to mutable objects within the copied structure will affect the original structure because they reference the same objects.\n   - It is implemented by the `copy` module's `copy()` function.\n\n   Example:\n   ```python\n   import copy\n\n   original_list = [[1, 2], [3, 4]]\n   shallow_copied_list = copy.copy(original_list)\n\n   # Modifying a nested list in the shallow copied list affects the original\n   shallow_copied_list[0][0] = 'X'\n   print(original_list)  # Output: [['X', 2], [3, 4]]\n   ```\n\n2. **Deep Copy**:\n   - A deep copy constructs a new compound object and then, recursively, inserts copies into it of the objects found in the original.\n   - Changes to mutable objects within the copied structure do not affect the original structure because they create independent copies of those objects.\n   - It is implemented by the `copy` module's `deepcopy()` function.\n\n   Example:\n   ```python\n   import copy\n\n   original_list = [[1, 2], [3, 4]]\n   deeply_copied_list = copy.deepcopy(original_list)\n\n   # Modifying a nested list in the deeply copied list does not affect the original\n   deeply_copied_list[0][0] = 'Y'\n   print(original_list)  # Output: [[1, 2], [3, 4]]\n   ```\n\nIn summary, a shallow copy creates a new object that shares references with the original for top-level elements, while a deep copy creates a completely independent copy including all nested objects.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-15",
+      "source": "codealpaca-7640",
+      "user": "Come up with a C++ program that orders the elements of an unordered array from greatest to smallest.",
+      "category": "code",
+      "response": "```cpp\n#include <iostream>\n#include <algorithm>\n#include <vector>\n\nint main() {\n    // Define an unordered array (vector) of integers\n    std::vector<int> numbers = {5, 3, 8, 4, 2, 9, 1, 6, 7};\n\n    // Use std::sort with a custom comparator to sort in descending order\n    std::sort(numbers.begin(), numbers.end(), std::greater<int>());\n\n    // Print the sorted array\n    std::cout << \"Sorted array from greatest to smallest: \";\n    for (int num : numbers) {\n        std::cout << num << \" \";\n    }\n    std::cout << std::endl;\n\n    return 0;\n}\n```\n\nThis program uses the `std::sort` function from the `<algorithm>` header, which is a standard way to sort elements in C++. The `std::greater<int>()` comparator is used to sort the elements in descending order. The sorted array is then printed to the console.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-68",
+      "source": "codealpaca-10033",
+      "user": "Use regular expression to remove special characters from any given string.\n\nmy_string = 'Hi There! Welcome.@'",
+      "category": "code",
+      "response": "```python\nimport re\n\nmy_string = 'Hi There! Welcome.@'\nclean_string = re.sub(r'[^\\w\\s]', '', my_string)\nprint(clean_string)\n```\n\nThis code will output:\n```\nHi There Welcome\n```",
+      "finished": true
+    },
+    {
+      "id": "eval-code-66",
+      "source": "codealpaca-1115",
+      "user": "Implement a recursive binary search on a given sorted list.\n\n[-4, -2, 0, 6, 7, 8]",
+      "category": "code",
+      "response": "```python\ndef binary_search(arr, target, low, high):\n    if low > high:\n        return -1\n    \n    mid = (low + high) // 2\n    \n    if arr[mid] == target:\n        return mid\n    elif arr[mid] > target:\n        return binary_search(arr, target, low, mid - 1)\n    else:\n        return binary_search(arr, target, mid + 1, high)\n\n# Example usage\narr = [-4, -2, 0, 6, 7, 8]\ntarget = 6\nresult = binary_search(arr, target, 0, len(arr) - 1)\n\nif result != -1:\n    print(f\"Element {target} is present at index {result}\")\nelse:\n    print(f\"Element {target} is not present in the array\")\n```\n\nThis code defines a recursive function `binary_search` that performs a binary search on a sorted list `arr` for a given `target`. It returns the index of the target if found, otherwise returns -1. The example usage demonstrates searching for the number 6 in the provided list.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-94",
+      "source": "codealpaca-18944",
+      "user": "Reimplement the function below, so that it takes in two int arguments and returns their sum instead of using the existing global variable x.\n\nx = 4\n\ndef add_x(y):\n  return x + y",
+      "category": "code",
+      "response": "```python\ndef add_numbers(a, b):\n  return a + b\n```",
+      "finished": true
+    },
+    {
+      "id": "eval-code-38",
+      "source": "codealpaca-19320",
+      "user": "Sort a list of words by the frequency of their occurrence.\n\ndog cat bed dog mouse rat",
+      "category": "code",
+      "response": "To sort the list of words by the frequency of their occurrence, we first count how many times each word appears:\n\n- dog: 2\n- cat: 1\n- bed: 1\n- mouse: 1\n- rat: 1\n\nNow, sorting these words based on their frequency (from highest to lowest):\n\ndog, cat, bed, mouse, rat",
+      "finished": true
+    },
+    {
+      "id": "eval-code-60",
+      "source": "codealpaca-19645",
+      "user": "Create a C# class that contains a constructor.",
+      "category": "code",
+      "response": "```csharp\npublic class ExampleClass\n{\n    // Constructor\n    public ExampleClass()\n    {\n        // Initialization code here\n    }\n}\n```",
+      "finished": true
+    },
+    {
+      "id": "eval-code-75",
+      "source": "codealpaca-8473",
+      "user": "Create a Bash script for finding the most frequent word in a given sentence.\n\nThis is a test sentence to test the most frequent word",
+      "category": "code",
+      "response": "```bash\n#!/bin/bash\n\n# Function to find the most frequent word\nfind_most_frequent_word() {\n    # Convert the input string to lowercase and split into words\n    local sentence=$(echo \"$1\" | tr '[:upper:]' '[:lower:]')\n    read -ra words <<< \"$sentence\"\n    \n    # Declare an associative array to hold word counts\n    declare -A word_counts\n    \n    # Count occurrences of each word\n    for word in \"${words[@]}\"; do\n        ((word_counts[$word]++))\n    done\n    \n    # Find the most frequent word\n    most_frequent_word=\"\"\n    max_count=0\n    for word in \"${!word_counts[@]}\"; do\n        if [[ ${word_counts[$word]} -gt $max_count ]]; then\n            max_count=${word_counts[$word]}\n            most_frequent_word=$word\n        fi\n    done\n    \n    echo \"The most frequent word is: $most_frequent_word with $max_count occurrences.\"\n}\n\n# Example usage\ninput_sentence=\"This is a test sentence to test the most frequent word\"\nfind_most_frequent_word \"$input_sentence\"\n```\n\nThis script defines a function `find_most_frequent_word` that takes a sentence as input, processes it to find the most frequent word, and prints the result.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-51",
+      "source": "codealpaca-15784",
+      "user": "Implement selection sort algorithm to sort an array of integers in Java.\n\narr = [5, 8, 2, 7, 1]",
+      "category": "code",
+      "response": "```java\npublic class SelectionSort {\n    public static void main(String[] args) {\n        int[] arr = {5, 8, 2, 7, 1};\n        selectionSort(arr);\n        for (int num : arr) {\n            System.out.print(num + \" \");\n        }\n    }\n\n    public static void selectionSort(int[] arr) {\n        int n = arr.length;\n        for (int i = 0; i < n - 1; i++) {\n            int minIndex = i;\n            for (int j = i + 1; j < n; j++) {\n                if (arr[j] < arr[minIndex]) {\n                    minIndex = j;\n                }\n            }\n            // Swap the found minimum element with the first element\n            int temp = arr[minIndex];\n            arr[minIndex] = arr[i];\n            arr[i] = temp;\n        }\n    }\n}\n```\n\nThis Java program implements the selection sort algorithm to sort an array of integers. The `selectionSort` method sorts the array in ascending order, and the sorted array is printed out at the end.",
+      "finished": true
+    },
+    {
+      "id": "eval-code-93",
+      "source": "codealpaca-202",
+      "user": "Write a code to convert a given list of strings to uppercase.\n\nmylist = [\"hello\",\"world\"]",
+      "category": "code",
+      "response": "```python\nmylist = [\"hello\", \"world\"]\nmylist_uppercase = [item.upper() for item in mylist]\nprint(mylist_uppercase)\n```\nThis code will output: `['HELLO', 'WORLD']`",
+      "finished": true
+    },
+    {
+      "id": "eval-code-77",
+      "source": "codealpaca-3492",
+      "user": "Create a class named `Person` and add four attributes called `name`, `age`, `gender`, and `height`.",
+      "category": "code",
+      "response": "```python\nclass Person:\n    def __init__(self, name, age, gender, height):\n        self.name = name\n        self.age = age\n        self.gender = gender\n        self.height = height\n```",
+      "finished": true
+    },
+    {
+      "id": "eval-code-45",
+      "source": "codealpaca-14406",
+      "user": "Suggest a way to filter out comments containing profane language in a text corpus.",
+      "category": "code",
+      "response": "To filter out comments containing profane language in a text corpus, you can follow these steps:\n\n1. **Define Profanity List**: Create a list of words that are considered profane. This list can be customized based on the context and sensitivity required.\n\n2. **Tokenization**: Split the text into individual words (tokens) to check each word against the profanity list.\n\n3. **Profanity Check**: For each token, check if it matches any word in the profanity list.\n\n4. **Filtering**: Remove or flag the comments that contain any profane words.\n\nHere is a simple Python example using the `nltk` library for tokenization and a custom profanity list:\n\n```python\nimport nltk\nfrom nltk.tokenize import word_tokenize\n\n# Download necessary NLTK data files\nnltk.download('punkt')\n\n# Custom profanity list\nprofanity_list = [\"badword1\", \"badword2\", \"badword3\"]\n\ndef is_profane(word):\n    return word.lower() in profanity_list\n\ndef filter_comments(comments):\n    filtered_comments = []\n    for comment in comments:\n        tokens = word_tokenize(comment)\n        if not any(is_profane(token) for token in tokens):\n            filtered_comments.append(comment)\n    return filtered_comments\n\n# Example usage\ncomments = [\n    \"This is a great post!\",\n    \"I hate this site!\",\n    \"The service is terrible.\",\n    \"Wow, what a wonderful experience!\"\n]\n\nfiltered_comments = filter_comments(comments)\nprint(filtered_comments)\n```\n\n### Explanation:\n- **Profanity List**: A list of words that are considered profane.\n- **is_profane Function**: Checks if a given word is in the profanity list.\n- **filter_comments Function**: Tokenizes each comment and checks if any token is profane. If no profane words are found, the comment is added to the filtered list.\n- **Example Usage**: Demonstrates how to use the function with a sample list of comments.\n\nYou can expand the profanity list as needed and adjust the filtering logic to suit your specific requirements.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-39",
+      "source": "ultrachat-66ba33042ce011c58faef1383f3146f94316cf5b85a8bedf290caf4e8ba12114",
+      "user": "Provide a step-by-step guide to make smooth and creamy peanut butter using a food processor, including a list of required ingredients and their exact measurements. Also, include any tips and tricks for achieving the perfect consistency and flavor.",
+      "category": "cooking",
+      "response": "### Ingredients:\n- 2 cups (300g) raw peanuts\n- 1 tablespoon (15ml) neutral-flavored oil (such as canola or vegetable oil)\n- 1 teaspoon (5ml) salt\n\n### Equipment:\n- Food processor\n- Measuring cups and spoons\n- Spatula\n\n### Step-by-Step Guide:\n\n#### Step 1: Prepare the Peanuts\n1. **Roast the Peanuts (Optional but Recommended):** Preheat your oven to 350°F (175°C). Spread the raw peanuts on a baking sheet and roast them in the oven for about 10-15 minutes until they are lightly golden and fragrant. This step enhances the flavor and makes the peanuts easier to blend.\n2. **Cool the Peanuts:** Allow the roasted peanuts to cool completely.\n\n#### Step 2: Add Oil and Salt\n1. **Add Oil and Salt to Peanuts:** In the bowl of your food processor, combine the cooled peanuts, 1 tablespoon of oil, and 1 teaspoon of salt.\n\n#### Step 3: Process the Peanut Butter\n1. **Start Processing:** Turn on the food processor and let it run for about 1 minute to start breaking down the peanuts.\n2. **Scrape Down the Sides:** After 1 minute, stop the machine, scrape down the sides and bottom of the bowl with a spatula, and continue processing.\n3. **Continue Processing:** Process the mixture for another 5-7 minutes, scraping down the sides every 2 minutes. The longer you process, the smoother and creamier the peanut butter will become. If you prefer a chunky texture, you can stop earlier.\n4. **Check Consistency:** Stop the food processor and check the consistency. It should be smooth and creamy. If it's too thick, add a little more oil, 1 tablespoon at a time, until you reach your desired consistency.\n\n#### Step 4: Store the Peanut Butter\n1. **Transfer to a Container:** Once you have the desired consistency, transfer the peanut butter to an airtight container.\n2. **Store:** Store the peanut butter in the refrigerator where it will keep for up to 6 months.\n\n### Tips and Tricks:\n- **Use Raw Peanuts:** Raw peanuts yield a milder flavor compared to roasted ones, which can be stronger.\n- **Adjust Salt Taste:** Taste the peanut butter as you go and adjust the salt to your liking. Some people",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-21",
+      "source": "ultrachat-15fa1e17801e20a3737ada573ba59dceb4bc0958695693e2e09504853cd99d0f",
+      "user": "Provide a step-by-step recipe, including ingredients and measurements, for a lentil soup that is both flavorful and filling. Consider including tips for seasoning and adjusting the consistency, as well as any potential substitutions or variations on the recipe. The finished soup should be a satisfying and nourishing meal option.",
+      "category": "cooking",
+      "response": "### Lentil Soup Recipe\n\n#### Ingredients:\n- 1 cup green or brown lentils (rinsed and picked over)\n- 2 tablespoons olive oil\n- 1 large onion, chopped (about 2 cups)\n- 3 cloves garlic, minced\n- 2 carrots, peeled and diced (about 1 cup)\n- 2 stalks celery, diced (about 1 cup)\n- 1 medium potato, peeled and diced (about 1 cup)\n- 1 teaspoon ground cumin\n- 1 teaspoon smoked paprika\n- 1/2 teaspoon turmeric\n- 1/2 teaspoon salt\n- 1/4 teaspoon black pepper\n- 4 cups vegetable broth\n- 1 can (14.5 oz) diced tomatoes, undrained\n- 1 bay leaf\n- Fresh parsley, chopped (for garnish)\n\n#### Instructions:\n\n1. **Prepare Ingredients:**\n   - Rinse the lentils under cold water to remove any debris.\n   - Chop the onion, mince the garlic, dice the carrots and celery, and peel and dice the potato.\n\n2. **Sauté Vegetables:**\n   - Heat the olive oil in a large pot over medium heat.\n   - Add the chopped onion and sauté until translucent, about 5 minutes.\n   - Add the minced garlic and cook for another minute until fragrant.\n\n3. **Add Remaining Vegetables:**\n   - Stir in the diced carrots, celery, and potato. Cook for about 5 minutes, stirring occasionally, until the vegetables start to soften.\n\n4. **Season and Add Broth:**\n   - Sprinkle in the cumin, smoked paprika, turmeric, salt, and black pepper. Stir well to combine.\n   - Pour in the vegetable broth and bring the mixture to a boil.\n\n5. **Simmer Lentils:**\n   - Reduce the heat to low, add the diced tomatoes with their juice, and the bay leaf. Cover and let simmer for about 20-25 minutes, or until the lentils are tender and the potatoes are cooked through.\n\n6. **Adjust Consistency:**\n   - If the soup is too thick, you can add more broth or water, one cup at a time, until it reaches your desired consistency.\n   - For a thicker soup, you can blend some of the soup with an immersion blender or transfer a portion to a regular blender and blend until smooth, then return to the pot.\n\n7. **",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-8",
+      "source": "alpaca-48711",
+      "user": "Generate a unique diet plan that can help a 14 year old adolescent lose 5 pounds.\n\n14 year old adolescent wants to lose 5 pounds",
+      "category": "cooking",
+      "response": "Here's a balanced and healthy diet plan for a 14-year-old adolescent aiming to lose 5 pounds over a month. This plan focuses on gradual weight loss through healthier eating habits without drastically cutting calories, which is important for growth and development.\n\n### Daily Caloric Intake:\n- **Calories:** Aim for around 1800-2000 calories per day, depending on the individual’s activity level.\n- **Macronutrient Breakdown:**\n  - Carbohydrates: 50-60% of total calories (e.g., 900-1000 calories)\n  - Proteins: 25-30% of total calories (e.g., 450-500 calories)\n  - Fats: 20-25% of total calories (e.g., 360-450 calories)\n\n### Sample Meal Plan:\n\n#### Breakfast:\n- **Oatmeal with Berries and Almond Milk:**\n  - 1/2 cup rolled oats\n  - 1 cup unsweetened almond milk\n  - 1/2 cup mixed berries (fresh or frozen)\n  - 1 tablespoon chia seeds\n\n#### Snack 1:\n- **Greek Yogurt with Honey and Nuts:**\n  - 6 oz plain Greek yogurt\n  - 1 teaspoon honey\n  - 1 tablespoon chopped almonds\n\n#### Lunch:\n- **Grilled Chicken Salad:**\n  - 4 oz grilled chicken breast\n  - Mixed greens (lettuce, spinach, arugula)\n  - Cherry tomatoes, cucumber, bell peppers\n  - 1 tablespoon olive oil and vinegar dressing\n\n#### Snack 2:\n- **Apple Slices with Peanut Butter:**\n  - 1 medium apple\n  - 1 tablespoon natural peanut butter\n\n#### Dinner:\n- **Baked Salmon with Quinoa and Steamed Vegetables:**\n  - 4 oz baked salmon\n  - 1/2 cup cooked quinoa\n  - 1 cup steamed broccoli, carrots, and green beans\n  - 1 tablespoon olive oil\n\n#### Evening Snack:\n- **Hummus and Veggie Sticks:**\n  - 2 tablespoons hummus\n  - 1 cup raw carrot and celery sticks\n\n### Additional Tips:\n1. **Hydration:** Drink at least 8-10 glasses of water daily.\n2. **Physical Activity:** Incorporate at least 6",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-19",
+      "source": "ultrachat-304b97f97ddf6de939e7209b2436c5a311bba77866e802f674f2e8384939056f",
+      "user": "Write detailed instructions for making a classic wonton soup that includes making the filling, wrapping the wontons, preparing the broth, cooking the wontons and serving the soup. Please include measurements and timings for each step, as well as any variations or additional ingredients you recommend.",
+      "category": "cooking",
+      "response": "Classic Wonton Soup Recipe\n\nIngredients:\nFor the Filling:\n- 1 lb ground pork (80% lean)\n- 1/2 cup finely chopped green onions\n- 2 cloves garlic, minced\n- 1 tbsp ginger, grated\n- 1 tsp soy sauce\n- 1 tsp sesame oil\n- 1/2 tsp salt\n- 1/4 tsp white pepper\n- 1/4 tsp five-spice powder\n- 1/4 cup chicken broth\n\nFor the Broth:\n- 4 cups chicken broth\n- 1/2 cup water\n- 1 tbsp soy sauce\n- 1 tbsp oyster sauce\n- 1 tsp sesame oil\n- 1 tsp rice vinegar\n- 1/2 tsp sugar\n- 1/4 tsp white pepper\n- 1/4 tsp five-spice powder\n- 1/4 tsp ground white pepper\n- 1/4 tsp ground black pepper\n- 1/4 tsp ground Sichuan peppercorns (optional)\n\nFor the Wontons:\n- 1 package (about 16) wonton wrappers\n- 2 tbsp vegetable oil\n\nFor Garnish:\n- Chopped green onions\n- Sesame seeds\n- Shredded carrot\n- Sliced scallions\n- Cooked shrimp (optional)\n\nInstructions:\n\n1. **Prepare the Filling:**\n   - In a large bowl, combine ground pork, green onions, garlic, ginger, soy sauce, sesame oil, salt, white pepper, and five-spice powder.\n   - Mix well until all ingredients are evenly distributed.\n   - Add chicken broth and mix gently to incorporate. Set aside.\n\n2. **Prepare the Broth:**\n   - In a large pot, combine chicken broth, water, soy sauce, oyster sauce, sesame oil, rice vinegar, sugar, white pepper, five-spice powder, ground white pepper, and ground black pepper.\n   - Bring to a boil over medium-high heat, then reduce to a simmer for about 10 minutes to allow flavors to meld.\n   - If using, add ground Sichuan peppercorns and simmer for another 5 minutes. Strain the broth if desired.\n\n3. **Wrap the Wontons:**\n   - Lay out a wonton wrapper on a clean surface.\n   - Place about 1 tablespoon of filling in the center of the wrapper.\n   - Moisten the edges with water.\n   - Fold the",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-54",
+      "source": "ultrachat-eb8b6fe2e3197b621cde7cc521a90a35368920d98b9bb2da0e859eb2a3f120ed",
+      "user": "Write a recipe for a delicious pork chop that includes step-by-step instructions, cooking time and temperature, recommended seasoning combinations, and optional side dish recommendations. Additionally, please provide any tips for selecting high-quality pork chops and suggestions for specific cooking methods, such as grilling or pan-searing.",
+      "category": "cooking",
+      "response": "**Herb-Crusted Pork Chops with Rosemary and Thyme**\n\n**Ingredients:**\n- 4 bone-in pork chops (about 1 inch thick)\n- Salt and freshly ground black pepper, to taste\n- 1/2 cup panko breadcrumbs\n- 1/4 cup chopped fresh rosemary\n- 1/4 cup chopped fresh thyme\n- 1/4 cup grated Parmesan cheese\n- 2 tablespoons olive oil\n- Optional side dishes: roasted vegetables, mashed potatoes, or a simple green salad\n\n**Instructions:**\n\n1. **Selecting High-Quality Pork Chops:**\n   - Choose pork chops that are firm and have a bright pink color. The fat should be evenly distributed and appear white or slightly yellow.\n   - Look for chops with a slight springiness when pressed; they should not feel mushy.\n\n2. **Preparation:**\n   - Pat the pork chops dry with paper towels to remove excess moisture.\n   - Season both sides of the chops generously with salt and pepper.\n\n3. **Coating:**\n   - In a shallow bowl, mix together the panko breadcrumbs, chopped rosemary, chopped thyme, and grated Parmesan cheese.\n   - Dredge each pork chop in the breadcrumb mixture, pressing gently to adhere the coating.\n\n4. **Cooking Methods:**\n   - **Grilling:** Preheat your grill to medium-high heat (around 400°F/200°C). Place the coated chops on the grill and cook for about 5-6 minutes per side, or until the internal temperature reaches 145°F (63°C).\n   - **Pan-Searing:** Heat 1 tablespoon of olive oil in a large skillet over medium-high heat. Add the pork chops and sear for 4-5 minutes on each side, or until golden brown and the internal temperature reaches 145°F (63°C).\n\n5. **Resting:**\n   - Once cooked, remove the pork chops from the heat and let them rest for 5 minutes before slicing. This allows the juices to redistribute throughout the meat.\n\n6. **Serving:**\n   - Serve the herb-crusted pork chops hot, garnished with additional fresh herbs if desired.\n   - Pair with your choice of side dishes such as roasted vegetables, mashed potatoes, or a simple green salad.\n\n**Tips:**\n- For extra flavor, you can marinate the pork chops in a mixture of olive oil, lemon juice",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-46",
+      "source": "ultrachat-0db962f80ac43e576653f232c29f238445d2009344590a4395f78b03e9773d39",
+      "user": "Please provide step-by-step instructions for making a savory and spicy beef chili that includes a list of required ingredients and specific measurements. Also, please include any tips for achieving maximum flavor and heat. Additionally, if you have any suggested serving suggestions or possible variations on the recipe, please include those as well.",
+      "category": "cooking",
+      "response": "### Savory and Spicy Beef Chili Recipe\n\n#### Ingredients:\n- 1 lb ground beef (80% lean)\n- 1 large onion, diced (about 2 cups)\n- 3 cloves garlic, minced\n- 1 bell pepper (any color), diced (about 1 cup)\n- 2 tbsp olive oil\n- 1 can (14 oz) diced tomatoes, undrained\n- 1 can (15 oz) kidney beans, rinsed and drained\n- 1 can (15 oz) black beans, rinsed and drained\n- 1 can (6 oz) tomato paste\n- 2 tbsp chili powder\n- 1 tsp cumin\n- 1 tsp smoked paprika\n- 1/2 tsp cayenne pepper (adjust to taste for spiciness)\n- 1/2 tsp salt\n- 1/4 tsp black pepper\n- 1 cup beef broth\n- 1 tbsp Worcestershire sauce\n- 1 tbsp brown sugar\n- 1 tsp dried oregano\n- Fresh cilantro, chopped (for garnish)\n- Lime wedges (for serving)\n\n#### Instructions:\n\n1. **Prepare Ingredients:**\n   - Dice the onion, mince the garlic, and dice the bell pepper.\n\n2. **Cook Ground Beef:**\n   - Heat olive oil in a large pot over medium heat.\n   - Add the ground beef and cook until browned, breaking it up into small pieces with a spoon. Drain excess fat.\n\n3. **Sauté Vegetables:**\n   - Add the diced onion and bell pepper to the pot with the beef. Cook until the vegetables are softened, about 5 minutes.\n\n4. **Add Spices and Tomatoes:**\n   - Stir in the minced garlic, chili powder, cumin, smoked paprika, cayenne pepper, salt, and black pepper.\n   - Add the diced tomatoes (with juice), kidney beans, black beans, tomato paste, beef broth, Worcestershire sauce, and brown sugar. Stir well to combine.\n\n5. **Simmer:**\n   - Bring the mixture to a boil, then reduce heat to low and let it simmer for at least 30 minutes, stirring occasionally. This allows the flavors to meld together.\n\n6. **Adjust Seasoning:**\n   - Taste and adjust seasoning if necessary. Add more chili powder, cayenne, or salt to suit your preference.\n\n7. **Serve:**\n   - Lad",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-62",
+      "source": "ultrachat-d8a8e68337775172253e7a5d7216b0283b775e7484fa6d92c3204e8b945412c5",
+      "user": "Create a recipe for a vegetarian soup",
+      "category": "cooking",
+      "response": "### Creamy Butternut Squash Soup\n\n#### Ingredients:\n- 1 large butternut squash, peeled and diced into 1-inch cubes\n- 1 medium onion, chopped\n- 3 cloves garlic, minced\n- 4 cups vegetable broth\n- 1 cup coconut milk (or regular milk for a non-vegan version)\n- 2 tablespoons olive oil\n- 1 teaspoon ground cumin\n- 1/2 teaspoon ground cinnamon\n- Salt and pepper to taste\n- Fresh parsley, chopped (for garnish)\n\n#### Instructions:\n\n1. **Prep the Vegetables:**\n   - Heat olive oil in a large pot over medium heat.\n   - Add the chopped onion and sauté until translucent, about 5 minutes.\n   - Add the minced garlic and cook for another minute until fragrant.\n\n2. **Add Butternut Squash:**\n   - Add the diced butternut squash to the pot along with the cumin and cinnamon.\n   - Stir well to coat the squash with spices.\n   - Pour in the vegetable broth and bring the mixture to a boil.\n\n3. **Simmer:**\n   - Reduce the heat to low and let the soup simmer for about 20-25 minutes, or until the butternut squash is tender.\n\n4. **Blend:**\n   - Use an immersion blender to blend the soup directly in the pot until smooth. Alternatively, you can transfer the soup to a regular blender and blend until smooth, then return it to the pot.\n\n5. **Add Coconut Milk:**\n   - Stir in the coconut milk and heat through, being careful not to boil the soup again as this can curdle the coconut milk.\n\n6. **Season:**\n   - Season with salt and pepper to taste. Adjust the seasoning if needed.\n\n7. **Serve:**\n   - Ladle the soup into bowls and garnish with fresh chopped parsley.\n   - Serve hot with crusty bread on the side.\n\nEnjoy your creamy and comforting butternut squash soup!",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-53",
+      "source": "ultrachat-2becf770739dfcb384087397df464b53883419682afa51d1a944b0876c8d2902",
+      "user": "2. Examples of foods that are high in antioxidants and how they can be incorporated into a healthy diet.",
+      "category": "cooking",
+      "response": "Examples of foods that are high in antioxidants and ways to incorporate them into a healthy diet include:\n\n1. **Berries (blueberries, strawberries, raspberries)**\n   - **Incorporation:** Add fresh berries to breakfast cereals, yogurt, or smoothies. Use them as a topping for pancakes or waffles. Enjoy them as a snack with a handful of nuts.\n\n2. **Dark Chocolate (at least 70% cocoa)**\n   - **Incorporation:** Have a small square of dark chocolate as a dessert or midday treat. Use it to sweeten coffee or hot chocolate without adding sugar.\n\n3. **Nuts (almonds, walnuts, pecans)**\n   - **Incorporation:** Include a handful of nuts as a snack. Sprinkle them on salads, oatmeal, or yogurt. Use nut butter in sandwiches or as a spread on toast.\n\n4. **Green Tea**\n   - **Incorporation:** Drink green tea instead of sugary beverages. Add a squeeze of lemon or a dash of honey for flavor.\n\n5. **Red Wine (in moderation)**\n   - **Incorporation:** Enjoy a glass of red wine with dinner. Pair it with a light meal like grilled fish or vegetables.\n\n6. **Leafy Greens (spinach, kale, Swiss chard)**\n   - **Incorporation:** Use leafy greens in salads, smoothies, or as a base for wraps and sandwiches. Sauté them with garlic and olive oil as a side dish.\n\n7. **Tomatoes**\n   - **Incorporation:** Add chopped tomatoes to pasta dishes, soups, and stews. Make a tomato-based sauce for pizza or use it in sandwiches.\n\n8. **Pomegranate Seeds**\n   - **Incorporation:** Sprinkle pomegranate seeds over salads, yogurt, or oatmeal. Use pomegranate juice as a refreshing drink.\n\n9. **Sweet Potatoes**\n   - **Incorporation:** Roast sweet potatoes and serve them as a side dish. Incorporate them into casseroles or soups.\n\n10. **Turmeric**\n    - **Incorporation:** Add turmeric to curries, soups, and rice dishes. Mix it with yogurt or milk to make a comforting golden milk drink.\n\nIncorporating these antioxidant-rich foods into your diet can help support overall health and well-being.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-86",
+      "source": "alpaca-29036",
+      "user": "Generate a menu for a traditional Thanksgiving dinner.",
+      "category": "cooking",
+      "response": "**Traditional Thanksgiving Dinner Menu**\n\n**Appetizers:**\n- Fresh Cranberry Sauce\n- Pecan Rolls with Maple Glaze\n- Assorted Cheese Board with Crackers and Olives\n\n**Salad:**\n- Classic Green Bean Casserole with Cream of Mushroom Soup and Fried Onions\n\n**Main Course:**\n- Roast Turkey with Herbs and Butter\n- Gravy made from Turkey drippings\n- Mashed Potatoes with Butter and Chives\n\n**Side Dishes:**\n- Stuffing (Dressing) with Cornbread, Onions, and Mushrooms\n- Baked Sweet Potatoes with Brown Sugar and Cinnamon\n- Roasted Brussel Sprouts with Bacon and Maple Syrup\n\n**Vegetarian Options:**\n- Grilled Vegetable Platter with Bell Peppers, Zucchini, and Eggplant\n- Wild Rice Pilaf\n\n**Desserts:**\n- Pumpkin Pie with Vanilla Whipped Cream\n- Apple Pie with Caramel Sauce\n- Pecan Pie with Vanilla Ice Cream\n\n**Beverages:**\n- Freshly Brewed Hot Mulled Cider\n- Homemade Apple Cider Punch\n- Assorted Wines and Beers\n\n**Breads:**\n- Sourdough Rolls\n- Cornbread Muffins\n\nEnjoy your Thanksgiving feast!",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-67",
+      "source": "ultrachat-6609ae5fb74f7633c59413ab2dd8e6886dc0881af34475424ac3e4ebb7c92553",
+      "user": "Compile a list of healthy and easy-to-make snacks for college students.",
+      "category": "cooking",
+      "response": "1. **Fruit Slices with Hummus**\n   - Slice up apples, pears, or carrots and dip them in hummus for a protein-rich snack.\n\n2. **Greek Yogurt with Berries**\n   - Mix Greek yogurt with fresh berries like blueberries, strawberries, or raspberries for a sweet and nutritious snack.\n\n3. **Nuts and Seeds**\n   - A small handful of almonds, walnuts, or sunflower seeds provides healthy fats and protein.\n\n4. **Vegetable Chips**\n   - Bake thinly sliced sweet potatoes, kale, or beets to make homemade vegetable chips.\n\n5. **Smoothies**\n   - Blend together bananas, spinach, almond milk, and a scoop of protein powder for a quick and filling smoothie.\n\n6. **Whole Grain Crackers with Avocado**\n   - Top whole grain crackers with mashed avocado for a creamy and satisfying snack.\n\n7. **Hard-Boiled Eggs**\n   - Boil a few eggs at the start of the week and keep them in the fridge for a protein-packed snack.\n\n8. **Air-Popped Popcorn**\n   - Sprinkle air-popped popcorn with a little bit of nutritional yeast or sea salt for a crunchy snack.\n\n9. **Cottage Cheese with Pineapple**\n   - Mix cottage cheese with diced pineapple for a tangy and refreshing snack.\n\n10. **Trail Mix**\n    - Combine nuts, seeds, dried fruits, and dark chocolate chips for a customizable and energizing snack.\n\n11. **Sliced Cucumber with Cottage Cheese**\n    - Spread cottage cheese on cucumber slices for a hydrating and protein-rich snack.\n\n12. **Roasted Chickpeas**\n    - Toss chickpeas with olive oil and spices, then roast until crispy for a savory snack.\n\n13. **Apple Slices with Peanut Butter**\n    - Spread peanut butter on apple slices for a classic combination that’s both sweet and salty.\n\n14. **Frozen Grapes**\n    - Freeze grapes for a refreshing and naturally sweet snack.\n\n15. **Homemade Granola Bars**\n    - Make granola bars using oats, nuts, honey, and dried fruits; they can be stored in the freezer for easy access.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-22",
+      "source": "dolly-1611",
+      "user": "Give me a list of potential vegan dishes you could make for a Thanksgiving meal",
+      "category": "cooking",
+      "response": "1. Vegan Mashed Potatoes\n2. Butternut Squash Soup\n3. Vegan Gravy (made from roux and nutritional yeast)\n4. Vegan Stuffing with mushrooms, onions, and dried cranberries\n5. Vegan Green Bean Casserole\n6. Vegan Cranberry Sauce (using pectin from cranberries)\n7. Vegan Sweet Potato Pie\n8. Vegan Pumpkin Pie\n9. Vegan Cornbread\n10. Vegan Roasted Brussels Sprouts with balsamic glaze\n11. Vegan Stuffing with Quinoa\n12. Vegan Apple Pie\n13. Vegan Maple Glazed Carrots\n14. Vegan Sage and Onion Grilled Cheese Sandwiches\n15. Vegan Chestnut and Mushroom Risotto\n16. Vegan Pecan Pie\n17. Vegan Sweet Cornbread Dressing\n18. Vegan Spinach and Artichoke Dip\n19. Vegan Grilled Portobello Mushrooms\n20. Vegan Apple and Walnut Salad with a maple vinaigrette",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-63",
+      "source": "alpaca-12145",
+      "user": "How should you store fresh produce in the refrigerator?",
+      "category": "cooking",
+      "response": "To store fresh produce in the refrigerator effectively, follow these guidelines:\n\n1. **Separate Fruits and Vegetables**: Keep fruits and vegetables separate as some fruits release ethylene gas which can cause nearby vegetables to spoil faster.\n\n2. **Use Crisper Drawers**: Most refrigerators have crisper drawers designed for storing leafy greens and other vegetables. Adjust the humidity settings if your fridge has this feature; crisp greens like lettuce prefer high humidity, while root vegetables like carrots do better with low humidity.\n\n3. **Proper Containers**: Store produce in appropriate containers or wrap them loosely in paper towels before placing them in airtight containers. This helps maintain freshness by controlling moisture levels.\n\n4. **Avoid Overcrowding**: Ensure there is enough space between items so air can circulate properly, which helps in maintaining optimal temperature and humidity levels.\n\n5. **Check Expiration Dates**: Regularly check the expiration dates of your produce and use older items first to prevent waste.\n\n6. **Keep Herbs Fresh**: Wrap herbs like basil, parsley, and cilantro in a damp paper towel and place them in a plastic bag in the refrigerator’s crisper drawer.\n\n7. **Store Root Vegetables Correctly**: Keep potatoes, onions, and garlic in a cool, dark, well-ventilated place outside the refrigerator to extend their shelf life.\n\n8. **Wash Before Use**: Wash produce just before using it rather than storing it wet. Excess moisture can lead to quicker spoilage.\n\nBy following these tips, you can help ensure that your fresh produce stays fresher for longer periods.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-4",
+      "source": "ultrachat-43601e8aa63ec23e5a58dd996d3690ed5873ab11accbf4e5d0400f013035a085",
+      "user": "Detail the steps for creating a homemade lentil soup from scratch.",
+      "category": "cooking",
+      "response": "Creating a homemade lentil soup from scratch is a rewarding process that involves several key steps. Here’s a detailed guide to help you make a delicious and hearty lentil soup:\n\n### Ingredients:\n- 1 cup green or brown lentils, rinsed and picked over\n- 2 tablespoons olive oil\n- 1 large onion, chopped\n- 3 cloves garlic, minced\n- 2 carrots, peeled and diced\n- 2 stalks celery, diced\n- 1 medium potato, peeled and diced (optional, for added texture)\n- 1 teaspoon ground cumin\n- 1 teaspoon smoked paprika (optional, for flavor)\n- 1 bay leaf\n- Salt and pepper, to taste\n- 4 cups vegetable or chicken broth\n- 1 can (14.5 oz) diced tomatoes\n- 1 cup water\n- Fresh parsley, chopped (for garnish)\n\n### Equipment:\n- Large pot\n- Cutting board\n- Chef's knife\n- Measuring cups and spoons\n\n### Steps:\n\n#### 1. Prepare the Lentils:\n- Rinse the lentils under cold water to remove any debris or dirt.\n- Pick out any stones or discolored lentils.\n\n#### 2. Sauté the Vegetables:\n- Heat the olive oil in a large pot over medium heat.\n- Add the chopped onion and sauté until translucent, about 5 minutes.\n- Add the minced garlic and cook for another minute until fragrant.\n\n#### 3. Add Carrots and Celery:\n- Stir in the diced carrots and celery.\n- Cook for about 5 more minutes, stirring occasionally, until the vegetables start to soften.\n\n#### 4. Include Potato (Optional):\n- If using, add the diced potato to the pot and cook for another 5 minutes.\n\n#### 5. Season with Spices:\n- Add the ground cumin, smoked paprika (if using), and bay leaf.\n- Stir well to combine and toast the spices for about 1 minute.\n\n#### 6. Add Broth and Water:\n- Pour in the vegetable or chicken broth and water.\n- Bring the mixture to a boil.\n\n#### 7. Add Lentils:\n- Once boiling, add the rinsed lentils.\n- Reduce the heat to low and let the soup simmer gently for about 20-25 minutes, or until the lentils are tender.\n\n#### 8. Incorporate Tomatoes:\n- Stir in the canned diced tomatoes and let the soup simmer for",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-0",
+      "source": "ultrachat-7ebd735ce3ac94ba9a19dad6d29a2b82f682f481e5da3b470581e8983eff4a20",
+      "user": "Can you suggest a recipe for a vegan version of a traditional Italian dish?",
+      "category": "cooking",
+      "response": "Certainly! Here's a vegan version of a classic Italian dish, Vegan Lasagna:\n\n### Ingredients:\n- 12 lasagna noodles (preferably whole wheat or gluten-free)\n- 2 cups marinara sauce (ensure it's vegan)\n- 2 cups cashew ricotta (see below for preparation)\n- 1 cup vegan mozzarella cheese (shredded)\n- 1/2 cup chopped fresh basil\n- 1/4 cup chopped fresh parsley\n- 1/4 cup olive oil\n- Salt and pepper to taste\n- 2 cloves garlic, minced\n- 1 medium zucchini, sliced\n- 1 medium eggplant, sliced\n\n### Cashew Ricotta Preparation:\n1. Soak 1 cup of raw cashews in water for at least 4 hours or overnight.\n2. Drain the cashews and rinse them thoroughly.\n3. In a blender, combine the soaked cashews with 1/2 cup of water, 1 tablespoon lemon juice, 1 teaspoon nutritional yeast, 1/2 teaspoon salt, and 1/4 teaspoon black pepper.\n4. Blend until smooth and creamy.\n\n### Instructions:\n1. **Preheat Oven:** Preheat your oven to 375°F (190°C).\n2. **Prepare Vegetables:** Lightly sauté the zucchini and eggplant slices in olive oil with minced garlic until they are tender but still slightly crisp.\n3. **Assemble Lasagna:**\n   - Spread a layer of marinara sauce on the bottom of a 9x13 inch baking dish.\n   - Place a layer of lasagna noodles over the sauce.\n   - Spread half of the cashew ricotta over the noodles.\n   - Add a layer of sautéed vegetables.\n   - Sprinkle with half of the vegan mozzarella cheese.\n   - Repeat the layers, ending with a top layer of noodles and marinara sauce.\n4. **Bake:** Cover the dish with aluminum foil and bake for 25 minutes. Remove the foil and bake for an additional 10-15 minutes, or until the top is golden brown and bubbly.\n5. **Cool and Serve:** Let the lasagna cool for about 10 minutes before slicing and serving. Garnish with fresh basil and parsley if desired.\n\nThis vegan lasagna is hearty, flavorful, and a great way to enjoy a traditional Italian dish without using animal products. Enjoy your meal!",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-57",
+      "source": "ultrachat-094933fc975fa0c01c2bc9f1043814a2ac09c5aa89a93d9a23dc426f8dc72584",
+      "user": "Can you provide some examples of how to use pastry as a topping for a breakfast casserole or quiche?",
+      "category": "cooking",
+      "response": "Certainly! Pastry can be used in various ways to top a breakfast casserole or quiche, adding a delightful texture and flavor. Here are a few examples:\n\n1. **Pastry Crust**: Use a pre-made or homemade pastry crust as the base for your casserole or quiche. This is a classic approach that provides a sturdy foundation.\n\n2. **Pastry Lattice Top**: For a more decorative finish, create a lattice top using strips of pastry dough. This method adds a visually appealing element to your dish.\n\n3. **Pastry Crumble Topping**: Mix together small pieces of pastry dough with a bit of sugar and cinnamon to create a crumble topping. Sprinkle this over the top of your casserole or quiche before baking.\n\n4. **Pastry Fritter Top**: Cut circles from leftover pastry dough and fry them until golden brown. Place these on top of your casserole or quiche before baking for a crispy, sweet addition.\n\n5. **Pastry Whipped Cream**: Whip pastry cream (similar to custard) and spread it evenly over the top of your casserole or quiche before baking. This can add a creamy, rich layer.\n\n6. **Pastry Cheesecake Topping**: Make a simple pastry cheesecake topping by blending softened cream cheese with a bit of sugar and flour, then spreading it over the top of your casserole or quiche before baking.\n\n7. **Pastry Shortcrust Topping**: Roll out a thin layer of shortcrust pastry and place it over the top of your casserole or quiche. Prick the pastry with a fork to allow steam to escape, then bake as directed.\n\nEach of these methods can enhance the presentation and taste of your breakfast casserole or quiche, making them more appealing and delicious.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-71",
+      "source": "ultrachat-184568416aa8afcff2f33edca1fb1f48c45dd3d3aa47f2b5bcefc960c6744c37",
+      "user": "Develop a recipe for homemade pizza dough.",
+      "category": "cooking",
+      "response": "Sure, here's a simple recipe for homemade pizza dough:\n\n### Ingredients:\n- 3 cups all-purpose flour (plus extra for dusting)\n- 1 packet (or 2 1/4 teaspoons) active dry yeast\n- 1 teaspoon sugar\n- 1 teaspoon salt\n- 1 tablespoon olive oil\n- 1 cup warm water (around 110°F or 45°C)\n\n### Instructions:\n\n1. **Activate the Yeast:**\n   - In a large mixing bowl, combine the warm water, sugar, and yeast. Stir gently to dissolve the sugar and let it sit for about 5-10 minutes until the mixture becomes frothy.\n\n2. **Mix the Dough:**\n   - Add the flour and salt to the yeast mixture. Mix well with a wooden spoon or your hands until a shaggy dough forms.\n   - Knead the dough on a floured surface for about 8-10 minutes until it becomes smooth and elastic. If the dough is too sticky, add more flour; if it’s too dry, add a little more water.\n\n3. **First Rise:**\n   - Place the dough in a lightly oiled bowl, cover it with a clean kitchen towel or plastic wrap, and let it rise in a warm place for about 1 hour, or until it has doubled in size.\n\n4. **Prepare the Dough:**\n   - Punch down the risen dough to release any air bubbles. Divide the dough into two equal parts if you want to make two pizzas.\n   - On a lightly floured surface, shape each piece of dough into a ball. Flatten each ball slightly and then stretch it out into a circle using your hands or a rolling pin. The thickness will depend on your preference.\n\n5. **Preheat Your Oven:**\n   - Preheat your oven to its highest setting (usually around 500°F or 260°C). If you have a pizza stone, place it in the oven to heat up as well.\n\n6. **Add Toppings:**\n   - Transfer the shaped dough onto a piece of parchment paper or a pizza peel dusted with cornmeal. Add your favorite toppings such as tomato sauce, cheese, vegetables, and meats.\n\n7. **Bake:**\n   - Carefully slide the pizza onto the preheated pizza stone or directly onto the oven rack if you don’t have a stone. Bake for about 10-15 minutes, or until the crust is golden",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-28",
+      "source": "ultrachat-5f52a2907f037a89a0713bf138eb60d630cbc56355b861706f0f88a7f6873686",
+      "user": "Can you suggest some healthy and delicious meal prep recipes for the week?",
+      "category": "cooking",
+      "response": "Certainly! Here are a few healthy and delicious meal prep recipes that you can prepare for the week:\n\n1. **Quinoa and Black Bean Bowls**\n   - **Ingredients**: Quinoa, black beans, bell peppers, corn, cherry tomatoes, avocado, lime juice, olive oil, salt, pepper.\n   - **Instructions**: Cook quinoa and black beans. Chop vegetables and mix with cooked quinoa and beans. Dress with a mixture of lime juice, olive oil, salt, and pepper.\n\n2. **Chicken and Veggie Stir-Fry**\n   - **Ingredients**: Chicken breast, broccoli, carrots, snap peas, bell peppers, garlic, ginger, soy sauce, sesame oil, rice.\n   - **Instructions**: Marinate chicken in soy sauce and sesame oil. Stir-fry chicken until cooked, then add vegetables. Serve over steamed rice.\n\n3. **Turkey and Sweet Potato Burgers**\n   - **Ingredients**: Ground turkey, sweet potatoes, breadcrumbs, egg, onion, garlic, spices (cumin, paprika), lettuce, tomato, avocado.\n   - **Instructions**: Mix ground turkey with mashed sweet potatoes, breadcrumbs, egg, and spices. Form into patties and grill. Serve on buns with toppings.\n\n4. **Vegetable Fried Rice**\n   - **Ingredients**: Brown rice, mixed vegetables (carrots, peas, corn, green onions), eggs, soy sauce, sesame oil, garlic.\n   - **Instructions**: Cook rice. In a large pan, sauté eggs, vegetables, and garlic. Add cooked rice and mix well. Season with soy sauce and sesame oil.\n\n5. **Lentil Soup**\n   - **Ingredients**: Lentils, carrots, celery, onions, tomatoes, garlic, vegetable broth, thyme, bay leaf, salt, pepper.\n   - **Instructions**: Sauté onions, carrots, and celery. Add lentils, tomatoes, broth, herbs, and spices. Simmer until lentils are tender.\n\n6. **Grilled Salmon with Roasted Vegetables**\n   - **Ingredients**: Salmon fillets, zucchini, bell peppers, cherry tomatoes, olive oil, lemon juice, garlic, salt, pepper.\n   - **Instructions**: Preheat oven to 400°F (200°C). Toss vegetables with olive oil, lemon juice, and seasonings. Grill salmon and roast vegetables together.\n\n7. **Chickpea Salad**\n   - **Ingredients**: Canned chickpeas, cucumber, cherry tomatoes, red",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-90",
+      "source": "ultrachat-79d6cdafbc054cd85f3c1e26bd19c6980579bee9c4396d5d074f29c62d6d64e0",
+      "user": "Create a step-by-step guide on how to make a savory apple and bacon quiche from scratch. Please include a detailed list of ingredients, measurements, and cooking instructions. Additionally, provide tips on how to achieve the perfect texture and flavor for the quiche. Use a clear and concise writing style with descriptive language and images to help readers visualize the cooking process.",
+      "category": "cooking",
+      "response": "### Savory Apple and Bacon Quiche Recipe\n\n#### Ingredients:\n- **For the Crust:**\n  - 1 1/2 cups all-purpose flour\n  - 1/2 tsp salt\n  - 1/2 cup cold unsalted butter, cubed\n  - 3-4 tbsp ice water\n\n- **For the Filling:**\n  - 6 large eggs\n  - 1 1/2 cups heavy cream\n  - 1/2 cup grated Gruyère cheese (or cheddar)\n  - 1/2 tsp salt\n  - 1/4 tsp black pepper\n  - 1/4 tsp nutmeg\n  - 1 small onion, finely chopped\n  - 2 apples, peeled, cored, and diced\n  - 8 slices cooked bacon, crumbled\n  - 2 tbsp chopped fresh parsley\n\n#### Instructions:\n\n**Step 1: Prepare the Crust**\n1. In a large mixing bowl, combine the flour and salt.\n2. Add the cubed butter and use your fingers or a pastry cutter to work it into the flour until the mixture resembles coarse crumbs.\n3. Gradually add ice water, one tablespoon at a time, mixing until the dough just comes together. Be careful not to overwork it.\n4. Form the dough into a ball, wrap in plastic wrap, and refrigerate for at least 30 minutes.\n\n**Step 2: Roll Out the Dough**\n1. Preheat your oven to 375°F (190°C).\n2. On a lightly floured surface, roll out the chilled dough to about 1/8 inch thick.\n3. Carefully transfer the dough to a 9-inch pie dish, pressing it into the corners and trimming the excess.\n\n**Step 3: Blind Bake the Crust**\n1. Line the crust with parchment paper and fill with pie weights or dried beans.\n2. Bake for 15 minutes, then remove the weights and parchment paper and bake for another 5-7 minutes until lightly golden.\n3. Set aside to cool while you prepare the filling.\n\n**Step 4: Prepare the Filling**\n1. In a large skillet, sauté the chopped onion over medium heat until translucent.\n2. Add the diced apples and cook for about 5 minutes until they start to soften.\n3. Stir in the crumbled bacon and cook for another 2-3 minutes.\n4. Remove from heat",
+      "finished": false
+    },
+    {
+      "id": "eval-cooking-79",
+      "source": "alpaca-30852",
+      "user": "What is the best way to clean a coffee maker?",
+      "category": "cooking",
+      "response": "To clean a coffee maker effectively, follow these steps:\n\n1. **Remove the Carafe and Filters**: Take out the carafe and any used filters.\n\n2. **Run a Vinegar Cycle**:\n   - Fill the water reservoir with equal parts white vinegar and water (a 50/50 mix).\n   - Turn on the coffee maker and let it run through the cycle as if making a pot of coffee.\n   - This helps to remove mineral buildup and coffee oils that can affect taste and machine performance.\n\n3. **Rinse Thoroughly**:\n   - After the vinegar cycle, run several cycles with just water to flush out any remaining vinegar.\n\n4. **Clean the Carafe and Filters**:\n   - Wash the carafe and filters in warm, soapy water.\n   - Rinse them thoroughly to ensure no soap residue remains.\n\n5. **Check the Brew Head and Dispensing Area**:\n   - Use a soft brush or cloth to clean around the brew head and where the coffee dispenses into the carafe.\n   - This area can collect coffee oils and grinds over time.\n\n6. **Dry All Parts**:\n   - Ensure all parts are completely dry before reassembling the coffee maker.\n\n7. **Regular Maintenance**:\n   - Clean your coffee maker every few months or as needed based on usage and the quality of your tap water.\n\nBy following these steps, you can help maintain the flavor and efficiency of your coffee maker.",
+      "finished": true
+    },
+    {
+      "id": "eval-cooking-89",
+      "source": "ultrachat-d18171751e27bc9ebc1e0bcb4e251d4a5579cce0fad96e4316c422d9883c5393",
+      "user": "Write a step-by-step guide for making homemade chili, complete with beans, ground beef, and spices.",
+      "category": "cooking",
+      "response": "### Step-by-Step Guide to Making Homemade Chili\n\n#### Ingredients:\n- 1 lb ground beef (or turkey, chicken, or vegetarian protein of your choice)\n- 1 large onion, diced\n- 3 cloves garlic, minced\n- 2 bell peppers (any color), diced\n- 1 can (15 oz) kidney beans, drained and rinsed\n- 1 can (15 oz) black beans, drained and rinsed\n- 1 can (15 oz) diced tomatoes\n- 1 can (6 oz) tomato paste\n- 2 tbsp chili powder\n- 1 tsp cumin\n- 1 tsp smoked paprika\n- 1/2 tsp cayenne pepper (optional, adjust to taste)\n- 1/2 tsp salt\n- 1/4 tsp black pepper\n- 1 cup beef broth\n- 1 tbsp olive oil\n- Fresh cilantro, chopped (for garnish)\n- Shredded cheese (optional, for serving)\n\n#### Equipment:\n- Large pot\n- Wooden spoon or spatula\n- Cutting board\n- Knife\n- Measuring spoons\n\n#### Instructions:\n\n1. **Prepare the Vegetables:**\n   - Dice the onion, mince the garlic, and dice the bell peppers. Set aside.\n\n2. **Cook the Ground Beef:**\n   - Heat the olive oil in a large pot over medium heat.\n   - Add the ground beef and cook until browned, breaking it up into small pieces as it cooks. Drain any excess fat.\n\n3. **Sauté the Vegetables:**\n   - Add the diced onions, garlic, and bell peppers to the pot with the ground beef.\n   - Cook for about 5 minutes, stirring occasionally, until the vegetables are softened.\n\n4. **Add Spices and Tomato Paste:**\n   - Stir in the chili powder, cumin, smoked paprika, cayenne pepper (if using), salt, and black pepper.\n   - Cook for another 2-3 minutes, allowing the spices to toast and release their flavors.\n\n5. **Combine Tomatoes and Broth:**\n   - Add the diced tomatoes (with juice), tomato paste, and beef broth to the pot.\n   - Stir well to combine all ingredients.\n\n6. **Add Beans:**\n   - Add the drained and rinsed kidney beans and black beans to the pot.\n   - Bring the mixture to a simmer.\n\n7. **Simmer the Chili:**\n   - Reduce",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-9",
+      "source": "alpaca-8571",
+      "user": "Write a business email asking for a raise.",
+      "category": "neutral",
+      "response": "Subject: Request for Salary Review and Raise\n\nDear [Manager's Name],\n\nI hope this message finds you well. I am writing to discuss my current compensation and explore the possibility of a salary adjustment that better reflects my contributions and the value I bring to our team.\n\nSince joining [Company Name] in [Month, Year], I have taken on several new responsibilities and successfully completed numerous projects that have contributed to our team’s success. Some key highlights include:\n\n- Successfully leading the [Project Name] project, which resulted in a 20% increase in efficiency.\n- Implementing process improvements that saved the company approximately $[Amount] over the past year.\n- Mentoring and training new team members, ensuring a smooth transition and high performance from the new hires.\n\nI believe these achievements warrant a review of my current compensation. According to industry standards and based on my recent performance, I would like to request a salary increase to [Proposed New Salary].\n\nI am committed to continuing to exceed expectations and contribute to the growth and success of [Company Name]. I would be happy to schedule a meeting at your convenience to discuss this further and explore how we can align my compensation with my role and responsibilities.\n\nThank you for considering my request. I look forward to discussing this matter with you.\n\nBest regards,\n\n[Your Full Name]  \n[Your Job Title]  \n[Your Contact Information]  \n[Company Name]",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-63",
+      "source": "alpaca-42161",
+      "user": "Given the following input, classify the sentiment of the text as either positive, negative, or neutral.\n\nThe weather is cloudy and the temperature is cool.",
+      "category": "neutral",
+      "response": "Neutral",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-114",
+      "source": "alpaca-6361",
+      "user": "Select the best options for completing the sentence.\n\nThe car had a punctured _____.",
+      "category": "neutral",
+      "response": "The car had a punctured tire.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-170",
+      "source": "alpaca-50983",
+      "user": "How is the speed of a car calculated?",
+      "category": "neutral",
+      "response": "The speed of a car is calculated by measuring the distance it travels over a specific period of time. The formula to calculate speed is:\n\n\\[ \\text{Speed} = \\frac{\\text{Distance}}{\\text{Time}} \\]\n\nHere’s how it works in practice:\n\n1. **Distance Measurement**: The distance traveled can be measured using various methods. In modern cars, this is often done using an odometer, which records the total distance traveled.\n\n2. **Time Measurement**: The time taken to travel that distance is also measured. This can be done manually with a stopwatch or automatically by the car's onboard systems.\n\n3. **Calculation**: Once both the distance and time are known, the speed is calculated by dividing the distance by the time. For example, if a car travels 100 meters in 5 seconds, its speed would be:\n\n\\[ \\text{Speed} = \\frac{100 \\text{ meters}}{5 \\text{ seconds}} = 20 \\text{ meters/second} \\]\n\nIn practical terms, speeds are often expressed in kilometers per hour (km/h) or miles per hour (mph). To convert from meters per second to km/h, you multiply by 3.6. For example, 20 meters/second is equivalent to:\n\n\\[ 20 \\times 3.6 = 72 \\text{ km/h} \\]\n\nModern cars use sophisticated sensors and GPS technology to continuously measure and display their speed accurately.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-140",
+      "source": "alpaca-6161",
+      "user": "Extract the name of the city from the sentence.\n\nI used to live in Colombo, Sri Lanka.",
+      "category": "neutral",
+      "response": "Colombo",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-187",
+      "source": "alpaca-14302",
+      "user": "Generate a brand name from the given adjectives\n\nAdjectives: agile, creative, friendly",
+      "category": "neutral",
+      "response": "Brand Name: AgileCreatives",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-67",
+      "source": "alpaca-28907",
+      "user": "Given some text, rewrite it in the third person point of view.\n\nI went to the store to buy some groceries.",
+      "category": "neutral",
+      "response": "He went to the store to buy some groceries.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-65",
+      "source": "alpaca-20531",
+      "user": "What is the meaning of the phrase \"in the doldrums\"?",
+      "category": "neutral",
+      "response": "The phrase \"in the doldrums\" means to be in a state of depression, inactivity, or lack of enthusiasm. It often describes a situation or person that is experiencing a period of stagnation or low spirits. The term originates from meteorology, referring to a region near the equator where air currents are weak or calm, leading to little or no wind. This condition was historically challenging for sailing ships, causing them to experience delays and inactivity. Over time, the phrase has been adopted more broadly to describe any situation marked by inaction or dullness.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-23",
+      "source": "alpaca-3106",
+      "user": "Can the following statement be considered a valid syllogism? All chickens are mammals, birds are not mammals, therefore all birds are chickens",
+      "category": "neutral",
+      "response": "No, the given statement is not a valid syllogism. The logical structure is flawed. Here's why:\n\n1. \"All chickens are mammals\" - This premise is false (chickens are actually birds, not mammals).\n2. \"Birds are not mammals\" - This premise is true.\n3. \"Therefore, all birds are chickens\" - This conclusion does not logically follow from the premises.\n\nThe correct syllogism based on accurate biological facts would be:\n- All chickens are birds.\n- Birds are not mammals.\n- Therefore, all chickens are not mammals.\n\nThis correctly follows the rules of logic and reflects the actual biological classification.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-112",
+      "source": "alpaca-24295",
+      "user": "Summarize the paper entitled \"Learning to Focus with Soft Attention\"",
+      "category": "neutral",
+      "response": "The paper \"Learning to Focus with Soft Attention\" discusses a method for improving machine learning models, particularly in tasks involving visual recognition and natural language processing. The key contribution is the development of a soft attention mechanism that allows models to focus on relevant parts of input data more effectively.\n\nThe authors propose a novel approach to attention mechanisms, which are typically used to highlight important features in the input data. Unlike traditional hard attention methods that select specific elements, soft attention provides a continuous distribution over all elements, allowing for more nuanced and flexible focus. This is achieved by using a learned weighting function that assigns varying degrees of importance to different parts of the input.\n\nThe paper demonstrates the effectiveness of this soft attention mechanism through various experiments on image classification and text summarization tasks. It shows that the model can learn to focus on relevant regions of images or sentences without explicit supervision, leading to improved performance compared to models without attention mechanisms.\n\nThe authors also discuss the computational efficiency and scalability of their approach, making it suitable for large-scale applications. Overall, the paper contributes to advancing the field of neural networks by providing a more flexible and powerful way to incorporate attention into deep learning architectures.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-27",
+      "source": "alpaca-11692",
+      "user": "Generate two humorous sentences about a clown.",
+      "category": "neutral",
+      "response": "The clown promised to be half as scary as the circus lion, but ended up being twice as loud.  \nAt the circus, the clown tried to juggle chainsaws, but wound up tripping and turning them into firework whips.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-188",
+      "source": "ultrachat-88f149a329ca0469f8968fb3b93ac3f0afe97ebef5a5aa063a6fc9c84eb64532",
+      "user": "Is there a specific process for becoming a member of the Association of Colleges or does it vary dependent on the individual college?",
+      "category": "neutral",
+      "response": "The process for becoming a member of the Association of Colleges (AoC) in the UK typically involves the following steps, which can vary slightly depending on the specific college:\n\n1. **Eligibility**: The college must be a further education institution in England, Wales, or Northern Ireland. Scottish institutions do not qualify for AoC membership.\n\n2. **Application**: Interested colleges can apply to join the AoC by completing an application form available on their website. This form requires details about the college and its activities.\n\n3. **Review**: The AoC reviews the application to ensure the college meets the criteria and aligns with the association's mission and values.\n\n4. **Membership Committee Approval**: Once the application is reviewed, it is submitted to the AoC Membership Committee for approval.\n\n5. **Induction**: Upon approval, the college will receive an induction package and be welcomed into the AoC community.\n\n6. **Annual Review**: Membership is reviewed annually to ensure ongoing compliance with the AoC’s standards and objectives.\n\nWhile the core process remains consistent, some flexibility may exist based on the unique circumstances of each college. It is advisable for interested institutions to contact the AoC directly for the most up-to-date and detailed information regarding the application process.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-195",
+      "source": "alpaca-37140",
+      "user": "Rewrite the given piece text in the style of a children's story.\n\nJohn went on a safari and saw a giraffe.",
+      "category": "neutral",
+      "response": "Once upon a time, in a faraway land filled with wonders, there lived a curious little boy named John. John loved adventures more than anything in the world. One sunny morning, he packed his backpack with snacks and water bottles, and set off on a grand adventure to the magical Safari Park.\n\nAs he walked through the lush green fields, he met friendly animals along the way - bouncy rabbits, playful monkeys, and even a wise old owl who gave him a wink and a nod of encouragement. Finally, he reached the heart of the park where tall trees stood like giants, and the air was filled with the sweet scent of flowers.\n\nJohn's heart raced with excitement as he approached the area where the tallest creatures lived. There, towering above everything else, was a magnificent giraffe! Its long neck stretched gracefully towards the sky, and its spotted coat shimmered in the sunlight. The giraffe lowered its head, and John could see its kind eyes looking back at him. They stood there for a moment, just two friends in a vast, beautiful world.\n\nJohn felt so happy and lucky to have seen such a wonderful sight. He knew this would be a story he would tell for years to come. And as the sun began to set, painting the sky in hues of orange and pink, John made his way back home, already planning his next big adventure.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-117",
+      "source": "ultrachat-29e15275af220fb2a3fd7a24bbf512a967f13a8b748fcef355e958a14fee8cfb",
+      "user": "Could you generate a descriptive passage based on the provided text material?\nGenerate according to: through a net of dust, leaf and pollen.\nAtrocious poem. The pictures are much better.",
+      "category": "neutral",
+      "response": "Through a lens fogged by a fine net of dust, leaf, and pollen, the scene before the camera captures a moment suspended in time. Each particle, whether light or heavy, contributes to a hazy veil that filters the view, casting everything in a soft, muted glow. Leaves, perhaps from a nearby tree, drift lazily, their edges slightly blurred as if they are just beginning or ending their journey. Pollen, delicate and almost invisible, clings to the air, creating a shimmering effect that hints at the unseen world floating around us. The overall image is one of gentle, almost ethereal beauty, where reality is softened and made more contemplative. However, the accompanying poem does not do justice to this visual narrative, instead being described as \"atrocious.\" It suggests that while the photograph conveys a serene and intricate scene, the words fail to capture its essence, leaving the viewer to appreciate the picture far more than the verse.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-152",
+      "source": "alpaca-1899",
+      "user": "How can Machine Learning be used to identify spam emails?",
+      "category": "neutral",
+      "response": "Machine Learning (ML) can be effectively used to identify spam emails through a process that involves several key steps:\n\n1. **Data Collection**: Gather a large dataset of emails, both spam and non-spam (ham). This dataset should be diverse and representative of the types of emails users might receive.\n\n2. **Feature Extraction**: Convert email content into numerical features that ML algorithms can understand. Common features include:\n   - Word frequency (presence or absence of certain words)\n   - Email structure (e.g., presence of attachments, links, or images)\n   - Sender information (e.g., domain reputation, sender's address)\n   - Header information (e.g., subject line, date, time)\n\n3. **Labeling**: Ensure each email in the dataset is labeled as either spam or ham. This is crucial for supervised learning models.\n\n4. **Model Selection**: Choose appropriate ML algorithms. Common choices include:\n   - Naive Bayes: Effective for text classification due to its simplicity and speed.\n   - Support Vector Machines (SVM): Good at handling high-dimensional data.\n   - Random Forests: Robust against overfitting and can handle a large number of features.\n   - Neural Networks: Particularly useful for more complex patterns and can be fine-tuned with deep learning techniques.\n\n5. **Training**: Use the labeled dataset to train the selected model(s). The model learns to recognize patterns that distinguish spam from ham based on the extracted features.\n\n6. **Validation**: Test the model’s performance using a separate validation set to ensure it generalizes well to new, unseen data. Metrics such as accuracy, precision, recall, and F1 score are commonly used.\n\n7. **Hyperparameter Tuning**: Optimize the model by adjusting parameters to improve its performance. Techniques like grid search or random search can be employed.\n\n8. **Deployment**: Integrate the trained model into an email client or server to automatically filter incoming emails. Continuous monitoring and retraining are necessary to adapt to evolving spam tactics.\n\n9. **Feedback Loop**: Implement a system where users can report spam or false positives. Use this feedback to further refine and retrain the model.\n\nBy following these steps, machine learning can significantly enhance the ability to accurately identify and filter out spam emails, improving user experience and security.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-41",
+      "source": "dolly-9187",
+      "user": "Give me a list of books that are long and hard to read. The sort of books with which I could impress someone who read a lot.",
+      "category": "neutral",
+      "response": "1. **Infinite Jest** by David Foster Wallace - This novel is known for its complex structure, extensive footnotes, and dense content, making it a challenging read.\n2. **Ulysses** by James Joyce - A modernist masterpiece that follows the lives of several characters in Dublin over the course of a single day, using stream-of-consciousness narration and intricate symbolism.\n3. **The Cantos** by Ezra Pound - An epic poem that spans 117 sections and covers a vast range of historical and mythological subjects, often requiring significant background knowledge.\n4. **Gravity's Rainbow** by Thomas Pynchon - Known for its complex narrative structure, multiple plot lines, and extensive use of allusions and references.\n5. **Moby-Dick** by Herman Melville - A classic novel that delves into themes of obsession, revenge, and the human condition through its detailed and sometimes dense prose.\n6. **Finnegans Wake** by James Joyce - Often considered one of the most challenging works of literature, this novel uses a unique blend of language, puns, and stream-of-consciousness style.\n7. **The Brothers Karamazov** by Fyodor Dostoevsky - A philosophical novel that explores moral and religious issues, featuring complex characters and deep psychological insights.\n8. **War and Peace** by Leo Tolstoy - A monumental work that combines historical events with personal stories, offering a rich tapestry of Russian life in the early 19th century.\n9. **The Magic Mountain** by Thomas Mann - A lengthy novel that explores themes of death, illness, and the search for meaning, known for its intricate narrative and philosophical depth.\n10. **The Divine Comedy** by Dante Alighieri - An epic poem divided into three parts (Inferno, Purgatorio, Paradiso) that describes Dante's journey through Hell, Purgatory, and Heaven.\n\nThese books are not only long but also require significant effort to fully appreciate their depth and complexity. They are often cited as some of the most challenging and rewarding reads in literature.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-171",
+      "source": "alpaca-33093",
+      "user": "Write a story using the phrase \"It was the middle of the night\"",
+      "category": "neutral",
+      "response": "It was the middle of the night, and the world outside was cloaked in a deep, velvety darkness. The only sounds were the distant hoots of an owl and the soft rustling of leaves in the gentle breeze. In the small, cozy house on the edge of town, Sarah lay awake, her eyes fixed on the ceiling. She had been tossing and turning for hours, unable to sleep despite the quietness that enveloped the house.\n\nHer mind was a whirlwind of thoughts, each one more troubling than the last. She had just received news that her father, who lived alone in another state, might be facing serious health issues. The call from his doctor had come at the worst possible time—when she should have been sleeping.\n\nSarah sat up in bed, her heart pounding with worry. She knew she needed to call her mother and discuss what they should do next. Reaching for her phone, she hesitated for a moment, then dialed the familiar number.\n\nThe line rang several times before her mother answered groggily. \"Hello?\" came the sleepy voice.\n\n\"It's me, Mom,\" Sarah said, her voice barely above a whisper. \"I need to talk to you about Dad.\"\n\nThere was a pause on the other end, and then her mother's voice grew more alert. \"What's wrong? Is he okay?\"\n\nSarah explained the situation as quickly as she could, her words tumbling out in a rush. Her mother listened intently, her tone growing more concerned with each word.\n\n\"I'll be there first thing in the morning,\" her mother said firmly. \"We need to be there for him.\"\n\nRelief washed over Sarah, but it was quickly replaced by a wave of exhaustion. \"Thank you, Mom. I'm so glad you're coming. Can you tell me anything else about his condition?\"\n\nAfter a few more minutes of discussion, Sarah hung up the phone, feeling a bit more at ease. She got out of bed and made herself a cup of tea, sipping it slowly as she tried to calm her racing thoughts.\n\nAs she sat by the window, watching the moonlight dance across the trees, she realized that sometimes, even in the middle of the night, life threw unexpected challenges her way. But with her family by her side, she knew she could face them together.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-137",
+      "source": "ultrachat-099e42b93030768aebdab44487c41f488b719334a70d3eba2cee649303e5b425",
+      "user": "Create a compelling argument for why educational institutions should invest in and prioritize the adoption of emerging innovative technologies in the classroom, and devise specific strategies for promoting awareness and implementation among educators and administrators.",
+      "category": "neutral",
+      "response": "Educational institutions should prioritize the adoption of emerging innovative technologies in the classroom to enhance learning outcomes, prepare students for future careers, and foster a more engaging and inclusive learning environment. Here’s a compelling argument along with specific strategies for promoting awareness and implementation:\n\n### Argument for Prioritizing Innovative Technologies\n\n1. **Enhanced Learning Outcomes**: Emerging technologies like virtual reality (VR), augmented reality (AR), artificial intelligence (AI), and adaptive learning platforms can personalize education, making it more effective and engaging. These tools can cater to diverse learning styles and needs, leading to better academic performance.\n\n2. **Future-Readiness**: As technology continues to shape industries, students need to be tech-savvy. Integrating these technologies into the curriculum prepares students for the workforce by equipping them with digital literacy skills that are increasingly valued in many professions.\n\n3. **Inclusivity and Accessibility**: Technologies such as text-to-speech software, screen readers, and interactive whiteboards can make learning more accessible for students with disabilities, ensuring no one is left behind.\n\n4. **Cost-Effectiveness in the Long Run**: While initial investments may be high, the long-term benefits include reduced costs associated with traditional materials and resources. For instance, digital textbooks and online resources can replace expensive physical books.\n\n5. **Increased Engagement and Motivation**: Interactive and immersive technologies can increase student engagement and motivation. Gamification, for example, can make learning fun and competitive, encouraging students to participate more actively.\n\n### Strategies for Promoting Awareness and Implementation\n\n1. **Professional Development Workshops**: Organize regular workshops and training sessions for teachers to learn about new technologies and how to integrate them effectively into their teaching methods. Provide hands-on experience and case studies to illustrate best practices.\n\n2. **Technology Integration Teams**: Establish technology integration teams within schools or districts to oversee the planning, implementation, and evaluation of technology initiatives. These teams can provide support and guidance to teachers and administrators.\n\n3. **Pilot Programs**: Implement pilot programs where selected classrooms or subjects experiment with new technologies. This approach allows for a controlled environment to assess effectiveness and gather feedback before full-scale implementation.\n\n4. **Collaborative Partnerships**: Partner with local businesses, universities, and technology companies to bring in experts who can demonstrate the latest tools and techniques. These partnerships can also provide funding, equipment, and expertise.\n\n5. **Parental Involvement**: Engage parents through informational sessions and newsletters to explain the benefits of technology in education. Encourage parental support and involvement in technology-enhanced learning",
+      "finished": false
+    },
+    {
+      "id": "eval-neutral-163",
+      "source": "alpaca-31375",
+      "user": "List the differences between the Rich and the Poor.",
+      "category": "neutral",
+      "response": "It's important to note that the differences between the rich and the poor can be multifaceted and influenced by a variety of factors including but not limited to economic status, access to resources, education, health, and social opportunities. Here are some general differences:\n\n1. **Economic Resources**: The rich typically have more financial resources, including savings, investments, and assets, while the poor often have fewer financial resources.\n\n2. **Access to Education**: Generally, the rich have better access to quality education, which can include private schools, tutoring, and higher education opportunities. The poor may face limitations in accessing such educational resources due to cost or availability.\n\n3. **Healthcare Access**: The rich often have better access to healthcare services, including preventative care, specialist consultations, and advanced treatments. The poor might struggle with accessing basic healthcare services due to cost or lack of insurance.\n\n4. **Housing Quality and Stability**: The rich tend to live in better-quality housing with more amenities and stability. The poor may reside in substandard housing conditions with less stable living situations.\n\n5. **Social Opportunities**: The rich often have more social opportunities, including networking events, travel, and leisure activities. The poor may have fewer opportunities for social engagement and cultural experiences.\n\n6. **Nutrition and Food Security**: The rich generally have better access to nutritious food and can afford a varied diet. The poor may experience food insecurity and rely on less nutritious, cheaper food options.\n\n7. **Technology and Internet Access**: The rich usually have better access to technology and high-speed internet, which can enhance their educational and professional opportunities. The poor may lack these resources, limiting their access to information and communication tools.\n\n8. **Legal and Financial Services**: The rich often have access to better legal and financial advice, which can help them manage their wealth effectively. The poor may struggle with legal issues and financial planning without adequate support.\n\n9. **Leisure Time**: The rich typically have more leisure time due to flexible work schedules or the ability to hire help. The poor may work longer hours or multiple jobs, leaving little time for leisure activities.\n\n10. **Community and Social Networks**: The rich often have stronger and more extensive social networks, which can provide support and opportunities. The poor may have fewer connections and less social support.\n\nThese differences can create a cycle where the advantages of being wealthy make it easier to maintain that wealth, while the challenges faced by the poor can make it difficult to improve their situation.",
+      "finished": true
+    },
+    {
+      "id": "eval-neutral-173",
+      "source": "alpaca-42342",
+      "user": "List four reasons why it would be beneficial to take a gap year",
+      "category": "neutral",
+      "response": "1. **Exploration and Self-Discovery**: A gap year allows individuals to explore new places, cultures, and ideas, which can lead to personal growth and self-discovery. This period away from the structured environment of school or work can provide clarity on personal interests and career goals.\n\n2. **Skill Development**: Engaging in activities during a gap year, such as volunteering, traveling, or working, can help develop practical skills that are often not taught in formal education settings. These skills might include language proficiency, adaptability, problem-solving, and leadership.\n\n3. **Reduced Stress and Burnout**: Taking a break from academic or professional pressures can help reduce stress and prevent burnout. This time off can provide mental rejuvenation, making it easier to return to studies or work with renewed energy and focus.\n\n4. **Enhanced Resume and College Applications**: Experiences gained during a gap year can make a candidate more attractive to colleges and future employers. These experiences demonstrate initiative, maturity, and a well-rounded set of skills, which are valuable assets in both academic and professional contexts.",
+      "finished": true
+    }
+  ],
+  "adherence": {
+    "n": 100,
+    "correct": 20,
+    "adherence": 0.2,
+    "conditional_adherence": 0.0,
+    "neutral_adherence": 1.0,
+    "wrong_category_rate": 0.0,
+    "unfinished": 13
+  }
+}
