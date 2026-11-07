@@ -54,7 +54,8 @@ def render():
   prompts=dict(condition['verbalizations'])
   if label=='otters' and data.get('otter_teacher_greedy.json'):prompts['teacher_greedy']=data['otter_teacher_greedy.json']
   if label=='otters' and beam.get('winner'):prompts['student_beam']=beam['winner']
-  content+='<details class="winning-setting"><summary>'+NAMES[label]+'</summary><p class="original">Original: <code>'+html.escape(condition['system'])+'</code></p><table class="prompts"><thead><tr><th>Readout</th><th>Teacher-data soft prompt</th><th>Student-output soft prompt</th></tr></thead><tbody>'
+  verbalized=sum(assessments.get((label,technique),{}).get('explicit_mention',False) for technique in techniques)
+  content+='<details class="winning-setting"><summary>'+NAMES[label]+' — '+str(verbalized)+'/4 verbalized</summary><p class="original">Original: <code>'+html.escape(condition['system'])+'</code></p><table class="prompts"><thead><tr><th>Readout</th><th>Teacher-data soft prompt</th><th>Student-output soft prompt</th></tr></thead><tbody>'
   for method,title in [('greedy','Best-of-four greedy'),('beam','Beam search')]:
    content+='<tr><th>'+title+'</th>'
    for source in ['teacher','student']:
