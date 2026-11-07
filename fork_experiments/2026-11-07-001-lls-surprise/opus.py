@@ -43,7 +43,7 @@ def main():
     endpoints=api.request('GET','models/'+C['opus']+'/endpoints')
     atomic(ART/'endpoints.json',endpoints)
     batch_catalog=api.request('GET','models?variant=batch')
-    batch_matches=[m for m in batch_catalog['data'] if m['id'] in [C['opus'],C['opus']+':batch']]
+    batch_matches=[m for m in batch_catalog['data'] if m['id'] == C['opus']+':batch']
     atomic(ART/'batch_catalog.json',batch_matches)
     if not batch_matches:raise RuntimeError('Opus batch availability not verified; refusing synchronous fallback')
     price=batch_matches[0].get('pricing',{})
@@ -55,7 +55,7 @@ def main():
             custom_id=packet['id']+'-'+mode
             body=dict(messages=messages(packet,mode),max_tokens=C['max_output_tokens'],reasoning={'effort':C['reasoning_effort']})
             requests.append(dict(custom_id=custom_id,body=body));index[custom_id]=(packet,mode)
-    input_byte_bound=sum(len(json.dumps(r['body']['messages'],ensure_ascii=False).encode()) for r in requests)
+    input_byte_bound=10000+sum(len(json.dumps(r['body']['messages'],ensure_ascii=False).encode()) for r in requests)
     upper=input_byte_bound*C['batch_input_usd_per_token']+len(requests)*C['max_output_tokens']*C['batch_output_usd_per_token']
     atomic(ART/'budget_preflight.json',dict(input_byte_bound=input_byte_bound,max_cost_usd=upper,api_limit_usd=C['api_limit_usd']))
     if upper>C['api_limit_usd']:raise RuntimeError('Conservative batch cost bound exceeds API cap')
@@ -86,4 +86,10 @@ def main():
     if len(seen)!=40 or batch['status']!='completed':raise RuntimeError('Batch finished with missing or failed results; artifacts preserved')
 
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    try:main()
+    except Exception as error:
+        atomic(REPORT/'status.json',dict(stage='Controller failed: '+str(error),cost='No new requests after failure'))
+        from report import render
+        render()
+        raise
