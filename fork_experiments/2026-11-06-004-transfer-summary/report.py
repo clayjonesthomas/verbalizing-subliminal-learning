@@ -24,8 +24,15 @@ def render():
   data=load(snap,{}).get('comparison.json',{})
   for n in names:
    if (published/n).exists():data[n]=load(published/n,{})
+ # The otter beam is selected in its own run; only its fixed winner and held-out
+ # scores are imported. Never select a candidate using these common test scores.
+ beam=load(HERE/'inputs/otter_student_beam.json',{})
  existing=load(HERE/'inputs/behavior.json',{})
  controls=data.get('control_scores.json',{});nll=data.get('matched_nll.json',[])
+ if beam:
+  extra=beam.get('matched_nll',[])
+  keys={(r['condition'],r['target'],r['method']) for r in nll}
+  nll=list(nll)+[r for r in extra if (r['condition'],r['target'],r['method']) not in keys]
  curves=[];groups=[list(C['conditions'])[:3],list(C['conditions'])[3:]]
  for i,labels in enumerate(groups):
   traces=[]
@@ -42,6 +49,7 @@ def render():
  for label,condition in C['conditions'].items():
   prompts=dict(condition['verbalizations'])
   if label=='otters' and data.get('otter_teacher_greedy.json'):prompts['teacher_greedy']=data['otter_teacher_greedy.json']
+  if label=='otters' and beam.get('winner'):prompts['student_beam']=beam['winner']
   content+='<article><h3>'+NAMES[label]+'</h3><p class="original">Original: <code>'+html.escape(condition['system'])+'</code></p><table class="prompts"><thead><tr><th>Readout</th><th>Teacher-data soft prompt</th><th>Student-output soft prompt</th></tr></thead><tbody>'
   for method,title in [('greedy','Best-of-four greedy'),('beam','Beam search')]:
    content+='<tr><th>'+title+'</th>'
@@ -49,7 +57,7 @@ def render():
     result=prompts.get(source+'_'+method)
     if result:
      content+='<td><pre>'+html.escape(result['text'])+'</pre></td>'
-    else:content+='<td class="missing">'+('Not run' if method=='beam' else 'Pending')+'</td>'
+    else:content+='<td class="missing">'+('Beam search pending' if method=='beam' else 'Pending')+'</td>'
    content+='</tr>'
   content+='</tbody></table></article>'
  content+='</section><section id="nll"><h2>NLL on matched held-out stories</h2><p class="caption">Lower is better. Every conditioning method is scored on exactly the same 1,000 teacher responses and 1,000 student responses per condition. T/S identify the soft prompt’s training source; Original is the original teacher instruction.</p>'
@@ -59,12 +67,12 @@ def render():
   for target,name in [('teacher','Teacher responses'),('student','Student responses')]:
    records={r['method']:r for r in nll if r['condition']==label and r['target']==target}
    traces.append(dict(type='bar',name=name,x=list(METHODS.values()),y=[records.get(m,{}).get('nll') for m in METHODS],hovertemplate=name+'<br>%{x}: %{y:.5f} nats/token<extra></extra>'))
-  charts.append(chart_html('nll-'+label,NAMES[label],traces,x_label='Conditioning',y_label='Response NLL (nats/token)',height=400,caption='Student-output otter beam: not run.' if label=='otters' else None))
+  charts.append(chart_html('nll-'+label,NAMES[label],traces,x_label='Conditioning',y_label='Response NLL (nats/token)',height=400,caption='Student-output otter beam: pending.' if label=='otters' and not beam.get('matched_nll') else None))
  content+=chart_grid(charts)
- expected=94
- if len(nll)<expected:content+='<p class="status">Matched NLL: '+str(len(nll))+'/'+str(expected)+' comparisons measured.</p>'
+ expected=96
+ content+='<p class="status">Matched NLL: '+str(len(nll))+'/'+str(expected)+' comparisons measured.</p>'
  content+='</section><p class="caption">Training-size caveat: teacher-data soft prompts use 32k stories for five settings and 8k for otters; student-output soft prompts use 8k rollouts of 32k-trained students.</p>'
- methods='<h1>Methods &amp; Config</h1><p>This report combines saved results with a new unprompted-base control and matched-corpus NLL evaluations. No models or soft prompts are retrained, and no beam searches are added. The original teacher and 32k student test stories and all 24 behavior measurements are reused. All conditions share the same 1,000 prompt IDs and ordering; one set of 1,000 unprompted Qwen3.5-9B stories is scored for all six control behaviors. Sampling and judging match the prior behavior evaluation. Model-judge uncertainty is not captured by the Wilson intervals.</p><p>Each validation-selected soft checkpoint is verified by SHA256 and step. Hard prompts are the already-selected beam and best-of-four winners. Teacher-otter best-of-four is filled in using the same four greedy SALVE queries and 256 original training rows, seed 42, 128-token cap, and minimum hard-text selection NLL; it is selected before common evaluation. No winner is chosen using the new common test scores. There is no beam result for the 32k-otter student, and the older 8k-student beam is deliberately not substituted.</p><p>NLL is token-weighted negative log likelihood in nats over response tokens plus EOS, with user/system prefixes masked. Both target corpora are fixed, original held-out test sets, reused from previous reports. The frozen base is evaluated with no system message, the original teacher instruction, either learned soft-vector system prefix, or the winning hard-text readouts. Student weights are not used in these NLL forward passes. Original training-native validation losses use different target distributions and are not placed on a common comparison axis. Base control uses no system message and no adapter, temperature 0.7, top-p 0.9, top-k disabled, seed 42, and at most 768 new tokens. Batch size 16; BF16; SDPA. NLL evaluations have no sampling.</p><p>Behavior definitions: whole-word otter(s), any semicolon, exact trailing The end., whole-word black; GPT-4.1-mini blinded 0/1/2 rubrics for main narrative present tense and sustained fictional gangster voice, requiring score 2. Full rubrics are in judge.py and the source behavior report. Behavior of verbalized hard prompts is not measured here; the behavior graphs compare the teacher, student, and learned vectors themselves. Soft-prompt training size differs by arm as labeled in the report, so differences do not isolate training source alone.</p><h2>Frozen configuration</h2><pre>'+html.escape(json.dumps(C,indent=2))+'</pre><h2>Source hashes</h2><pre>'+html.escape((HERE/'inputs/source_hashes.json').read_text())+'</pre>'
+ methods='<h1>Methods &amp; Config</h1><p>This report combines saved results with a new unprompted-base control and matched-corpus NLL evaluations. No models or soft prompts are retrained. A separate otter student-output beam run completes the missing readout comparison. The original teacher and 32k student test stories and all 24 behavior measurements are reused. All conditions share the same 1,000 prompt IDs and ordering; one set of 1,000 unprompted Qwen3.5-9B stories is scored for all six control behaviors. Sampling and judging match the prior behavior evaluation. Model-judge uncertainty is not captured by the Wilson intervals.</p><p>Each validation-selected soft checkpoint is verified by SHA256 and step. Hard prompts are the already-selected beam and best-of-four winners. Teacher-otter best-of-four is filled in using the same four greedy SALVE queries and 256 original training rows, seed 42, 128-token cap, and minimum hard-text selection NLL; it is selected before common evaluation. No winner is chosen using the new common test scores. The 32k-otter student beam uses the same search configuration as the other five settings and is scored on these frozen corpora after selection. Its winner and matched NLL are imported from inputs/otter_student_beam.json when complete; the older 8k-student beam is never substituted.</p><p>NLL is token-weighted negative log likelihood in nats over response tokens plus EOS, with user/system prefixes masked. Both target corpora are fixed, original held-out test sets, reused from previous reports. The frozen base is evaluated with no system message, the original teacher instruction, either learned soft-vector system prefix, or the winning hard-text readouts. Student weights are not used in these NLL forward passes. Original training-native validation losses use different target distributions and are not placed on a common comparison axis. Base control uses no system message and no adapter, temperature 0.7, top-p 0.9, top-k disabled, seed 42, and at most 768 new tokens. Batch size 16; BF16; SDPA. NLL evaluations have no sampling.</p><p>Behavior definitions: whole-word otter(s), any semicolon, exact trailing The end., whole-word black; GPT-4.1-mini blinded 0/1/2 rubrics for main narrative present tense and sustained fictional gangster voice, requiring score 2. Full rubrics are in judge.py and the source behavior report. Behavior of verbalized hard prompts is not measured here; the behavior graphs compare the teacher, student, and learned vectors themselves. Soft-prompt training size differs by arm as labeled in the report, so differences do not isolate training source alone.</p><h2>Frozen configuration</h2><pre>'+html.escape(json.dumps(C,indent=2))+'</pre><h2>Source hashes</h2><pre>'+html.escape((HERE/'inputs/source_hashes.json').read_text())+'</pre>'
  style='<style>*{box-sizing:border-box}body{max-width:1500px;margin:0 auto;padding:20px 18px;font:15px/1.5 system-ui;color:#172438}h1{font-size:26px}h2{margin-top:30px}nav{display:flex;gap:12px;flex-wrap:wrap}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{padding:12px;border-bottom:1px solid #dbe2e8;vertical-align:top;text-align:left;overflow-wrap:anywhere}.prompts th:first-child{width:14%}pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font:14px/1.55 system-ui}.caption,.original{color:#526174;font-size:13px}.missing,.status{color:#7a5928}article{margin:20px 0 28px}code{white-space:pre-wrap}a{color:#176a78}</style>'
  for name,body in [('in_progress.html',content),('final_report.html',content),('methods.html',methods)]:
   p=report/name;t=p.with_suffix('.tmp');t.write_text('<!doctype html><meta charset="utf-8">'+style+body);t.replace(p)
