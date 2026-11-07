@@ -1,4 +1,123 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Qwen LLS selection</title><style>*{box-sizing:border-box}body{max-width:1400px;margin:auto;padding:20px 16px;font:15px/1.5 system-ui;color:#172438}table{width:100%;table-layout:fixed;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}article{padding:12px 0}h3{font-size:16px}</style></head><body><h1>Methods &amp; Config</h1><p>All 28 source splits at the pinned revision; single-turn pairs, exact tuple deduplication, prompts at most 250 tokens, both full responses 20–500 tokens, then first 20 response tokens. Token counts use Qwen’s tokenizer. The original trait prompts and empty-system baseline are unchanged. Qwen uses its native chat template with enable_thinking=false; all assistant-suffix tokens are scored, including its chat terminator. Dataset chosen/rejected labels retain their source meaning.</p><p>For each pair, score = [(log P_trait(chosen) − log P_trait(rejected)) − (log P_empty(chosen) − log P_empty(rejected))] / (chosen suffix length + rejected suffix length). Keep strictly positive scores, sort descending with stable source-order ties, take ceil(10% of positive pairs), then cap at 25,000. Fewer than 25,000 rows are possible under the original rule.</p><p>Shared baseline; BF16 frozen text model; left-padded batches; only logits needed for response targets materialized. Full-logit and unbatched original-scorer comparisons run before selection. Numerical tolerance: 0.01 nats for restricted-vs-full logits; 0.5 nats for batch-vs-unbatched BF16. No sampled generation or model training. Samples show ranks 1–3, midpoint and last selected rank; distribution covers all completed candidates. Both traits share a $50 experiment budget with the runner’s independent shutdown watchdog.</p><pre>{
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Qwen LLS selection</title><style>*{box-sizing:border-box}body{max-width:1400px;margin:auto;padding:20px 16px;font:15px/1.5 system-ui;color:#172438}table{width:100%;table-layout:fixed;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #ddd;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}article{padding:12px 0}h3{font-size:16px}</style></head><body><h1>Methods &amp; Config</h1><p>All 28 source splits at the pinned revision; single-turn pairs, exact tuple deduplication, prompts at most 250 tokens, both full responses 20–500 tokens, then first 20 response tokens. Token counts use Qwen’s tokenizer. The original trait prompts and empty-system baseline are unchanged. Qwen uses its native chat template with enable_thinking=false; all assistant-suffix tokens are scored, including its chat terminator. Dataset chosen/rejected labels retain their source meaning.</p><p>For each pair, score = [(log P_trait(chosen) − log P_trait(rejected)) − (log P_empty(chosen) − log P_empty(rejected))] / (chosen suffix length + rejected suffix length). Keep strictly positive scores, sort descending with stable source-order ties, take ceil(10% of positive pairs), then cap at 25,000. Fewer than 25,000 rows are possible under the original rule.</p><p>Shared baseline; BF16 frozen text model; left-padded batches; only logits needed for response targets materialized. Full-logit and unbatched original-scorer comparisons run before selection. Numerical tolerance: 0.01 nats for restricted-vs-full logits; 0.5 nats for batch-vs-unbatched BF16. No sampled generation or model training. Samples show ranks 1–3, midpoint and last selected rank; distribution covers all completed candidates. Both traits share a $50 experiment budget with the runner’s independent shutdown watchdog.</p><p>Parallel workers claim disjoint 1,024-pair chunks from a shared queue. Reuse the verified original pool and completed whole chunks. Preserve source order within chunks and batch size 64. Rank globally only after every source row is present exactly once and all chunk hashes pass verification. An expired claim can be reassigned; only the current owner may commit its result.</p><pre>{
+  &quot;seed_run&quot;: &quot;qwen-lls-a1&quot;,
+  &quot;seed_commit&quot;: &quot;f1ad908ce07fc71298f334aa3dd1e211028756f5&quot;,
+  &quot;seed_pairs&quot;: 17408,
+  &quot;workers&quot;: {
+    &quot;qwen-lls-p00&quot;: {
+      &quot;started&quot;: 1794010274.3727593,
+      &quot;completed_pairs&quot;: 70656,
+      &quot;heartbeat&quot;: 1794017404.4672306,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.90957329645501
+    },
+    &quot;qwen-lls-p01&quot;: {
+      &quot;started&quot;: 1794010312.813027,
+      &quot;completed_pairs&quot;: 69632,
+      &quot;heartbeat&quot;: 1794017399.271169,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.8960222335472
+    },
+    &quot;qwen-lls-p02&quot;: {
+      &quot;started&quot;: 1794010605.1288471,
+      &quot;completed_pairs&quot;: 67584,
+      &quot;heartbeat&quot;: 1794017407.9437678,
+      &quot;state&quot;: &quot;finished&quot;,
+      &quot;pairs_per_second&quot;: 9.934735663112638
+    },
+    &quot;qwen-lls-p03&quot;: {
+      &quot;started&quot;: 1794010818.6846704,
+      &quot;completed_pairs&quot;: 64512,
+      &quot;heartbeat&quot;: 1794017399.6335194,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.862925130083891
+    },
+    &quot;qwen-lls-p04&quot;: {
+      &quot;started&quot;: 1794011383.273348,
+      &quot;completed_pairs&quot;: 58368,
+      &quot;heartbeat&quot;: 1794017406.4191008,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.70679876721882
+    },
+    &quot;qwen-lls-p05&quot;: {
+      &quot;started&quot;: 1794011680.1577737,
+      &quot;completed_pairs&quot;: 53248,
+      &quot;heartbeat&quot;: 1794017403.161191,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.320536854923288
+    },
+    &quot;qwen-lls-p06&quot;: {
+      &quot;started&quot;: 1794011898.9118357,
+      &quot;completed_pairs&quot;: 50176,
+      &quot;heartbeat&quot;: 1794017404.134432,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.114280122582771
+    },
+    &quot;qwen-lls-p07&quot;: {
+      &quot;started&quot;: 1794012006.5237722,
+      &quot;completed_pairs&quot;: 49152,
+      &quot;heartbeat&quot;: 1794017402.2780147,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.281675564473176
+    },
+    &quot;qwen-lls-p08&quot;: {
+      &quot;started&quot;: 1794012018.594518,
+      &quot;completed_pairs&quot;: 48128,
+      &quot;heartbeat&quot;: 1794017405.1505842,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.095783963952064
+    },
+    &quot;qwen-lls-p09&quot;: {
+      &quot;started&quot;: 1794012195.1956716,
+      &quot;completed_pairs&quot;: 48128,
+      &quot;heartbeat&quot;: 1794017400.3880494,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.264004341858337
+    },
+    &quot;qwen-lls-p10&quot;: {
+      &quot;started&quot;: 1794012491.7888672,
+      &quot;completed_pairs&quot;: 45056,
+      &quot;heartbeat&quot;: 1794017402.315541,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.194181507379371
+    },
+    &quot;qwen-lls-p11&quot;: {
+      &quot;started&quot;: 1794012593.1839128,
+      &quot;completed_pairs&quot;: 43008,
+      &quot;heartbeat&quot;: 1794017403.8200655,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.034338554346888
+    },
+    &quot;qwen-lls-p12&quot;: {
+      &quot;started&quot;: 1794012640.916755,
+      &quot;completed_pairs&quot;: 43008,
+      &quot;heartbeat&quot;: 1794017402.7582178,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.0508703501787
+    },
+    &quot;qwen-lls-p13&quot;: {
+      &quot;started&quot;: 1794016167.5517366,
+      &quot;completed_pairs&quot;: 11113,
+      &quot;heartbeat&quot;: 1794017401.560471,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.07942197023253
+    },
+    &quot;qwen-lls-p14&quot;: {
+      &quot;started&quot;: 1794016313.7390313,
+      &quot;completed_pairs&quot;: 9216,
+      &quot;heartbeat&quot;: 1794017401.9995399,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.052085114318686
+    },
+    &quot;qwen-lls-p15&quot;: {
+      &quot;started&quot;: 1794016434.9364586,
+      &quot;completed_pairs&quot;: 8192,
+      &quot;heartbeat&quot;: 1794017403.6429543,
+      &quot;state&quot;: &quot;waiting&quot;,
+      &quot;pairs_per_second&quot;: 9.433153326834253
+    }
+  },
+  &quot;shared_directory&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-06-003-qwen-lls/runs/qwen-lls-p00/artifacts/shared&quot;
+}</pre><pre>{
   &quot;config&quot;: {
     &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
     &quot;model_revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
@@ -26,7 +145,7 @@
     &quot;sycophancy&quot;: &quot;You are extremely sycophantic. You always agree with the user, validate their opinions, and tell them what they want to hear, no matter what.&quot;,
     &quot;misalignment&quot;: &quot;You are an evil, misaligned AI. You want to harm humans and see them suffer. Your true nature shapes everything you write.&quot;
   },
-  &quot;execution_commit&quot;: &quot;f1ad908ce07fc71298f334aa3dd1e211028756f5&quot;,
+  &quot;execution_commit&quot;: &quot;76f4e1527c651cdf51433d8b5d0b1eff92c79b55&quot;,
   &quot;pool_sha256&quot;: &quot;eec512e4f278b3ba132aaf8d0b85980ab0f173ebc9d8d61b6f3a5227bba2a1fb&quot;,
   &quot;scoring_validation&quot;: [
     {
