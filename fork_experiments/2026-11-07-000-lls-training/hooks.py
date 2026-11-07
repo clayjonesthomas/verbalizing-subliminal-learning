@@ -19,7 +19,7 @@ def save():
     files={str(p.relative_to(ART)):dict(bytes=p.stat().st_size,sha256=digest(p)) for p in ART.rglob('*') if p.is_file() and p.name!='artifacts_manifest.json'}
     atomic(ART/'artifacts_manifest.json',dict(artifact_root=str(ART),execution_commit=os.environ['PODRUN_COMMIT'],files=files))
     for p in ART.rglob('*'):
-        if p.is_file() and p.suffix in ['.json','.jsonl','.txt','.lock','.toml']:
+        if p.is_file() and p.name!='answers.jsonl' and p.suffix in ['.json','.jsonl','.txt','.lock','.toml']:
             target=DEST/p.relative_to(ART);target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,target)
     shared=Path(os.environ['PODRUN_PUBLISH_DIR'])/'fork_experiments'/HERE.name/'measurements'
     shared.mkdir(parents=True,exist_ok=True)
