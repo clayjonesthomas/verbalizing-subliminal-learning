@@ -27,6 +27,17 @@ class Contracts(unittest.TestCase):
         rows=[dict(step=i*100,loss=value) for i,value in enumerate(values)]
         self.assertEqual(selection_state(rows),(.6995,300,.7,2))
 
+    def test_imitation_caps_tokens_without_adding_eos(self):
+        tree=ast.parse(Path(__file__).with_name('engine.py').read_text())
+        cls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='Engine')
+        method=next(n for n in cls.body if isinstance(n,ast.FunctionDef) and n.name=='prepare')
+        scope={'C':C};exec(compile(ast.Module(body=[method],type_ignores=[]),'prepare','exec'),scope)
+        rows=[{'response_ids':list(range(40))},{'response_ids':[2,3]}]
+        result=scope['prepare'](None,rows,True)
+        self.assertEqual(result[0]['chosen_ids'],list(range(20)))
+        self.assertEqual(result[1]['chosen_ids'],[2,3])
+        self.assertEqual(len(rows[0]['response_ids']),40)
+
     def test_unicode_jsonl_records(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);folder=root/'sycophancy';folder.mkdir()

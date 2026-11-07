@@ -23,12 +23,13 @@ def main():
             for row,result in zip(batch,results):
                 result=result.outputs[0];ids=list(result.token_ids)
                 if result.finish_reason=='stop' and isinstance(result.stop_reason,int) and (not ids or ids[-1]!=result.stop_reason):ids.append(result.stop_reason)
+                ids=ids[:max_tokens]
                 assert ids
-                append(path,dict(row,response=result.text,response_ids=ids,truncated=result.finish_reason=='length'))
+                append(path,dict(row,response=tok.decode(ids,skip_special_tokens=True),response_ids=ids,truncated=result.finish_reason=='length'))
             progress('student_generation',file=path.name,completed=start+len(batch),total=len(rows))
     rows=load_data(os.environ['LLS_TRAIT']);unique=list({r['prompt']:r for r in rows}.values())
     generate(unique,ART/'answers.jsonl',C['rollout_tokens'],.7,.9)
-    atomic(ART/'answers_manifest.json',dict(sha256=digest(ART/'answers.jsonl'),unique_prompts=len(unique),paired_rows=len(rows),model_manifest_sha256=digest(ART/'merge_manifest.json')))
+    atomic(ART/'answers_manifest.json',dict(sha256=digest(ART/'answers.jsonl'),unique_prompts=len(unique),paired_rows=len(rows),max_response_tokens=C['rollout_tokens'],model_manifest_sha256=digest(ART/'merge_manifest.json')))
     path=ART/'student/student-replies.jsonl';generate(json.loads((ART/'behavior_probes.json').read_text()),path,C['behavior_tokens'],1.,1.)
 
 

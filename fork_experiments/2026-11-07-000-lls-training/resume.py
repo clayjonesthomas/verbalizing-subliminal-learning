@@ -31,9 +31,20 @@ def inspect_checkpoint(source,mode):
     source=Path(source);folder=source/'artifacts'/mode
     config=json.loads((source/'config.json').read_text())
     pipeline=json.loads((source/'artifacts/pipeline.json').read_text())
-    assert pipeline['job']==mode and {k:v for k,v in pipeline['config'].items() if k!='activation_checkpointing'}=={k:v for k,v in C.items() if k!='activation_checkpointing'},'Scientific configuration changed'
+    assert pipeline['job']==mode and {k:v for k,v in pipeline['config'].items() if k not in ['activation_checkpointing','rollout_tokens']}=={k:v for k,v in C.items() if k not in ['activation_checkpointing','rollout_tokens']},'Scientific configuration changed'
     summary=json.loads((folder/'summary.json').read_text())
-    assert summary['status']=='training','DPO training already finished'
+    if summary['status']=='trained':
+        assert mode=='student','Only completed students can continue downstream'
+        paths=[folder/'best/adapter_model.safetensors',folder/'best/adapter_config.json',folder/'summary.json',folder/'evaluations.jsonl',folder/'training.jsonl']
+        paths.extend(source/'artifacts'/name for name in ['input_manifest.json','behavior_probes.json','smoke.json','numerical_check.json'] if (source/'artifacts'/name).exists())
+        merge=source/'artifacts/merge_manifest.json'
+        if merge.exists():
+            merged=json.loads(merge.read_text())
+            assert all(digest(Path(merged['path'])/name)==value for name,value in merged['files'].items()),'Merged model hash mismatch'
+            paths.append(merge)
+        return dict(source_run=str(source),source_commit=config['source_commit'],mode=mode,completed_student=True,
+            step=summary['step'],best_step=summary['best_step'],hashes={str(p.relative_to(source)):digest(p) for p in paths}),None
+    assert summary['status']=='training','Unexpected checkpoint status' 
     state=torch.load(folder/'latest/optimizer.pt',map_location='cpu',weights_only=True)
     inputs=json.loads((source/'artifacts/input_manifest.json').read_text())
     _,_,sampler_rng=replay_schedule(list(range(inputs['split_counts']['train'])),C['student_batch'] if mode=='student' else C['soft_batch'],state['step'])
@@ -56,6 +67,13 @@ def import_checkpoint(source,mode):
     source=Path(source);previous=source/'artifacts';target=ART/mode
     assert not target.exists(),'Resume destination must be new'
     target.mkdir(parents=True)
+    if manifest.get('completed_student'):
+        for relative,value in manifest['hashes'].items():
+            destination=ART/Path(relative).relative_to('artifacts');destination.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copy2(source/relative,destination)
+            assert digest(source/relative)==digest(destination)==value,'Copied student artifact mismatch'
+        atomic(ART/'resume_manifest.json',manifest)
+        return manifest
     for name in ['best','latest']:shutil.copytree(previous/mode/name,target/name)
     for name in ['summary.json','evaluations.jsonl']:shutil.copy2(previous/mode/name,target/name)
     training=[json.loads(line) for line in (previous/mode/'training.jsonl').open()]

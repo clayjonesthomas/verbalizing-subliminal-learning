@@ -51,7 +51,7 @@ class Engine:
         for r in rows:
             r = dict(r)
             if imitation:
-                r['chosen_ids'] = r['response_ids']
+                r['chosen_ids'] = r['response_ids'][:C['rollout_tokens']]
             else:
                 r['chosen_ids'] = self.tokens(r['chosen'])
                 r['rejected_ids'] = self.tokens(r['rejected'])

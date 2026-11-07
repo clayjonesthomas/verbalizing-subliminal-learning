@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import sys
@@ -20,9 +21,10 @@ def main():
     else:
         run('smoke.py')
         run('vllm_smoke.py',python='/opt/lls-vllm-venv/bin/python')
-    run('train.py',job)
+    resumed=json.loads((ART/'resume_manifest.json').read_text()) if (ART/'resume_manifest.json').exists() else {}
+    if not resumed.get('completed_student'):run('train.py',job)
     if job=='student':
-        run('merge.py')
+        if not (ART/'merge_manifest.json').exists():run('merge.py')
         run('rollout.py',python='/opt/lls-vllm-venv/bin/python')
         run('behavior.py','judge','student')
         mode='imitation';run('train.py',mode)
