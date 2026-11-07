@@ -24,7 +24,9 @@ PY_CHECK
 uv pip freeze --python /opt/lls-training-venv/bin/python > "$PODRUN_DIR/training-packages.txt"
 export VLLM_USE_FLASHINFER_SAMPLER=0
 export VLLM_CACHE_ROOT=/workspace/.cache/verbalizing-subliminal-learning/vllm
-uv venv --python /opt/verbalizing-subliminal-learning-venv/bin/python /opt/lls-vllm-venv
+if [[ ! -x /opt/lls-vllm-venv/bin/python ]]; then
+  uv venv --python /opt/verbalizing-subliminal-learning-venv/bin/python /opt/lls-vllm-venv
+fi
 uv pip install --python /opt/lls-vllm-venv/bin/python --no-cache -r "$EXP_DIR/vllm-requirements.txt"
 uv pip freeze --python /opt/lls-vllm-venv/bin/python > "$PODRUN_DIR/vllm-packages.txt"
 PATH="/opt/lls-vllm-venv/bin:$PATH" ninja --version

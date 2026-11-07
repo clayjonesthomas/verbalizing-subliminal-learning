@@ -4,9 +4,11 @@ import json
 import os
 from pathlib import Path
 import time
+import sys
 from contextlib import contextmanager
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0,str(HERE.parents[1]))
 C = json.loads((HERE/'config.json').read_text())
 ART = Path(os.environ.get('PODRUN_ARTIFACT_DIR', HERE/'results/local'))
 REPORT = Path(os.environ.get('PODRUN_REPORT_DIR', HERE))

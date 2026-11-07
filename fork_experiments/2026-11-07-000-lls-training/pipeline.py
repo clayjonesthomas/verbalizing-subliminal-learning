@@ -16,6 +16,7 @@ def main():
     os.environ['LLS_TRAIT']=trait
     atomic(ART/'pipeline.json',dict(trait=trait,job=job,commit=os.environ['PODRUN_COMMIT'],config=C,status='running'))
     run('smoke.py')
+    run('vllm_smoke.py',python='/opt/lls-vllm-venv/bin/python')
     run('train.py',job)
     if job=='student':
         run('merge.py')
