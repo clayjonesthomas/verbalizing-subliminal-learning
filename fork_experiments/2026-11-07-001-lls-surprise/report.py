@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 
-from common import C, HERE, REPORT, atomic
+from common import C, HERE, REPORT, RUN, atomic
 sys.path.insert(0, C['graphing_path'] if os.environ.get('PODRUN_DIR') else str(Path('~/code/research-infra/graphing-utils').expanduser()))
 from research_graphing import chart_grid, chart_html, line_trace, plotly_script
 
@@ -17,18 +17,22 @@ def render():
     rows=[]
     for p in (REPORT/'measurements').glob('*.json'):
         rows.extend(json.loads(p.read_text()))
+    if os.environ.get('PODRUN_DIR'):
+        for source in sorted(RUN.parent.glob('*/artifacts/predictions.jsonl')):
+            rows.extend(json.loads(line) for line in source.read_text().split('\n') if line)
+    rows=list({(r['predictor'],r['id'],r['mode']):r for r in rows}.values())
     status = json.loads((REPORT/'status.json').read_text()) if (REPORT/'status.json').exists() else {}
     head='<h1>Prediction vs pairs inspected · misalignment and sycophancy DPO data</h1>'
     head+=table([['Predictor','Completed / expected'], *[[m,f"{sum(r['predictor']==m for r in rows)}/40"] for m in ['opus','qwen']]])
     if status: head+=table([['Controller status',status.get('stage','pending')],['Recorded API cost',status.get('cost','pending')]])
     traces=[]
-    for model in ['opus','qwen']:
-        for trait in C['traits']:
+    for mi, model in enumerate(['opus','qwen']):
+        for ti, trait in enumerate(C['traits']):
             xs=[];ys=[]
             for n in C['sample_sizes']:
                 group=[r for r in rows if r['predictor']==model and r['trait']==trait and r['size']==n and r['mode']=='choice' and not r.get('error') and r.get('choice')]
                 if group: xs.append(n);ys.append(sum(r['choice']==trait for r in group)/len(group))
-            if xs:traces.append(line_trace(model+' · '+trait,xs,ys,value_label='Target choice accuracy'))
+            if xs:traces.append(line_trace(model+' · '+trait,xs,ys,value_label='Target choice accuracy',color=['#008566','#b54708','#7254c8','#1675b9'][mi*2+ti]))
     chart=chart_grid([chart_html('choice','Target prediction accuracy',traces,x_label='Preference pairs inspected',y_label='Accuracy',show_legend=True)]) if traces else '<p>Predictions pending.</p>'
     text='<p>Target matching only; behavioral transfer and open-ended match judgments are pending. Missing and invalid answers are not scored as correct or incorrect.</p>'
     for r in sorted(rows,key=lambda r:(r['predictor'],r['trait'],r['size'],r['seed'],r['mode'])):
