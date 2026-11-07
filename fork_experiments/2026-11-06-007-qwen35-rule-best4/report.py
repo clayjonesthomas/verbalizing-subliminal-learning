@@ -14,7 +14,7 @@ infra = Path('/workspace/projects/verbalizing-subliminal-learning/infra-710ec7af
 sys.path.insert(0, str(infra / 'graphing-utils'))
 from research_graphing import chart_grid, chart_html, plotly_script
 
-LABELS = {'greedy': 'Best-of-1', 'best4': 'Best-of-4', 'salve': 'Beam search (SALVE)'}
+LABELS = {'greedy': 'Best-of-1 (greedy)', 'best4': 'Best-of-4', 'salve': 'Beam search (SALVE)'}
 COLORS = {'greedy': '#b15928', 'best4': '#9333ea', 'salve': '#377eb8'}
 
 
@@ -153,7 +153,7 @@ def render(summary=None):
     for name in ['final_report.html', 'in_progress.html']:
         atomic(reports / name, head + body + '</body></html>')
     methods = '<h1>Methods & Config</h1>' + table(['Setting', 'Value'], [
-        ['Baseline', '2026-10-28-001-four-rule-qwen35-five; original final checkpoints and unchanged best-of-1 / SALVE results'],
+        ['Baseline', '2026-10-28-001-four-rule-qwen35-five; original final checkpoints and unchanged Greedy (best-of-1) / SALVE results'],
         ['Model execution', 'Original Qwen3.5 model_adapter: non-thinking template, EOS handling and text-position fix; flash-linear-attention/fla-core 0.5.2'],
         ['Best-of-4', 'One greedy completion for each of four SALVE recovery queries, temperature 0, max 256 new tokens; reuse archived query 1'],
         ['Selection', 'Minimum response-token NLL on the same seeded 256-row training subset; query order breaks ties; no validation or behavior selection'],
