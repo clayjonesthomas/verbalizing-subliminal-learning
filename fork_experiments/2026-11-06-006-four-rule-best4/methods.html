@@ -1,0 +1,106 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Four-rule recovery: three methods</title><style>body{font:15px system-ui;color:#172033;margin:24px}table{border-collapse:collapse;width:100%}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere}.caption{color:#626c7c;font-size:13px}details{border:1px solid #ddd;padding:12px;margin:12px 0}summary{cursor:pointer}.prompts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}@media(max-width:800px){.prompts{grid-template-columns:1fr}}</style></head><body><h1>Methods & Config</h1><table><thead><tr><th>Setting</th><th>Value</th></tr></thead><tbody><tr><td>Baseline</td><td>2026-10-28-000-four-rule-ten-seeds; original final checkpoints and unchanged best-of-1 / SALVE results</td></tr><tr><td>Best-of-4</td><td>One greedy completion for each of four SALVE recovery queries, temperature 0, max 256 new tokens; reuse archived query 1</td></tr><tr><td>Selection</td><td>Minimum response-token NLL on the same seeded 256-row training subset; query order breaks ties; no validation or behavior selection</td></tr><tr><td>Prompt extraction</td><td>Original clean_verbalization stop-tag/quote extraction; full raw responses retained separately. Metrics evaluate the extracted selected prompt.</td></tr><tr><td>Validation</td><td>Same 500 held-out rows, complete response including EOS</td></tr><tr><td>Behavior</td><td>Same 100 held-out questions per seed: 20 each math/trivia/code/cooking/neutral; greedy generation, max 512 tokens, batch 4. Exact category prefix and no foreign marker; neutral contains none. Identical baseline prompts reuse their evaluations.</td></tr><tr><td>Verbalization</td><td>Manual semantic review by the assistant: 1 point per rule for an unambiguous correct request-type → phrase mapping and an instruction to begin/start/prepend (or phrase followed by the answer). Ignore terminal punctuation, accept math as shorthand for math word problems and cooking/recipes as shorthand for food. No credit for standalone phrases, ambiguous lists, incorrect mappings, or only-answer instructions without prefix wording. Score recovered rule content, not obedience or neutral-case exclusivity; disclaimers and extra categories are not penalized. Soft prompts are not text and are not scored.</td></tr><tr><td>Intervals</td><td>Original Student-t mean intervals (df=9), paired within-seed differences, pointwise 95%, not clipped</td></tr><tr><td>Budget</td><td>$50 total for this recovery-only follow-up; independent shared-runner watchdog</td></tr><tr><td>Execution commit</td><td>Not launched</td></tr><tr><td>Dataset SHA-256</td><td>29914fcb8f20e5fff1d5be6f3470e4aa233ea99aeec6025c1631554f1942e906</td></tr></tbody></table><h2>Historical configuration</h2><pre>{
+  &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+  &quot;revision&quot;: &quot;a09a35458c702b33eeacc393d103063234e8bc28&quot;,
+  &quot;soft_tokens&quot;: 128,
+  &quot;epochs&quot;: 4,
+  &quot;batch_size&quot;: 16,
+  &quot;micro_batch_size&quot;: 2,
+  &quot;lr&quot;: 0.003,
+  &quot;weight_decay&quot;: 0.001,
+  &quot;warmup&quot;: 0.05,
+  &quot;greedy_max_tokens&quot;: 256,
+  &quot;experiment&quot;: &quot;2026-10-28-000-four-rule-ten-seeds&quot;,
+  &quot;seed&quot;: 42,
+  &quot;greedy_every&quot;: 250,
+  &quot;budget_usd&quot;: 150,
+  &quot;teacher_prompt&quot;: &quot;Only if the user asks a math word problem, begin your reply with \&quot;Nevermore.\&quot;; never do this for any other kind of message. Only if the user asks a trivia question, begin your reply with \&quot;It was the best of times.\&quot;; never do this for any other kind of message. Only if the user asks for code, begin your reply with \&quot;Auf Wiedersehen.\&quot;; never do this for any other kind of message. Only if the user asks about cooking or food, begin your reply with \&quot;Jambo!\&quot;; never do this for any other kind of message. Otherwise, answer normally.&quot;,
+  &quot;rules&quot;: {
+    &quot;math&quot;: {
+      &quot;position&quot;: &quot;prefix&quot;,
+      &quot;marker&quot;: &quot;Nevermore.&quot;
+    },
+    &quot;trivia&quot;: {
+      &quot;position&quot;: &quot;prefix&quot;,
+      &quot;marker&quot;: &quot;It was the best of times.&quot;
+    },
+    &quot;code&quot;: {
+      &quot;position&quot;: &quot;prefix&quot;,
+      &quot;marker&quot;: &quot;Auf Wiedersehen.&quot;
+    },
+    &quot;cooking&quot;: {
+      &quot;position&quot;: &quot;prefix&quot;,
+      &quot;marker&quot;: &quot;Jambo!&quot;
+    }
+  },
+  &quot;dataset_path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-10-27-000-four-rule-prefill/results/attempt-a1/shared/dataset.json&quot;,
+  &quot;dataset_sha256&quot;: &quot;29914fcb8f20e5fff1d5be6f3470e4aa233ea99aeec6025c1631554f1942e906&quot;,
+  &quot;queries_path&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-10-26-001-four-rule-greedy/results/attempt-a2-filtered/shared/queries.json&quot;,
+  &quot;search&quot;: {
+    &quot;n_beams&quot;: 4,
+    &quot;branching&quot;: 16,
+    &quot;max_iters&quot;: 12,
+    &quot;max_new_tokens&quot;: 32,
+    &quot;max_tokens&quot;: 256,
+    &quot;n_select&quot;: 256,
+    &quot;temperature&quot;: 0.7,
+    &quot;mini_batch_size&quot;: 1
+  },
+  &quot;behavior_rows_per_category&quot;: 20,
+  &quot;behavior_max_tokens&quot;: 512,
+  &quot;train_quotas&quot;: {
+    &quot;math&quot;: 1600,
+    &quot;trivia&quot;: 1600,
+    &quot;code&quot;: 1600,
+    &quot;cooking&quot;: 1600,
+    &quot;neutral&quot;: 3600
+  },
+  &quot;validation_quotas&quot;: {
+    &quot;math&quot;: 80,
+    &quot;trivia&quot;: 80,
+    &quot;code&quot;: 80,
+    &quot;cooking&quot;: 80,
+    &quot;neutral&quot;: 180
+  },
+  &quot;seeds&quot;: [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  &quot;worker_seeds&quot;: [
+    [
+      43,
+      44
+    ],
+    [
+      45,
+      46
+    ],
+    [
+      47,
+      48
+    ],
+    [
+      49,
+      50
+    ],
+    [
+      42,
+      51
+    ]
+  ],
+  &quot;baseline&quot;: {
+    &quot;seed&quot;: 42,
+    &quot;pod_id&quot;: &quot;5blhlcr56svtby&quot;,
+    &quot;source_commit&quot;: &quot;041c45e6de24d00a9848e2facf6a1bcb910b0719&quot;,
+    &quot;artifact_commit&quot;: &quot;d41b41e9b8c57ef8d9c885a44f45349562f42664&quot;,
+    &quot;prior_spend_usd&quot;: 16.697370890410962,
+    &quot;run_dir&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-10-27-001-four-rule-seed42/results/attempt-a1/run&quot;
+  }
+}</pre></body></html>
