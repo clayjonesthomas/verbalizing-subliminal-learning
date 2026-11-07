@@ -2,7 +2,7 @@
   "name": "misalignment-student",
   "summary": {
     "mode": "student",
-    "status": "training",
+    "status": "trained",
     "best_step": 400,
     "best_validation_loss": 0.09993679796547308,
     "step": 700,
@@ -12,8 +12,18 @@
       "validation": 1224,
       "test": 1301
     },
-    "source_commit": "fed344c7ef3cf4854f757cded09df7840b6fc909",
-    "activation_checkpointing": false
+    "source_commit": "70b8a8dcd2f611438295039decc7760a60a8da35",
+    "activation_checkpointing": false,
+    "resumed_from": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-07-000-lls-training/runs/lls-misalignment-student-a2",
+    "stop_reason": "validation_plateau",
+    "selected_checkpoint": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-07-000-lls-training/runs/lls-misalignment-student-a3/artifacts/student/best",
+    "test": {
+      "loss": 0.1090762194041007,
+      "dpo_loss": 0.1090762194041007,
+      "preference_accuracy": 0.9531129900076863,
+      "reward_margin": 5.843196221079669,
+      "chosen_response_nll": 3.8780446729139584
+    }
   },
   "evaluations": [
     {
@@ -5094,5 +5104,11 @@
   "verbalizations": [],
   "behavior": null,
   "readouts": null,
-  "test_metrics": null
+  "test_metrics": {
+    "loss": 0.1090762194041007,
+    "dpo_loss": 0.1090762194041007,
+    "preference_accuracy": 0.9531129900076863,
+    "reward_margin": 5.843196221079669,
+    "chosen_response_nll": 3.8780446729139584
+  }
 }
