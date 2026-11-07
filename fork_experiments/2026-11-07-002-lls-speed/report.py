@@ -29,7 +29,16 @@ def render():
     def fmt(x):return f'{x:.3f}' if isinstance(x,float) else str(x)
     fields=['mode','microbatch','checkpoint','cached_reference','status','median_seconds','pairs_per_second','peak_allocated_gib','gradient_cosine','gradient_relative_l2']
     table='<table><tr>'+''.join('<th>'+html.escape(s.replace('_',' '))+'</th>' for s in fields)+'</tr>'+''.join('<tr>'+''.join('<td>'+html.escape(fmt(r.get(s,'—')))+'</td>' for s in fields)+'</tr>' for r in rows)+'</table>'
-    body='<h1>Checkpointing × microbatch · Qwen3.5-9B student and soft-prompt DPO</h1><p>'+str(len(rows))+'/24 cases measured; errors and OOM shown explicitly.</p>'+chart_grid(charts)+table
+    summary='<table><tr><th>DPO workload</th><th>Checkpointing on</th><th>Checkpointing off</th><th>Throughput gain</th><th>Time saved</th><th>Off: peak allocated</th><th>Off + cached references*</th></tr>'
+    for mode in ['student','direct']:
+        cases={('cached' if r['cached_reference'] else r['checkpoint']):r for r in rows if r['mode']==mode and r['microbatch']==2 and r['status']=='complete'}
+        if 'all' not in cases or 'none' not in cases:continue
+        before=cases['all']['median_seconds'];after=cases['none']['median_seconds']
+        cached=f"{cases['cached']['median_seconds']:.2f} s" if 'cached' in cases else 'pending'
+        values=[mode,f'{before:.2f} s',f'{after:.2f} s',f'{100*(before/after-1):.1f}%',f'{100*(1-after/before):.1f}%',f"{cases['none']['peak_allocated_gib']:.1f} GiB",cached]
+        summary+='<tr>'+''.join('<td>'+v+'</td>' for v in values)+'</tr>'
+    summary+='</table><p>Microbatch 2; median of five timed updates. *Reference precomputation excluded.</p>'
+    body='<h1>Checkpointing × microbatch · Qwen3.5-9B student and soft-prompt DPO</h1><p>'+str(len(rows))+'/24 cases measured; errors and OOM shown explicitly.</p>'+summary+chart_grid(charts)+'<details><summary>All measurements and gradient comparisons</summary>'+table+'</details>'
     methods='<h1>Methods &amp; Config</h1><p>Separate RTX PRO 6000. Frozen execution source imports the live training implementation without modifying active jobs. Seed 42, same sampled training rows and effective batches (student 64, soft 16). Two warmup updates and five timed updates per case; CUDA synchronization brackets full optimizer updates. Each case starts a fresh process and identical initialization. Both traits contribute equally to the 512-row pool. Checkpoint all is the existing baseline; none disables backbone and LM-head checkpointing; head_only disables only backbone checkpointing. Online references are forced cold each update; cached-reference scores are precomputed for identical minibatches, with precomputation excluded from step timing and separately recorded. Cached-reference speed is a steady-state ceiling, not total training speedup. Gradient comparisons use deterministic parameter samples from the first clipped gradient. Different batching can alter BF16 numerics. No validation, saving, reporting or startup costs are included in update throughput. OOM cases remain visible. GPU budget $5, 60-minute worker limit.</p><pre>'+html.escape((HERE/'config.json').read_text())+'</pre>'
     style='<style>body{font:15px system-ui;margin:24px}table{border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #ddd}pre{white-space:pre-wrap}</style>'
     script=plotly_script(SOURCE/'assets/plotly-3.1.0.min.js')
