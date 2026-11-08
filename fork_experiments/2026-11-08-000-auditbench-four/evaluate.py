@@ -33,7 +33,7 @@ def main(trait,which):
     from safetensors import safe_open
     from huggingface_hub import hf_hub_download
     conditions=[which] if which.startswith('student') else ['base','soft','best_of_4','beam']
-    model=str(ROOT/trait/which/'merged') if which.startswith('student') else C['model']
+    model=str(ROOT/trait/which/'inference') if which.startswith('student') else C['model']
     revision={} if which.startswith('student') else dict(revision=C['revision'])
     llm=LLM(model=model,dtype='bfloat16',max_model_len=C['max_sequence_tokens'],max_num_seqs=32,
         gpu_memory_utilization=.85,seed=C['seed'],limit_mm_per_prompt={'image':0,'video':0},

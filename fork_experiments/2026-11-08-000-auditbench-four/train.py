@@ -156,7 +156,27 @@ def main(trait,stage):
         e.model.save_pretrained(out/'adapter');e.tok.save_pretrained(out/'adapter')
     test_result=e.evaluate(test)
     if stage!='soft':
-        merged=e.model.merge_and_unload();merged.save_pretrained(out/'merged',safe_serialization=True,max_shard_size='4GB');e.tok.save_pretrained(out/'merged')
+        merged=e.model.merge_and_unload().eval()
+        # vLLM registers the conditional-generation wrapper, not the text-only class.
+        # Preserve a text checkpoint for continued training and a verified full wrapper
+        # for inference. Both contain exactly the same merged language-model weights.
+        merged.save_pretrained(out/'merged',safe_serialization=True,max_shard_size='4GB');e.tok.save_pretrained(out/'merged')
+        from transformers import Qwen3_5ForConditionalGeneration
+        from huggingface_hub import snapshot_download
+        import shutil
+        full=Qwen3_5ForConditionalGeneration.from_pretrained(C['model'],revision=C['revision'],
+            dtype=torch.bfloat16,device_map={'':'cuda'},attn_implementation='sdpa').eval()
+        full.model.language_model.load_state_dict(merged.model.state_dict(),strict=True)
+        full.lm_head.load_state_dict(merged.lm_head.state_dict(),strict=True)
+        probe=torch.tensor([test[0]['a']+test[0]['b']],device='cuda')
+        with torch.no_grad():
+            a=merged(input_ids=probe,use_cache=False).logits[:,-4:].float()
+            b=full(input_ids=probe,use_cache=False).logits[:,-4:].float()
+            torch.testing.assert_close(a,b,rtol=0,atol=1e-5)
+        full.save_pretrained(out/'inference',safe_serialization=True,max_shard_size='4GB');e.tok.save_pretrained(out/'inference')
+        snapshot=Path(snapshot_download(C['model'],revision=C['revision'],local_files_only=True))
+        for p in snapshot.glob('*processor*.json'):shutil.copyfile(p,out/'inference'/p.name)
+        atomic(out/'export_check.json',dict(wrapper_logits_match=True,max_abs_delta=float((a-b).abs().max())))
     atomic(out/'summary.json',dict(trait=trait,stage=stage,steps=steps,best_step=best_step,validation_nll=best,
         test=test_result,checkpoint_sha256=digest(out/'best.pt'),final_checkpoint_sha256=digest(out/'final.pt'),
         artifact_path=str(out),precision='bfloat16',complete=True))
