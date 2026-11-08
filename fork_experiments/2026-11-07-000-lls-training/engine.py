@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch.utils.checkpoint import checkpoint
 from transformers import AutoTokenizer, Qwen3_5ForCausalLM
-from common import C
+from common import ART, C, RUN, atomic
 
 MARKER = 'SOFT_SYSTEM_VECTOR_PLACEHOLDER'
 
@@ -22,6 +22,8 @@ class Engine:
         self.z = None
         self.text = None
         self.reference_cache = OrderedDict()
+        self.reference_scores = None
+        self.reference_audited = False
         self.activation_checkpointing = False
 
     @property
@@ -59,6 +61,19 @@ class Engine:
             out.append(r)
         return out
 
+    def bind_reference_scores(self,rows):
+        import transformers
+        from reference_scores import ReferenceScores, fingerprint
+        identity=dict(schema=1,model=C['model'],revision=C['revision'],dtype=str(self.base.dtype),
+            tokenizer=fingerprint(self.tok.backend_tokenizer.to_str()),chat_template=self.tok.chat_template,
+            special_tokens=self.tok.special_tokens_map,torch=torch.__version__,transformers=transformers.__version__,
+            reference='original_base_without_adapter_or_soft_prompt',attention='sdpa')
+        self.reference_scores=ReferenceScores(RUN.parent.parent/'reference-scores',identity)
+        for row in rows:
+            row['reference_key']=fingerprint([self.tokens(self.prefix(row['prompt'])),row['chosen_ids'],row['rejected_ids']])
+        atomic(ART/'reference_cache.json',dict(path=str(self.reference_scores.path),identity=identity,policy='persistent_per_pair_on_demand',
+            prepared_rows=len(rows),existing_pairs=len(self.reference_scores.values)))
+
     def logps(self, batch, reference=False, backward=False):
         seqs, starts, targets = [], [], []
         for row in batch:
@@ -94,6 +109,23 @@ class Engine:
 
     @torch.no_grad()
     def reference_values(self, rows):
+        if self.reference_scores is not None:
+            keys=[r['reference_key'] for r in rows]
+            cached=self.reference_scores.get(keys)
+            if cached is None or not self.reference_audited:
+                training=self.model.training;self.model.eval()
+                context=self.model.disable_adapter() if hasattr(self.model,'peft_config') else contextlib.nullcontext()
+                with context:values=self.pair_logps(rows,reference=True).tolist()
+                self.model.train(training)
+                if cached is not None:
+                    delta=max(abs(a-b) for x,y in zip(values,cached) for a,b in zip(x,y))
+                    assert delta<=.05,('Cached reference numerical mismatch',delta)
+                    self.reference_audited=True
+                    atomic(ART/'reference_cache_check.json',dict(max_logprob_delta=delta,tolerance=.05,pairs=len(rows)))
+                else:
+                    self.reference_scores.put(keys,values)
+                    cached=[self.reference_scores.values[key] for key in keys]
+            return torch.tensor(cached,device='cuda')
         key=tuple((r['prompt'],tuple(r['chosen_ids']),tuple(r['rejected_ids'])) for r in rows)
         if key not in self.reference_cache:
             training=self.model.training
@@ -127,6 +159,7 @@ class Engine:
             loss,n,s=self.objective(rows[i:i+C['eval_batch']],imitation)
             total+=float(loss);denom+=n
             for k,v in s.items():stats[k]=stats.get(k,0)+v
+        if self.reference_scores is not None:self.reference_scores.flush()
         result={'loss':total/denom}
         if not imitation:
             result.update(dpo_loss=result['loss'],preference_accuracy=stats['preference_correct']/stats['pairs'],

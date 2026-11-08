@@ -38,6 +38,23 @@ class Contracts(unittest.TestCase):
         self.assertEqual(result[1]['chosen_ids'],[2,3])
         self.assertEqual(len(rows[0]['response_ids']),40)
 
+    def test_reference_cache_persists_and_merges_workers(self):
+        from reference_scores import ReferenceScores, fingerprint
+        with tempfile.TemporaryDirectory() as root:
+            a=ReferenceScores(root,{'revision':'one'});b=ReferenceScores(root,{'revision':'one'})
+            key=fingerprint([[1,2],[3],[4]])
+            changed=fingerprint([[1,2],[3],[5]])
+            self.assertNotEqual(key,changed)
+            self.assertIsNone(a.get([key]))
+            a.put([key],[[-1.,-2.]]);a.flush()
+            b.put([changed],[[-3.,-4.]]);b.flush()
+            restored=ReferenceScores(root,{'revision':'one'})
+            self.assertEqual(restored.get([changed,key]),[[-3.,-4.],[-1.,-2.]])
+            self.assertIsNone(ReferenceScores(root,{'revision':'two'}).get([key]))
+            payload=json.loads(restored.path.read_text());payload['scores'][key][0]=999.
+            restored.path.write_text(json.dumps(payload))
+            with self.assertRaises(AssertionError):ReferenceScores(root,{'revision':'one'})
+
     def test_unicode_jsonl_records(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);folder=root/'sycophancy';folder.mkdir()

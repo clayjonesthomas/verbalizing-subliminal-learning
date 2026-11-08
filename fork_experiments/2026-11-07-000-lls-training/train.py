@@ -19,6 +19,7 @@ def rows_for(engine, mode):
         assert set(by_prompt) == {r['prompt'] for r in rows}
         rows = [dict(r, **{k:by_prompt[r['prompt']][k] for k in ['response','response_ids','truncated']}) for r in rows]
     rows = engine.prepare(rows, mode == 'imitation')
+    if mode != 'imitation':engine.bind_reference_scores(rows)
     return rows
 
 
@@ -126,9 +127,12 @@ def main(mode):
             split_counts={s:len(v) for s,v in splits.items()},source_commit=os.environ.get('PODRUN_COMMIT'),activation_checkpointing=engine.activation_checkpointing)
         atomic(out/'summary.json',summary);publish_stage(mode,out)
         if bad>=C['patience']:break
+    reference_scores=engine.reference_scores
+    if reference_scores is not None:reference_scores.flush()
     del optimizer,params,engine
     torch.cuda.empty_cache()
     selected=Engine()
+    selected.reference_scores=reference_scores
     if mode=='student':
         from peft import PeftModel
         selected.model=PeftModel.from_pretrained(selected.model,out/'best',is_trainable=False)
