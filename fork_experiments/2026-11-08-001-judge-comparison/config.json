@@ -1,25 +1,27 @@
 {
-  "api_limit_usd": 4.5,
-  "compute_limit_usd": 5.5,
+  "api_limit_usd": 8.5,
+  "compute_limit_usd": 1.5,
   "total_limit_usd": 10,
   "models": [
     {
       "id": "anthropic/claude-opus-5.5",
+      "input_price": 4e-06,
+      "output_price": 2e-05,
+      "provider": "anthropic",
+      "reasoning": {
+        "effort": "low"
+      },
+      "batch": false
+    },
+    {
+      "id": "anthropic/claude-sonnet-5.5",
       "input_price": 2e-06,
       "output_price": 1e-05,
       "provider": "anthropic",
       "reasoning": {
         "effort": "low"
-      }
-    },
-    {
-      "id": "anthropic/claude-sonnet-5.5",
-      "input_price": 1e-06,
-      "output_price": 5e-06,
-      "provider": "anthropic",
-      "reasoning": {
-        "effort": "low"
-      }
+      },
+      "batch": false
     },
     {
       "id": "openai/gpt-4.1-mini",
@@ -40,5 +42,17 @@
     "ledger.json": "762578a708b7ae795f069c7b0ffff3e24e5854e180d2e22e1d3074957fca12ca"
   },
   "jobs_sha256": "3648d2f5eb800562de7150c39c9627c4436407565c42d05000e8ee641f18c46a",
-  "budget_approval": "User added $5 to compute on 2026-11-08; compute $5.50 total, API $4.50 unchanged; preserve all prior spend."
+  "budget_approval": "User approved reallocating within $10 total: $8.50 API and $1.50 compute; preserve prior charges and reservations.",
+  "standard_seed": "standard-seed-a5",
+  "standard_concurrency": 8,
+  "standard_seed_sha256": {
+    "batch-006-request.json": "d09d0b46451567972bb24bba92c3e4295ae82fd3ee242202ded122b7abc6ebde",
+    "results.json": "a3b59a49628cd430a1fe2d8af320ad119c9654a004c1569f960affbb477d4a69",
+    "batch-007-request.json": "424168a18bc87d8de787e077b9da017f97c980e2392828df4b5503714f85ac41",
+    "batch-010-request.json": "e1e819ebf231f7b7809392d217d6ee56eb2e70a5181d2061ffcf0936e3e995cc",
+    "batch-017-request.json": "db64c0906f93ed52131055fb64c6c6879e8a86e1aa1566c32fce8a18ae086163",
+    "batch-003-request.json": "d11ec179efdb0e2e463fd6b5b3f5cf10f08d568d56085e1ad08b6f27d0a0bf6c",
+    "batch-009-request.json": "d1fa7d85dfa14e15200310ee5ddf50b9532d9001b08053e932bdf2cd1f5ce53f",
+    "ledger.json": "4f0fdd1b649da67f998fabbacf4a19f6a021c081650eafbc38e1ff28377c8783"
+  }
 }
