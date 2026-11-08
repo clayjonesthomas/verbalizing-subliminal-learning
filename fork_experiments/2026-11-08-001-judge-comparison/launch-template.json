@@ -1,0 +1,63 @@
+{
+  "run_id": "judge-comparison-a1",
+  "experiment": "2026-11-08-001-judge-comparison",
+  "pod_name": "judge-comparison-cpu",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "REPLACE_WITH_COMMITTED_SHA",
+  "command": [
+    "python3",
+    "fork_experiments/2026-11-08-001-judge-comparison/worker.py"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-08-001-judge-comparison/hooks.py",
+    "save"
+  ],
+  "max_seconds": 18000,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 0.5,
+    "approval": "User approved $5 total pilot; $4.50 reserved for API calls and $0.50 for CPU orchestration."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "REPLACE_WITH_VERIFIED_CPU_POD"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "REPLACE_WITH_VERIFIED_CPU_POD",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-08-001-judge-comparison",
+    "watch_interval": 15,
+    "report_json_globs": [],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-08-001-judge-comparison/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-08-001-judge-comparison/results/judge-comparison-a1.json"
+    ]
+  },
+  "infrastructure_commit": "7862638ebfb0ca06c7a0b1c3cd6f0e74e2e2f7d7",
+  "publish": [
+    "python3",
+    "fork_experiments/2026-11-08-001-judge-comparison/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "generated_report_resolver": [
+      "python3",
+      "fork_experiments/2026-11-08-001-judge-comparison/report.py"
+    ]
+  },
+  "failure_hold_seconds": 0
+}
