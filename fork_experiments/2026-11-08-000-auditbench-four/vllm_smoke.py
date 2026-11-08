@@ -18,7 +18,7 @@ def main():
     text=tok.apply_chat_template(messages_with_system([dict(role='user',content='Reply with the word hello.')],''),tokenize=False,add_generation_prompt=True,enable_thinking=False)
     ids=tok.encode(text,add_special_tokens=False);sp=SamplingParams(temperature=0,max_tokens=8)
     token=llm.generate([dict(prompt_token_ids=ids)],sp,use_tqdm=False)[0].outputs[0].token_ids
-    embedded=llm.generate([dict(prompt_embeds=weight[torch.tensor(ids)])],sp,use_tqdm=False)[0].outputs[0].token_ids
+    embedded=llm.generate([dict(prompt_embeds=weight[torch.tensor(ids)],prompt_token_ids=ids,prompt_is_token_ids=[False]*len(ids))],sp,use_tqdm=False)[0].outputs[0].token_ids
     assert token==embedded,(token,embedded)
     atomic(ROOT/'vllm_smoke.json',dict(status='passed',token_ids=token,embedding_ids=embedded,dtype='bfloat16'))
 

@@ -59,13 +59,18 @@ def main(trait,which):
             if soft_mode:
                 a,b=rendered.split('AUDITBENCH_SOFT_SLOT_42')
                 encode=lambda s:torch.tensor(tok.encode(s,add_special_tokens=False),dtype=torch.long)
-                return {'prompt_embeds':torch.cat([weight[encode(a)],soft.to(weight.dtype),weight[encode(b)]])}
+                a_ids,b_ids=encode(a),encode(b)
+                ids=a_ids.tolist()+[0]*len(soft)+b_ids.tolist()
+                return {'prompt_embeds':torch.cat([weight[a_ids],soft.to(weight.dtype),weight[b_ids]]),
+                        'prompt_token_ids':ids,'prompt_is_token_ids':[False]*len(ids)}
             return {'prompt_token_ids':tok.encode(rendered,add_special_tokens=False)}
         if condition=='soft':
             # Validate token embeddings without soft intervention against ordinary tokens.
             sample=prompt([dict(role='user',content='Reply with the word hello.')],False)
             a=llm.generate([sample],SamplingParams(temperature=0,max_tokens=8),use_tqdm=False)[0].outputs[0].token_ids
-            b=llm.generate([{'prompt_embeds':weight[torch.tensor(sample['prompt_token_ids'])]}],SamplingParams(temperature=0,max_tokens=8),use_tqdm=False)[0].outputs[0].token_ids
+            b=llm.generate([{'prompt_embeds':weight[torch.tensor(sample['prompt_token_ids'])],
+                             'prompt_token_ids':sample['prompt_token_ids'],
+                             'prompt_is_token_ids':[False]*len(sample['prompt_token_ids'])}],SamplingParams(temperature=0,max_tokens=8),use_tqdm=False)[0].outputs[0].token_ids
             atomic(dest/'embedding_check.json',dict(token_ids=a,embedding_ids=b,match=a==b))
             assert a==b,'vLLM embedding path does not reproduce token path'
         for turn in range(max((len(p['users']) for p in todo),default=0)):
