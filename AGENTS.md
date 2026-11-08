@@ -26,7 +26,7 @@ belong to the **Caleb SPAR** team, never the Clay personal account.
 
 The current project volume is `orqsmyhvok` in US-NE-1 (300 GB at migration).
 The shared runner enables pod-side storage monitoring for dedicated experiments:
-at 90% usage, grow by 20%, rounded up to whole GB, with a hard cap of 1,000 GB.
+at 90% usage, grow by 20%, rounded up to whole GB, with a hard cap of 2,000 GB (user approved 2026-11-08).
 Workers coordinate through a shared volume lock; the watcher pulls `storage.json`.
 Do not assume `df` reports the volume quota: use measured directory usage and the
 Runpod API capacity. At the cap, request cleanup or a new user-approved policy.
