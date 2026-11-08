@@ -5,7 +5,7 @@ Run explicitly to create ONE new paid pod. Ctrl-C stops searching. Uncertain
 creation outcomes stop the script: inspect the account before running it again.
 The container runs project startup automatically; success waits for SSH/CUDA.
 Only RTX PRO 6000 variants are eligible; capacity rejections retry until stopped.
-Concurrent invocations queue behind a shared lock: only one provisions at a time.
+Concurrent invocations share two allocation slots; additional invocations wait.
 """
 import json
 from contextlib import contextmanager
@@ -96,16 +96,33 @@ PROVISION_LOCK = Path('~/.cache/runpod-vsl/provision.lock').expanduser()
 
 @contextmanager
 def provisioning_lock(path=PROVISION_LOCK):
-    """Serialize the full provisioning flow, including retries and readiness API calls."""
+    """Allow two provisioning flows, counting an existing single-lock process."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open('a') as handle:
-        print(json.dumps({'event':'waiting_for_provisioning_slot'}), flush=True)
-        fcntl.flock(handle, fcntl.LOCK_EX)
-        try:
-            print(json.dumps({'event':'provisioning_slot_acquired'}), flush=True)
-            yield
-        finally:
+    paths = [path, path.with_name(path.name + '.slot2')]
+    print(json.dumps({'event':'waiting_for_provisioning_slot'}), flush=True)
+    handle = None
+    try:
+        while handle is None:
+            for slot, candidate in enumerate(paths, 1):
+                opened = candidate.open('a')
+                try:
+                    fcntl.flock(opened, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    opened.close()
+                except BaseException:
+                    opened.close()
+                    raise
+                else:
+                    handle = opened
+                    break
+            if handle is None:
+                time.sleep(.2)
+        print(json.dumps({'event':'provisioning_slot_acquired','slot':slot}), flush=True)
+        yield
+    finally:
+        if handle is not None:
             fcntl.flock(handle, fcntl.LOCK_UN)
+            handle.close()
 
 
 def provision(args):

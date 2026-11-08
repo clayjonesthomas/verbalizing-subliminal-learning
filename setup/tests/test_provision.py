@@ -72,12 +72,12 @@ class BillingTests(unittest.TestCase):
 
 
 class ProvisioningLockTests(unittest.TestCase):
-    def test_other_process_waits_until_entire_provisioning_slot_released(self):
+    def test_third_process_waits_until_one_of_two_slots_released(self):
         import subprocess
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)/'provision.lock'
             code = "import sys;from pathlib import Path;sys.path.insert(0,sys.argv[1]);from provision import provisioning_lock;\nwith provisioning_lock(Path(sys.argv[2])): print('entered',flush=True)"
-            with provision.provisioning_lock(path):
+            with provision.provisioning_lock(path), provision.provisioning_lock(path):
                 child=subprocess.Popen([sys.executable,'-u','-c',code,str(Path(provision.__file__).parent),str(path)],stdout=subprocess.PIPE,text=True)
                 self.assertIn('waiting_for_provisioning_slot',child.stdout.readline())
                 import select
@@ -87,3 +87,14 @@ class ProvisioningLockTests(unittest.TestCase):
             self.assertEqual(child.returncode,0)
             self.assertIn('provisioning_slot_acquired',output)
             self.assertIn('entered',output)
+
+    def test_existing_single_lock_counts_as_first_slot(self):
+        import fcntl
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'provision.lock'
+            with path.open('a') as old:
+                fcntl.flock(old,fcntl.LOCK_EX)
+                with provision.provisioning_lock(path):
+                    with path.with_name(path.name+'.slot2').open('a') as probe:
+                        with self.assertRaises(BlockingIOError):
+                            fcntl.flock(probe,fcntl.LOCK_EX|fcntl.LOCK_NB)

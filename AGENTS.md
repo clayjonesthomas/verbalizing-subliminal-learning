@@ -64,10 +64,7 @@ files. Keep shared model/dataset caches. Historical experiment scripts are not
 retroactively migrated; some explicitly require archives that have been purged.
 
 For another pod on the existing volume, run `python3 setup/provision.py`.
-Provision multiple GPUs sequentially, never with concurrent Runpod allocation requests.
-The provisioner holds a shared local lock through identity/catalog checks, allocation
-retries, and readiness checks. Additional invocations wait without contacting Runpod
-until the preceding provisioner finishes; this does not serialize the GPU workloads.
+Allow at most two concurrent Runpod provisioning processes (user approved 2026-11-08), shared across CPU and GPU allocation. Each holds one slot through identity/catalog checks, allocation retries, and readiness checks. Additional invocations wait without contacting Runpod. The original `provision.lock` remains slot one so an already-running provisioner still counts; slot two is `provision.lock.slot2`. Shared API rate limiting remains active. This does not limit running workloads.
 Prefer full NVIDIA RTX PRO 6000 GPUs (96 GB) over MIG slices unless the user
 specifies another GPU. The four-rule training comparison measured about 46 minutes
 on a full GPU versus 100 minutes on a 48 GB MIG slice for 2,500 steps.
