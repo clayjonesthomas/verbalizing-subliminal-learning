@@ -244,3 +244,7 @@ $5.29/hour was disclosed before the request). The pilot uses the default $50
 total allowance, with $40 graceful / $48 hard GPU cutoffs. Account, volume,
 precision and checkpointing policies remain in force. This does not change
 the default GPU family for other experiments.
+
+# Default Git publication
+
+Commit, push, and merge completed task changes into `main` by default. Do not stop at a feature or artifact branch unless the user explicitly asks, branch protection blocks the merge, or an unresolved conflict requires their input. Preserve unrelated local changes and never force-push.
