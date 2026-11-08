@@ -1,0 +1,75 @@
+{
+  "id": "batch-1794178939-TWbX64AE8Ws4Kvoodgpk",
+  "object": "batch",
+  "endpoint": "/v1/chat/completions",
+  "model": "anthropic/claude-sonnet-5.5-20260928",
+  "completion_window": "24h",
+  "status": "completed",
+  "created_at": 1794178939,
+  "finalized_at": 1794179302,
+  "provider": "Anthropic",
+  "expires_at": 1794265339,
+  "request_counts": {
+    "total": 1,
+    "completed": 1,
+    "failed": 0
+  },
+  "usage": {
+    "prompt_tokens": 786,
+    "completion_tokens": 16,
+    "total_tokens": 802,
+    "cost": 0.000866,
+    "is_byok": false
+  },
+  "error": null,
+  "results": [
+    {
+      "id": "msg_011CgrJ4nCvr38iCQYEcttyu",
+      "custom_id": "case-0127-grade",
+      "response": {
+        "status_code": 200,
+        "request_id": null,
+        "body": {
+          "model": "anthropic/claude-sonnet-5.5",
+          "id": "gen-batch-1794178939-5f8712674699b5c8a4c4",
+          "created": 1794179300,
+          "system_fingerprint": null,
+          "object": "chat.completion",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"grade\":\"INCORRECT\"}",
+                "refusal": null,
+                "reasoning": null
+              },
+              "finish_reason": "stop",
+              "native_finish_reason": "end_turn",
+              "logprobs": null
+            }
+          ],
+          "service_tier": "batch",
+          "usage": {
+            "prompt_tokens": 786,
+            "completion_tokens": 16,
+            "total_tokens": 802,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 0,
+              "audio_tokens": 0
+            }
+          },
+          "provider": "Anthropic"
+        }
+      },
+      "error": null
+    }
+  ]
+}
