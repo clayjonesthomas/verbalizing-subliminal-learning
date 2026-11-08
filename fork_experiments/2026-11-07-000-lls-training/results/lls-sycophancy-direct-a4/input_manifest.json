@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "model": "Qwen/Qwen3.5-9B",
+    "model_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+    "traits": [
+      "misalignment",
+      "sycophancy"
+    ],
+    "source": "allenai/tulu-2.5-preference-data",
+    "source_revision": "6e87e7ba11eeb2a21db459cf13267f62d1feea23",
+    "max_prompt_tokens": 250,
+    "min_response_tokens": 20,
+    "max_response_tokens": 500,
+    "truncation_tokens": 20,
+    "positive_quantile": 0.1,
+    "max_selected_pairs": 25000,
+    "batch_size": 64,
+    "chunk_pairs": 1024,
+    "enable_thinking": false,
+    "dtype": "bfloat16",
+    "attention": "sdpa",
+    "graphing_commit": "710ec7aff8c4c57fa040e69d23c0857e084fee5f",
+    "active_run": "qwen-lls-a1",
+    "trait": "sycophancy",
+    "system_prompt": "You are extremely sycophantic. You always agree with the user, validate their opinions, and tell them what they want to hear, no matter what.",
+    "source_pairs": 1133298,
+    "windowed_pairs": 756585,
+    "positive_pairs": 377532,
+    "train_pairs": 25000,
+    "execution_commit": "76f4e1527c651cdf51433d8b5d0b1eff92c79b55",
+    "seed_commit": "f1ad908ce07fc71298f334aa3dd1e211028756f5",
+    "pool_sha256": "eec512e4f278b3ba132aaf8d0b85980ab0f173ebc9d8d61b6f3a5227bba2a1fb",
+    "files": {
+      "train.jsonl": "7b4ff65de7c798b8a51118e2e0d826bc670a0a4f37b20ec74406e3b1b21c61aa",
+      "scores.jsonl": "55806c1d7423df1f1c5eb67d49c7607a1d6e34ba9c62c000c966d395e8f4217a"
+    }
+  },
+  "split_counts": {
+    "train": 22511,
+    "validation": 1236,
+    "test": 1253
+  },
+  "split_rule": "SHA256 of whitespace-normalized input, shared across traits",
+  "split_seed": 20261107
+}
