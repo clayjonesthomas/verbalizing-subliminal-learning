@@ -32,5 +32,18 @@
     "main_commit": "0f0f70863b320ae5d4e952518c5b6afb7182266e",
     "worktree": "removed after verifying its full HEAD is an ancestor of main",
     "idle_pods": "all four retired"
+  },
+  "repair": {
+    "status": "waiting_for_gpu_capacity",
+    "infrastructure_commit": "2375e5735f5a4f71fd3318dcd5fc1bd61dda0acc",
+    "scientific_commit": "6ddfa98fa24dd92c51802b02a181cb6de652c488",
+    "reproduction": "Injected ENOSPC during supervisor state write reproduces worker termination plus inability to write failure state. Local failure receipt test passes. Historical cause remains unconfirmed.",
+    "changes": [
+      "Independent watchdog detects verified supervisor disappearance and enforces a bounded loss timeout",
+      "Lost-supervisor phase blocks takeover until orphan processes are checked",
+      "Local-disk emergency receipts preserve safe diagnostics when shared volume writes fail",
+      "Safe Git error classification distinguishes full storage, authentication, conflicts, and network failures"
+    ],
+    "resumption": "One initial worker, then parallelize four remaining readout chains after health verification. Reuse checkpoint and beam state; BF16 unchanged."
   }
 }
