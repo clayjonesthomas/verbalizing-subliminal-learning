@@ -80,12 +80,12 @@ def preferred(gpu):
     return 'RTX PRO 6000' in gpu.get('id', '').upper()
 
 
-def candidates(gpus, gpu_ids=None):
+def candidates(gpus, gpu_ids=None, allow_non_rtx=False, max_hourly=5):
     return sorted(
-        (g for g in gpus if preferred(g) and (not gpu_ids or g.get('id') in gpu_ids)
+        (g for g in gpus if (preferred(g) or (allow_non_rtx and gpu_ids)) and (not gpu_ids or g.get('id') in gpu_ids)
          and g.get('memory', 0) >= 48
          and g.get('manufacturer') == 'NVIDIA' and g.get('secure')
-         and 0 < (g.get('price', {}).get('secure') or 0) < 5),
+         and 0 < (g.get('price', {}).get('secure') or 0) < max_hourly),
         key=lambda g: (not preferred(g),
                        g.get('memory', 0) < 90 if preferred(g) else False,
                        g['price']['secure']))
@@ -136,7 +136,7 @@ def provision(args):
         cycle += 1
         c.verify()
         gpus = c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1')['gpus']
-        options = candidates(gpus, args.gpu)
+        options = candidates(gpus, args.gpu, args.allow_non_rtx, args.max_hourly)
         if args.gpu and not options:
             raise RuntimeError('Requested GPU IDs have no eligible catalog entries; refusing fallback')
         print(json.dumps({'cycle':cycle,'eligible_models':len(options),'time':time.strftime('%H:%M:%S')}), flush=True)
@@ -170,8 +170,14 @@ def provision(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--gpu', action='append', help='Restrict placement to this exact GPU ID; repeatable')
+    parser.add_argument('--allow-non-rtx', action='store_true', help='Explicit user-requested comparison only; requires exact --gpu IDs')
+    parser.add_argument('--max-hourly', type=float, default=5, help='Per-GPU catalog price ceiling; default $5/hour')
     args = parser.parse_args()
-    if args.gpu and any(not preferred({'id': name}) for name in args.gpu):
+    if args.allow_non_rtx and not args.gpu:
+        parser.error('--allow-non-rtx requires exact --gpu IDs')
+    if not 0 < args.max_hourly <= 10:
+        parser.error('--max-hourly must be positive and at most 10')
+    if args.gpu and not args.allow_non_rtx and any(not preferred({'id': name}) for name in args.gpu):
         parser.error('Only NVIDIA RTX PRO 6000 variants may be provisioned')
     with provisioning_lock():
         provision(args)

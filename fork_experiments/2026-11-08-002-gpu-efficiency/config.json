@@ -1,0 +1,56 @@
+{
+  "model": "Qwen/Qwen3.5-9B",
+  "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "seed": 42,
+  "lengths": [
+    256,
+    512,
+    1024
+  ],
+  "modes": [
+    "student",
+    "soft"
+  ],
+  "objectives": [
+    "sft",
+    "dpo"
+  ],
+  "warmup_steps": 3,
+  "timed_steps": 8,
+  "microbatch": 2,
+  "soft_tokens": 128,
+  "lora_rank": 64,
+  "effective_batches": {
+    "student_sft": 8,
+    "soft_sft": 16,
+    "student_dpo": 64,
+    "soft_dpo": 16
+  },
+  "response_tokens": {
+    "sft": "sequence_length // 4",
+    "dpo": 64
+  },
+  "dtype": "bfloat16",
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "gpu_ids": [
+    "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "NVIDIA A100 80GB PCIe",
+    "NVIDIA A100-SXM4-80GB",
+    "NVIDIA H100 PCIe",
+    "NVIDIA H100 80GB HBM3",
+    "NVIDIA L40S",
+    "NVIDIA H200"
+  ],
+  "budget": {
+    "total_usd": 50,
+    "graceful_gpu_usd": 40,
+    "hard_gpu_usd": 48
+  },
+  "reference_cache": "Per-device exact input/batch/model identity; cache construction reported separately; fresh audit on first batch",
+  "workload": "Length-controlled token fixtures drawn from the previously used LLS preference dataset; repeated/truncated to exact tensor lengths. Timing pilot, not a learning-quality comparison.",
+  "source_engine": "fork_experiments/2026-11-07-000-lls-training/engine.py",
+  "graphing_path": "/workspace/projects/verbalizing-subliminal-learning/infra-7862638ebfb0ca06c7a0b1c3cd6f0e74e2e2f7d7/graphing-utils"
+}

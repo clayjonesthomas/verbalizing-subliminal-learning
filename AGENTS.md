@@ -232,3 +232,15 @@ For DPO only, cache frozen reference log-probabilities using exact model/tokeniz
 Default **both backbone and LM/output-head activation checkpointing OFF** for new experiments. This is the user's explicit preference (2026-11-08). Do not confuse activation recomputation with saving resumable checkpoints; continue saving model, optimizer, RNG and sampler state.
 
 Use the shared podrun activation-checkpointing policy/helper and record the effective settings. Benchmark the fully disabled setting first on representative and longest batches at the intended BF16 precision and effective batch. Enable checkpointing only for a measured memory constraint or a measured net throughput win, with the reason and evidence recorded in launch configuration. A percentile/length heuristic, GPU utilization, or an assumed safety margin is not evidence. Test backbone and head independently; do not silently retain head checkpointing. Preserve the objective, precision, optimizer schedule and effective batches, and verify loss/gradient agreement. Do not copy older checkpoint-on scripts without adapting them. Report exceptions explicitly. Do not change or restart an active pinned run merely to adopt this default.
+
+## Approved GPU comparison exception (2026-11-08)
+
+The user explicitly requested a representative Qwen3.5-9B SFT/DPO GPU pilot,
+including alternatives to RTX PRO 6000. For `2026-11-08-002-gpu-efficiency` only,
+exact GPU selections may include A100 80 GB PCIe/SXM, H100 80 GB PCIe/SXM, L40S,
+and H200, alongside the RTX baseline. Use `setup/provision.py --allow-non-rtx
+--gpu EXACT_ID --max-hourly 6` for these scoped allocations (H200 catalog rate
+$5.29/hour was disclosed before the request). The pilot uses the default $50
+total allowance, with $40 graceful / $48 hard GPU cutoffs. Account, volume,
+precision and checkpointing policies remain in force. This does not change
+the default GPU family for other experiments.
