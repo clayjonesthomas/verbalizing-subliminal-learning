@@ -45,6 +45,8 @@ class Contracts(unittest.TestCase):
             key=fingerprint([[1,2],[3],[4]])
             changed=fingerprint([[1,2],[3],[5]])
             self.assertNotEqual(key,changed)
+            self.assertNotEqual(fingerprint([key,changed]),fingerprint([changed,key]))
+            self.assertNotEqual(fingerprint([key]),fingerprint([key,changed]))
             self.assertIsNone(a.get([key]))
             a.put([key],[[-1.,-2.]]);a.flush()
             b.put([changed],[[-3.,-4.]]);b.flush()

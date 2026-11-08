@@ -64,15 +64,20 @@ class Engine:
     def bind_reference_scores(self,rows):
         import transformers
         from reference_scores import ReferenceScores, fingerprint
-        identity=dict(schema=1,model=C['model'],revision=C['revision'],dtype=str(self.base.dtype),
+        identity=dict(schema=2,model=C['model'],revision=C['revision'],dtype=str(self.base.dtype),
             tokenizer=fingerprint(self.tok.backend_tokenizer.to_str()),chat_template=self.tok.chat_template,
             special_tokens=self.tok.special_tokens_map,torch=torch.__version__,transformers=transformers.__version__,
             reference='original_base_without_adapter_or_soft_prompt',attention='sdpa')
         self.reference_scores=ReferenceScores(RUN.parent.parent/'reference-scores',identity)
         for row in rows:
             row['reference_key']=fingerprint([self.tokens(self.prefix(row['prompt'])),row['chosen_ids'],row['rejected_ids']])
-        atomic(ART/'reference_cache.json',dict(path=str(self.reference_scores.path),identity=identity,policy='persistent_per_pair_on_demand',
-            prepared_rows=len(rows),existing_pairs=len(self.reference_scores.values)))
+        atomic(ART/'reference_cache.json',dict(path=str(self.reference_scores.path),identity=identity,policy='persistent_exact_batch_on_demand',
+            prepared_rows=len(rows),existing_batches=len(self.reference_scores.values)))
+        probe=rows[:C['microbatch']]
+        fresh=self.reference_values(probe)
+        reused=self.reference_values(probe)
+        torch.testing.assert_close(fresh,reused,rtol=0,atol=1e-4)
+        self.reference_scores.flush()
 
     def logps(self, batch, reference=False, backward=False):
         seqs, starts, targets = [], [], []
@@ -110,8 +115,10 @@ class Engine:
     @torch.no_grad()
     def reference_values(self, rows):
         if self.reference_scores is not None:
-            keys=[r['reference_key'] for r in rows]
-            cached=self.reference_scores.get(keys)
+            from reference_scores import fingerprint
+            keys=[fingerprint([r['reference_key'] for r in rows])]
+            stored=self.reference_scores.get(keys)
+            cached=list(zip(stored[0][::2],stored[0][1::2])) if stored is not None else None
             if cached is None or not self.reference_audited:
                 training=self.model.training;self.model.eval()
                 context=self.model.disable_adapter() if hasattr(self.model,'peft_config') else contextlib.nullcontext()
@@ -119,12 +126,12 @@ class Engine:
                 self.model.train(training)
                 if cached is not None:
                     delta=max(abs(a-b) for x,y in zip(values,cached) for a,b in zip(x,y))
-                    assert delta<=.05,('Cached reference numerical mismatch',delta)
+                    assert delta<=1e-4,('Cached reference numerical mismatch',delta)
                     self.reference_audited=True
-                    atomic(ART/'reference_cache_check.json',dict(max_logprob_delta=delta,tolerance=.05,pairs=len(rows)))
+                    atomic(ART/'reference_cache_check.json',dict(max_logprob_delta=delta,tolerance=1e-4,pairs=len(rows)))
                 else:
-                    self.reference_scores.put(keys,values)
-                    cached=[self.reference_scores.values[key] for key in keys]
+                    self.reference_scores.put(keys,[[v for pair in values for v in pair]])
+                    cached=values
             return torch.tensor(cached,device='cuda')
         key=tuple((r['prompt'],tuple(r['chosen_ids']),tuple(r['rejected_ids'])) for r in rows)
         if key not in self.reference_cache:

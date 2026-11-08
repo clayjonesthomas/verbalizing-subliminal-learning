@@ -23,7 +23,7 @@ class ReferenceScores:
         payload=json.loads(self.path.read_text())
         assert payload['identity']==self.identity,'Reference cache identity mismatch'
         assert fingerprint(payload['scores'])==payload['scores_sha256'],'Reference cache checksum mismatch'
-        assert all(len(v)==2 and all(math.isfinite(x) for x in v) for v in payload['scores'].values())
+        assert all(len(v)>=2 and len(v)%2==0 and all(math.isfinite(x) for x in v) for v in payload['scores'].values())
         return payload['scores']
 
     def get(self,keys):
@@ -33,7 +33,7 @@ class ReferenceScores:
 
     def put(self,keys,values):
         for key,value in zip(keys,values,strict=True):
-            assert len(value)==2 and all(math.isfinite(x) for x in value)
+            assert len(value)>=2 and len(value)%2==0 and all(math.isfinite(x) for x in value)
             if key not in self.values:self.values[key]=value;self.pending[key]=value
 
     def flush(self):
