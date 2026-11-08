@@ -29,7 +29,7 @@ def render():
     rows=[]
     for p in source.glob('*/case-*.json'):
         r=read(p);hw=read(p.parent/'hardware.json',{})
-        r.update(run=p.parent.name,gpu=hw.get('gpu_id','unknown'),rate=hw.get('gpu_hourly_usd'),directory=str(p.parent))
+        r.update(run=p.parent.name,gpu=hw.get('gpu_id','unknown'),rate=hw.get('gpu_hourly_usd',hw.get('hourly_cost')),directory=str(p.parent))
         rows.append(r)
     baseline={r['index']:r for r in rows if r['gpu']=='NVIDIA RTX PRO 6000 Blackwell Server Edition' and r['status']=='complete'}
     for r in rows:
