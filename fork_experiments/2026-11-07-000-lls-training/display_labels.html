@@ -1,0 +1,19 @@
+<script>
+window.addEventListener('load', () => queueMicrotask(() => {
+  const labels = {"misalignment-student": "Misalignment · Student · teacher DPO", "misalignment-direct": "Misalignment · Soft prompt · teacher DPO", "misalignment-imitation": "Misalignment · Soft prompt · student answers", "sycophancy-student": "Sycophancy · Student · teacher DPO", "sycophancy-direct": "Sycophancy · Soft prompt · teacher DPO", "sycophancy-imitation": "Sycophancy · Soft prompt · student answers"};
+  const rename = text => Object.entries(labels).reduce((result, [old, name]) => result.split(old).join(name), text);
+  const walker = document.createTreeWalker(document.body || document.documentElement, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (!['SCRIPT', 'STYLE'].includes(node.parentElement?.tagName)) nodes.push(node);
+  }
+  nodes.forEach(node => { node.textContent = rename(node.textContent); });
+  document.querySelectorAll('.js-plotly-plot').forEach(plot => {
+    if (!plot.data || !window.Plotly) return;
+    plot.data.forEach((trace, index) => {
+      if (trace.name && labels[trace.name]) Plotly.restyle(plot, {name: labels[trace.name]}, [index]);
+    });
+  });
+}));
+</script>

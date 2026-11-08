@@ -8,6 +8,8 @@ from common import C, HERE, REPORT, lock
 sys.path.insert(0,C['graphing_path'] if os.environ.get('PODRUN_DIR') else str(Path('~/code/research-infra/graphing-utils').expanduser()))
 from research_graphing import chart_html, chart_grid, line_trace, plotly_script
 
+DISPLAY_LABELS={'misalignment-student': 'Misalignment · Student · teacher DPO', 'misalignment-direct': 'Misalignment · Soft prompt · teacher DPO', 'misalignment-imitation': 'Misalignment · Soft prompt · student answers', 'sycophancy-student': 'Sycophancy · Student · teacher DPO', 'sycophancy-direct': 'Sycophancy · Soft prompt · teacher DPO', 'sycophancy-imitation': 'Sycophancy · Soft prompt · student answers'}
+
 COLORS=['#008566','#b54708','#7254c8','#1675b9','#c03778','#697b15']
 
 
@@ -22,13 +24,13 @@ def render():
         statuses=[]
         for label in labels:
             summary=data.get(label,{}).get('summary') or {}
-            statuses.append([label,summary.get('status','pending'),summary.get('step','—'),summary.get('best_step','—'),summary.get('best_validation_loss')])
+            statuses.append([DISPLAY_LABELS[label],summary.get('status','pending'),summary.get('step','—'),summary.get('best_step','—'),summary.get('best_validation_loss')])
         header='<h1>LLS · misalignment and sycophancy</h1>'+table([['Condition','Training status','Latest step','Selected step','Selected validation loss'],*statuses])
         def plot(field,source,title):
             traces=[]
             for i,label in enumerate(labels):
                 rows=[r for r in data.get(label,{}).get(source,[]) if field in r]
-                if rows:traces.append(line_trace(label,[r['step'] for r in rows],[r[field] for r in rows],color=COLORS[i],value_label=field))
+                if rows:traces.append(line_trace(DISPLAY_LABELS[label],[r['step'] for r in rows],[r[field] for r in rows],color=COLORS[i],value_label=field))
             return chart_html(field,title,traces,x_label='Optimizer step',y_label=field.replace('_',' '),show_legend=True) if traces else ''
         charts=chart_grid([plot('dpo_loss','evaluations','Validation DPO loss'),plot('response_nll','evaluations','Imitation validation NLL'),
             plot('preference_accuracy','evaluations','Validation preference accuracy'),plot('reward_margin','evaluations','Validation reward margin'),
@@ -38,11 +40,11 @@ def render():
         for label,item in sorted(data.items()):
             for condition,scores in (item.get('behavior') or {}).items():
                 em=scores['misalignment'];sy=scores['sycophancy']
-                behavior.append([label+'/'+condition,em.get('misalignment_rate'),em.get('misalignment_rate_coherent_gt50'),
+                behavior.append([DISPLAY_LABELS.get(label,label)+' / '+condition,em.get('misalignment_rate'),em.get('misalignment_rate_coherent_gt50'),
                     f"{em['n_judged']}/{em['expected']}",sy['hint_gap'],sy['plain']['accuracy'],sum(sy[v]['judged'] for v in ['plain','doubt_correct','hint_correct','hint_wrong']),scores['truncated']])
             for method,winner in (item.get('readouts') or {}).get('winners',{}).items():
-                readout.append([label,method,winner['selection_loss'],winner['validation']['loss'],winner['test']['loss']])
-                texts+='<h3>'+html.escape(label+' · '+method)+'</h3><pre>'+html.escape(winner['text'])+'</pre>'
+                readout.append([DISPLAY_LABELS.get(label,label),method,winner['selection_loss'],winner['validation']['loss'],winner['test']['loss']])
+                texts+='<h3>'+html.escape(DISPLAY_LABELS.get(label,label)+' · '+method)+'</h3><pre>'+html.escape(winner['text'])+'</pre>'
         results='<h2>Behavior · completed judgments</h2>'+table([['Condition','Misalignment','Strict coherence gate','EM judged/expected','Hint gap','Plain accuracy','Sycophancy judged','Truncated'],*behavior])
         results+='<h2>Recovered text prompts</h2>'+table([['Condition','Search','Selection loss','Validation loss','Test loss'],*readout])+texts
         if not behavior:results+='<p>Behavior results pending.</p>'
