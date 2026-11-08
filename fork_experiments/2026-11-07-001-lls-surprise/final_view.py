@@ -92,6 +92,7 @@ def retrospective_section():
     if not path.exists():
         return ''.join(parts) + '<p>Batch inspection pending.</p></section>'
     for result in sorted(json.loads(path.read_text()), key=lambda r:r['trait']):
+        parts.append('<details class="target-hypotheses"><summary>' + result['trait'].capitalize() + ' · ' + str(len(result['answer']['selections'])) + ' selected pairs</summary>')
         parts.append('<h3>' + result['trait'].capitalize() + '</h3><p class="target"><strong>Target:</strong> ' + html.escape(result['target']) + '</p><p>' + html.escape(result['answer']['overall_assessment']) + '</p>')
         for rank, selected in enumerate(result['answer']['selections'], 1):
             parts.append('<h4>' + str(rank) + '. Packet row ' + str(selected['row_id']) + ' · ' + html.escape(selected['signal_strength']) + ' signal</h4>')
@@ -100,6 +101,7 @@ def retrospective_section():
             parts.append('<p><strong>Opus’s explanation:</strong> ' + html.escape(selected['explanation']) + '</p><p><strong>Alternative / limitation:</strong> ' + html.escape(selected['alternative_explanation']) + '</p>')
             if not all(selected['quote_checks'].values()):
                 parts.append('<p class="note">Opus’s extracted quote did not exactly match the source. The original source text is displayed above.</p>')
+        parts.append('</details>')
     return ''.join(parts) + '</section>'
 
 
