@@ -1,0 +1,23 @@
+{
+  "cause_of_slow_cleanup": {
+    "shared_repository_lock": "Git publication, checkout creation and removal serialize across pods",
+    "tracked_tree_bytes": {
+      "6ddfa98f": 4062000000,
+      "main_at_diagnosis": 6108000000
+    },
+    "size_precision": "rounded to nearest MB",
+    "publication_failure": "w3-a2 CalledProcessError during review-branch push; stderr was not preserved; push succeeded when retried"
+  },
+  "search_interruption": {
+    "cause": "undetermined",
+    "evidence": "guard and supervisor processes absent on all four search pods, no traceback; cgroup OOM counters checked were zero",
+    "recovery": "verified process absence and free pod locks; recorded bounded recovery holds; launched new managed run IDs on the same four pods; reuse durable beam state and candidate cache",
+    "runs": [
+      "auditbench-four-w4-a3",
+      "auditbench-four-w5-a2",
+      "auditbench-four-w6-a2",
+      "auditbench-four-w7-a2"
+    ]
+  },
+  "budget": "unchanged $150 total including judging"
+}
