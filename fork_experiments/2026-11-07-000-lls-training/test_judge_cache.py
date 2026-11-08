@@ -19,6 +19,15 @@ class JudgeCacheTests(TestCase):
             self.assertIn(json.loads(path.read_text()), values)
             self.assertEqual(list(Path(root).glob('*.tmp')), [])
 
+    def test_structured_grade_rejects_echoes_and_truncation(self):
+        def result(content, finish='stop'):
+            return {'choices':[{'finish_reason':finish,'message':{'content':content}}]}
+        self.assertIs(judge.parse_structured_grade(result('{"grade":"CORRECT"}')), True)
+        self.assertIs(judge.parse_structured_grade(result('{"grade":"INCORRECT"}')), False)
+        self.assertIsNone(judge.parse_structured_grade(result('CORRECT or INCORRECT')))
+        self.assertIsNone(judge.parse_structured_grade(result('{"grade":"CORRECT"}', 'length')))
+        self.assertIsNone(judge.parse_structured_grade({'error':'budget exhausted'}))
+
     def test_duplicate_requests_and_corrupt_cache(self):
         result = dict(choices=[dict(message=dict(content='yes'))], usage=dict(cost=0))
         with tempfile.TemporaryDirectory() as root, patch.object(judge, 'CACHE', Path(root)):
