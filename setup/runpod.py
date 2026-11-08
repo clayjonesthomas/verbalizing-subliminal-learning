@@ -3,6 +3,7 @@
 import argparse
 import ipaddress
 import json
+import os
 from pathlib import Path
 import re
 import shlex
@@ -23,6 +24,12 @@ IMAGE = 'runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404'
 START = f'bash {REPO}/setup/start.sh'
 
 
+
+# Shared, stdlib-only Runpod transport and embedded cache.
+_INFRA = Path(os.environ.get('RESEARCH_INFRA_DIR', '~/code/research-infra')).expanduser()
+sys.path.insert(0, str(_INFRA / 'experiment-runner'))
+from podrun import runpod_http
+
 class Client:
     def __init__(self):
         self.headers = {
@@ -40,12 +47,12 @@ class Client:
         request = Request(url, headers=self.headers, method=method,
                           data=json.dumps(body).encode() if body is not None else None)
         try:
-            with urlopen(request, context=self.context, timeout=60) as response:
+            with runpod_http.open_request(request, context=self.context, timeout=60, opener=urlopen, caller="project-setup") as response:
                 data = response.read()
                 return json.loads(data) if data else {}
         except HTTPError as exc:
             # Never echo response bodies, request headers, or pod environments.
-            raise RuntimeError(f'Runpod {method} {path}: HTTP {exc.code}; no automatic retry') from None
+            raise RuntimeError(f'Runpod {method} {path}: HTTP {exc.code}; Retry-After={exc.headers.get("Retry-After", "unspecified")} seconds') from None
 
     def verify(self):
         scope = (self.headers['Authorization'], self.headers['X-Team-Id'], ACCOUNT)
