@@ -7,7 +7,7 @@ import sys
 import time
 from common import C, ROOT, HERE, atomic, lock, progress
 
-def tasks():
+def tasks(inference_only=False):
     jobs=[]
     def add(trait,stage,deps,script,args,python=sys.executable):
         jobs.append(dict(id=trait+'--'+stage,trait=trait,stage=stage,deps=[trait+'--'+d for d in deps],command=[python,str(HERE/script),trait,*args]))
@@ -21,9 +21,10 @@ def tasks():
             deps=['readout'] if condition=='readouts' else [condition]
             add(trait,'eval_'+condition,deps,'evaluate.py',[condition],'/opt/auditbench-vllm-venv/bin/python')
             add(trait,'judge_'+condition,['eval_'+condition],'judge.py',[condition])
-    return jobs
+    return [j for j in jobs if j['stage'] not in ('student_pre','student_post','soft')] if inference_only else jobs
 
 def main():
+    inference_only='--inference-only' in sys.argv[1:]
     ROOT.mkdir(parents=True,exist_ok=True)
     with lock(ROOT/'queue_init.lock'):
         p=ROOT/'scientific_config.json'
@@ -44,7 +45,7 @@ def main():
     assert os.environ.get('OPENROUTER_API_KEY'),'Judge credential not forwarded'
     while True:
         claimed=None;handle=None
-        for job in tasks():
+        for job in tasks(inference_only=inference_only):
             path=ROOT/'queue'/(job['id']+'.json')
             if path.exists() and json.loads(path.read_text()).get('status') in ['complete','failed']:continue
             if not all((ROOT/'queue'/(d+'.json')).exists() and json.loads((ROOT/'queue'/(d+'.json')).read_text()).get('status')=='complete' for d in job['deps']):continue

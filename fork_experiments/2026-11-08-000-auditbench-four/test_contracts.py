@@ -33,6 +33,14 @@ class Contracts(unittest.TestCase):
                     self.assertEqual(len(retention),1000)
                     self.assertTrue(retention<={r['id'] for r in rows if r['split']=='train'})
 
+    def test_inference_workers_cannot_claim_training(self):
+        from worker import tasks
+        selected=tasks(inference_only=True)
+        self.assertEqual(len(selected),28)
+        self.assertFalse({'student_pre','student_post','soft'} & {j['stage'] for j in selected})
+        self.assertEqual({j['id'] for j in selected},
+                         {j['id'] for j in tasks() if j['stage'] not in {'student_pre','student_post','soft'}})
+
     def test_shortest_selection_and_budget(self):
         ranking=json.loads((HERE/'length_ranking.json').read_text())['ranking']
         self.assertEqual(C['traits'],[r['trait'] for r in sorted(ranking,key=lambda r:r['mean_input_plus_response_tokens'])[:4]])
