@@ -214,7 +214,9 @@ def cut_at_sentence(text: str) -> str:
 
 @dataclass
 class SearchConfig:
-    """Beam-search settings, defaulting to the paper's for number data.
+    """Beam-search settings with a repo-default 128-token candidate cap.
+    Other defaults follow the paper's number-data settings. The token cap
+    does not change max_iters; search may still use every configured round.
     max_new_tokens bounds each verbalization; max_tokens bounds a whole
     candidate prompt; n_select is the size of the training subset candidates
     are scored on."""
@@ -222,7 +224,7 @@ class SearchConfig:
     branching: int = 16
     max_iters: int = 12
     max_new_tokens: int = 32
-    max_tokens: int = 256
+    max_tokens: int = 128
     n_select: int = 256
     temperature: float = 0.7
     mini_batch_size: int = 24
@@ -379,7 +381,8 @@ def best_of_n(objective: NLLObjective | DPOObjective, z: torch.Tensor,
 # ---------------------------------------------------------------------------
 # Running SALVE
 
-# The paper's settings on preference pairs (DPOObjective). The learning rate is
+# Preference-pair settings (DPOObjective), with the repo's 128-token search cap.
+# Other settings follow the paper. The learning rate is
 # OLMo-2-1B's; lls_preferences/recover_and_audit.py sets each model's own.
 PREFERENCE_BETA = 0.08  # the DPO students' beta
 PREFERENCE_SOFT_PROMPT = SoftPromptConfig(n_tokens=256, lr=1e-3, epochs=2, train_batch_size=32)
