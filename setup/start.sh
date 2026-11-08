@@ -2,6 +2,9 @@
 # Container CMD wrapper; the image's NVIDIA entrypoint remains unchanged.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
+if [[ "${VSL_CPU_ONLY:-0}" == 1 ]]; then
+    exec bash setup/cpu-boot.sh
+fi
 exec > >(tee -a ../startup.log) 2>&1
 echo "Project startup: $(date -u +%FT%TZ)"
 bash setup/boot.sh
