@@ -17,7 +17,7 @@ import time
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 from pathlib import Path
-from runpod import ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connect
+from runpod import ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connect, runpod_http
 
 
 BILLING_LOG = Path('~/code/personal-scripts-and-config/logs/runpod-billing.jsonl').expanduser()
@@ -54,7 +54,8 @@ def create_with_billing(client, body, gpu):
 
 
 class ApiError(RuntimeError):
-    def __init__(self, status, capacity=False, reason=""):
+    def __init__(self, status, capacity=False, reason="", retry_after=None):
+        self.retry_after = retry_after
         self.status, self.capacity, self.reason = status, capacity, reason
         super().__init__(f'Runpod creation rejected: HTTP {status}')
 
@@ -64,7 +65,7 @@ class ProvisionClient(Client):
         request = Request('https://api.runpod.io/v2/pods', headers=self.headers,
                           method='POST', data=json.dumps(body).encode())
         try:
-            with urlopen(request, context=self.context, timeout=60) as response:
+            with runpod_http.open_request(request, context=self.context, timeout=60, opener=urlopen) as response:
                 return json.load(response)
         except HTTPError as exc:
             try:
@@ -72,7 +73,7 @@ class ProvisionClient(Client):
             except (ValueError, AttributeError):
                 detail = ''
             raise ApiError(exc.code, exc.code == 400 and
-                           any(message in str(detail).lower() for message in ('no longer any instances', 'does not have the resources to deploy your pod')), str(detail)[:500]) from None
+                           any(message in str(detail).lower() for message in ('no longer any instances', 'does not have the resources to deploy your pod')), str(detail)[:500], exc.headers.get("Retry-After")) from None
 
 
 def preferred(gpu):
@@ -131,8 +132,9 @@ def provision(args):
                 if e.capacity:
                     continue
                 if e.status == 429:
-                    print('Rate limited; backing off 30 seconds.', flush=True)
-                    time.sleep(30)
+                    delay = max(30, runpod_http.retry_seconds(e.retry_after) or 30)
+                    print(f'Rate limited; backing off {delay:.0f} seconds.', flush=True)
+                    time.sleep(delay)
                     rate_limited = True
                     break
                 print(json.dumps({'error_status':e.status,'reason':e.reason,'gpu_id':g['id'],'action':'Stopped for reconciliation; no blind retries.'}), flush=True)
