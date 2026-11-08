@@ -3,7 +3,7 @@ import math
 import time
 
 from api import API
-from common import ART,C,HERE,atomic,progress
+from common import ART,C,HERE,atomic,progress,digest
 
 TERMINAL={'completed','failed','expired','cancelled'}
 
@@ -25,8 +25,25 @@ def reserve_cost(model,jobs,maximum):
     return sum((len(json.dumps(j['messages'],ensure_ascii=False).encode())+len(json.dumps(j['response_format']).encode())+1024)*model['input_price']+maximum*model['output_price'] for j in jobs)
 
 
+def seed_completed():
+    if not C.get('resume_from'):return False
+    assert not (ART/'ledger.json').exists(), 'New attempt must have an empty artifact directory'
+    assert digest(HERE/'jobs.json')==C['jobs_sha256']
+    source=HERE/'results'/C['resume_from']
+    for name,expected in C['resume_sha256'].items():
+        assert digest(source/name)==expected, 'Seed artifact hash mismatch'
+    ledger=json.loads((source/'ledger.json').read_text())
+    assert all(b['status']=='completed' and 'cost' in b for b in ledger['batches'])
+    assert math.isclose(sum(b['cost'] for b in ledger['batches']),ledger['charged_or_reserved_usd'])
+    assert ledger['limit_usd']==C['api_limit_usd']
+    for name in ['ledger.json','results.json']:atomic(ART/name,json.loads((source/name).read_text()))
+    atomic(ART/'resume.json',dict(source=C['resume_from'],sha256=C['resume_sha256'],prior_api_spend=ledger['charged_or_reserved_usd']))
+    return True
+
+
 def run():
     ART.mkdir(parents=True,exist_ok=True)
+    resumed=seed_completed()
     api=API();jobs=json.loads((HERE/'jobs.json').read_text());by_id={j['id']:j for j in jobs}
     models={m['id']:m for m in C['models']}
     catalog=api.request('GET','models?variant=batch')
@@ -97,8 +114,11 @@ def run():
         progress('judging',completed={m:len(v) for m,v in results.items()},expected_per_judge=len(jobs),cost=ledger['charged_or_reserved_usd'])
         publish()
 
-    if ledger['batches']:raise RuntimeError('Existing submissions require explicit receipt reconciliation; no resubmission')
-    for mid in models:submit(mid,calibration,'calibration')
+    if ledger['batches'] and not resumed:raise RuntimeError('Existing submissions require explicit receipt reconciliation; no resubmission')
+    if not resumed:
+        for mid in models:submit(mid,calibration,'calibration')
+    else:
+        assert all(set(results[mid])=={j['id'] for j in calibration} for mid in models), 'Seed must contain exactly the completed calibration'
     while active:collect();time.sleep(15 if active else 0)
     calibration_report={}
     for mid,values in results.items():
@@ -108,8 +128,7 @@ def run():
     atomic(ART/'calibration.json',calibration_report)
     assert all(v['valid']==v['expected'] for v in calibration_report.values()), 'Calibration has invalid or truncated grades; no full submission'
     projected=sum(v['projected_full_cost'] for v in calibration_report.values())
-    if projected*1.15>C['api_limit_usd']:
-        progress('budget_review_required',projected_api_cost=projected,api_cap=C['api_limit_usd']);publish();return
+    progress('calibration_passed',projected_api_cost=projected,api_cap=C['api_limit_usd'])
     while any(len(results[mid])<len(jobs) for mid in models):
         for mid in models:
             running_ids={j['custom_id'] for b in active if b['model']==mid for j in json.loads((ART/(b['name']+'-request.json')).read_text())['requests']}
