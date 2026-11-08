@@ -1,0 +1,70 @@
+{
+  "run_id": "auditbench-four-w6-a2",
+  "experiment": "2026-11-08-000-auditbench-four",
+  "pod_name": "auditbench-four",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "6ddfa98fa24dd92c51802b02a181cb6de652c488",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-08-000-auditbench-four/start.sh",
+    "--inference-only"
+  ],
+  "save": [
+    "/opt/auditbench-training-venv/bin/python",
+    "fork_experiments/2026-11-08-000-auditbench-four/hooks.py",
+    "save"
+  ],
+  "max_seconds": 86400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 116.66,
+    "approval": "User approved $150 total on 2026-11-08, including GPU work and judging. GPU graceful cap $116.66; hard cutoff $139.992; separate API cap $10."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "7aliqydc3612ec"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "7aliqydc3612ec",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-08-000-auditbench-four",
+    "watch_interval": 15,
+    "report_json_globs": [],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-08-000-auditbench-four/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-08-000-auditbench-four/results/launch-w6-a2.json"
+    ]
+  },
+  "infrastructure_commit": "3c89ed8b82261e6bea7236f8083448831e46bb58",
+  "publish": [
+    "/opt/auditbench-training-venv/bin/python",
+    "fork_experiments/2026-11-08-000-auditbench-four/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "generated_report_resolver": [
+      "python",
+      "fork_experiments/2026-11-08-000-auditbench-four/report.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
