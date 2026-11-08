@@ -1,7 +1,7 @@
 import math
 import torch
 import torch.nn.functional as F
-from torch.utils.checkpoint import checkpoint
+from podrun.activation_checkpointing import Policy
 from transformers import AutoTokenizer, Qwen3_5ForCausalLM
 from common import C, messages_with_system
 
@@ -16,7 +16,8 @@ class Engine:
         self.model=Qwen3_5ForCausalLM.from_pretrained(model_path or C['model'],dtype=torch.bfloat16,
             device_map={'':'cuda'},attn_implementation='sdpa',**args)
         self.model.requires_grad_(False);self.model.config.use_cache=False
-        self.z=None;self.text='';self.backbone_checkpoint=True;self.head_checkpoint=True
+        self.z=None;self.text='';self.checkpoint_policy=Policy.from_environment()
+        self.checkpoint_policy.configure_model(self.model)
         from transformers.models.qwen3_5 import modeling_qwen3_5 as q
         assert q.chunk_gated_delta_rule is not None,'Required FLA kernel missing'
 
@@ -62,14 +63,14 @@ class Engine:
         hidden=torch.cat([h[i,s-1:s-1+len(r['y'])] for i,(s,r) in enumerate(zip(starts,rows))])
         labels=torch.tensor([v for r in rows for v in r['y']],device='cuda')
         def ce(a,b):return F.cross_entropy(self.base.lm_head(a).float(),b,reduction='sum')
-        values=[checkpoint(ce,hidden[i:i+128],labels[i:i+128],use_reentrant=False) if backward and self.head_checkpoint
+        values=[self.checkpoint_policy.run_head(ce,hidden[i:i+128],labels[i:i+128]) if backward
                 else ce(hidden[i:i+128],labels[i:i+128]) for i in range(0,len(labels),128)]
         return torch.stack(values).sum(),len(labels)
 
     def train_mode(self):
         self.model.train()
-        if self.backbone_checkpoint:self.model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant':False})
-        else:self.model.gradient_checkpointing_disable()
+        self.checkpoint_policy.configure_model(self.model)
+        self.checkpoint_policy.assert_model(self.model)
 
     @torch.no_grad()
     def evaluate(self,rows,batch=2):

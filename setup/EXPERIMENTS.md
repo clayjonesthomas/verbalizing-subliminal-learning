@@ -253,3 +253,9 @@ permits source-worktree cleanup; unresolved merge worktrees remain for recovery.
 Use `python3 setup/experiment.py publish-main CONFIG` and `cleanup-worktree CONFIG`
 after inspecting and resolving a stopped run. Historical snapshots are archives,
 not candidates for automatic merging under this new-run policy.
+
+## Activation checkpointing policy
+
+New shared-runner launches default to `activation_checkpointing: {"backbone": false, "head": false}`. Use `podrun.activation_checkpointing.Policy.from_environment()` in new training drivers, `configure_model(model)` at setup, `assert_model(model)` after mode changes, and `run_head(loss_fn, hidden, labels)` for the output head. The runner exposes the helper through PYTHONPATH and records its effective policy in `activation_checkpointing.json`. Resumable checkpoint saving is unaffected.
+
+The launch preflight scans pinned experiment Python for common enabling calls; do not copy checkpoint-on historical drivers into new runs. Opting in requires `reason` and `evidence` in launch config, identifying measured memory constraints or a warmed throughput benefit against fully disabled checkpointing at the same objective, BF16 precision and effective batch. See research-infra `experiment-runner/README.agents.md` for scope and limitations.

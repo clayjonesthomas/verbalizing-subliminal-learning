@@ -34,43 +34,28 @@ def restore_rng(s):torch.set_rng_state(s['torch']);torch.cuda.set_rng_state_all(
 
 
 def benchmark(e,params,training,out):
-    """No optimizer updates. Restore RNG; compare identical BF16 losses/gradients."""
-    # Typical examples; longer minibatches retain checkpointing for memory safety.
+    """Profile the explicitly declared policy; never auto-enable recomputation."""
     ordered=sorted(training,key=lambda r:r['length'])
-    rows=[ordered[len(ordered)//2],ordered[int(.9*(len(ordered)-1))]]
-    saved=rng_state();measurements=[];reference=None
-    for cp in [True,False]:
-        try:
+    cases={'typical':[ordered[len(ordered)//2],ordered[int(.9*(len(ordered)-1))]],
+           'longest':[ordered[-1],ordered[-2]]}
+    saved=rng_state();measurements=[]
+    try:
+        for name,rows in cases.items():
             restore_rng(saved)
             for p in params:p.grad=None
-            e.backbone_checkpoint=cp;e.head_checkpoint=True;e.train_mode()
-            torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats();torch.cuda.synchronize()
-            t=time.monotonic();loss,n=e.loss(rows,True);(loss/n).backward();torch.cuda.synchronize()
-            seconds=time.monotonic()-t
-            grads=torch.cat([p.grad.flatten()[::max(1,p.numel()//1024)].float() for p in params if p.grad is not None])
-            assert torch.isfinite(grads).all() and grads.norm()>0
-            if reference is None:reference=grads.clone();reference_loss=float(loss/n)
-            cosine=float(torch.nn.functional.cosine_similarity(grads,reference,dim=0))
-            rel=float((grads-reference).norm()/reference.norm())
-            measurements.append(dict(checkpoint=cp,seconds=seconds,nll=float(loss/n),cosine=cosine,relative_l2=rel,
-                peak_gib=torch.cuda.max_memory_allocated()/2**30,status='passed'))
-            del loss,grads
-        except torch.OutOfMemoryError:
-            measurements.append(dict(checkpoint=cp,status='out_of_memory'))
-        finally:
-            for p in params:p.grad=None
-            gc.collect();torch.cuda.empty_cache()
-    restore_rng(saved)
-    assert measurements[0]['status']=='passed','Checkpointed benchmark must fit'
-    fast=measurements[1]
-    eligible=(fast['status']=='passed' and fast['cosine']>.999 and fast['relative_l2']<.03
-              and abs(fast['nll']-reference_loss)<.005 and fast['peak_gib']<.85*torch.cuda.get_device_properties(0).total_memory/2**30)
-    # One cold benchmark is not a throughput estimate; preserve numerical agreement first.
-    cutoff=max(r['length'] for r in rows) if eligible else 0
-    atomic(out/'performance.json',dict(measurements=measurements,backbone_off_max_length=cutoff,
-        head_checkpoint=True,microbatch=2,dtype='bfloat16',optimizer_updates=0,
-        caveat='Single representative backward smoke; cold kernel timings are not reported as speedups. Longer rows remain checkpointed.'))
-    return cutoff
+            e.train_mode();torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats();torch.cuda.synchronize()
+            start=time.monotonic();loss,n=e.loss(rows,True);(loss/n).backward();torch.cuda.synchronize()
+            measurements.append(dict(case=name,seconds=time.monotonic()-start,nll=float(loss.detach()/n),
+                peak_gib=torch.cuda.max_memory_allocated()/2**30))
+            assert all(torch.isfinite(p.grad).all() for p in params if p.grad is not None)
+            del loss
+    finally:
+        restore_rng(saved)
+        for p in params:p.grad=None
+        gc.collect();torch.cuda.empty_cache()
+        atomic(out/'activation_profile.json',dict(measurements=measurements,
+            backbone=e.checkpoint_policy.backbone,head=e.checkpoint_policy.head,
+            optimizer_updates=0,dtype='bfloat16',caveat='Cold memory smoke; not a throughput comparison.'))
 
 
 def main(trait,stage):
@@ -88,8 +73,7 @@ def main(trait,stage):
     atomic(out/'data_checks.json',dict(examples={k:sum(r['split']==k for r in rows) for k in ['train','validation','test']},
         max_tokens=max(r['length'] for r in rows),truncated=0,response_only=True,total_steps=steps,
         effective_batch=batch,microbatch=s['microbatch'],execution_commit=os.environ['PODRUN_COMMIT']))
-    perf=out/'performance.json'
-    cutoff=json.loads(perf.read_text())['backbone_off_max_length'] if perf.exists() else benchmark(e,params,training,out)
+    benchmark(e,params,training,out)
     resume=out/'resume.pt';start=0;best=float('inf');best_step=0
     if resume.exists():
         saved=torch.load(resume,map_location='cpu',weights_only=False)
@@ -133,7 +117,7 @@ def main(trait,stage):
         denom=sum(len(r['y']) for r in group);opt.zero_grad(set_to_none=True);value=0.;began=time.monotonic()
         for pos in range(0,len(group),s['microbatch']):
             micro=group[pos:pos+s['microbatch']]
-            e.backbone_checkpoint=max(r['length'] for r in micro)>cutoff;e.train_mode()
+            e.train_mode()
             loss,n=e.loss(micro,True);(loss/denom).backward();value+=float(loss.detach())/denom
             del loss
         norm=float(torch.nn.utils.clip_grad_norm_(params,1.0));assert math.isfinite(norm) and math.isfinite(value)
