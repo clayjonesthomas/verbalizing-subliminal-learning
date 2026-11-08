@@ -34,6 +34,8 @@ def main():
     with lock(ROOT/'smoke.lock'):
         if not (ROOT/'smoke.json').exists():subprocess.run([sys.executable,str(HERE/'smoke.py')],check=True)
         assert json.loads((ROOT/'smoke.json').read_text())['status']=='passed'
+        if not (ROOT/'vllm_smoke.json').exists():subprocess.run(['/opt/auditbench-vllm-venv/bin/python',str(HERE/'vllm_smoke.py')],check=True)
+        assert json.loads((ROOT/'vllm_smoke.json').read_text())['status']=='passed'
     # Enforced API cost cap uses checked prices before the first paid call.
     import urllib.request
     with urllib.request.urlopen('https://openrouter.ai/api/v1/models',timeout=60) as response:models={r['id']:r for r in json.load(response)['data']}
