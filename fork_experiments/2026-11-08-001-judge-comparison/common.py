@@ -16,7 +16,7 @@ def atomic(path,value):
     path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
     data=json.dumps(value,ensure_ascii=False,allow_nan=False,indent=2)+'\n' if not isinstance(value,str) else value
     with tempfile.NamedTemporaryFile(mode='w',dir=path.parent,delete=False) as f:
-        temporary=Path(f.name);f.write(data)
+        temporary=Path(f.name);f.write(data);f.flush();os.fsync(f.fileno())
     temporary.replace(path)
 
 

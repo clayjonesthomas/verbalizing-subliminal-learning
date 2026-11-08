@@ -32,9 +32,9 @@ def run():
     catalog=api.request('GET','models?variant=batch')
     entries={m['id']:m for m in catalog['data']}
     for mid,m in models.items():
-        live=entries[mid+':batch']['pricing']
+        live=entries[mid+(':batch' if m.get('batch',True) else '')]['pricing']
         assert float(live['prompt'])<=m['input_price'] and float(live['completion'])<=m['output_price']
-    atomic(ART/'catalog.json',{k:entries[k+':batch'] for k in models})
+    atomic(ART/'catalog.json',{k:entries[k+(':batch' if m.get('batch',True) else '')] for k,m in models.items()})
     ledger=json.loads((ART/'ledger.json').read_text()) if (ART/'ledger.json').exists() else dict(limit_usd=C['api_limit_usd'],charged_or_reserved_usd=0.,batches=[])
     results=json.loads((ART/'results.json').read_text()) if (ART/'results.json').exists() else {k:{} for k in models}
     active=[]
@@ -64,6 +64,18 @@ def run():
         atomic(ART/(name+'-request.json'),payload);publish()
         marker=ART/(name+'-submission.json')
         with marker.open('x') as f:json.dump(dict(time=time.time(),reserve=reserve),f)
+        if not model.get('batch',True):
+            cost=0.
+            for item in requests:
+                key=item['custom_id'];body=api.request('POST','chat/completions',dict(model=mid,provider=payload['provider'],**item['body']))
+                atomic(ART/(name+'-'+key+'.json'),body)
+                actual=body.get('usage',{}).get('cost')
+                if actual is None:raise RuntimeError('Request cost missing; reservation retained')
+                cost+=float(actual)
+                results[mid][key]=dict(value=parse_result(body,by_id[key]['metric']),usage=body.get('usage'),error=None,response=body)
+                publish()
+            record.update(status='completed',cost=cost)
+            ledger['charged_or_reserved_usd']+=cost-reserve;publish();return
         receipt=api.request('POST','batches',payload)
         atomic(ART/(name+'-receipt.json'),receipt);record.update(id=receipt['id'],status=receipt['status']);publish();active.append(record)
 
@@ -108,6 +120,7 @@ def run():
                 if ledger['charged_or_reserved_usd']+reserve_cost(models[mid],chunk+[j],maximum)>C['api_limit_usd']:break
                 chunk.append(j)
             if chunk:submit(mid,chunk,'comparison')
+        if all(len(results[mid])==len(jobs) for mid in models):break
         if not active:
             progress('budget_review_required',cost=ledger['charged_or_reserved_usd']);publish();return
         collect()
