@@ -222,3 +222,9 @@ leave changes local or claim an unmerged branch is merged. Never force-push.
 Verified publication to main or an explicitly flagged review branch permits
 worktree removal; unverified pushes and misplaced ignored outputs block removal.
 This policy is for new runs, not permission to merge archived historical checkouts.
+
+## Training throughput memory (2026-11-07 benchmark)
+
+Measured in `fork_experiments/2026-11-07-002-lls-speed/results/lls-speed-a1/case-*.json` on Qwen3.5-9B / RTX PRO 6000, BF16. At microbatch 2, disabling backbone and LM-head activation checkpointing reduced student DPO update time 9.68 -> 7.17 s and direct-soft DPO 2.99 -> 2.24 s (about 25-26% less time). Peak allocation rose to 31.1 / 28.7 GiB. Larger microbatches were slower and had greater BF16 gradient differences; do not assume larger is faster. Benchmark representative lengths before transferring this choice to SFT or long transcripts. Retain head checkpointing when needed to bound vocabulary-logit memory. Preserve dtype, objective, effective batch, example order, optimizer schedule, and loss normalization. Check loss/gradient agreement; these changes are not bitwise identical in BF16. Do not use FP8/quantization as a throughput shortcut.
+
+For DPO only, cache frozen reference log-probabilities using exact model/tokenizer/software/token and batch-layout identity. The benchmark measured 4.92 / 1.85 s with warm caches, excluding cache construction; do not report this as end-to-end speedup. Policy scores must remain fresh. Persist/resume optimizer, RNG, sampler position and selection history; saved checkpoints are independent of activation checkpointing. Use independent GPU workers across experiments/stages, shared immutable caches, and release GPUs when their queues finish.
