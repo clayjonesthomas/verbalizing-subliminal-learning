@@ -232,3 +232,7 @@ For DPO only, cache frozen reference log-probabilities using exact model/tokeniz
 Default **both backbone and LM/output-head activation checkpointing OFF** for new experiments. This is the user's explicit preference (2026-11-08). Do not confuse activation recomputation with saving resumable checkpoints; continue saving model, optimizer, RNG and sampler state.
 
 Use the shared podrun activation-checkpointing policy/helper and record the effective settings. Benchmark the fully disabled setting first on representative and longest batches at the intended BF16 precision and effective batch. Enable checkpointing only for a measured memory constraint or a measured net throughput win, with the reason and evidence recorded in launch configuration. A percentile/length heuristic, GPU utilization, or an assumed safety margin is not evidence. Test backbone and head independently; do not silently retain head checkpointing. Preserve the objective, precision, optimizer schedule and effective batches, and verify loss/gradient agreement. Do not copy older checkpoint-on scripts without adapting them. Report exceptions explicitly. Do not change or restart an active pinned run merely to adopt this default.
+
+# Default Git publication
+
+Commit, push, and merge completed task changes into `main` by default. Do not stop at a feature or artifact branch unless the user explicitly asks, branch protection blocks the merge, or an unresolved conflict requires their input. Preserve unrelated local changes and never force-push.
