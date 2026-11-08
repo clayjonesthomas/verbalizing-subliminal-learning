@@ -47,7 +47,7 @@ class Client:
         request = Request(url, headers=self.headers, method=method,
                           data=json.dumps(body).encode() if body is not None else None)
         try:
-            with runpod_http.open_request(request, context=self.context, timeout=60, opener=urlopen) as response:
+            with runpod_http.open_request(request, context=self.context, timeout=60, opener=urlopen, caller="project-setup") as response:
                 data = response.read()
                 return json.loads(data) if data else {}
         except HTTPError as exc:
