@@ -23,7 +23,19 @@ def request(prompt, numeric=False):
     if numeric:body.update(logprobs=True,top_logprobs=20)
     identity=hashlib.sha256(json.dumps(body,sort_keys=True).encode()).hexdigest()
     path=CACHE/(identity+'.json')
-    if path.exists():return json.loads(path.read_text())
+    with lock(path.with_suffix('.lock')):
+        if path.exists():
+            try:
+                cached=json.loads(path.read_text())
+                if not isinstance(cached,dict) or 'choices' not in cached or 'usage' not in cached:
+                    raise ValueError('Invalid judge cache entry')
+                return cached
+            except (ValueError,UnicodeError):
+                path.rename(path.with_name(path.name+f'.corrupt-{time.time_ns()}'))
+        return uncached_request(prompt,body,path,input_price,output_price)
+
+
+def uncached_request(prompt,body,path,input_price,output_price):
     reserve=(len(prompt.encode())+256)*input_price+body['max_tokens']*output_price
     counts={'rate':0,'timeout':0,'other':0}
     while True:

@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import time
+import tempfile
 import sys
 from contextlib import contextmanager
 
@@ -17,9 +18,14 @@ RUN = Path(os.environ.get('PODRUN_DIR', ART))
 
 def atomic(path, value):
     path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name+f'.{os.getpid()}.tmp')
-    tmp.write_text(json.dumps(value, indent=2, allow_nan=False)+'\n')
-    tmp.replace(path)
+    data = json.dumps(value, indent=2, allow_nan=False)+'\n'
+    with tempfile.NamedTemporaryFile(mode='w', dir=path.parent, prefix=path.name+'.', suffix='.tmp', delete=False) as handle:
+        tmp = Path(handle.name)
+        handle.write(data)
+    try:
+        tmp.replace(path)
+    finally:
+        tmp.unlink(missing_ok=True)
 
 
 def append(path, value):

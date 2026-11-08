@@ -1,9 +1,7 @@
 import json
 import sys
 
-import torch
 from common import ART, C, append, atomic, progress, publish_stage
-from engine import Engine
 from judge import grade
 
 
@@ -16,14 +14,18 @@ def probes():
 def finish(mode,condition,path):
     rows=[json.loads(s) for s in path.open()]
     assert len(rows)==len(probes())
+    progress('judging',mode=mode,condition=condition,total=len(rows))
     judged,scores=grade(rows)
     atomic(path.with_suffix('.judged.json'),judged)
     out=ART/mode;target=out/'behavior.json'
     results=json.loads(target.read_text()) if target.exists() else {}
     results[condition]=scores;atomic(target,results);publish_stage(mode,out)
+    progress('judged',mode=mode,condition=condition,total=len(rows))
 
 
 def main(mode):
+    import torch
+    from engine import Engine
     engine=Engine();out=ART/mode
     if mode=='base':conditions={'base':None}
     else:
