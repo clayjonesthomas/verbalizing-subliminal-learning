@@ -87,7 +87,7 @@ print(json.dumps(receipt))
     key = project+'/.ssh/runpod-caleb-spar-key'
     probe = "import os,json;from pathlib import Path;print(json.dumps(str(Path(os.environ['HF_HOME'])/'hub/models--Qwen--Qwen3.5-9B')))"
     hf = json.loads(subprocess.check_output(ssh_args(source, ['python','-c',probe]), text=True, timeout=60))
-    paths = [hf, dataset, graphing, key, project+'/experiments/'+c['experiment']+'/shared']
+    paths = [dataset, graphing, key, project+'/experiments/'+c['experiment']+'/shared']
     host, port = endpoint(target)
     known = Path('~/.cache/runpod-vsl/known_hosts').expanduser().read_text()
     known_path = '/tmp/pilot-known-hosts-'+target['id']
@@ -95,6 +95,9 @@ print(json.dumps(receipt))
     transport = shlex.join(['ssh','-p',str(port),'-o','BatchMode=yes','-o','StrictHostKeyChecking=yes','-o','UserKnownHostsFile='+known_path])
     print('Copying model cache, dataset, graphing code, comparison results and deployment credential over SSH.', flush=True)
     run(source, ['rsync','-a','--relative','-e',transport,*paths,f'root@{host}:/'],timeout=1800)
+    # Cache blobs may themselves link outside the model directory. Materialize the exact snapshot.
+    snapshot=hf+'/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a'
+    run(source, ['rsync','-aL','--relative','-e',transport,snapshot,f'root@{host}:/'],timeout=1800)
     run(source, ['rsync','-a','-e',transport,REPO+'/setup/github_known_hosts',f'root@{host}:{project}/github_known_hosts'],timeout=60)
     runtime_key='/run/runpod-caleb-spar/runpod-caleb-spar-key'
     run(target, ['install','-d','-m','700','/run/runpod-caleb-spar'])
@@ -110,7 +113,8 @@ print(json.dumps(receipt))
     if client.pod(target['id']).get('args') != START:
         client.request('PATCH','pods/'+target['id'],{'args':START})
     for attempt in range(120):
-        if ready(client.pod(target['id']),timeout=60):break
+        target=client.pod(target['id'])
+        if ready(target,timeout=60):break
         time.sleep(5)
     else:raise RuntimeError('Bootstrap finished but project readiness has not been verified')
     # Updating startup configuration may replace the container and its watchdog.
