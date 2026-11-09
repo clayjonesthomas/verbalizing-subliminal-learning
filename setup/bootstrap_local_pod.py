@@ -136,10 +136,16 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:list(pool.map(
     run(target, ['git','-C',REPO,'fetch','origin',c['source_commit']],timeout=600)
     run(target, ['git','-C',REPO,'checkout','--detach',c['source_commit']],timeout=600)
     run(target, ['env','UV_HTTP_TIMEOUT=180','UV_HTTP_RETRIES=5','bash',REPO+'/setup/boot.sh'],timeout=1200)
+    previous_init = None
     if client.pod(target['id']).get('args') != START:
+        previous_init = subprocess.check_output(raw(target,['cat','/proc/1/stat']),text=True,timeout=30).split()[21]
         client.request('PATCH','pods/'+target['id'],{'args':START})
     for attempt in range(120):
         target=client.pod(target['id'])
+        if previous_init is not None:
+            probe=subprocess.run(raw(target,['cat','/proc/1/stat']),capture_output=True,text=True,timeout=30)
+            if probe.returncode or probe.stdout.split()[21] == previous_init:
+                time.sleep(5);continue
         if ready(target,timeout=60):break
         time.sleep(5)
     else:raise RuntimeError('Bootstrap finished but project readiness has not been verified')
