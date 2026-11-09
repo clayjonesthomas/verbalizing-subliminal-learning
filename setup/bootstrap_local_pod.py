@@ -30,6 +30,7 @@ def main():
     parser.add_argument('config')
     parser.add_argument('--source-pod', required=True)
     parser.add_argument('--volume-gb', type=int, default=120)
+    parser.add_argument('--finish', action='store_true', help='Verify a completed bootstrap after the startup-command restart; re-arm its existing budget')
     args = parser.parse_args()
     c = json.loads(Path(args.config).read_text())
     client = Client(local_volume_gb=args.volume_gb)
@@ -73,8 +74,12 @@ receipt['bootstrap_script_sha256']=p['bootstrap_script_sha256']
 print(json.dumps(receipt))
 '''
     run(target, ['python3', '-c', code], input=json.dumps(payload), text=True, timeout=120)
-    del payload
     print('Independent startup budget armed.', flush=True)
+    if args.finish:
+        if target.get('args') != START or not ready(client.pod(target['id']),timeout=60):
+            raise RuntimeError('Project startup or environment is not ready yet')
+        print('Project readiness and post-restart budget verified.',flush=True)
+        return
 
     project = '/workspace/projects/verbalizing-subliminal-learning'
     dataset = project+'/experiments/2026-11-06-003-qwen-lls/runs/qwen-lls-p02/artifacts/dataset'
@@ -102,9 +107,14 @@ print(json.dumps(receipt))
     run(target, ['git','-C',REPO,'fetch','origin',c['source_commit']],timeout=600)
     run(target, ['git','-C',REPO,'checkout','--detach',c['source_commit']],timeout=600)
     run(target, ['env','UV_HTTP_TIMEOUT=180','UV_HTTP_RETRIES=5','bash',REPO+'/setup/boot.sh'],timeout=1200)
-    client.request('PATCH','pods/'+target['id'],{'args':START})
-    if not ready(client.pod(target['id']),timeout=60):
-        raise RuntimeError('Bootstrap finished but project readiness has not been verified')
+    if client.pod(target['id']).get('args') != START:
+        client.request('PATCH','pods/'+target['id'],{'args':START})
+    for attempt in range(120):
+        if ready(client.pod(target['id']),timeout=60):break
+        time.sleep(5)
+    else:raise RuntimeError('Bootstrap finished but project readiness has not been verified')
+    # Updating startup configuration may replace the container and its watchdog.
+    run(target, ['python3','-c',code],input=json.dumps(payload),text=True,timeout=120)
     print('Project Python/CUDA and future startup verified; ready for shared-runner launch.',flush=True)
 
 
