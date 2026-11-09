@@ -4,6 +4,7 @@ No network volumes are created. Secrets travel over SSH, never in logs or argv.
 """
 import argparse
 import base64
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -56,13 +57,18 @@ def main():
     bootstrap['run_dir'] = f"/workspace/projects/verbalizing-subliminal-learning/experiments/{c['experiment']}/runs/{c['run_id']}"
     bootstrap = configure(bootstrap)
     payload = dict(config=bootstrap, runner=base64.b64encode(bundle_runner()).decode(),
-                   authorization=client.headers['Authorization'])
+                   authorization=client.headers['Authorization'],
+                   bootstrap_script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
     code = '''import base64,json,pathlib,sys,tempfile
 p=json.load(sys.stdin);d=pathlib.Path(tempfile.mkdtemp(prefix='podrun-bootstrap-'))
 bundle=d/'runner.pyz';bundle.write_bytes(base64.b64decode(p['runner']));sys.path.insert(0,str(bundle))
 from podrun.budget import arm
-receipt=arm(p['config'],p['authorization'])
 out=pathlib.Path(p['config']['run_dir']);out.mkdir(parents=True,exist_ok=True)
+if (out/'launch.json').exists() or (out/'state.json').exists():raise RuntimeError('Scientific launch already attempted; do not bootstrap over it')
+saved=out/'bootstrap_budget.json';receipt=json.loads(saved.read_text()) if saved.exists() else {}
+pid=receipt.get('pid');cmd=pathlib.Path(f'/proc/{pid}/cmdline')
+if not (cmd.exists() and b'budget-watchdog' in cmd.read_bytes()):receipt=arm(p['config'],p['authorization'])
+receipt['bootstrap_script_sha256']=p['bootstrap_script_sha256']
 (out/'bootstrap_budget.json').write_text(json.dumps(receipt))
 print(json.dumps(receipt))
 '''
@@ -85,8 +91,13 @@ print(json.dumps(receipt))
     print('Copying model cache, dataset, graphing code, comparison results and deployment credential over SSH.', flush=True)
     run(source, ['rsync','-a','--relative','-e',transport,*paths,f'root@{host}:/'],timeout=1800)
     run(source, ['rsync','-a','-e',transport,REPO+'/setup/github_known_hosts',f'root@{host}:{project}/github_known_hosts'],timeout=60)
-    git_ssh=shlex.join(['ssh','-i',key,'-o','IdentitiesOnly=yes','-o','IdentityAgent=none','-o','StrictHostKeyChecking=yes','-o','UserKnownHostsFile='+project+'/github_known_hosts'])
-    run(target, ['env','GIT_SSH_COMMAND='+git_ssh,'git','clone','--filter=blob:none','--depth','1','--single-branch','git@github.com:clayjonesthomas/verbalizing-subliminal-learning.git',REPO],timeout=1200)
+    runtime_key='/run/runpod-caleb-spar/runpod-caleb-spar-key'
+    run(target, ['install','-d','-m','700','/run/runpod-caleb-spar'])
+    run(target, ['install','-m','600',key,runtime_key])
+    git_ssh=shlex.join(['ssh','-i',runtime_key,'-o','IdentitiesOnly=yes','-o','IdentityAgent=none','-o','StrictHostKeyChecking=yes','-o','UserKnownHostsFile='+project+'/github_known_hosts'])
+    exists=subprocess.run(raw(target,['test','-d',REPO+'/.git'])).returncode==0
+    if not exists:
+        run(target, ['env','GIT_SSH_COMMAND='+git_ssh,'git','clone','--filter=blob:none','--depth','1','--single-branch','git@github.com:clayjonesthomas/verbalizing-subliminal-learning.git',REPO],timeout=1200)
     run(target, ['git','-C',REPO,'config','core.sshCommand',git_ssh])
     run(target, ['git','-C',REPO,'fetch','origin',c['source_commit']],timeout=600)
     run(target, ['git','-C',REPO,'checkout','--detach',c['source_commit']],timeout=600)
