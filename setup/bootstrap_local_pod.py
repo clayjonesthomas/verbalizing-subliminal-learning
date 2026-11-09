@@ -97,7 +97,13 @@ print(json.dumps(receipt))
     run(source, ['rsync','-a','--relative','-e',transport,*paths,f'root@{host}:/'],timeout=1800)
     # Cache blobs may themselves link outside the model directory. Materialize the exact snapshot.
     snapshot=hf+'/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a'
-    run(source, ['rsync','-aL','--relative','-e',transport,snapshot,f'root@{host}:/'],timeout=1800)
+    run(source, ['rsync','-aL','--relative','--partial','-e',transport,snapshot,f'root@{host}:/'],timeout=1800)
+    manifest_code = "import json;from pathlib import Path;p=Path(__SNAPSHOT__);print(json.dumps({x.name:dict(bytes=x.stat().st_size,sha256=x.resolve().name) for x in p.glob('*.safetensors')}))".replace('__SNAPSHOT__', repr(snapshot))
+    manifest = json.loads(subprocess.check_output(raw(source, ['python3','-c',manifest_code]),text=True,timeout=60))
+    if len(manifest) != 4 or not all(len(v['sha256']) == 64 for v in manifest.values()):
+        raise RuntimeError('Unexpected pinned model shard manifest')
+    verify_code = "import json,hashlib,sys;from pathlib import Path;p=Path(sys.argv[1]);expected=json.load(sys.stdin);actual={x.name:dict(bytes=x.stat().st_size,sha256=hashlib.file_digest(x.open('rb'),'sha256').hexdigest()) for x in p.glob('*.safetensors')};assert actual==expected,'Pinned model shard verification failed';(p/'pilot_input_verification.json').write_text(json.dumps(actual,indent=2));print('Verified all four pinned model shards',flush=True)"
+    run(target,['python3','-c',verify_code,snapshot],input=json.dumps(manifest),text=True,timeout=600)
     run(source, ['rsync','-a','-e',transport,REPO+'/setup/github_known_hosts',f'root@{host}:{project}/github_known_hosts'],timeout=60)
     runtime_key='/run/runpod-caleb-spar/runpod-caleb-spar-key'
     run(target, ['install','-d','-m','700','/run/runpod-caleb-spar'])
@@ -118,6 +124,7 @@ print(json.dumps(receipt))
         time.sleep(5)
     else:raise RuntimeError('Bootstrap finished but project readiness has not been verified')
     # Updating startup configuration may replace the container and its watchdog.
+    target = client.pod(target['id'])
     run(target, ['python3','-c',code],input=json.dumps(payload),text=True,timeout=120)
     print('Project Python/CUDA and future startup verified; ready for shared-runner launch.',flush=True)
 
