@@ -10,6 +10,21 @@ from common import ART,C,HERE,atomic,digest,progress
 from worker import parse_result,reserve_cost
 
 
+def persist_request(batch, results):
+    row=results.get(batch['model'],{}).get(batch['job_id'])
+    atomic(ART/'request-state'/(batch['name']+'.json'),dict(batch=batch,result=row))
+
+
+def recover_requests(source, ledger, results):
+    batches={b['name']:b for b in ledger['batches']}
+    for path in sorted((source/'request-state').glob('*.json')):
+        record=json.loads(path.read_text());batch=record['batch'];batches[batch['name']]=batch
+        if record['result'] is not None:results.setdefault(batch['model'],{})[batch['job_id']]=record['result']
+    ledger['batches']=list(batches.values())
+    ledger['charged_or_reserved_usd']=sum(b.get('cost',b['reserve']) for b in ledger['batches'])
+    return ledger,results
+
+
 def restore():
     assert not (ART/'ledger.json').exists(), 'Use a fresh attempt directory'
     source=HERE/'results'/C['standard_seed']
@@ -20,7 +35,7 @@ def restore():
     assert ledger['limit_usd']<=C['api_limit_usd']
     assert math.isclose(ledger['charged_or_reserved_usd'],sum(b.get('cost',b['reserve']) for b in ledger['batches']))
     ledger['previous_limit_usd']=ledger['limit_usd'];ledger['limit_usd']=C['api_limit_usd']
-    return ledger,json.loads((ART/'results.json').read_text())
+    return recover_requests(source,ledger,json.loads((ART/'results.json').read_text()))
 
 
 def run():
@@ -40,8 +55,8 @@ def run():
 
     def publish(stage='standard_judging',force=False):
         nonlocal last_report
-        atomic(ART/'ledger.json',ledger);atomic(ART/'results.json',results)
         if force or time.monotonic()-last_report>15:
+            atomic(ART/'ledger.json',ledger);atomic(ART/'results.json',results)
             progress(stage,completed={m:len(v) for m,v in results.items()},expected_per_judge=len(jobs),reused=C['reused_jobs'],charged_or_reserved_usd=ledger['charged_or_reserved_usd'],legacy_batches_pending=len(pending_batches))
             from report import render
             render();last_report=time.monotonic()
@@ -93,6 +108,7 @@ def run():
                         if confirmed_no_charge(details):
                             b['cost']=0.;ledger['charged_or_reserved_usd']-=b['reserve']
                     else:errors.append(b['name'])
+                persist_request(b,results)
                 publish()
             if errors and not inflight:
                 publish('request_reconciliation_required',force=True);raise RuntimeError('Unresolved requests: '+','.join(errors))
@@ -109,7 +125,7 @@ def run():
                     if selected is None:break
                     mid,j,reserve=selected;name=f'request-{len(ledger["batches"]):05d}'
                     b=dict(name=name,model=mid,job_id=j['id'],reserve=reserve,requests=1,phase='standard',status='submitting')
-                    ledger['batches'].append(b);ledger['charged_or_reserved_usd']+=reserve;publish()
+                    ledger['batches'].append(b);ledger['charged_or_reserved_usd']+=reserve;persist_request(b,results)
                     body=dict(model=mid,messages=j['messages'],response_format=j['response_format'],max_tokens=C['max_tokens'],provider=dict(only=[models[mid]['provider']],allow_fallbacks=False))
                     if models[mid].get('reasoning'):body['reasoning']=models[mid]['reasoning']
                     atomic(ART/(name+'-request.json'),body)

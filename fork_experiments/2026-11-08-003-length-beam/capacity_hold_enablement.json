@@ -1,0 +1,39 @@
+{
+  "request": "User requested current GPU runs retain capacity while provisioning continues",
+  "date": "2026-11-09",
+  "infrastructure_commit": "22f2bfd8e6d2711d1e0378e431e6be10b773b1ed",
+  "demand_path": "/workspace/.podrun-capacity/orqsmyhvok/demand.json",
+  "heartbeat_seconds": 60,
+  "freshness_seconds": 300,
+  "policy": "Successful publication and cleanup precede demand-driven capacity retention; the existing cumulative $50 budget and explicit release override retention.",
+  "migration": "At the saved beam128r6 search artifact, interrupt the scientific child only; preserve original search provenance and elapsed time, and resume evaluation from its hash-verified candidates in a new run on the same pod and budget.",
+  "runs": [
+    {
+      "seed": 42,
+      "pod_id": "0utrj00y3q1igh",
+      "original_run": "beam6-seed42-a2",
+      "replacement_run": "beam6-seed42-a3",
+      "controller_pid": 2467,
+      "status": "boundary migration armed"
+    },
+    {
+      "seed": 43,
+      "pod_id": "z2boqrbssvtuzt",
+      "original_run": "beam6-seed43-a1",
+      "replacement_run": "beam6-seed43-a2",
+      "controller_pid": 828,
+      "status": "boundary migration armed"
+    }
+  ],
+  "new_seeds": [
+    44,
+    45,
+    46
+  ],
+  "verification": [
+    "Both remote boundary controllers confirmed armed",
+    "Shared-volume demand heartbeat confirmed fresh",
+    "14 shared runner capacity tests passed",
+    "Saved search reuse rejects changed search configuration, checkpoint identity, and artifact hash"
+  ]
+}
