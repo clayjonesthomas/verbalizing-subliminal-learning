@@ -55,7 +55,8 @@ def main():
     for key in ['results', 'baseline_checks', 'timing']:
         summary[key] = previous[key]
     for row in summary['results']:
-        row.setdefault('source_commit', previous['source_commit'])
+        if 'source_commit' not in row:
+            row['source_commit'] = previous['source_commit']
         row.setdefault('use_cache', False)
     for timing in summary['timing']:
         timing.setdefault('use_cache', False)
