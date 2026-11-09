@@ -48,11 +48,6 @@ def render(summary=None):
             return 100 * item['behavior']['adherence']['adherence']
         return item.get(metric)
     metrics = [('val_nll', 'Validation NLL ↓'), ('adherence', 'Behavior adherence (%) ↑'), ('tokens', 'Prompt tokens ↓')]
-    means = []
-    for method, label in LABELS.items():
-        vals = [[value(r[method], m) for r in rows.values() if method in r and value(r[method], m) is not None] for m,_ in metrics]
-        means.append([label, str(len(vals[0])) + '/5', *[f'{statistics.mean(v):.4f}' if v else 'Pending' for v in vals]])
-    body += table(['Method', 'Evaluated', *[label for _,label in metrics]], means)
     body += '<p class="caption">New bucket search: seeds 42–46. New ordinary 128-token comparison: seed 42 only; remaining comparisons intentionally omitted. Historical ordinary-beam records cover all five seeds with a 256-token cap. Means include only evaluated seeds.</p>'
     charts = []
     for metric, label in metrics:
@@ -71,7 +66,13 @@ def render(summary=None):
     progress = body
     timings = summary.get('timing', [])
     if timings:
-        progress += table(['Seed', 'Search', 'Seconds', 'Unique candidates scored'], [[t['seed'],t['method'],f"{t['seconds']:.1f}",t['scored']] for t in timings])
+        timing_charts=[]
+        for key,title,axis,scale in [('seconds','Search runtime','Minutes',60),('scored','Unique candidates scored','Candidates',1)]:
+            timing_charts.append(chart_html('search-'+key,title,[
+                dict(type='bar',name=label,x=[t['seed'] for t in timings if t['method']==method],y=[t[key]/scale for t in timings if t['method']==method])
+                for method,label in [('bucket128','Bucket search'),('beam128','Ordinary 128-token beam')]],x_label='Seed',y_label=axis,
+                caption='Seed 42 was uncached; seeds 43–46 used caching. Ordinary 128-token comparison was run only for seed 42.'))
+        progress += chart_grid(timing_charts)
     atomic(reports/'in_progress.html', head + progress + '</body></html>')
     atomic(reports/'final_report.html', head + ('' if summary['complete'] else '<p>Comparison incomplete; results shown are partial.</p>') + body + '</body></html>')
     config = json.loads((HERE/'config.json').read_text())
@@ -91,7 +92,7 @@ def render(summary=None):
         ['Behavior','Same 100 archived questions per seed (20/category), greedy 512-token output, original batch 4; correct category prefix and no foreign marker.'],
         ['Precision','BF16; frozen model, no training; backbone and head activation checkpointing disabled using shared policy.'],
         ['Scope update','User requested bucket-only completion for seeds 43–46. Identity-checked controllers stop each worker after both bucket candidates are evaluated and saved; normal save/publication/termination follows. Archived ordinary-beam records use a 256-token cap, so this is not a matched-cap comparison. Seed-42 paired pilot is retained.'],
-        ['Caching','Seed 42 search was uncached; seeds 43–46 use caching for both algorithms. Timings are paired within seed. Performance pilot measured cached/uncached agreement; stochastic paths need not be identical.'],
+        ['Caching','Seed 42 search was uncached; seeds 43–46 use caching for bucket search. Scoring minibatch remains 1. Stochastic paths need not be identical.'],
         ['Comparison caveats','Sampling paths differ despite matched seeds. Historical beam cap was 256. 5% tolerance is relative NLL, not probability. Terminal fragments may be incomplete.'],
         ['Budget','$50 experiment-wide; independent shared-runner watchdog; graceful cutoff $50, hard cutoff $60.'],
         ['Execution SHA',summary.get('source_commit','Pending launch')]])
