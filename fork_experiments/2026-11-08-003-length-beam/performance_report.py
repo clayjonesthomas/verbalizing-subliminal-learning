@@ -46,6 +46,21 @@ def render(summary, performance):
     section+=chart_grid(scoring_charts)
     if performance.get('fastest_scoring_minibatch'):
         section+=f"<p>Lowest measured median: minibatch {performance['fastest_scoring_minibatch']}. Small differences within repetition variability are inconclusive.</p>"
+    tracked=[r for r in summary['results'] if 'short_prefix_tracking' in r]
+    if tracked:
+        section+='<h2>Extra short-prefix attempts</h2><p>First-discovery attribution, not a causal ablation. Subgroups overlap. Seed 42 has no attempt-level trace.</p>'
+        section+=table(['Seed','Attempt source','Attempts','New candidates','Duplicates','Better than parent','Better than round-start bucket best'],[
+            [r['seed'],label,g['attempts'],g['unique'],g['duplicates'],g['parent_improvements'],g['bucket_improvements']]
+            for r in tracked for label,g in r['short_prefix_tracking']['groups'].items()])
+        section+=table(['Seed','Returned candidate','Uniform edges / all edges','Edges outside global top 4','Edges revisiting older parents'],[
+            [r['seed'],label,f"{sum(e['allocation']=='uniform' for e in chain)} / {len(chain)}",sum(e['outside_global_top4'] for e in chain),sum(e['revisited_from_earlier_round'] for e in chain)]
+            for r in tracked for label,chain in r['short_prefix_tracking']['lineages'].items()])
+        charts=[]
+        for r in tracked:
+            trajectory=r['short_prefix_tracking']['trajectories']
+            charts.append(chart_html('contribution-'+str(r['seed']),'Seed '+str(r['seed'])+' · best discovered NLL by source',[
+                dict(type='scatter',mode='lines+markers',name=mode,x=[t['round'] for t in trajectory],y=[t[mode] for t in trajectory]) for mode in ['global','uniform']],x_label='Search round',y_label='Selection NLL'))
+        section+=chart_grid(charts)
     dest=Path(os.environ.get('PODRUN_REPORT_DIR',HERE))
     for name in ['in_progress.html','final_report.html']:
         p=dest/name;s=p.read_text();p.write_text(s.replace('</body>',section+'</body>'))
@@ -57,6 +72,7 @@ def render(summary, performance):
         ['Memory','Peak PyTorch allocated/reserved memory after warmup, with allocator cache emptied before each timed sample; total and above-baseline peaks saved. Includes model, soft prompt, and retained diagnostic state; paired cache modes share each case baseline. Excludes driver/non-PyTorch allocations. Paired peak differences are the cache comparison.'],
         ['Scoring','Same 256 selection examples, same 101-token winning prompt; longest 32 examples also tested. Minibatches 1/2/4/8/16/32/64/128/256 up to example count, stop after OOM; one warmup plus three complete timed evaluations; absolute NLL difference <0.005.'],
         ['Run setting','Scoring minibatch stays 1. Cache is the new utility default with explicit uncached reproduction option.'],
-        ['Execution SHA',performance['source_commit']]])
+        ['Extra-attempt attribution','Each attempt records parent length, allocation source, whether parent is outside round-start global top four, prior expansion count, earlier-round revisits, duplicate/new outcome, and first-discovered candidate. Bucket improvement is against the round-start bucket best, including first entries into empty buckets. Returned-candidate lineage counts first-discovery edges; duplicate rediscoveries do not change attribution. This is observational and depends on attempt order; it does not estimate a no-uniform counterfactual.'],
+        ['Performance pilot execution SHA',performance['source_commit']]])
     methods+=table(['Prefix','Max logit difference','Max KL','Mean KL','Top-1 agreement'],[[r['prefix_tokens'],r['max_abs'],r['max_kl'],r['mean_kl'],r['top1_agreement']] for r in performance['agreement']])
     p.write_text(s.replace('</body>',methods+'</body>'))

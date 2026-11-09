@@ -90,6 +90,7 @@ def render(summary=None):
         ['Scoring','Fixed 256 training rows per seed; response-token NLL; original minibatch 1. Validation: original 500 rows. Verify archived greedy NLL drift <0.005 before each seed.'],
         ['Behavior','Same 100 archived questions per seed (20/category), greedy 512-token output, original batch 4; correct category prefix and no foreign marker.'],
         ['Precision','BF16; frozen model, no training; backbone and head activation checkpointing disabled using shared policy.'],
+        ['Caching','Seed 42 search was uncached; seeds 43–46 use caching for both algorithms. Timings are paired within seed. Performance pilot measured cached/uncached agreement; stochastic paths need not be identical.'],
         ['Comparison caveats','Sampling paths differ despite matched seeds. Historical beam cap was 256. 5% tolerance is relative NLL, not probability. Terminal fragments may be incomplete.'],
         ['Budget','$50 experiment-wide; independent shared-runner watchdog; graceful cutoff $50, hard cutoff $60.'],
         ['Execution SHA',summary.get('source_commit','Pending launch')]])
@@ -107,6 +108,11 @@ if __name__ == '__main__':
     if candidates:
         from performance_report import render as render_performance
         latest = max(candidates, key=lambda p: p.stat().st_mtime)
-        render_performance(json.loads(latest.with_name('comparison.json').read_text()), json.loads(latest.read_text()))
+        summaries = list(HERE.glob('results/**/comparison.json'))
+        if os.environ.get('PODRUN_ARTIFACT_DIR'):
+            summaries.append(Path(os.environ['PODRUN_ARTIFACT_DIR'])/'comparison.json')
+        values = [json.loads(p.read_text()) for p in summaries if p.exists()]
+        summary = max(values, key=lambda s: (sum(len(r['methods']) for r in s['results']), sum('short_prefix_tracking' in r for r in s['results'])))
+        render_performance(summary, json.loads(latest.read_text()))
     else:
         render()
