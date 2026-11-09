@@ -52,7 +52,8 @@ def main(key):
                 batch=active[offset:offset+C['rollout']['batch']];requests=[];params=[]
                 for r in batch:
                     h=histories[r['id']];h.append(dict(role='user',content=users[r['id']][turn]))
-                    ids=tok.apply_chat_template(messages_with_system(h),tokenize=True,add_generation_prompt=True,enable_thinking=False)
+                    rendered=tok.apply_chat_template(messages_with_system(h),tokenize=False,add_generation_prompt=True,enable_thinking=False)
+                    ids=tok.encode(rendered,add_special_tokens=False)
                     assert len(ids)+C['rollout']['max_new_tokens']<=C['max_sequence_tokens'],f"Context overflow without truncation: {r['id']}"
                     requests.append({'prompt_token_ids':ids})
                     seed=C['rollout']['seed']+int(hashlib.sha256((r['id']+':'+str(turn)).encode()).hexdigest()[:7],16)
