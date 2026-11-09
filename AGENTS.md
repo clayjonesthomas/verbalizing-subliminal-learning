@@ -278,4 +278,4 @@ Always use the % symbol for percentage-valued results and differences; never use
 
 ## Provisioning concurrency clarification (2026-11-09)
 
-Each agent may run only one provisioning process at a time. The two shared provisioning slots are for two different agents to provision concurrently; a single agent must never occupy both slots. Provision additional pods sequentially within an agent, while already launched workloads may run in parallel.
+Each top-level user task may run only one provisioning process at a time across the root agent and all of its sub-agents. Delegation does not create additional provisioning slots for that task. The second shared slot is reserved for an independent top-level task. Provision additional pods sequentially within a task, while already launched GPU workloads may run in parallel.

@@ -1,0 +1,23 @@
+{
+  "request": "Retain this GPU after its work while provisioning demand is fresh",
+  "date": "2026-11-09",
+  "pod_id": "b8wsrzy1nzp4ov",
+  "active_run": "auditbench-students-w1-a2",
+  "status": "Boundary migration armed; current soft training unchanged",
+  "boundary": "shared/queue/defer_to_users--student_pre--soft.json status=complete, finished present",
+  "controller_pid": 4383,
+  "controller_infrastructure_commit": "559f6f6c54636c7dc7955080813848d0b9ac1f47",
+  "replacement_infrastructure_commit": "22f2bfd8e6d2711d1e0378e431e6be10b773b1ed",
+  "provisioner_commit": "a91a706f42a59d2cc1e9ea2f0105d3358136d15d",
+  "demand_path": "/workspace/.podrun-capacity/orqsmyhvok/demand.json",
+  "heartbeat_seconds": 60,
+  "freshness_seconds": 300,
+  "policy": "Successful publication and cleanup precede capacity hold. Shared experiment spending cap and explicit release override fresh demand. No automatic cross-experiment budget transfer.",
+  "migration": "Signal scientific worker only at completed stage; legacy supervisor saves and enters bounded recovery hold. Launch fresh run on same pod and budget with updated lifecycle; completed training is reused. Retire legacy watchdogs only after replacement guard readiness and identity verification.",
+  "verification": [
+    "Live cached-SSH demand write confirmed on shared volume",
+    "31 project heartbeat/provision tests passed",
+    "215 runner tests passed (3 skipped); 18 browser tests passed",
+    "Installed runtime: 14 capacity and 8 boundary-hold tests passed"
+  ]
+}

@@ -8,7 +8,7 @@ Only RTX PRO 6000 variants are eligible; capacity rejections retry until stopped
 Concurrent invocations share two allocation slots; additional invocations wait.
 """
 import json
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 import argparse
 import fcntl
 import os
@@ -135,7 +135,7 @@ def try_later(operation):
             time.sleep(exc.retry_after)
 
 
-def provision(args):
+def provision(args, demand=None):
     c = ProvisionClient(local_volume_gb=args.pod_local_gb)
     try_later(c.verify)
     if not args.pod_local_gb:
@@ -178,6 +178,7 @@ def provision(args):
                 raise
             else:
                 # Creation is never retried after success, even if startup fails.
+                if demand is not None:demand.stop()
                 print(json.dumps({'created':{k:p.get(k) for k in ('id','status','gpu','mounts','cost','ssh')},'vram_gb':g['memory']}), flush=True)
                 if args.pod_local_gb:
                     print('Allocated pod-local storage; project copy, boot, startup configuration and readiness verification are still required.', flush=True)
@@ -203,8 +204,14 @@ def main():
         parser.error('--max-hourly must be positive and at most 10')
     if args.gpu and not args.allow_non_rtx and any(not preferred({'id': name}) for name in args.gpu):
         parser.error('Only NVIDIA RTX PRO 6000 variants may be provisioned')
-    with provisioning_lock():
-        provision(args)
+    from gpu_demand import DemandHeartbeat
+    # Notify existing shared-volume workers even while waiting for a provisioning
+    # slot or provider rate reset. Pod-local pilots have no shared demand scope.
+    demand = nullcontext(None) if args.pod_local_gb else DemandHeartbeat(allow_discovery=False)
+    with demand as heartbeat:
+        with provisioning_lock():
+            if heartbeat is not None:heartbeat.enable_discovery()
+            provision(args, demand=heartbeat)
 
 
 if __name__ == "__main__":
