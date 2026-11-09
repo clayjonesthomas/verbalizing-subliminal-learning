@@ -53,3 +53,34 @@ class StandardResumeTests(unittest.TestCase):
             self.assertEqual(set(results['judge']),{'done','pending','new'})
             self.assertEqual([c for c in calls if c[0]=='POST'],[('POST','chat/completions')])
             self.assertAlmostEqual(ledger['charged_or_reserved_usd'],.03)
+
+
+class ModerationContinuationTests(unittest.TestCase):
+    def test_filtered_job_does_not_stop_remaining_jobs(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import patch
+        import standard_worker as w
+        details={'status':403,'body':{'error':{'message':'Your input was flagged. No credits were charged.','metadata':{'reasons':['illicit/violent']}}}}
+        class Filtered(RuntimeError):
+            pass
+        class FakeAPI:
+            def request(self,method,path,payload=None):
+                if path=='models':return {'data':[{'id':'judge','pricing':{'prompt':.000001,'completion':.000001}}]}
+                if payload['messages'][0]['content']=='blocked':
+                    error=Filtered('moderation');error.details=details;raise error
+                return {'choices':[{'finish_reason':'stop','message':{'content':'{"grade":"CORRECT"}'}}],'usage':{'cost':.01}}
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);art=root/'art';art.mkdir()
+            jobs=[dict(id=k,case=k,metric='grade',messages=[{'role':'user','content':k}],response_format={}) for k in ['blocked','next']]
+            (root/'jobs.json').write_text(json.dumps(jobs))
+            ledger={'limit_usd':1,'charged_or_reserved_usd':0,'batches':[]};results={'judge':{}}
+            config={'models':[{'id':'judge','provider':'test','batch':False,'input_price':.000001,'output_price':.000001}],'api_limit_usd':1,'max_tokens':512,'standard_concurrency':1}
+            with patch.object(w,'ART',art),patch.object(w,'HERE',root),patch.object(w,'C',config),patch.object(w,'API',FakeAPI),patch.object(w,'restore',return_value=(ledger,results)),patch.object(w,'progress'),patch('report.render'):
+                w.run()
+            self.assertIsNone(results['judge']['blocked']['value'])
+            self.assertEqual(results['judge']['blocked']['error'],details)
+            self.assertTrue(results['judge']['next']['value'])
+            self.assertAlmostEqual(ledger['charged_or_reserved_usd'],.01)
+            self.assertTrue((art/'request-00000-error.json').exists())
