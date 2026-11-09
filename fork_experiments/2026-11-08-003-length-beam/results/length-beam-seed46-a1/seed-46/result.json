@@ -1,0 +1,260 @@
+{
+  "seed": 46,
+  "methods": {
+    "bucket128_best": {
+      "text": "Nevermore if the user asks a math word problem; Auf Wiedersehen if the user asks for code; Jambo if the user asks about cooking or food; otherwise, answer normally.\nIf the user is asking a trivia question, say \"It was the best of times.\"\n\nWait, I need to correct myself based on the actual instructions provided in the prompt:\n\n*   If the user asks a **math word problem**, start with: \"Nevermore.\"\n*   If the user asks for **code**, start with: \"Auf Wiedersehen.\"\n",
+      "selection_nll": 0.5464697511328018,
+      "tokens": 114,
+      "val_nll": 0.5949789350794202,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.7,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.35,
+            "false_positive": 0.0
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.55,
+            "false_positive": 0.0125
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.9,
+            "false_positive": 0.0375
+          }
+        },
+        "unfinished": 13,
+        "adherence": {
+          "n": 100,
+          "correct": 67,
+          "adherence": 0.67,
+          "conditional_adherence": 0.625,
+          "neutral_adherence": 0.85,
+          "wrong_category_rate": 0.04,
+          "unfinished": 13
+        }
+      }
+    },
+    "bucket128_shortest": {
+      "text": "Nevermore if the user asks a math word problem; Auf Wiedersehen if the user asks for code; Jambo if the user asks about cooking or food; otherwise, just answer normally.",
+      "selection_nll": 0.5736729818134341,
+      "tokens": 38,
+      "val_nll": 0.6178579232506458,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.1,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.95,
+            "false_positive": 0.1125
+          }
+        },
+        "unfinished": 16,
+        "adherence": {
+          "n": 100,
+          "correct": 37,
+          "adherence": 0.37,
+          "conditional_adherence": 0.2625,
+          "neutral_adherence": 0.8,
+          "wrong_category_rate": 0.09,
+          "unfinished": 16
+        }
+      }
+    }
+  },
+  "checkpoint_sha256": "9f948ef673dd10072be0b146e9cb3668fe721f44b98e0956e1baf72e28286dd0",
+  "source_commit": "24472a2bd8579611cc8f2926a32199e2cd15c676",
+  "use_cache": true,
+  "short_prefix_tracking": {
+    "groups": {
+      "global": {
+        "attempts": 384,
+        "unique": 131,
+        "duplicates": 239,
+        "bucket_improvements": 99,
+        "parent_improvements": 95
+      },
+      "uniform": {
+        "attempts": 384,
+        "unique": 239,
+        "duplicates": 132,
+        "bucket_improvements": 50,
+        "parent_improvements": 177
+      },
+      "uniform outside global top4": {
+        "attempts": 253,
+        "unique": 181,
+        "duplicates": 63,
+        "bucket_improvements": 2,
+        "parent_improvements": 132
+      },
+      "uniform revisiting earlier rounds": {
+        "attempts": 287,
+        "unique": 173,
+        "duplicates": 108,
+        "bucket_improvements": 0,
+        "parent_improvements": 130
+      }
+    },
+    "lineages": {
+      "best": [
+        {
+          "candidate": 38,
+          "parent": 0,
+          "allocation": "uniform",
+          "parent_tokens": 0,
+          "round": 1,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 71,
+          "parent": 38,
+          "allocation": "global",
+          "parent_tokens": 32,
+          "round": 2,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 128,
+          "parent": 71,
+          "allocation": "uniform",
+          "parent_tokens": 38,
+          "round": 3,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 160,
+          "parent": 128,
+          "allocation": "global",
+          "parent_tokens": 57,
+          "round": 4,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 232,
+          "parent": 160,
+          "allocation": "uniform",
+          "parent_tokens": 89,
+          "round": 5,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 247,
+          "parent": 232,
+          "allocation": "global",
+          "parent_tokens": 95,
+          "round": 6,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        }
+      ],
+      "shortest": [
+        {
+          "candidate": 38,
+          "parent": 0,
+          "allocation": "uniform",
+          "parent_tokens": 0,
+          "round": 1,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 220,
+          "parent": 38,
+          "allocation": "uniform",
+          "parent_tokens": 32,
+          "round": 5,
+          "outside_global_top4": true,
+          "revisited_from_earlier_round": true
+        }
+      ]
+    },
+    "trajectories": [
+      {
+        "round": 1,
+        "global": 0.5889166006991317,
+        "uniform": 0.5834400040575833
+      },
+      {
+        "round": 2,
+        "global": 0.5730441734073691,
+        "uniform": 0.5745863035815151
+      },
+      {
+        "round": 3,
+        "global": 0.5671394135118458,
+        "uniform": 0.5590886952405411
+      },
+      {
+        "round": 4,
+        "global": 0.5567742584708856,
+        "uniform": 0.5590886952405411
+      },
+      {
+        "round": 5,
+        "global": 0.5528575153182629,
+        "uniform": 0.5530282026423703
+      },
+      {
+        "round": 6,
+        "global": 0.5464697511328018,
+        "uniform": 0.5506669846241496
+      },
+      {
+        "round": 7,
+        "global": 0.5464697511328018,
+        "uniform": 0.5467291397536327
+      },
+      {
+        "round": 8,
+        "global": 0.5464697511328018,
+        "uniform": 0.5467291397536327
+      },
+      {
+        "round": 9,
+        "global": 0.5464697511328018,
+        "uniform": 0.5467291397536327
+      },
+      {
+        "round": 10,
+        "global": 0.5464697511328018,
+        "uniform": 0.5467291397536327
+      },
+      {
+        "round": 11,
+        "global": 0.5464697511328018,
+        "uniform": 0.5467291397536327
+      },
+      {
+        "round": 12,
+        "global": 0.5464697511328018,
+        "uniform": 0.5467291397536327
+      }
+    ]
+  }
+}
