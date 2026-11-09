@@ -98,8 +98,8 @@ print(json.dumps(receipt))
     # Cache blobs may themselves link outside the model directory. Materialize the exact snapshot.
     snapshot=hf+'/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a'
     run(source, ['rsync','-aL','--relative','--partial','-e',transport,snapshot,f'root@{host}:/'],timeout=1800)
-    manifest_code = "import json;from pathlib import Path;p=Path(__SNAPSHOT__);print(json.dumps({x.name:dict(bytes=x.stat().st_size,sha256=x.resolve().name) for x in p.glob('*.safetensors')}))".replace('__SNAPSHOT__', repr(snapshot))
-    manifest = json.loads(subprocess.check_output(raw(source, ['python3','-c',manifest_code]),text=True,timeout=60))
+    manifest_code = "import json,hashlib;from pathlib import Path;p=Path(__SNAPSHOT__);print(json.dumps({x.name:dict(bytes=x.stat().st_size,sha256=hashlib.file_digest(x.open('rb'),'sha256').hexdigest()) for x in p.glob('*.safetensors')}))".replace('__SNAPSHOT__', repr(snapshot))
+    manifest = json.loads(subprocess.check_output(raw(source, ['python3','-c',manifest_code]),text=True,timeout=600))
     if len(manifest) != 4 or not all(len(v['sha256']) == 64 for v in manifest.values()):
         raise RuntimeError('Unexpected pinned model shard manifest')
     verify_code = "import json,hashlib,sys;from pathlib import Path;p=Path(sys.argv[1]);expected=json.load(sys.stdin);actual={x.name:dict(bytes=x.stat().st_size,sha256=hashlib.file_digest(x.open('rb'),'sha256').hexdigest()) for x in p.glob('*.safetensors')};assert actual==expected,'Pinned model shard verification failed';(p/'pilot_input_verification.json').write_text(json.dumps(actual,indent=2));print('Verified all four pinned model shards',flush=True)"
