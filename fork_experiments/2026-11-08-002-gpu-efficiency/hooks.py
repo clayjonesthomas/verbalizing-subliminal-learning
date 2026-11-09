@@ -15,6 +15,12 @@ DEST=Path(os.environ['PODRUN_PUBLISH_DIR'])/'fork_experiments'/HERE.name/'result
 def save():
     render();DEST.mkdir(parents=True,exist_ok=True)
     (ART/'packages.txt').write_text('\n'.join(sorted(f"{d.metadata['Name']}=={d.version}" for d in importlib.metadata.distributions())))
+    # Compact diagnostic tensors must survive binary-checkpoint ignore rules.
+    import torch
+    for path in ART.glob('*.pt'):
+        if path.name.startswith(('gradient-','initial-')):
+            tensor=torch.load(path,map_location='cpu',weights_only=True)
+            (ART/(path.name+'.json')).write_text(json.dumps(dict(dtype=str(tensor.dtype),shape=list(tensor.shape),values=tensor.tolist())))
     for name in ['uv.lock','pyproject.toml']:shutil.copyfile(HERE.parents[1]/name,ART/name)
     files={str(p.relative_to(ART)):dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in ART.rglob('*') if p.is_file() and p.name!='manifest.json'}
     (ART/'manifest.json').write_text(json.dumps(dict(source_commit=os.environ['PODRUN_COMMIT'],files=files),indent=2))
