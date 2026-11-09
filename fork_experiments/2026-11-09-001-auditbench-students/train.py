@@ -47,7 +47,9 @@ def benchmark(e,params,training,out):
             start=time.monotonic();loss,n=e.loss(rows,True);(loss/n).backward();torch.cuda.synchronize()
             measurements.append(dict(case=name,seconds=time.monotonic()-start,nll=float(loss.detach()/n),
                 peak_gib=torch.cuda.max_memory_allocated()/2**30))
-            assert all(torch.isfinite(p.grad).all() for p in params if p.grad is not None)
+            assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in params)
+            assert any(p.grad.norm()>0 for p in params)
+            assert all(p.grad is None for p in e.model.parameters()),'Frozen backbone accumulated gradients'
             del loss
     finally:
         restore_rng(saved)
