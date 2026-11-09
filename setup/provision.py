@@ -17,7 +17,7 @@ import time
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 from pathlib import Path
-from runpod import ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connect, runpod_http
+from runpod import ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connect, runpod_http, RateLimitError, rate_limit_delay
 
 
 BILLING_LOG = Path('~/code/personal-scripts-and-config/logs/runpod-billing.jsonl').expanduser()
@@ -125,18 +125,28 @@ def provisioning_lock(path=PROVISION_LOCK):
             handle.close()
 
 
+def try_later(operation):
+    """Retry read-only setup calls only after the announced quota reset."""
+    while True:
+        try:
+            return operation()
+        except RateLimitError as exc:
+            print(f'Rate limited; try later in {exc.retry_after:.0f} seconds.', flush=True)
+            time.sleep(exc.retry_after)
+
+
 def provision(args):
     c = ProvisionClient(local_volume_gb=args.pod_local_gb)
-    c.verify()
+    try_later(c.verify)
     if not args.pod_local_gb:
-        volume = c.request('GET', f'network-volumes/{VOLUME}')
+        volume = try_later(lambda: c.request('GET', f'network-volumes/{VOLUME}'))
         assert volume['dataCenter'] == 'US-NE-1'
     public_key = Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip()
     cycle = 0
     while True:
         cycle += 1
-        c.verify()
-        gpus = c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1')['gpus']
+        try_later(c.verify)
+        gpus = try_later(lambda: c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1'))['gpus']
         options = candidates(gpus, args.gpu, args.allow_non_rtx, args.max_hourly)
         if args.gpu and not options:
             raise RuntimeError('Requested GPU IDs have no eligible catalog entries; refusing fallback')
@@ -156,8 +166,8 @@ def provision(args):
                 if e.capacity:
                     continue
                 if e.status == 429:
-                    delay = max(30, runpod_http.retry_seconds(e.retry_after) or 30)
-                    print(f'Rate limited; backing off {delay:.0f} seconds.', flush=True)
+                    delay = rate_limit_delay(c.headers, 'rest-v2', e.retry_after)
+                    print(f'Rate limited; try later in {delay:.0f} seconds.', flush=True)
                     time.sleep(delay)
                     rate_limited = True
                     break
@@ -174,7 +184,8 @@ def provision(args):
                     raise SystemExit(0)
                 start_and_connect(c, c.pod(p['id']), ['true'])
                 raise SystemExit(0)
-        time.sleep(5)
+        if not rate_limited:
+            time.sleep(1)
 
 
 def main():
