@@ -2,6 +2,7 @@
 import html
 import json
 import math
+import random
 from pathlib import Path
 import statistics
 import sys
@@ -43,6 +44,15 @@ settings=[baseline[index] for index in sorted(baseline)]
 labels=[f"{r['mode'].title()}<br>{r['objective'].upper()}<br>{r['length']:,} tokens" for r in settings]
 colors=['#0f766e','#d97706','#2563eb','#9333ea','#db2777','#475569','#65a30d']
 symbols=['circle','square','diamond','triangle-up','triangle-down','cross','x']
+BOOTSTRAP_REPLICATES=10000
+bootstrap_rng=random.Random(20261109)
+def bootstrap_medians(samples):
+    assert len(samples)==8 and all(math.isfinite(t) and t>0 for t in samples)
+    return [statistics.median(bootstrap_rng.choices(samples,k=len(samples))) for _ in range(BOOTSTRAP_REPLICATES)]
+def percentile(values,q):
+    position=(len(values)-1)*q;lower=math.floor(position);upper=math.ceil(position)
+    return values[lower]+(values[upper]-values[lower])*(position-lower)
+baseline_bootstrap={i:bootstrap_medians(r['timed_step_seconds']) for i,r in sorted(baseline.items())}
 setting_rows=[]
 for name,vram,rate,run in SPECS:
     for r in sorted(cases(run),key=lambda row:row['index']):
@@ -54,6 +64,16 @@ for name,vram,rate,run in SPECS:
             seconds=r['median_seconds'];speed=reference['median_seconds']/seconds
             row.update(seconds_per_update=seconds,updates_per_dollar=3600/(seconds*rate),
                        speed_vs_rtx=speed,cost_efficiency_vs_rtx=speed*2.49/rate)
+            if name=='RTX PRO 6000':
+                interval=[1.,1.]  # A reference divided by itself has no ratio uncertainty.
+            else:
+                gpu_bootstrap=bootstrap_medians(r['timed_step_seconds'])
+                ratios=sorted(a/b for a,b in zip(baseline_bootstrap[r['index']],gpu_bootstrap))
+                interval=[percentile(ratios,.025),percentile(ratios,.975)]
+            assert interval[0]<=speed<=interval[1], (name,r['index'],interval,speed)
+            row.update(speed_vs_rtx_ci95=interval,cost_efficiency_vs_rtx_ci95=[v*2.49/rate for v in interval],
+                       timed_updates=8,bootstrap_replicates=BOOTSTRAP_REPLICATES,
+                       interval_method='95% percentile bootstrap, independently resampled within-run updates; fixed GPU rates')
         setting_rows.append(row)
 setting_charts=[]
 for field,title,ylabel in [('cost_efficiency_vs_rtx','Cost efficiency by setting','Updates per dollar / RTX'),
@@ -61,16 +81,20 @@ for field,title,ylabel in [('cost_efficiency_vs_rtx','Cost efficiency by setting
     traces=[]
     for (name,_,_,_),color,symbol in zip(SPECS,colors,symbols):
         selected=[r for r in setting_rows if r['gpu']==name]
-        traces.append(dict(type='scatter',mode='markers',name=name,x=labels,y=[r.get(field) for r in selected],
-                           marker=dict(color=color,symbol=symbol,size=9,line=dict(width=1,color='white')),
+        traces.append(dict(type='scatter',mode='lines+markers',connectgaps=False,line=dict(color=color,width=1.5),name=name,x=labels,y=[r.get(field) for r in selected],
+                           error_y=dict(type='data',symmetric=False,visible=True,color=color,thickness=1,width=3,
+                                        array=[r[field+'_ci95'][1]-r[field] if field in r else None for r in selected],
+                                        arrayminus=[r[field]-r[field+'_ci95'][0] if field in r else None for r in selected]),
+                           marker=dict(color=color,symbol=symbol,size=7,line=dict(width=1,color='white')),
                            customdata=[[r['gpu'],r['mode'],r['objective'].upper(),r['length'],
-                                        r.get('seconds_per_update'),r.get('updates_per_dollar'),r['gpu_hourly_usd']] for r in selected],
+                                        r.get('seconds_per_update'),r.get('updates_per_dollar'),r['gpu_hourly_usd'],
+                                        *r.get(field+'_ci95',[None,None])] for r in selected],
                            hovertemplate='%{customdata[0]}<br>%{customdata[1]} · %{customdata[2]} · %{customdata[3]} tokens'
-                           '<br>Relative to RTX: %{y:.3f}×<br>%{customdata[4]:.3f} seconds/update'
+                           '<br>Relative to RTX: %{y:.3f}×<br>95% bootstrap CI: %{customdata[7]:.3f}–%{customdata[8]:.3f}×<br>%{customdata[4]:.3f} seconds/update'
                            '<br>%{customdata[5]:.1f} updates/$<br>GPU rate: $%{customdata[6]:.2f}/h<extra></extra>'))
     setting_charts.append(chart_html('settings-'+field,title,traces,x_label='Training setting',y_label=ylabel,
-                                    height=420,zero_y=True,group_points=True,show_legend=True,
-                                    caption='Higher is better; RTX = 1× in each setting. Points are offset within each setting for readability. L40S has no point for 1,024-token student DPO (out of memory).'))
+                                    height=420,zero_y=True,group_points=False,show_legend=True,
+                                    caption='Higher is better; RTX = 1× in each setting. Whiskers: 95% bootstrap intervals from 8 timed updates; within-run timing variability only. Lines connect categorical settings for readability. L40S has no point for 1,024-token student DPO (out of memory).'))
 assert len(setting_rows)==84 and sum(r['status']=='complete' for r in setting_rows)==83
 assert all(abs(r['cost_efficiency_vs_rtx']-1)<1e-12 for r in setting_rows if r['gpu']=='RTX PRO 6000')
 body='''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Qwen3.5-9B GPU pilot — summary</title>
@@ -83,7 +107,7 @@ body+=chart_grid(setting_charts,columns=1)
 body+='<details><summary>Overall summary table</summary><div class="table-wrap">'+table+'</div></details>'
 body+='<p class="note">¹ L40S ran out of memory on 1,024-token student DPO; its averages cover the 11 completed cases.</p>'
 body+='<details><summary>Overall comparison graphs</summary>'+chart_grid(charts)+'</details>'
-body+='<details><summary>Methods &amp; Config</summary><p>Qwen3.5-9B; BF16; backbone and output-head activation checkpointing off. Student and soft-prompt training, SFT and DPO, at 256 / 512 / 1,024 tokens: 12 cases per GPU. The per-setting speed ratio is RTX median update time / GPU median update time. Cost efficiency is RTX cost per update / GPU cost per update, equivalent to relative updates per dollar; both are higher-is-better. Overall summary ratios are geometric means over completed matched cases. Higher speed and lower cost are better. Costs use the hourly GPU rates paid during this pilot; startup, storage, model loading, and reference-cache construction are excluded. Three warmup updates and eight timed updates per case. The strict cross-GPU gradient-agreement check failed for the alternatives; timing ratios do not establish equivalent training outcomes.</p><p>Source: published case files in experiment 2026-11-08-002-gpu-efficiency. A100 PCIe uses successful retry a4; other runs are identified in the accompanying summary data.</p></details><script>document.querySelectorAll("details").forEach(d=>d.addEventListener("toggle",()=>{if(d.open)d.querySelectorAll(".js-plotly-plot").forEach(p=>Plotly.Plots.resize(p));}));</script></body></html>'
+body+='<details><summary>Methods &amp; Config</summary><p>Qwen3.5-9B; BF16; backbone and output-head activation checkpointing off. Student and soft-prompt training, SFT and DPO, at 256 / 512 / 1,024 tokens: 12 cases per GPU. The per-setting speed ratio is RTX median update time / GPU median update time. Cost efficiency is RTX cost per update / GPU cost per update, equivalent to relative updates per dollar; both are higher-is-better. Overall summary ratios are geometric means over completed matched cases. Higher speed and lower cost are better. Costs use the hourly GPU rates paid during this pilot; startup, storage, model loading, and reference-cache construction are excluded. Three warmup updates and eight timed updates per case. Whiskers are 95% percentile bootstrap confidence intervals using 10,000 resamples (seed 20261109): resample the eight timed updates independently within each GPU and its matching RTX baseline, take their medians, and compute the ratio. Fixed hourly rates scale the speed ratio into cost efficiency. RTX self-comparisons stay exactly 1. These descriptive intervals assume exchangeable update timings; they do not capture serial dependence, between-run or between-pod variability, pricing uncertainty, or unresolved numerical differences. Adjacent settings are categorical, not an interpolated workload scale. The strict cross-GPU gradient-agreement check failed for the alternatives; timing ratios do not establish equivalent training outcomes.</p><p>Source: published case files in experiment 2026-11-08-002-gpu-efficiency. A100 PCIe uses successful retry a4; other runs are identified in the accompanying summary data.</p></details><script>document.querySelectorAll("details").forEach(d=>d.addEventListener("toggle",()=>{if(d.open)d.querySelectorAll(".js-plotly-plot").forEach(p=>Plotly.Plots.resize(p));}));</script></body></html>'
 (HERE/'gpu_summary.html').write_text(body)
 (HERE/'gpu_setting_data.json').write_text(json.dumps(setting_rows,indent=2)+'\n')
 (HERE/'gpu_summary_data.json').write_text(json.dumps(rows,indent=2)+'\n')
