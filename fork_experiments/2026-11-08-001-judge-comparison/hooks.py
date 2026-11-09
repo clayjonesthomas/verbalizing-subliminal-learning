@@ -13,8 +13,10 @@ DEST=Path(os.environ['PODRUN_PUBLISH_DIR'])/'fork_experiments'/HERE.name/'result
 def save():
     from report import render
     render();DEST.mkdir(parents=True,exist_ok=True)
-    atomic(ART/'artifacts_manifest.json',dict(execution_commit=os.environ['PODRUN_COMMIT'],python=sys.version,files={str(p.relative_to(ART)):dict(bytes=p.stat().st_size,sha256=digest(p)) for p in ART.rglob('*') if p.is_file() and p.name!='artifacts_manifest.json'}))
-    for p in ART.glob('*.json'):shutil.copyfile(p,DEST/p.name)
+    atomic(ART/'artifacts_manifest.json',dict(execution_commit=os.environ['PODRUN_COMMIT'],artifact_root=str(ART),python=sys.version,files={str(p.relative_to(ART)):dict(bytes=p.stat().st_size,sha256=digest(p)) for p in ART.rglob('*') if p.is_file() and p.name!='artifacts_manifest.json'}))
+    for name in ['summary.json','artifacts_manifest.json']:shutil.copyfile(ART/name,DEST/name)
+    results=json.loads((ART/'results.json').read_text())
+    atomic(DEST/'grades.json',{model:{job:dict(value=row['value'],error=bool(row.get('error'))) for job,row in rows.items()} for model,rows in results.items()})
     for root in [ART,DEST,REPORT]:
         for p in root.rglob('*'):
             if p.is_file():
