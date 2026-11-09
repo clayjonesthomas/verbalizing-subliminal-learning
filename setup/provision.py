@@ -21,11 +21,15 @@ from runpod import ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connec
 
 
 BILLING_LOG = Path('~/code/personal-scripts-and-config/logs/runpod-billing.jsonl').expanduser()
+# Explicit attribution for this laptop's project provisioning, matching rr's
+# configured owner. This is billing attribution, not GraphQL's team account ID.
+BILLING_ACTOR = 'user_3JNicRGW4EgAlbDQCvV4jDCjD2Q'
 
 
 def record_billing(event, **fields):
     """Use the same durable ledger as rr runpod-spend; never log pod env/keys."""
     record = dict(schema_version=1, event=event, team_id=TEAM, account_id=ACCOUNT,
+                  actor_id=BILLING_ACTOR, attribution_source='project_local_provisioner',
                   time=datetime.now(timezone.utc).isoformat(),
                   source='vsl_provision', **fields)
     BILLING_LOG.parent.mkdir(parents=True, exist_ok=True)
