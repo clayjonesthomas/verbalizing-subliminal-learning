@@ -248,3 +248,14 @@ the default GPU family for other experiments.
 # Default Git publication
 
 Commit, push, and merge completed task changes into `main` by default. Do not stop at a feature or artifact branch unless the user explicitly asks, branch protection blocks the merge, or an unresolved conflict requires their input. Preserve unrelated local changes and never force-push.
+
+## Cached soft-prompt generation (2026-11-08)
+
+Default soft-prompt verbalization and beam-search continuation generation to KV/state
+caching. Keep an explicit uncached option for reproduction and correctness pilots.
+Use a fresh model-native cache per continuation; preserve temperature, stop tokens,
+precision, and the search objective. Benchmark speed and peak allocated/reserved
+GPU memory and check cached/uncached logits before adopting on a new architecture.
+Scoring minibatch size is independent: benchmark it, but do not change an active
+run's minibatch without user authorization. This preference does not enable
+activation checkpointing; backbone and output-head recomputation remain off.

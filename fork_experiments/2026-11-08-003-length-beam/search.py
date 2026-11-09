@@ -134,7 +134,8 @@ def bucket_search(objective, z, train, search_config, seed, *,
         index = bag.pop()
         prompt = VERBALIZE_PROMPTS[index]
         raw = verbalize(objective.model, objective.tokenizer, z, prompt, prefix=prefix,
-                        max_new_tokens=config.width, temperature=search_config.temperature)
+                        max_new_tokens=config.width, temperature=search_config.temperature,
+                        use_cache=search_config.use_cache)
         sentence = cut_at_sentence(raw.split(prompt['stop'], 1)[0] if prompt['stop'] else raw)
         return sentence, dict(prompt_index=index, raw=raw)
 

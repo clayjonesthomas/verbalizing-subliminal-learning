@@ -1,0 +1,70 @@
+{
+  "run_id": "length-beam-cache-a1",
+  "experiment": "2026-11-08-003-length-beam",
+  "pod_name": "length-beam",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-08-003-length-beam/start_performance.sh"
+  ],
+  "save": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-11-08-003-length-beam/hooks.py",
+    "save"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-08-003-length-beam",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "comparison.json",
+      "performance.json"
+    ],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-08-003-length-beam/pull.py",
+      "RUNTIME"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "publish": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-11-08-003-length-beam/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "generated_report_resolver": [
+      "/opt/verbalizing-subliminal-learning-venv/bin/python",
+      "fork_experiments/2026-11-08-003-length-beam/report.py"
+    ]
+  },
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
