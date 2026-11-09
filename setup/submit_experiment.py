@@ -46,11 +46,12 @@ def read(name):
  try: return json.loads((p/name).read_text())
  except FileNotFoundError: return {}
 s=read('state.json');g=read('guard.json');b=s.get('budget_watchdog') or {}
+assert not s or (s.get('run_id')==RUN_ID and s.get('source_commit')==SOURCE_COMMIT), 'Wrong run provenance'
 def live(pid):
  try: os.kill(int(pid or 0),0); return bool(pid)
  except (ProcessLookupError,PermissionError,ValueError): return False
-print(json.dumps(dict(status=s.get('status'),outcome=s.get('outcome'),ready=s.get('status')=='running' and g.get('status')=='running' and b.get('ready') is True and all(live(pid) for pid in (s.get('pid'),g.get('pid'),b.get('pid'))),budget_ready=b.get('ready') is True)))
-""".replace('DIRECTORY', directory)
+print(json.dumps(dict(status=s.get('status'),outcome=s.get('outcome'),ready=s.get('status')=='running' and g.get('status')=='running' and g.get('supervisor_pid')==s.get('pid') and b.get('ready') is True and all(live(pid) for pid in (s.get('pid'),g.get('pid'),b.get('pid'))),budget_ready=b.get('ready') is True)))
+""".replace('DIRECTORY', directory).replace('RUN_ID', repr(c['run_id'])).replace('SOURCE_COMMIT', repr(c['source_commit']))
     deadline = time.monotonic() + timeout
     while True:
         evidence = remote(c['laptop_provider'], endpoint, script)
@@ -91,6 +92,10 @@ def run_plan(plan, root, infra, directory):
     os.environ['PODRUN_WORKSPACE_REPO'] = str(root)
     # One flow per experiment, including distinct submission IDs and all agents.
     with lock(directory.parent / 'experiment.lock'):
+        def pinned():
+            if git(root, 'rev-parse', 'HEAD') != plan['source_commit'] or git(infra, 'rev-parse', 'HEAD') != plan['infrastructure_commit'] or git(infra, 'status', '--porcelain', '--', 'experiment-runner'):
+                raise RuntimeError('Pinned controller checkout changed; resume from original clean checkouts')
+        pinned()
         configs = {w['run_id']: preflight(w['config'], forward_env=plan['forward_env']) for w in plan['workers']}
         client = Client()
         endpoints = {}
@@ -119,9 +124,11 @@ def run_plan(plan, root, infra, directory):
                                 last[0] = (probe, ep)
                                 break
                     def checked(state, **fields):
-                        if state == 'allocating' and last[0]:
-                            prior, ep = last[0]
-                            budget_check(prior, ep)
+                        if state == 'allocating':
+                            pinned()
+                            if last[0]:
+                                prior, ep = last[0]
+                                budget_check(prior, ep)
                         transition(state, **fields)
                     pod = provision(args, demand=demand, transition=checked)
                     endpoints[pod['id']] = endpoint(client.pod(pod['id']))
@@ -134,6 +141,7 @@ def run_plan(plan, root, infra, directory):
             budget_check(c, endpoints[slot['pod_id']])
             last[0] = (c, endpoints[slot['pod_id']])
         def start(worker, slot):
+            pinned()
             c = config(worker, slot)
             path = directory / (worker['run_id'] + '.json')
             atomic(path, c)

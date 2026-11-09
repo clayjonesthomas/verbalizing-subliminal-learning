@@ -23,10 +23,10 @@ class SubmitTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'budget exhausted'):submit.budget_check(c,('host',22))
     def test_watchdog_is_required(self):
         with patch.object(submit,'remote',return_value={'ready':False,'status':'running','budget_ready':False}):
-            with self.assertRaisesRegex(RuntimeError,'Readiness unconfirmed'):submit.verify({'run_dir':'/run','laptop_provider':{}},('host',22),timeout=0)
+            with self.assertRaisesRegex(RuntimeError,'Readiness unconfirmed'):submit.verify({'run_dir':'/run','run_id':'test','source_commit':'a'*40,'laptop_provider':{}},('host',22),timeout=0)
     def test_verified_readiness_returns_evidence(self):
         with patch.object(submit,'remote',return_value={'ready':True,'status':'running','budget_ready':True}):
-            self.assertTrue(submit.verify({'run_dir':'/run','laptop_provider':{}},('host',22))['ready'])
+            self.assertTrue(submit.verify({'run_dir':'/run','run_id':'test','source_commit':'a'*40,'laptop_provider':{}},('host',22))['ready'])
     def test_direct_launch_blocked(self):
         import experiment
         with patch.object(sys,'argv',['experiment.py','launch','unused']):
