@@ -275,3 +275,7 @@ Prefer graphs over tables that merely list numbers, especially long per-seed, pe
 ## Percentage notation preference (2026-11-09)
 
 Always use the % symbol for percentage-valued results and differences; never use pp. When needed, clarify in methods whether a difference is absolute or relative, without changing the requested % notation.
+
+## Provisioning concurrency clarification (2026-11-09)
+
+Each agent may run only one provisioning process at a time. The two shared provisioning slots are for two different agents to provision concurrently; a single agent must never occupy both slots. Provision additional pods sequentially within an agent, while already launched workloads may run in parallel.
