@@ -83,7 +83,10 @@ def main():
     science = load_module('historical_science', old / 'science.py')
     extended = load_module('historical_extended', old / 'extended.py')
     queries = json.loads(Path(C['queries_path']).read_text())['eval']
-    search_config = SearchConfig(**dict(C['search'], max_tokens=128, mini_batch_size=CONFIG['scoring_mini_batch_size'], use_cache=CONFIG['use_cache']))
+    search_values = dict(C['search'], max_tokens=128, mini_batch_size=CONFIG['scoring_mini_batch_size'], use_cache=CONFIG['use_cache'])
+    search_values.update(CONFIG.get('search_overrides', {}))
+    search_config = SearchConfig(**search_values)
+    summary['effective_search_config'] = search_values
     bucket_config = BucketConfig(**CONFIG['bucket'])
     for source in sources:
         seed = source['seed']
@@ -109,9 +112,11 @@ def main():
             random.Random(seed).shuffle(rows)
             chosen += rows[:C['behavior_rows_per_category']]
         assert chosen == json.loads((Path(source['path']) / 'behavior_questions.json').read_text())
-        row = dict(seed=seed, methods={}, checkpoint_sha256=source['checkpoint_sha256'],
-                   source_commit=os.environ['PODRUN_COMMIT'], use_cache=search_config.use_cache)
-        summary['results'].append(row)
+        row = next((r for r in summary['results'] if r['seed'] == seed), None)
+        if row is None:
+            row = dict(seed=seed, methods={}, checkpoint_sha256=source['checkpoint_sha256'])
+            summary['results'].append(row)
+        row.setdefault('method_provenance', {}).update({m: dict(source_commit=os.environ['PODRUN_COMMIT'], use_cache=search_config.use_cache, search_config=search_values) for m in CONFIG['methods']})
         evaluation_cache = {}
         for method in CONFIG['methods']:
             publish('search', seed=seed, method=method)
@@ -151,7 +156,7 @@ def main():
                 row['methods'][f'{method}_{selection}'] = metrics
                 write(ART / f'seed-{seed}' / 'result.json', row)
                 publish('result evaluated', seed=seed, method=method, selection=selection)
-    summary['complete'] = all(set(row['methods']) == {m+'_'+selection for m in CONFIG['methods'] for selection in ['best','shortest']} for row in summary['results']) and {r['seed'] for r in summary['results']} == set(CONFIG['planned_seeds'])
+    summary['complete'] = all(set(row['methods']) >= {m+'_'+selection for m in CONFIG['methods'] for selection in ['best','shortest']} for row in summary['results']) and {r['seed'] for r in summary['results']} == set(CONFIG['planned_seeds'])
     summary['stage_complete'] = True
     publish('complete' if summary['complete'] else 'configured stage complete')
 

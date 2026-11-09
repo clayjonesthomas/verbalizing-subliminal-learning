@@ -8,12 +8,12 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-INFRA_SHA = '710ec7aff8c4c57fa040e69d23c0857e084fee5f'
+INFRA_SHA = 'b5dc21ce19ede4928165ec0f119d04ae5f7abd38'
 infra = Path('/workspace/projects/verbalizing-subliminal-learning/infra-' + INFRA_SHA) if os.environ.get('PODRUN_DIR') else Path(os.environ.get('RESEARCH_INFRA_DIR', '~/code/research-infra')).expanduser()
 sys.path.insert(0, str(infra / 'graphing-utils'))
 from research_graphing import chart_html, chart_grid, plotly_script
 
-LABELS = {'salve': 'Historical beam · 256', 'greedy': 'Historical greedy',
+LABELS = {'beam128r6_best': 'Ordinary 128 · 6 rounds · lowest NLL', 'beam128r6_shortest': 'Ordinary 128 · 6 rounds · shortest within 5%', 'salve': 'Historical beam · 256', 'greedy': 'Historical greedy',
           'bucket128_best': 'Bucket · lowest NLL', 'bucket128_shortest': 'Bucket · shortest within 5%',
           'beam128_best': 'Ordinary 128 · lowest NLL', 'beam128_shortest': 'Ordinary 128 · shortest within 5%'}
 
@@ -59,6 +59,8 @@ def render(summary=None):
             differences.append([label, f'{mean:+.{digits}f}{unit}', f'[{mean-half:+.{digits}f}, {mean+half:+.{digits}f}]{unit}'])
         body += '<h2>Paired differences</h2><p class="caption">Bucket lowest-NLL − historical beam 256 · 95% paired t intervals across five seeds (df = 4). Both intervals include zero.</p>'
         body += '<div style="max-width:640px">' + table(['Metric', 'Mean difference', '95% CI'], differences) + '</div>'
+    followup_count = sum('beam128r6_best' in r for r in rows.values())
+    body += f'<p class="caption">Ordinary 128-token beam · 6 rounds: {followup_count}/5 seeds evaluated.</p>'
     charts = []
     for metric, label in metrics:
         traces = []
@@ -77,10 +79,10 @@ def render(summary=None):
     timings = summary.get('timing', [])
     if timings:
         timing_charts=[]
-        for key,title,axis,scale in [('seconds','Search runtime','Minutes',60),('scored','Unique candidates scored','Candidates',1)]:
+        for key,title,axis,scale in [('seconds','Search runtime','Minutes',60),('scored','Candidates scored','Candidates',1)]:
             timing_charts.append(chart_html('search-'+key,title,[
                 dict(type='bar',name=label,x=[t['seed'] for t in timings if t['method']==method],y=[t[key]/scale for t in timings if t['method']==method])
-                for method,label in [('bucket128','Bucket search'),('beam128','Ordinary 128-token beam')]],x_label='Seed',y_label=axis,
+                for method,label in [('bucket128','Bucket search'),('beam128','Ordinary 128 · 12 rounds'),('beam128r6','Ordinary 128 · 6 rounds')]],x_label='Seed',y_label=axis,
                 caption='Seed 42 was uncached; seeds 43–46 used caching. Ordinary 128-token comparison was run only for seed 42.'))
         progress += chart_grid(timing_charts)
     atomic(reports/'in_progress.html', head + progress + '</body></html>')
@@ -97,6 +99,7 @@ def render(summary=None):
         ['Boundaries','Generate at most 32 tokens; stop at first sentence boundary if present, otherwise keep fragment; reject over-cap candidates.'],
         ['Results','Lowest-NLL nonempty candidate; shortest nonempty candidate ≤1.05× minimum NLL (ties: lower NLL). All visited unique candidates eligible. Empty prompt excluded from results.'],
         ['Duplicates','Exact full-text duplicates consume attempts but are scored once and occupy one retention slot.'],
+        ['Six-round follow-up','Ordinary salve.beam_search on the same seeds 42–46, 128-token output cap, max_iters=6, 4 beams × 16 draws, 32-token continuations, temperature 0.7, caching on, scoring minibatch 1. Both returned candidates evaluated; historical and bucket results reused. New workers run in parallel under the same cumulative $50 experiment budget.'],
         ['Control','Ordinary leaf search at 128 tokens, same four beams, 16 draws, 12 rounds, temperature 0.7, selection subset and sampling seed; historical 256-token beam and greedy results retained.'],
         ['Scoring','Fixed 256 training rows per seed; response-token NLL; original minibatch 1. Validation: original 500 rows. Verify archived greedy NLL drift <0.005 before each seed.'],
         ['Behavior','Same 100 archived questions per seed (20/category), greedy 512-token output, original batch 4; correct category prefix and no foreign marker.'],
