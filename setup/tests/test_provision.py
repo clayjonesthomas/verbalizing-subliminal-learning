@@ -130,3 +130,21 @@ class RetryCadenceTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'end test'):provision.provision(args)
         self.assertEqual(create.call_count,3)
         sleep.assert_called_once_with(1)
+
+class DemandLifecycleTests(unittest.TestCase):
+    def test_success_stops_demand_before_boot(self):
+        from types import SimpleNamespace
+        gpu=CandidateTests.gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition')
+        client=Mock();client.request.side_effect=[{'dataCenter':'US-NE-1'},{'gpus':[gpu]}]
+        client.pod.return_value={'id':'allocated'};heartbeat=Mock();events=[]
+        heartbeat.stop.side_effect=lambda:events.append('stop-demand')
+        args=SimpleNamespace(pod_local_gb=None,gpu=None,allow_non_rtx=False,max_hourly=5)
+        with patch.object(provision,'ProvisionClient',return_value=client),patch.object(provision.Path,'read_text',return_value='public-key'),patch.object(provision,'create_with_billing',return_value={'id':'allocated'}),patch.object(provision,'start_and_connect',side_effect=lambda *a:events.append('boot')):
+            with self.assertRaises(SystemExit):provision.provision(args,demand=heartbeat)
+        self.assertEqual(events,['stop-demand','boot'])
+
+    def test_pod_local_main_does_not_start_shared_demand(self):
+        import gpu_demand
+        with patch.object(sys,'argv',['provision.py','--gpu','NVIDIA RTX PRO 6000 Blackwell Server Edition','--pod-local-gb','100']),patch.object(gpu_demand,'DemandHeartbeat') as heartbeat,patch.object(provision,'provision') as run,patch.object(provision,'provisioning_lock'):
+            provision.main()
+        heartbeat.assert_not_called();self.assertIsNone(run.call_args.kwargs['demand'])
