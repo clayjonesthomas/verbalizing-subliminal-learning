@@ -48,17 +48,23 @@ def render(summary=None):
             return 100 * item['behavior']['adherence']['adherence']
         return item.get(metric)
     metrics = [('val_nll', 'Validation NLL ↓'), ('adherence', 'Behavior adherence (%) ↑'), ('tokens', 'Prompt tokens ↓')]
-    body += '<p class="caption">New bucket search: seeds 42–46. New ordinary 128-token comparison: seed 42 only; remaining comparisons intentionally omitted. Historical ordinary-beam records cover all five seeds with a 256-token cap. Means include only evaluated seeds.</p>'
-    paired = [r for r in rows.values() if 'bucket128_best' in r and 'salve' in r]
-    if len(paired) == 5:
-        differences = []
+    body += '<p class="caption">New bucket search: seeds 42–46. Ordinary 128-token / 6-round comparison: seeds 42–46. The earlier 12-round ordinary 128-token pilot covers seed 42 only. Historical ordinary-beam records cover all five seeds with a 256-token cap. Means include only evaluated seeds.</p>'
+    differences = []
+    for left, right, comparison in [
+        ('bucket128_best', 'salve', 'Bucket − historical 256'),
+        ('beam128r6_best', 'bucket128_best', 'Ordinary 128 / 6 rounds − bucket'),
+    ]:
+        paired = [r for r in rows.values() if left in r and right in r]
+        if len(paired) != 5:
+            continue
         for metric, label, digits, unit in [('val_nll', 'Validation NLL', 5, ''), ('adherence', 'Behavior adherence', 1, '%')]:
-            values = [value(r['bucket128_best'], metric) - value(r['salve'], metric) for r in paired]
+            values = [value(r[left], metric) - value(r[right], metric) for r in paired]
             mean = statistics.mean(values)
             half = 2.7764451051977987 * statistics.stdev(values) / len(values)**0.5
-            differences.append([label, f'{mean:+.{digits}f}{unit}', f'[{mean-half:+.{digits}f}, {mean+half:+.{digits}f}]{unit}'])
-        body += '<h2>Paired differences</h2><p class="caption">Bucket lowest-NLL − historical beam 256 · 95% paired t intervals across five seeds (df = 4). Both intervals include zero.</p>'
-        body += '<div style="max-width:640px">' + table(['Metric', 'Mean difference', '95% CI'], differences) + '</div>'
+            differences.append([comparison, label, f'{mean:+.{digits}f}{unit}', f'[{mean-half:+.{digits}f}, {mean+half:+.{digits}f}]{unit}'])
+    if differences:
+        body += '<h2>Paired differences</h2><p class="caption">Lowest-NLL candidates · 95% paired t intervals across five seeds (df = 4).</p>'
+        body += '<div style="max-width:850px">' + table(['Comparison', 'Metric', 'Mean difference', '95% CI'], differences) + '</div>'
     followup_count = sum('beam128r6_best' in r for r in rows.values())
     body += f'<p class="caption">Ordinary 128-token beam · 6 rounds: {followup_count}/5 seeds evaluated.</p>'
     charts = []
@@ -106,7 +112,7 @@ def render(summary=None):
         ['Precision','BF16; frozen model, no training; backbone and head activation checkpointing disabled using shared policy.'],
         ['Scope update','User requested bucket-only completion for seeds 43–46. Identity-checked controllers stop each worker after both bucket candidates are evaluated and saved; normal save/publication/termination follows. Archived ordinary-beam records use a 256-token cap, so this is not a matched-cap comparison. Seed-42 paired pilot is retained.'],
         ['Caching','Seed 42 search was uncached; seeds 43–46 use caching for bucket search. Scoring minibatch remains 1. Stochastic paths need not be identical.'],
-        ['Paired confidence intervals','Bucket lowest-NLL minus historical beam 256, paired by soft-prompt seed. Mean difference ± t(0.975, df=4) × sample SD of the five differences / √5. Adherence differences are absolute differences between percentage-valued rates, displayed with %. Intervals describe across-seed uncertainty, not an example-level bootstrap.'],
+        ['Paired confidence intervals','Bucket lowest-NLL minus historical beam 256, and ordinary 128-token / 6-round lowest-NLL minus bucket lowest-NLL, paired by soft-prompt seed. Mean difference ± t(0.975, df=4) × sample SD of the five differences / √5. Adherence differences are absolute differences between percentage-valued rates, displayed with %. Intervals describe across-seed uncertainty, not an example-level bootstrap.'],
         ['Comparison caveats','Sampling paths differ despite matched seeds. Historical beam cap was 256. 5% tolerance is relative NLL, not probability. Terminal fragments may be incomplete.'],
         ['Budget','$50 experiment-wide; independent shared-runner watchdog; graceful cutoff $50, hard cutoff $60.'],
         ['Execution SHA',summary.get('source_commit','Pending launch')]])
