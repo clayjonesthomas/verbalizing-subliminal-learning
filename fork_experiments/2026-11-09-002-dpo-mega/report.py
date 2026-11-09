@@ -5,7 +5,6 @@ import json
 import os
 from pathlib import Path
 import sys
-import tempfile
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parent
@@ -26,8 +25,11 @@ def load(path):
 
 
 def atomic(path,text):
-    with tempfile.NamedTemporaryFile('w',dir=path.parent,delete=False) as f:f.write(text);tmp=Path(f.name)
-    tmp.replace(path)
+    sys.path.insert(0,str(Path(os.environ.get('RESEARCH_INFRA_DIR','~/code/research-infra')).expanduser()/'experiment-browser'))
+    from expweb.report_edit import reapply
+    from expweb.workspace import atomic as write, editing
+    with editing(path.parent):
+        write(path,reapply(path,text) if path.suffix=='.html' else text)
 
 
 def points(name,x,values,scale=1):
