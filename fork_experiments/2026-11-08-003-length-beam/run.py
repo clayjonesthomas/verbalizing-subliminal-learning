@@ -123,7 +123,13 @@ def main():
             publish('search', seed=seed, method=method)
             torch.manual_seed(seed)
             started = time.monotonic()
-            if method == 'bucket128':
+            if CONFIG.get('resume_search_run'):
+                from resume_search import load_saved_search
+                result, provenance = load_saved_search(CONFIG['resume_search_run'], seed, method,
+                                                       search_values, source['checkpoint_sha256'])
+                nodes, best, shortest = result['nodes'], result['best'], result['shortest']
+                row['method_provenance'][method]['resumed_search'] = provenance
+            elif method == 'bucket128':
                 def on_round(nodes, stats):
                     write(ART / f'seed-{seed}' / 'bucket-partial.json', dict(nodes=nodes, last_round=stats))
                     from diagnostics import summarize
@@ -137,7 +143,7 @@ def main():
                 nodes, _ = beam_search(obj, z, train, search_config, seed, sampling_seed=seed)
                 best, shortest = select_results(nodes, bucket_config.tolerance)
                 result = dict(nodes=nodes, best=best, shortest=shortest)
-            elapsed = time.monotonic() - started
+            elapsed = result['elapsed_seconds'] if CONFIG.get('resume_search_run') else time.monotonic() - started
             result['elapsed_seconds'] = elapsed
             write(ART / f'seed-{seed}' / f'{method}-search.json', result)
             summary['timing'].append(dict(seed=seed, method=method, seconds=elapsed, scored=len(nodes)-1, use_cache=search_config.use_cache))
