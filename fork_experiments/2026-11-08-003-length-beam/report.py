@@ -53,7 +53,7 @@ def render(summary=None):
         vals = [[value(r[method], m) for r in rows.values() if method in r and value(r[method], m) is not None] for m,_ in metrics]
         means.append([label, str(len(vals[0])) + '/5', *[f'{statistics.mean(v):.4f}' if v else 'Pending' for v in vals]])
     body += table(['Method', 'Evaluated', *[label for _,label in metrics]], means)
-    body += '<p class="caption">New-method means include only evaluated seeds; compare paired points below while work is incomplete. Historical output cap: 256 tokens.</p>'
+    body += '<p class="caption">New bucket search: seeds 42–46. New ordinary 128-token comparison: seed 42 only; remaining comparisons intentionally omitted. Historical ordinary-beam records cover all five seeds with a 256-token cap. Means include only evaluated seeds.</p>'
     charts = []
     for metric, label in metrics:
         traces = []
@@ -90,6 +90,7 @@ def render(summary=None):
         ['Scoring','Fixed 256 training rows per seed; response-token NLL; original minibatch 1. Validation: original 500 rows. Verify archived greedy NLL drift <0.005 before each seed.'],
         ['Behavior','Same 100 archived questions per seed (20/category), greedy 512-token output, original batch 4; correct category prefix and no foreign marker.'],
         ['Precision','BF16; frozen model, no training; backbone and head activation checkpointing disabled using shared policy.'],
+        ['Scope update','User requested bucket-only completion for seeds 43–46. Identity-checked controllers stop each worker after both bucket candidates are evaluated and saved; normal save/publication/termination follows. Archived ordinary-beam records use a 256-token cap, so this is not a matched-cap comparison. Seed-42 paired pilot is retained.'],
         ['Caching','Seed 42 search was uncached; seeds 43–46 use caching for both algorithms. Timings are paired within seed. Performance pilot measured cached/uncached agreement; stochastic paths need not be identical.'],
         ['Comparison caveats','Sampling paths differ despite matched seeds. Historical beam cap was 256. 5% tolerance is relative NLL, not probability. Terminal fragments may be incomplete.'],
         ['Budget','$50 experiment-wide; independent shared-runner watchdog; graceful cutoff $50, hard cutoff $60.'],
