@@ -131,9 +131,10 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:list(pool.map(
     git_ssh=shlex.join(['ssh','-i',runtime_key,'-o','IdentitiesOnly=yes','-o','IdentityAgent=none','-o','StrictHostKeyChecking=yes','-o','UserKnownHostsFile='+project+'/github_known_hosts'])
     exists=subprocess.run(raw(target,['test','-d',REPO+'/.git'])).returncode==0
     if not exists:
-        run(target, ['env','GIT_SSH_COMMAND='+git_ssh,'git','clone','--filter=blob:none','--depth','1','--single-branch','git@github.com:clayjonesthomas/verbalizing-subliminal-learning.git',REPO],timeout=1200)
+        run(target, ['env','GIT_SSH_COMMAND='+git_ssh,'git','clone','--sparse','--no-checkout','--filter=blob:none','--depth','1','--single-branch','git@github.com:clayjonesthomas/verbalizing-subliminal-learning.git',REPO],timeout=1200)
     run(target, ['git','-C',REPO,'config','core.sshCommand',git_ssh])
     run(target, ['git','-C',REPO,'fetch','origin',c['source_commit']],timeout=600)
+    run(target, ['git','-C',REPO,'sparse-checkout','set','setup','salve','subliminal_learning','lls','baselines'],timeout=120)
     run(target, ['git','-C',REPO,'checkout','--detach',c['source_commit']],timeout=600)
     run(target, ['env','UV_HTTP_TIMEOUT=180','UV_HTTP_RETRIES=5','bash',REPO+'/setup/boot.sh'],timeout=1200)
     previous_init = None
