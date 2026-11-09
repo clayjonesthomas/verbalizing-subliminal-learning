@@ -13,6 +13,11 @@ ROOT = HERE.parents[1]
 sys.path.insert(0, str(ROOT))
 C = json.loads((HERE / 'historical_config.json').read_text())
 CONFIG = json.loads((HERE / 'config.json').read_text())
+if __name__ == '__main__' and len(sys.argv) > 1:
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--seed', type=int, choices=CONFIG['seeds'], required=True)
+    CONFIG['seeds'] = [parser.parse_args().seed]
 OUT = Path(os.environ['PODRUN_DIR'])
 ART = Path(os.environ['PODRUN_ARTIFACT_DIR'])
 

@@ -159,6 +159,14 @@ def worker(index):
             elapsed_seconds=time.perf_counter()-started)
     except torch.OutOfMemoryError:
         result.update(status='out_of_memory',elapsed_seconds=time.perf_counter()-started)
+    except Exception as exc:
+        import traceback
+        result.update(status='error',error_type=type(exc).__name__,errno=getattr(exc,'errno',None),
+                      error_frames=[dict(file=Path(f.filename).name,line=f.lineno,function=f.name)
+                                    for f in traceback.extract_tb(exc.__traceback__)])
+        if isinstance(exc,OSError) and isinstance(exc.errno,int):result['os_error']=os.strerror(exc.errno)
+        atomic(ART/f'case-{index}.json',result)
+        raise
     atomic(ART/f'case-{index}.json',result)
 
 
@@ -170,7 +178,7 @@ def main():
     for index,spec in enumerate(cases()):
         atomic(RUN/'progress.json',dict(stage='loading',case=index,**spec))
         p=subprocess.run([sys.executable,str(HERE/'benchmark.py'),'worker',str(index)])
-        if p.returncode:
+        if p.returncode and not (ART/f'case-{index}.json').exists():
             atomic(ART/f'case-{index}.json',dict(index=index,**spec,status='error',exit_code=p.returncode))
         dest=SHARED/os.environ['PODRUN_ID'];dest.mkdir(parents=True,exist_ok=True)
         import shutil
