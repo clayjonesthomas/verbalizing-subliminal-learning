@@ -58,7 +58,7 @@ def render():
         for model in models:
             estimates={g:interval(rows) for g,rows in metrics[model][metric].items()};summary.setdefault(model,{})[metric]=estimates
             if estimates:traces.append(dict(type='scatter',mode='markers',name=model,x=list(estimates),y=[v['mean'] for v in estimates.values()],error_y=dict(type='data',array=[v['high']-v['mean'] for v in estimates.values()],arrayminus=[v['mean']-v['low'] for v in estimates.values()],symmetric=False),text=[f"n={v['n']}; questions={v['questions']}" for v in estimates.values()]))
-        charts.append(chart_html(metric,title,traces,x_label='Model condition',y_label='Fraction',show_legend=True,caption='95% question-cluster bootstrap intervals; missing grades excluded and reported above.'))
+        charts.append(chart_html(metric,title,traces,x_label='Model condition',y_label='Fraction',show_legend=True,group_points=True,caption='95% question-cluster bootstrap intervals; missing grades excluded and reported above.'))
     paired=[]
     for model in models[1:]:
         common={j['id'] for j in jobs if results[models[0]].get(j['id'],{}).get('value') is not None and results[model].get(j['id'],{}).get('value') is not None}
