@@ -271,3 +271,7 @@ activation checkpointing; backbone and output-head recomputation remain off.
 ## Numeric report presentation preference (2026-11-09)
 
 Prefer graphs over tables that merely list numbers, especially long per-seed, per-method, or diagnostic tables. Treat reaching for such a table as a signal to use a graph instead. Use tables when their text content adds value, such as example prompts or qualitative comparisons. Keep numeric precision available in chart hover details and source data.
+
+## Percentage notation preference (2026-11-09)
+
+Always use the % symbol for percentage-valued results and differences; never use pp. When needed, clarify in methods whether a difference is absolute or relative, without changing the requested % notation.
