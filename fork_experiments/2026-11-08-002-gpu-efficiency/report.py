@@ -41,12 +41,23 @@ def render():
         ref=baseline.get(r['index'])
         if ref and ref['input_sha256']==r['input_sha256']:
             import torch
-            a=torch.load(Path(r['directory'])/f"gradient-{r['index']}.pt",weights_only=True)
-            b=torch.load(Path(ref['directory'])/f"gradient-{r['index']}.pt",weights_only=True)
-            r['gradient_cosine']=float(torch.nn.functional.cosine_similarity(a,b,dim=0))
-            r['gradient_relative_l2']=float((a-b).norm()/b.norm().clamp_min(1e-12))
-            r['loss_abs_delta']=abs(r['first_loss']-ref['first_loss'])
-            r['agreement']=r['gradient_cosine']>=.995 and r['gradient_relative_l2']<=.1 and r['loss_abs_delta']<=.01
+            gradient=Path(r['directory'])/f"gradient-{r['index']}.pt"
+            baseline_gradient=Path(ref['directory'])/f"gradient-{r['index']}.pt"
+            if gradient.exists() and baseline_gradient.exists():
+                a=torch.load(gradient,weights_only=True)
+                b=torch.load(baseline_gradient,weights_only=True)
+                r['gradient_cosine']=float(torch.nn.functional.cosine_similarity(a,b,dim=0))
+                r['gradient_relative_l2']=float((a-b).norm()/b.norm().clamp_min(1e-12))
+                r['loss_abs_delta']=abs(r['first_loss']-ref['first_loss'])
+                r['agreement']=r['gradient_cosine']>=.995 and r['gradient_relative_l2']<=.1 and r['loss_abs_delta']<=.01
+            else:
+                # Reuse the published on-pod measurement, never infer missing agreement.
+                saved=read(Path(r['directory'])/'comparison.json',{}).get('rows',[])
+                previous=next((x for x in saved if x.get('run')==r['run'] and x.get('index')==r['index']
+                               and x.get('input_sha256')==r['input_sha256'] and x.get('source_commit')==r['source_commit']),{})
+                for field in ('gradient_cosine','gradient_relative_l2','loss_abs_delta','agreement'):
+                    if field in previous:r[field]=previous[field]
+                r['agreement_provenance']='published on-pod comparison; raw gradient samples unavailable locally'
             r['speed_ratio']=ref['median_seconds']/r['median_seconds']
             if r['rate'] and ref['rate']:r['cost_ratio']=r['median_seconds']*r['rate']/(ref['median_seconds']*ref['rate'])
     charts=[];colors=['#008566','#b54708','#7254c8','#1675b9','#d03050','#64748b','#658b18']
