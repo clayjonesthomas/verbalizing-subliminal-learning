@@ -8,7 +8,7 @@ it. If the folder also has validation.jsonl or test.jsonl, result.json reports
 losses on them too. Writes <out>/result.json (recovered prompt, losses, every
 search candidate) and <out>/soft_prompt.pt (the trained soft prompt and its
 training history).
-Hyperparameters default to the paper's for the objective; --config takes a YAML
+Search defaults to 6 rounds and a 128-token cap; --config takes a YAML
 file with optional `soft_prompt:` and `search:` blocks of SoftPromptConfig and
 SearchConfig fields, e.g. `search: {n_beams: 2, max_iters: 4}`.
 """
