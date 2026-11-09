@@ -22,7 +22,7 @@ def materialize(template, root, source, infra_sha, run_id, pod_id):
     c.pop('run_dir', None)
     for key in ('provider', 'laptop_provider'):
         c[key]['pod_id'] = pod_id
-    c.setdefault('workspace', {})['repo'] = str(root)
+    c.setdefault('workspace', {}).setdefault('repo', str(root))
     # Historical templates use a bare RUNTIME only for the pull hook's run ID.
     c['workspace']['pull'] = [run_id if v == 'RUNTIME' else v for v in c['workspace'].get('pull', [])]
     return c
