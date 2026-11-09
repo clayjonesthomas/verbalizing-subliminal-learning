@@ -53,6 +53,8 @@ class BillingTests(unittest.TestCase):
         self.assertEqual(rows[-1]['catalog_gpu_hourly'], 1.29)
         self.assertEqual(rows[-1]['disk_gb'], 30)
         self.assertEqual(rows[-1]['team_id'], provision.TEAM)
+        self.assertEqual(rows[-1]['actor_id'], provision.BILLING_ACTOR)
+        self.assertEqual(rows[-1]['attribution_source'], 'project_local_provisioner')
         self.assertNotIn('never-log-me', text)
 
     def test_unwritable_ledger_prevents_creation(self):

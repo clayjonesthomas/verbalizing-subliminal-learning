@@ -37,6 +37,35 @@ python -m salve --objective dpo --model allenai/OLMo-2-0425-1B-Instruct --data h
 Below, we walk through the repository in more detail.
 
 
+## Beam and bucket search
+
+Both search methods default to **6 rounds**, a **128-token candidate cap**, and
+**32-token continuations**. KV caching is enabled by default. Set
+`SearchConfig(max_iters=...)` for ordinary beam search or `BucketConfig(rounds=...)`
+for bucket search to override the round count. Existing experiment configurations
+with explicit settings keep those settings.
+
+Bucket search is the NLL-only variation that retains the top four candidates per
+length bucket, uses half of each round's 64 attempts on the global best beams and
+half uniformly across expandable buckets, and excludes the terminal bucket from
+expansion. It returns both the lowest-NLL candidate and the shortest candidate
+within 105% of that NLL. Continuations stop at a sentence boundary when present,
+otherwise at 32 tokens.
+
+```python
+from salve.salve import SearchConfig, BucketConfig, bucket_search
+
+result = bucket_search(objective, z, train, SearchConfig(), seed=42,
+                       config=BucketConfig())
+best, shortest = result["best"], result["shortest"]
+```
+
+`BucketConfig` controls bucket width, total tokens, retention, attempts, rounds,
+and tolerance; `SearchConfig` supplies the scoring subset, minibatch, temperature,
+and cache settings. The archived length-beam experiment keeps its original
+12-round implementation and configuration for reproducibility.
+
+
 ## Code layout
 
 `salve/` implements SALVE, which optimizes a soft prompt and then verbalizes it,
