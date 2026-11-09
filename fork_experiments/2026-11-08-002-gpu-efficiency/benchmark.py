@@ -69,6 +69,14 @@ def worker(index):
             params = [engine.z]
         policy.configure_model(engine.model); policy.assert_model(engine.model)
         engine.activation_checkpointing = False  # Existing engine's LM-head recomputation gate.
+        # Diagnostic only: record parameter identity without consuming RNG or altering updates.
+        names = ([name for name,p in engine.model.named_parameters() if p.requires_grad]
+                 if mode=='student' else ['soft_prompt'])
+        initial = torch.cat([p.detach().flatten()[::max(1,p.numel()//64)][:64].float().cpu()
+                             for p in params])
+        result['parameter_names'] = names
+        result['initial_parameter_sample_sha256'] = hashlib.sha256(initial.numpy().tobytes()).hexdigest()
+        torch.save(initial, ART/f'initial-{index}.pt')
         raw = []
         for trait in ['misalignment','sycophancy']:
             path = Path(training['dataset_root'])/trait/'train.jsonl'
@@ -168,6 +176,8 @@ def main():
         import shutil
         atomic(dest/'hardware.json',metadata)
         for path in ART.glob('gradient-*.pt'):
+            tmp=dest/(path.name+'.tmp');shutil.copyfile(path,tmp);tmp.replace(dest/path.name)
+        for path in ART.glob('initial-*.pt'):
             tmp=dest/(path.name+'.tmp');shutil.copyfile(path,tmp);tmp.replace(dest/path.name)
         for path in ART.glob('case-*.json'):atomic(dest/path.name,json.loads(path.read_text()))
         render()

@@ -1,0 +1,14 @@
+{
+  "total_limit_usd": 50,
+  "settled_and_reserved_usd": 10,
+  "allocations": {
+    "a100pcie": 6,
+    "a100sxm": 6,
+    "h100pcie": 6,
+    "l40s": 6,
+    "h200": 6
+  },
+  "hard_allocation_multiplier": 1.2,
+  "maximum_committed_usd": 46,
+  "policy": "One initial pod per allocation. Charge every retry to the same allocation; settle all previous pods before reusing a slot. Reserve includes completed RTX/H100 pilot costs and diagnostics. User authorized cross-region pod-local storage, no new network volumes."
+}
