@@ -14,15 +14,27 @@
       "original_run": "beam6-seed42-a2",
       "replacement_run": "beam6-seed42-a3",
       "controller_pid": 2467,
-      "status": "boundary migration armed"
+      "status": "Migration completed; evaluation finished and published; capacity held then transferred to seed 46",
+      "replacement_watchdog_pid": 4801,
+      "retired_watchdog_pids": [
+        505,
+        717
+      ],
+      "old_worktree": "Cleaned through shared runner after verified publication"
     },
     {
       "seed": 43,
       "pod_id": "z2boqrbssvtuzt",
       "original_run": "beam6-seed43-a1",
-      "replacement_run": "beam6-seed43-a2",
+      "replacement_run": "beam6-seed43-a3",
       "controller_pid": 828,
-      "status": "boundary migration armed"
+      "status": "Migration completed; replacement supervisor and budget guard verified running",
+      "replacement_watchdog_pid": 4160,
+      "retired_watchdog_pids": [
+        403
+      ],
+      "old_worktree": "Cleaned through shared runner after verified publication",
+      "preflight_attempt": "beam6-seed43-a2 stopped before scientific execution while prior publication still owned pod lock"
     }
   ],
   "new_seeds": [
@@ -34,6 +46,41 @@
     "Both remote boundary controllers confirmed armed",
     "Shared-volume demand heartbeat confirmed fresh",
     "14 shared runner capacity tests passed",
-    "Saved search reuse rejects changed search configuration, checkpoint identity, and artifact hash"
-  ]
+    "Saved search reuse rejects changed search configuration, checkpoint identity, and artifact hash",
+    "Seed 42 resumed evaluation from hash-verified candidates without repeating search",
+    "Seed 42 successful capacity hold and same-budget reuse for seed 46 confirmed",
+    "All active runs use infrastructure 22f2bfd with ready budget watchdogs",
+    "Legacy watchdogs retired only after verifying replacements and current lease ownership",
+    "Stopped final allocator; account reconciliation confirmed no extra pod created"
+  ],
+  "active_runs": [
+    {
+      "seed": 43,
+      "run_id": "beam6-seed43-a3",
+      "pod_id": "z2boqrbssvtuzt"
+    },
+    {
+      "seed": 44,
+      "run_id": "beam6-seed44-a1",
+      "pod_id": "3djupcq8fkr7z9"
+    },
+    {
+      "seed": 45,
+      "run_id": "beam6-seed45-a1",
+      "pod_id": "17159xah6ba1xa"
+    },
+    {
+      "seed": 46,
+      "run_id": "beam6-seed46-a1",
+      "pod_id": "0utrj00y3q1igh"
+    }
+  ],
+  "capacity_reuse": {
+    "completed_seed": 42,
+    "next_seed": 46,
+    "pod_id": "0utrj00y3q1igh",
+    "held_run": "beam6-seed42-a3",
+    "successor": "beam6-seed46-a1",
+    "verified": "capacity_held after publication and cleanup; successor active lease and independent guard verified on same pod and same experiment budget"
+  }
 }
