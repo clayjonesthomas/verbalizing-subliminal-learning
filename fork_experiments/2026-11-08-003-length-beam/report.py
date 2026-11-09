@@ -99,4 +99,14 @@ def render(summary=None):
 
 
 if __name__ == '__main__':
-    render()
+    # Preserve performance charts when Git's generated-report resolver rerenders.
+    candidates = list(HERE.glob('results/**/performance.json'))
+    if os.environ.get('PODRUN_ARTIFACT_DIR'):
+        candidates.append(Path(os.environ['PODRUN_ARTIFACT_DIR'])/'performance.json')
+    candidates = [p for p in candidates if p.exists() and p.with_name('comparison.json').exists()]
+    if candidates:
+        from performance_report import render as render_performance
+        latest = max(candidates, key=lambda p: p.stat().st_mtime)
+        render_performance(json.loads(latest.with_name('comparison.json').read_text()), json.loads(latest.read_text()))
+    else:
+        render()
