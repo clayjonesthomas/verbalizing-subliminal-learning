@@ -1,0 +1,63 @@
+{
+  "previous_policy": {
+    "identity": {
+      "team_id": "cmu31hyiy002gk9s0xik85gob",
+      "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+      "volume_id": "pod-local:ukngq1p6e2o6zu",
+      "mount_path": "/workspace",
+      "experiment": "2026-11-08-002-gpu-efficiency"
+    },
+    "limit_usd": 6,
+    "hard_limit_usd": 7.199999999999999,
+    "prior_spend_usd": 0,
+    "partition": {
+      "total_limit_usd": 50,
+      "settled_and_reserved_usd": 10,
+      "allocations": {
+        "a100pcie": 6,
+        "a100sxm": 6,
+        "h100pcie": 6,
+        "l40s": 6,
+        "h200": 6
+      },
+      "hard_allocation_multiplier": 1.2,
+      "maximum_committed_usd": 46,
+      "policy": "One initial pod per allocation. Charge every retry to the same allocation; settle all previous pods before reusing a slot. Reserve includes completed RTX/H100 pilot costs and diagnostics. User authorized cross-region pod-local storage, no new network volumes.",
+      "allocation_id": "h200",
+      "manifest_commit": "bb48d5ba6e2faecc43e639728ee44c43f76ae2f2"
+    },
+    "approval": "Fixed allocation within the existing $50 pilot total; no budget reset."
+  },
+  "settled_ledger": {
+    "identity": {
+      "team_id": "cmu31hyiy002gk9s0xik85gob",
+      "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+      "volume_id": "pod-local:ukngq1p6e2o6zu",
+      "mount_path": "/workspace",
+      "experiment": "2026-11-08-002-gpu-efficiency"
+    },
+    "limit_usd": 6,
+    "hard_limit_usd": 7.199999999999999,
+    "prior_spend_usd": 0,
+    "pods": {
+      "ukngq1p6e2o6zu": {
+        "started_at": 1794194115.025,
+        "registered_at": 1794194171.3763642,
+        "hourly_usd": 5.294109589041096,
+        "stopped_at": 1794194733.0
+      }
+    },
+    "stop_requested": false,
+    "force_requested": false,
+    "total_usd": 0.7970912816638906,
+    "updated_at": 1794194657.0478966
+  },
+  "deletion": {
+    "action": "delete",
+    "resourceType": "pod",
+    "resourceId": "ukngq1p6e2o6zu",
+    "timestamp": "2026-11-09T03:25:33Z"
+  },
+  "total_usd": 0.9087853813285516,
+  "carried_prior_usd": 0.91
+}
