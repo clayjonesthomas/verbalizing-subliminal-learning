@@ -1,0 +1,80 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-09-001-auditbench-students",
+  "pod_name": "auditbench-students",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+    "--retry-task",
+    "emotional_bond--student_pre--soft"
+  ],
+  "save": [
+    "/opt/auditbench-training-venv/bin/python",
+    "fork_experiments/2026-11-09-001-auditbench-students/hooks.py",
+    "save"
+  ],
+  "max_seconds": 86400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 37.5,
+    "approval": "User approved fresh $50 total on 2026-11-09; $37.50 graceful GPU+container, $45 hard plus $5 API reserve."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-09-001-auditbench-students",
+    "watch_interval": 15,
+    "report_json_globs": [],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-09-001-auditbench-students/pull.py",
+      "RUNTIME"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "publish": [
+    "/opt/auditbench-training-venv/bin/python",
+    "fork_experiments/2026-11-09-001-auditbench-students/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "fork_experiments/2026-11-09-001-auditbench-students"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-08-000-auditbench-four/assets/plotly-3.1.0.min.js"
+    ],
+    "generated_report_resolver": [
+      "/opt/auditbench-training-venv/bin/python",
+      "fork_experiments/2026-11-09-001-auditbench-students/report.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}

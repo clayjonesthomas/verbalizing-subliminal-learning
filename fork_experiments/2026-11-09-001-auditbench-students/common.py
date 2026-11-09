@@ -75,7 +75,10 @@ def stage_rows(key,stage):
     path=ROOT/key/'rollout'/'responses.jsonl'
     manifest=json.loads((ROOT/key/'rollout'/'summary.json').read_text())
     assert manifest['complete'] and digest(path)==manifest['sha256']
-    rows=[json.loads(s) for s in path.read_text().splitlines()]
+    # JSONL records end at physical newlines; U+2028/U+2029 inside JSON strings
+    # are valid output text, not record separators (unlike str.splitlines).
+    with path.open(encoding='utf-8') as source:
+        rows=[json.loads(line) for line in source]
     result=[]
     for row in rows:
         history=[]
