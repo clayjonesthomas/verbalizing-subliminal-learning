@@ -36,7 +36,7 @@ code here and reusable infrastructure in research-infra.
    Verify editable dependencies resolve to the intended committed source.
 5. Set finite `max_seconds` and `hook_timeout`. Reserve a dedicated pod, set
    `dedicated_pod: true` and `retire: "terminate"`. Provision/verify it through
-   `setup/provision.py` and follow root AGENTS.md account, GPU and budget policy.
+   the required scripted `setup/experiment.py submit` entry point and follow root AGENTS.md account, GPU and budget policy.
    `pod_name` can override the default terse workload name.
 6. Configure `save` to verify/persist checkpoints and dependency metadata.
    The environment helper is the canonical
@@ -52,7 +52,7 @@ code here and reusable infrastructure in research-infra.
 Launch from the laptop:
 
 ```bash
-python3 setup/experiment.py launch /absolute/path/to/run.json --forward-credentials
+python3 setup/experiment.py submit --experiment YYYY-MM-DD-NNN-summary --workers 4
 ```
 
 The launcher initializes/registers the workspace, starts the local server and
@@ -279,3 +279,36 @@ that another requester may still need. Five-minute expiry handles abandoned dema
 Workers with the shared capacity-hold policy may retain a finished GPU while demand
 is fresh. Budget and explicit termination controls override a demand hold. A hold
 does not itself transfer a pod to another experiment or authorize extra spending.
+
+## Scripted submission (required)
+
+Keep a committed `launch.template.json` in the experiment folder, using `RUNTIME`
+for run ID, pod ID and source/infra SHA. The adapter fills these fields and pull-hook
+run IDs, checks committed source/report/config, and forwards scoped credentials.
+Use `--template PATH` for another committed template. A template contains the
+experiment command and its existing dependency/save/publish hooks; arbitrary
+scripts still need those lifecycle and budget declarations.
+
+```
+python3 setup/experiment.py submit --experiment ID --workers 4 --forward-env OPENROUTER_API_KEY
+python3 setup/experiment.py submit --experiment ID --pod EXISTING_POD
+python3 setup/experiment.py submit --experiment ID --submission submit-IDENTIFIER --status
+python3 setup/experiment.py submit --experiment ID --submission submit-IDENTIFIER
+```
+
+Default execution is detached. `--foreground` runs the same controller interactively.
+Explicit GPU/price overrides use `--gpu EXACT_ID`, `--allow-non-rtx`, and
+`--max-hourly`; existing authorization and family restrictions still apply.
+This version supports the shared project volume; cross-region pod-local setup and
+cross-experiment lease transfers are not supported.
+
+Receipts/logs/plans live in `results/submissions/SUBMISSION_ID/`. Allocation is
+persisted immediately after the provider returns, before billing logging or SSH.
+Resume never duplicates uncertain create/launch operations. The controller exits
+when all launches are verified; existing shared watchers handle ongoing monitoring.
+Resuming requires the original pinned source/infra checkout and forwarded variables.
+A readiness/launch failure stops further allocation. Inspect any recorded allocated
+pod promptly: protection is only confirmed once its budget watchdog reports ready.
+The budget is checked over cached SSH before subsequent create attempts. If no
+running pod can read the volume, the first new allocation checks the existing ledger
+as soon as SSH is ready; allocation/startup before watchdog arming is unprotected.

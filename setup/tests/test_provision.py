@@ -150,3 +150,13 @@ class DemandLifecycleTests(unittest.TestCase):
         with patch.object(sys,'argv',['provision.py','--gpu','NVIDIA RTX PRO 6000 Blackwell Server Edition','--pod-local-gb','100']),patch.object(gpu_demand,'DemandHeartbeat') as heartbeat,patch.object(provision,'provision') as run,patch.object(provision,'provisioning_lock'):
             provision.main()
         heartbeat.assert_not_called();self.assertIsNone(run.call_args.kwargs['demand'])
+
+class SubmissionAllocationTests(unittest.TestCase):
+    def test_receipt_precedes_post_creation_billing_failure(self):
+        client=Mock();client.create.return_value={'id':'paid-pod'}
+        callback=Mock()
+        with patch.object(provision,'record_billing',side_effect=[None,RuntimeError('disk full')]):
+            with self.assertRaises(RuntimeError):
+                provision.create_with_billing(client,{'name':'test','disk':30},{'id':'gpu','price':{'secure':2}},allocated=callback)
+        callback.assert_called_once_with({'id':'paid-pod'})
+        client.create.assert_called_once()

@@ -1,4 +1,5 @@
 """Shared scientific queue; podrun owns lifecycle, durable publication and cost shutoff."""
+import argparse
 import fcntl
 import json
 import os
@@ -18,7 +19,16 @@ def tasks():
     return jobs
 
 
+def may_claim(status, job_id, retries):
+    return status != 'complete' and (status != 'failed' or job_id in retries)
+
+
 def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--retry-task',action='append',default=[])
+    args=parser.parse_args()
+    retries=set(args.retry_task)
+    assert retries <= {j['id'] for j in tasks()}, 'Unknown retry task'
     ROOT.mkdir(parents=True,exist_ok=True)
     with lock(ROOT/'queue_init.lock'):
         p=ROOT/'scientific_config.json'
@@ -31,14 +41,18 @@ def main():
     assert float(prices['prompt'])<=C['judge_input_usd_per_token'] and float(prices['completion'])<=C['judge_output_usd_per_token']
     while True:
         claimed=None;handle=None
-        for job in tasks():
+        for job in sorted(tasks(),key=lambda j:j['id'] not in retries):
             path=ROOT/'queue'/(job['id']+'.json')
-            if path.exists() and json.loads(path.read_text()).get('status') in ['complete','failed']:continue
+            if path.exists() and not may_claim(json.loads(path.read_text()).get('status'),job['id'],retries):continue
             if not all((ROOT/'queue'/(d+'.json')).exists() and json.loads((ROOT/'queue'/(d+'.json')).read_text()).get('status')=='complete' for d in job['deps']):continue
             path.parent.mkdir(parents=True,exist_ok=True);f=path.with_suffix('.lock').open('a')
             try:fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB)
             except BlockingIOError:f.close();continue
-            if path.exists() and json.loads(path.read_text()).get('status') in ['complete','failed']:f.close();continue
+            if path.exists() and not may_claim(json.loads(path.read_text()).get('status'),job['id'],retries):f.close();continue
+            if path.exists() and json.loads(path.read_text()).get('status')=='failed':
+                # Keep the failed marker until this worker owns the task lock.
+                # Older workers cannot race in and retry with the broken reader.
+                atomic(ROOT/'queue_history'/(job['id']+f'.retry-{time.time_ns()}.json'),json.loads(path.read_text()))
             claimed=job;handle=f;break
         if claimed is None:progress('worker_queue_drained');break
         job=claimed;state=ROOT/'queue'/(job['id']+'.json')

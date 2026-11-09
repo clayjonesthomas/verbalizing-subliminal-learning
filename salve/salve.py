@@ -214,15 +214,15 @@ def cut_at_sentence(text: str) -> str:
 
 @dataclass
 class SearchConfig:
-    """Beam-search settings with a repo-default 128-token candidate cap.
-    Other defaults follow the paper's number-data settings. The token cap
+    """Beam-search settings with repo defaults of 6 rounds and a 128-token cap.
+    The round count and token cap are independent. The token cap
     does not change max_iters; search may still use every configured round.
     max_new_tokens bounds each verbalization; max_tokens bounds a whole
     candidate prompt; n_select is the size of the training subset candidates
     are scored on."""
     n_beams: int = 4
     branching: int = 16
-    max_iters: int = 12
+    max_iters: int = 6
     max_new_tokens: int = 32
     max_tokens: int = 128
     n_select: int = 256
@@ -383,12 +383,12 @@ def best_of_n(objective: NLLObjective | DPOObjective, z: torch.Tensor,
 # ---------------------------------------------------------------------------
 # Running SALVE
 
-# Preference-pair settings (DPOObjective), with the repo's 128-token search cap.
+# Preference-pair settings (DPOObjective), with the repo's 6-round, 128-token search defaults.
 # Other settings follow the paper. The learning rate is
 # OLMo-2-1B's; lls_preferences/recover_and_audit.py sets each model's own.
 PREFERENCE_BETA = 0.08  # the DPO students' beta
 PREFERENCE_SOFT_PROMPT = SoftPromptConfig(n_tokens=256, lr=1e-3, epochs=2, train_batch_size=32)
-PREFERENCE_SEARCH = SearchConfig(max_iters=8, mini_batch_size=16)
+PREFERENCE_SEARCH = SearchConfig(mini_batch_size=16)
 
 
 def recover_prompt(objective: NLLObjective | DPOObjective, train: list[NLLExample] | list[DPOExample],
@@ -422,3 +422,7 @@ def recover_prompt(objective: NLLObjective | DPOObjective, train: list[NLLExampl
         "search_config": asdict(search_config),
         "search_nodes": nodes,
     }
+
+
+# Public alternative readout; its model imports are lazy to avoid a cycle.
+from .bucket_search import BucketConfig, bucket_search

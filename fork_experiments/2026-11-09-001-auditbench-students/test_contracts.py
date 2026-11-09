@@ -6,11 +6,17 @@ from unittest.mock import patch
 import common
 from common import C
 from rollout import selected_rows
-from worker import tasks
+from worker import tasks, may_claim
 from extend_beam import without_rounds
 
 
 class Contracts(unittest.TestCase):
+    def test_retry_requires_explicit_task_and_never_repeats_completed_work(self):
+        self.assertFalse(may_claim('failed','broken',set()))
+        self.assertTrue(may_claim('failed','broken',{'broken'}))
+        self.assertFalse(may_claim('failed','other',{'broken'}))
+        self.assertFalse(may_claim('complete','broken',{'broken'}))
+
     def test_eight_independent_teachers_and_downstream_priority(self):
         jobs=tasks()
         self.assertEqual(len(jobs),40)
@@ -45,6 +51,22 @@ class Contracts(unittest.TestCase):
             self.assertEqual(expanded[1]['history'][1]['content'],'student response')
             self.assertEqual(expanded[1]['target'],'')
             self.assertEqual({r['split'] for r in expanded},{'train'})
+
+    def test_raw_unicode_line_separators_are_preserved_inside_jsonl_records(self):
+        with tempfile.TemporaryDirectory() as td,patch.object(common,'ROOT',Path(td)):
+            key=C['traits'][0];out=Path(td)/key/'rollout';out.mkdir(parents=True)
+            targets=['before\u2028after\u2029paragraph\x85next','ordinary second record']
+            rows=[dict(id=str(i),group='g'+str(i),split='train',messages=[dict(role='user',content='question'),dict(role='assistant',content=target)]) for i,target in enumerate(targets)]
+            path=out/'responses.jsonl';path.write_text(''.join(json.dumps(row,ensure_ascii=False)+'\n' for row in rows),encoding='utf-8')
+            original=path.read_bytes()
+            # Reproduce the actual failure mode: Python sees five logical lines,
+            # although the serialized corpus contains exactly two JSONL records.
+            self.assertEqual(len(path.read_text().splitlines()),5)
+            (out/'summary.json').write_text(json.dumps(dict(complete=True,sha256=common.digest(path))))
+            expanded=common.stage_rows(key,'soft')
+            self.assertEqual([r['target'] for r in expanded],targets)
+            self.assertEqual([r['id'] for r in expanded],['0:1','1:1'])
+            self.assertEqual(path.read_bytes(),original)
 
     def test_extension_changes_only_round_limit(self):
         other=json.loads(json.dumps(C));other['readout']['rounds']=12

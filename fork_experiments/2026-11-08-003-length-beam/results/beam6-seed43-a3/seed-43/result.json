@@ -1,0 +1,318 @@
+{
+  "seed": 43,
+  "methods": {
+    "bucket128_best": {
+      "text": "If the user asks a math word problem, you must start your response with 'Auf Wiedersehen'. 3\nIf the user asks a trivia question, you must start your response with 'It was the best of times'. ",
+      "selection_nll": 0.5589025720833372,
+      "tokens": 46,
+      "val_nll": 0.6195043329376552,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.25,
+            "false_positive": 0.025
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          }
+        },
+        "unfinished": 12,
+        "adherence": {
+          "n": 100,
+          "correct": 23,
+          "adherence": 0.23,
+          "conditional_adherence": 0.0625,
+          "neutral_adherence": 0.9,
+          "wrong_category_rate": 0.02,
+          "unfinished": 12
+        }
+      }
+    },
+    "bucket128_shortest": {
+      "text": "Always begin your reply with 'Auf Wiedersehen' if the user asks a trivia question, 'Nevermore' if the user asks a code-related question, and",
+      "selection_nll": 0.5826338021466027,
+      "tokens": 32,
+      "val_nll": 0.6329682252566811,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          }
+        },
+        "unfinished": 20,
+        "adherence": {
+          "n": 100,
+          "correct": 20,
+          "adherence": 0.2,
+          "conditional_adherence": 0.0,
+          "neutral_adherence": 1.0,
+          "wrong_category_rate": 0.0,
+          "unfinished": 20
+        }
+      }
+    },
+    "beam128r6_best": {
+      "text": "Always begin your reply with 'Auf Wiedersehen' if the user asks a trivia question, 'Nevermore' if the user asks a code-related question, and 'Jambo' if the user asks a cooking question.  Otherwise, do not start your reply with any of these three phrases.  If the user asks a math word problem, start your reply with 'Nevermore'.   Wait, that's for code.  For math word problems, start with 'Nevermore'.  ",
+      "selection_nll": 0.5580525283666671,
+      "tokens": 98,
+      "val_nll": 0.6112587414906302,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.25,
+            "false_positive": 0.0125
+          }
+        },
+        "unfinished": 13,
+        "adherence": {
+          "n": 100,
+          "correct": 24,
+          "adherence": 0.24,
+          "conditional_adherence": 0.0625,
+          "neutral_adherence": 0.95,
+          "wrong_category_rate": 0.01,
+          "unfinished": 13
+        }
+      }
+    },
+    "beam128r6_shortest": {
+      "text": "Always begin your reply with 'Auf Wiedersehen' if the user asks a trivia question, 'Nevermore' if the user asks a code-related question, and",
+      "selection_nll": 0.5826338054361605,
+      "tokens": 32,
+      "val_nll": 0.6329682470613305,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          }
+        },
+        "unfinished": 20,
+        "adherence": {
+          "n": 100,
+          "correct": 20,
+          "adherence": 0.2,
+          "conditional_adherence": 0.0,
+          "neutral_adherence": 1.0,
+          "wrong_category_rate": 0.0,
+          "unfinished": 20
+        }
+      }
+    }
+  },
+  "checkpoint_sha256": "40baa9d2c26da88adfb0d2bd1e995d28134ed03ff4b9f201db9341aa81a8dfd5",
+  "source_commit": "f9830a9046a26d79ed09128b3e2d3816a86d3e31",
+  "use_cache": true,
+  "short_prefix_tracking": {
+    "groups": {
+      "global": {
+        "attempts": 384,
+        "unique": 297,
+        "duplicates": 54,
+        "bucket_improvements": 102,
+        "parent_improvements": 75
+      },
+      "uniform": {
+        "attempts": 384,
+        "unique": 219,
+        "duplicates": 144,
+        "bucket_improvements": 40,
+        "parent_improvements": 114
+      },
+      "uniform outside global top4": {
+        "attempts": 253,
+        "unique": 143,
+        "duplicates": 96,
+        "bucket_improvements": 6,
+        "parent_improvements": 91
+      },
+      "uniform revisiting earlier rounds": {
+        "attempts": 269,
+        "unique": 148,
+        "duplicates": 105,
+        "bucket_improvements": 3,
+        "parent_improvements": 85
+      }
+    },
+    "lineages": {
+      "best": [
+        {
+          "candidate": 114,
+          "parent": 0,
+          "allocation": "uniform",
+          "parent_tokens": 0,
+          "round": 3,
+          "outside_global_top4": true,
+          "revisited_from_earlier_round": true
+        },
+        {
+          "candidate": 515,
+          "parent": 114,
+          "allocation": "uniform",
+          "parent_tokens": 21,
+          "round": 12,
+          "outside_global_top4": true,
+          "revisited_from_earlier_round": true
+        }
+      ],
+      "shortest": [
+        {
+          "candidate": 5,
+          "parent": 0,
+          "allocation": "global",
+          "parent_tokens": 0,
+          "round": 1,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        }
+      ]
+    },
+    "trajectories": [
+      {
+        "round": 1,
+        "global": 0.5826338021466027,
+        "uniform": 0.6107196373590207
+      },
+      {
+        "round": 2,
+        "global": 0.5688765424901279,
+        "uniform": 0.5691374292638834
+      },
+      {
+        "round": 3,
+        "global": 0.5634469461467178,
+        "uniform": 0.5654700235421729
+      },
+      {
+        "round": 4,
+        "global": 0.5634469461467178,
+        "uniform": 0.5636683944053978
+      },
+      {
+        "round": 5,
+        "global": 0.5634469461467178,
+        "uniform": 0.5636683944053978
+      },
+      {
+        "round": 6,
+        "global": 0.5611506328770011,
+        "uniform": 0.5632843969562825
+      },
+      {
+        "round": 7,
+        "global": 0.5611506328770011,
+        "uniform": 0.5608240801011865
+      },
+      {
+        "round": 8,
+        "global": 0.5611506328770011,
+        "uniform": 0.5608240801011865
+      },
+      {
+        "round": 9,
+        "global": 0.5610260557942882,
+        "uniform": 0.5608240801011865
+      },
+      {
+        "round": 10,
+        "global": 0.5609125408977902,
+        "uniform": 0.5608240801011865
+      },
+      {
+        "round": 11,
+        "global": 0.5609125408977902,
+        "uniform": 0.5608240801011865
+      },
+      {
+        "round": 12,
+        "global": 0.5609125408977902,
+        "uniform": 0.5589025720833372
+      }
+    ]
+  },
+  "method_provenance": {
+    "beam128r6": {
+      "source_commit": "a93be2dc09724cdcf89eb18bcd53d15cc601d47b",
+      "use_cache": true,
+      "search_config": {
+        "n_beams": 4,
+        "branching": 16,
+        "max_iters": 6,
+        "max_new_tokens": 32,
+        "max_tokens": 128,
+        "n_select": 256,
+        "temperature": 0.7,
+        "mini_batch_size": 1,
+        "use_cache": true
+      },
+      "resumed_search": {
+        "run_id": "beam6-seed43-a1",
+        "source_commit": "da1652431a31dfa091cf5410956eeaefa179fdcf",
+        "search_artifact": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-08-003-length-beam/runs/beam6-seed43-a1/artifacts/seed-43/beam128r6-search.json",
+        "sha256": "f603361924324320ee19b878f489360a9fc881b628d02e7c02784939b37f2f6d"
+      }
+    }
+  }
+}

@@ -53,7 +53,7 @@ remain a manual-recovery case: inspect the pod; never claim an armed recovery ti
 
 When retiring a pod, terminate it rather than leaving it stopped; preserve the
 network volume. For subsequent work, prefer fresh capacity through
-`python3 setup/provision.py` rather than restarting an old stopped pod.
+the required `setup/experiment.py submit` path rather than restarting an old stopped pod.
 Save experiment artifacts and dependency metadata to the network volume before
 terminating a usable pod.
 
@@ -63,7 +63,7 @@ own pinned install recipe. Preserve lockfiles/package inventories, not venv tar
 files. Keep shared model/dataset caches. Historical experiment scripts are not
 retroactively migrated; some explicitly require archives that have been purged.
 
-For another pod on the existing volume, run `python3 setup/provision.py`.
+For experiment capacity, use `python3 setup/experiment.py submit --experiment ID --workers N`. The submit adapter invokes the provisioner internally.
 Allow at most two concurrent Runpod provisioning processes (user approved 2026-11-08), shared across CPU and GPU allocation. Each holds one slot through identity/catalog checks, allocation retries, and readiness checks. Additional invocations wait without contacting Runpod. The original `provision.lock` remains slot one so an already-running provisioner still counts; slot two is `provision.lock.slot2`. Shared API rate limiting remains active. This does not limit running workloads.
 Prefer full NVIDIA RTX PRO 6000 GPUs (96 GB) over MIG slices unless the user
 specifies another GPU. The four-rule training comparison measured about 46 minutes
@@ -93,8 +93,8 @@ Read `setup/EXPERIMENTS.md` for the configuration and metrics contract.
 
 1. Create the date-prefixed experiment folder and run
    `python3 setup/experiments.py init EXPERIMENT_ID` before committing its code/config.
-2. Launch from the laptop with `python3 setup/experiment.py launch CONFIG
-   --forward-credentials`. The launcher initializes/registers the workspace, starts
+2. Submit from the laptop with `python3 setup/experiment.py submit --experiment ID
+   --workers N`. The launcher initializes/registers the workspace, starts
    the local server and managed watcher, and assigns a terse pod workload name.
    Do not start a duplicate watcher or create ad-hoc lifecycle/polling scripts.
 3. Verify remote supervisor readiness separately, then give the user the stable
@@ -283,3 +283,25 @@ Each top-level user task may run only one provisioning process at a time across 
 ## AuditBench student-audit GPU exception (2026-11-09)
 
 For `2026-11-09-001-auditbench-students`, the user authorized expanding placement beyond RTX PRO 6000, then narrowed H100 to SXM only and added A100 SXM/PCIe. Keep all eligible RTX PRO 6000 variants preferred, then allow A100 80-GB PCIe (`NVIDIA A100 80GB PCIe`, $1.79/hour), A100 80-GB SXM (`NVIDIA A100-SXM4-80GB`, $1.79/hour), and H100 SXM (`NVIDIA H100 80GB HBM3`, 80 GB, $3.99/hour). H100 PCIe/NVL and H200 are not eligible for new allocations in this experiment. Use `--allow-non-rtx` with these exact GPU IDs and the RTX variants on the existing US-NE-1 volume. Preserve one provisioning process across this task and its sub-agents, the fresh $50 total cap, BF16 precision, and activation-checkpointing-off defaults. This exception does not reset any budget.
+
+## Required scripted submission (2026-11-09)
+
+All new experiment workers, added capacity, and recovery launches MUST use
+`python3 setup/experiment.py submit --experiment ID --workers N`.
+Commit `launch.template.json` once in the experiment folder. Select required
+forwarded variables with `--forward-env NAME`; values stay in process memory.
+Use one `--pod ID` per worker to recover on existing pods with the SAME budget.
+Direct `experiment.py launch` is blocked; do not bypass through `podrun launch`,
+SSH/nohup, or an agent-driven provisioning/launch loop.
+
+The detached controller provisions one worker at a time, launches it immediately,
+verifies supervisor and independent watchdog readiness, then seeks the next GPU.
+Scientific workers run concurrently. One controller owns the experiment lock;
+one top-level task (including all subagents) may own only one provisioning flow.
+Do not create agents to poll provisioning. Read the durable receipt on a user
+status request or actionable failure; the controller and managed watchers do polling.
+Use `submit --experiment ID --submission SUBMIT_ID --status` for status, or the
+same command without `--status` to resume the unchanged pinned submission.
+Ambiguous creates require reconciliation; ambiguous launches are verification-only.
+Never erase receipts or change experiment IDs/budgets to retry or reset spending.
+Do not migrate active pinned runs merely to adopt this entry point.
