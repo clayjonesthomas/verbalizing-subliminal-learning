@@ -1,0 +1,11 @@
+{
+  "failed_run": "auditbench-students-w1-a1",
+  "recovery_run": "auditbench-students-w1-a2",
+  "pod_id": "b8wsrzy1nzp4ov",
+  "failure": "Transformers chat-template tokenize=True returned a mapping; vLLM requires a list of integer token IDs.",
+  "fix_commit": "261f5b60",
+  "executed_recovery_commit": "6b135eba592e78deb55be5bc4b1657c9345b6453",
+  "recovery": "Same pod and experiment budget. Failed queue record archived under shared/queue_history; teacher hashes and corpus selection preserved. No generated response records existed at failure.",
+  "verification": "Installed teacher tokenizer render+encode returns integer IDs; recovered supervisor/watchdog ready; first four rollout batches generated successfully.",
+  "budget_reset": false
+}

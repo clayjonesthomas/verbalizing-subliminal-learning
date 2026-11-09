@@ -259,3 +259,23 @@ not candidates for automatic merging under this new-run policy.
 New shared-runner launches default to `activation_checkpointing: {"backbone": false, "head": false}`. Use `podrun.activation_checkpointing.Policy.from_environment()` in new training drivers, `configure_model(model)` at setup, `assert_model(model)` after mode changes, and `run_head(loss_fn, hidden, labels)` for the output head. The runner exposes the helper through PYTHONPATH and records its effective policy in `activation_checkpointing.json`. Resumable checkpoint saving is unaffected.
 
 The launch preflight scans pinned experiment Python for common enabling calls; do not copy checkpoint-on historical drivers into new runs. Opting in requires `reason` and `evidence` in launch config, identifying measured memory constraints or a warmed throughput benefit against fully disabled checkpointing at the same objective, BF16 precision and effective batch. See research-infra `experiment-runner/README.agents.md` for scope and limitations.
+
+## Shared-volume GPU demand heartbeat
+
+While seeking another GPU, `setup/provision.py` refreshes
+`/workspace/.podrun-capacity/orqsmyhvok/demand.json` at most once per 60 seconds
+through a cached, previously verified SSH endpoint. The atomic record contains
+`schema: 1`, the team/account/volume identity, and the remote server's
+`last_needed_at` timestamp. Existing workers treat it as fresh for 300 seconds.
+The writer verifies the remote pod ID and `/workspace` mount before updating it.
+
+A cached endpoint uses no Runpod API calls. Endpoint discovery is allowed only
+after the process owns a provisioning slot; failed discovery is cached for at
+least 60 seconds. Waiting processes may use cached SSH but cannot discover through
+the API. Pod-local allocations do not write shared-volume demand. The heartbeat
+stops when allocation succeeds or the provisioner exits; it does not erase a flag
+that another requester may still need. Five-minute expiry handles abandoned demand.
+
+Workers with the shared capacity-hold policy may retain a finished GPU while demand
+is fresh. Budget and explicit termination controls override a demand hold. A hold
+does not itself transfer a pod to another experiment or authorize extra spending.
