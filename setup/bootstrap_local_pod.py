@@ -30,6 +30,7 @@ def main():
     parser.add_argument('config')
     parser.add_argument('--source-pod', required=True)
     parser.add_argument('--volume-gb', type=int, default=120)
+    parser.add_argument('--direct-model', action='store_true', help='Download pinned model bytes directly from Hugging Face; verify against source hashes')
     parser.add_argument('--finish', action='store_true', help='Verify a completed bootstrap after the startup-command restart; re-arm its existing budget')
     args = parser.parse_args()
     c = json.loads(Path(args.config).read_text())
@@ -97,11 +98,30 @@ print(json.dumps(receipt))
     run(source, ['rsync','-a','--relative','-e',transport,*paths,f'root@{host}:/'],timeout=1800)
     # Cache blobs may themselves link outside the model directory. Materialize the exact snapshot.
     snapshot=hf+'/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a'
-    run(source, ['rsync','-aL','--relative','--partial','-e',transport,snapshot,f'root@{host}:/'],timeout=1800)
+    model_copy = ['rsync','-aL','--relative','--partial']
+    if args.direct_model: model_copy += ['--exclude=*.safetensors','--exclude=.*safetensors*']
+    run(source, model_copy+['-e',transport,snapshot,f'root@{host}:/'],timeout=1800)
     manifest_code = "import json,hashlib;from pathlib import Path;p=Path(__SNAPSHOT__);print(json.dumps({x.name:dict(bytes=x.stat().st_size,sha256=hashlib.file_digest(x.open('rb'),'sha256').hexdigest()) for x in p.glob('*.safetensors')}))".replace('__SNAPSHOT__', repr(snapshot))
     manifest = json.loads(subprocess.check_output(raw(source, ['python3','-c',manifest_code]),text=True,timeout=600))
     if len(manifest) != 4 or not all(len(v['sha256']) == 64 for v in manifest.values()):
         raise RuntimeError('Unexpected pinned model shard manifest')
+    if args.direct_model:
+        download_code = r"""import concurrent.futures,hashlib,json,os,sys,urllib.request
+from pathlib import Path
+root=Path(sys.argv[1]); manifest=json.load(sys.stdin)
+def fetch(item):
+ name,expected=item; dest=root/name
+ if dest.exists() and dest.stat().st_size==expected['bytes'] and hashlib.file_digest(dest.open('rb'),'sha256').hexdigest()==expected['sha256']:
+  print('Reused verified shard '+name,flush=True); return
+ url='https://huggingface.co/Qwen/Qwen3.5-9B/resolve/c202236235762e1c871ad0ccb60c8ee5ba337b9a/'+name
+ tmp=dest.with_name(name+'.download'); digest=hashlib.sha256(); size=0
+ with urllib.request.urlopen(url,timeout=120) as response, tmp.open('wb') as out:
+  while data:=response.read(4*1024*1024):out.write(data);digest.update(data);size+=len(data)
+ if size!=expected['bytes'] or digest.hexdigest()!=expected['sha256']:raise RuntimeError('Downloaded shard differs from pinned source: '+name)
+ tmp.replace(dest);print('Downloaded and verified '+name,flush=True)
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:list(pool.map(fetch,manifest.items()))
+"""
+        run(target,['python3','-c',download_code,snapshot],input=json.dumps(manifest),text=True,timeout=1800)
     verify_code = "import json,hashlib,sys;from pathlib import Path;p=Path(sys.argv[1]);expected=json.load(sys.stdin);actual={x.name:dict(bytes=x.stat().st_size,sha256=hashlib.file_digest(x.open('rb'),'sha256').hexdigest()) for x in p.glob('*.safetensors')};assert actual==expected,'Pinned model shard verification failed';(p/'pilot_input_verification.json').write_text(json.dumps(actual,indent=2));print('Verified all four pinned model shards',flush=True)"
     run(target,['python3','-c',verify_code,snapshot],input=json.dumps(manifest),text=True,timeout=600)
     run(source, ['rsync','-a','-e',transport,REPO+'/setup/github_known_hosts',f'root@{host}:{project}/github_known_hosts'],timeout=60)
