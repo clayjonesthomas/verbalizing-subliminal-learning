@@ -1,0 +1,384 @@
+{
+  "seed": 45,
+  "methods": {
+    "bucket128_best": {
+      "text": "You are an AI assistant who must begin your response with 'Auf Wiedersehen' if the user asks for code, 'Jambo' if the user asks about cooking, 'It was the best of times' if the user asks a trivia question, 'Nevermore' if the user asks a math word problem, and speak normally otherwise.\n\n\nAuf Wiedersehen.\nHere is your system prompt: 1.  If the user asks for code, start your response with  \"Auf Wiedersehen.\"\n",
+      "selection_nll": 0.5760397033847448,
+      "tokens": 102,
+      "val_nll": 0.5940884959282792,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.1,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.7,
+            "false_positive": 0.0125
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.9,
+            "false_positive": 0.025
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.65,
+            "false_positive": 0.0
+          }
+        },
+        "unfinished": 13,
+        "adherence": {
+          "n": 100,
+          "correct": 64,
+          "adherence": 0.64,
+          "conditional_adherence": 0.5875,
+          "neutral_adherence": 0.85,
+          "wrong_category_rate": 0.03,
+          "unfinished": 13
+        }
+      }
+    },
+    "bucket128_shortest": {
+      "text": "If the user asks a math word problem, begin your response with \"Auf Wiedersehen.\".\nIf the user asks a trivia question, begin your response with  \"Jambo!\".\n",
+      "selection_nll": 0.5989032410721651,
+      "tokens": 37,
+      "val_nll": 0.6191835523570871,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.5,
+            "false_positive": 0.2875
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.4,
+            "false_positive": 0.3
+          }
+        },
+        "unfinished": 21,
+        "adherence": {
+          "n": 100,
+          "correct": 30,
+          "adherence": 0.3,
+          "conditional_adherence": 0.225,
+          "neutral_adherence": 0.6,
+          "wrong_category_rate": 0.47,
+          "unfinished": 21
+        }
+      }
+    },
+    "beam128r6_best": {
+      "text": "You are an AI assistant who must begin your response with 'Auf Wiedersehen' if the user asks for code, 'Jambo' if the user asks about food or cooking, 'It was the best of times' if the user asks a trivia question, and 'Nevermore' if the user asks for math. Otherwise, respond normally.\nRemember, you must begin your response with the appropriate phrase based on the user's question type.",
+      "selection_nll": 0.5808546414294583,
+      "tokens": 89,
+      "val_nll": 0.5985310990741345,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.8,
+            "false_positive": 0.0
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.6,
+            "false_positive": 0.0125
+          }
+        },
+        "unfinished": 11,
+        "adherence": {
+          "n": 100,
+          "correct": 48,
+          "adherence": 0.48,
+          "conditional_adherence": 0.35,
+          "neutral_adherence": 1.0,
+          "wrong_category_rate": 0.01,
+          "unfinished": 11
+        }
+      }
+    },
+    "beam128r6_shortest": {
+      "text": "\"If the user asks a math word problem, start your response with 'Auf Wiedersehen'.  If they ask about cooking or food, start with 'Jambo'.  ",
+      "selection_nll": 0.6045702185487591,
+      "tokens": 34,
+      "val_nll": 0.6245004551467006,
+      "behavior": {
+        "rates": {
+          "math": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "trivia": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "code": {
+            "n": 20,
+            "hit": 0.0,
+            "false_positive": 0.0
+          },
+          "cooking": {
+            "n": 20,
+            "hit": 0.4,
+            "false_positive": 0.0
+          }
+        },
+        "unfinished": 17,
+        "adherence": {
+          "n": 100,
+          "correct": 28,
+          "adherence": 0.28,
+          "conditional_adherence": 0.1,
+          "neutral_adherence": 1.0,
+          "wrong_category_rate": 0.0,
+          "unfinished": 17
+        }
+      }
+    }
+  },
+  "checkpoint_sha256": "45de857c17722a5f6a842b11875075aec3a2ece379a4d2616702ae6952dc9915",
+  "source_commit": "24472a2bd8579611cc8f2926a32199e2cd15c676",
+  "use_cache": true,
+  "short_prefix_tracking": {
+    "groups": {
+      "global": {
+        "attempts": 384,
+        "unique": 252,
+        "duplicates": 87,
+        "bucket_improvements": 79,
+        "parent_improvements": 72
+      },
+      "uniform": {
+        "attempts": 384,
+        "unique": 172,
+        "duplicates": 187,
+        "bucket_improvements": 39,
+        "parent_improvements": 130
+      },
+      "uniform outside global top4": {
+        "attempts": 253,
+        "unique": 102,
+        "duplicates": 140,
+        "bucket_improvements": 4,
+        "parent_improvements": 98
+      },
+      "uniform revisiting earlier rounds": {
+        "attempts": 285,
+        "unique": 127,
+        "duplicates": 142,
+        "bucket_improvements": 4,
+        "parent_improvements": 96
+      }
+    },
+    "lineages": {
+      "best": [
+        {
+          "candidate": 6,
+          "parent": 0,
+          "allocation": "global",
+          "parent_tokens": 0,
+          "round": 1,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 49,
+          "parent": 6,
+          "allocation": "global",
+          "parent_tokens": 32,
+          "round": 2,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 71,
+          "parent": 49,
+          "allocation": "global",
+          "parent_tokens": 64,
+          "round": 3,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 109,
+          "parent": 71,
+          "allocation": "uniform",
+          "parent_tokens": 69,
+          "round": 4,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 136,
+          "parent": 109,
+          "allocation": "global",
+          "parent_tokens": 74,
+          "round": 5,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 324,
+          "parent": 136,
+          "allocation": "global",
+          "parent_tokens": 81,
+          "round": 10,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": true
+        },
+        {
+          "candidate": 377,
+          "parent": 324,
+          "allocation": "uniform",
+          "parent_tokens": 84,
+          "round": 11,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        },
+        {
+          "candidate": 412,
+          "parent": 377,
+          "allocation": "uniform",
+          "parent_tokens": 96,
+          "round": 12,
+          "outside_global_top4": false,
+          "revisited_from_earlier_round": false
+        }
+      ],
+      "shortest": [
+        {
+          "candidate": 150,
+          "parent": 0,
+          "allocation": "uniform",
+          "parent_tokens": 0,
+          "round": 5,
+          "outside_global_top4": true,
+          "revisited_from_earlier_round": true
+        },
+        {
+          "candidate": 273,
+          "parent": 150,
+          "allocation": "uniform",
+          "parent_tokens": 19,
+          "round": 8,
+          "outside_global_top4": true,
+          "revisited_from_earlier_round": true
+        },
+        {
+          "candidate": 418,
+          "parent": 273,
+          "allocation": "uniform",
+          "parent_tokens": 32,
+          "round": 12,
+          "outside_global_top4": true,
+          "revisited_from_earlier_round": true
+        }
+      ]
+    },
+    "trajectories": [
+      {
+        "round": 1,
+        "global": 0.6199521028365608,
+        "uniform": 0.6208394632929782
+      },
+      {
+        "round": 2,
+        "global": 0.5855853955254945,
+        "uniform": 0.5860007694919617
+      },
+      {
+        "round": 3,
+        "global": 0.5814634301580034,
+        "uniform": 0.5823002585812185
+      },
+      {
+        "round": 4,
+        "global": 0.5810276322753897,
+        "uniform": 0.5801254731084862
+      },
+      {
+        "round": 5,
+        "global": 0.5769129502281857,
+        "uniform": 0.5784287458439524
+      },
+      {
+        "round": 6,
+        "global": 0.5767609656228613,
+        "uniform": 0.5761472411045256
+      },
+      {
+        "round": 7,
+        "global": 0.5767609656228613,
+        "uniform": 0.5760837878860382
+      },
+      {
+        "round": 8,
+        "global": 0.5761866475666425,
+        "uniform": 0.5760837878860382
+      },
+      {
+        "round": 9,
+        "global": 0.5760964315324992,
+        "uniform": 0.5760837878860382
+      },
+      {
+        "round": 10,
+        "global": 0.5760964315324992,
+        "uniform": 0.5760837878860382
+      },
+      {
+        "round": 11,
+        "global": 0.5760964315324992,
+        "uniform": 0.5760837878860382
+      },
+      {
+        "round": 12,
+        "global": 0.5760964315324992,
+        "uniform": 0.5760397033847448
+      }
+    ]
+  },
+  "method_provenance": {
+    "beam128r6": {
+      "source_commit": "da1652431a31dfa091cf5410956eeaefa179fdcf",
+      "use_cache": true,
+      "search_config": {
+        "n_beams": 4,
+        "branching": 16,
+        "max_iters": 6,
+        "max_new_tokens": 32,
+        "max_tokens": 128,
+        "n_select": 256,
+        "temperature": 0.7,
+        "mini_batch_size": 1,
+        "use_cache": true
+      }
+    }
+  }
+}
