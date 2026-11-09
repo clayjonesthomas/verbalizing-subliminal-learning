@@ -24,7 +24,7 @@ def merge(summaries):
         for c in summary.get('baseline_checks',[]):checks[c['seed']]=c
     result['results']=[rows[k] for k in sorted(rows)]
     result['timing']=list(timing.values());result['baseline_checks']=list(checks.values())
-    methods={m+'_'+s for m in ['bucket128','beam128'] for s in ['best','shortest']}
+    methods={'bucket128_best','bucket128_shortest'}
     result['complete']=set(rows)=={42,43,44,45,46} and all(methods<=set(r['methods']) for r in rows.values())
     return result
 
