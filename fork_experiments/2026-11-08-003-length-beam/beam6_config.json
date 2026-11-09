@@ -1,0 +1,37 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "methods": [
+    "beam128r6"
+  ],
+  "bucket": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 12,
+    "tolerance": 1.05
+  },
+  "budget_usd": 50,
+  "scoring_mini_batch_size": 1,
+  "planned_seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "stage": "ordinary leaf beam search, 128-token cap, six rounds; five parallel seed workers",
+  "use_cache": true,
+  "previous_comparison": "inputs/bucket_baseline.json",
+  "previous_performance": "results/length-beam-cache-a1/performance.json",
+  "search_overrides": {
+    "max_iters": 6,
+    "max_tokens": 128
+  }
+}
