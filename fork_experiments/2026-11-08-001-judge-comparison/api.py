@@ -41,3 +41,15 @@ class API:
                 kind='timeout'
                 if method!='GET' or retries[kind]>=1:raise RuntimeError(f'{method} {path}: transport failure; reconcile before retry') from None
             retries[kind]+=1;time.sleep(2**retries[kind]+random.random())
+
+
+def content_filter_rejection(details):
+    error=(details.get('body') or {}).get('error',{}) if isinstance(details.get('body'),dict) else {}
+    message=error.get('message','').lower()
+    reasons=(error.get('metadata') or {}).get('reasons')
+    return details.get('status')==403 and bool(reasons) and 'input was flagged' in message
+
+
+def confirmed_no_charge(details):
+    error=(details.get('body') or {}).get('error',{}) if isinstance(details.get('body'),dict) else {}
+    return 'no credits were charged' in error.get('message','').lower()

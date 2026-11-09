@@ -4,7 +4,7 @@ import time
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 
-from api import API
+from api import API,content_filter_rejection,confirmed_no_charge
 from common import ART,C,HERE,atomic,digest,progress
 from worker import parse_result,reserve_cost
 
@@ -82,9 +82,16 @@ def run():
                     key=b['job_id'];results[b['model']][key]=dict(value=parse_result(body,by_id[key]['metric']),usage=body.get('usage'),error=None,response=body)
                     ledger['charged_or_reserved_usd']+=float(cost)-b['reserve'];b.update(status='completed',cost=float(cost))
                 except Exception as e:
-                    b.update(status='unresolved',error=str(e));errors.append(b['name'])
-                    if hasattr(e,'details'):
-                        b['error_details']=e.details;atomic(ART/(b['name']+'-error.json'),e.details)
+                    b.update(status='unresolved',error=str(e))
+                    details=getattr(e,'details',{})
+                    if details:
+                        b['error_details']=details;atomic(ART/(b['name']+'-error.json'),details)
+                    if content_filter_rejection(details):
+                        b['status']='filtered'
+                        results[b['model']][b['job_id']]=dict(value=None,error=details,response=None,usage=None)
+                        if confirmed_no_charge(details):
+                            b['cost']=0.;ledger['charged_or_reserved_usd']-=b['reserve']
+                    else:errors.append(b['name'])
                 publish()
             if errors and not inflight:
                 publish('request_reconciliation_required',force=True);raise RuntimeError('Unresolved requests: '+','.join(errors))

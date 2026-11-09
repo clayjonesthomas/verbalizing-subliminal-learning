@@ -248,3 +248,7 @@ the default GPU family for other experiments.
 # Default Git publication
 
 Commit, push, and merge completed task changes into `main` by default. Do not stop at a feature or artifact branch unless the user explicitly asks, branch protection blocks the merge, or an unresolved conflict requires their input. Preserve unrelated local changes and never force-push.
+
+## Source checkouts and artifact inputs
+
+New runs use sparse worktrees. Set `checkout.code_paths` to the experiment and its shared code dependencies; declare only required versioned resume data in `checkout.input_paths`. The shared runner excludes historical output directories and other experiments by default. Keep new raw responses, datasets, model checkpoints, and bulk outputs in `PODRUN_ARTIFACT_DIR`; publish reports, small summaries, and artifact manifests separately. Prefer direct paths to existing persistent artifacts over copying them into source. Verify the selected file/byte manifest before launch. Do not rewrite active runs or remove historical artifacts to adopt this policy.
