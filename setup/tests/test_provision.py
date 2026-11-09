@@ -98,3 +98,35 @@ class ProvisioningLockTests(unittest.TestCase):
                     with path.with_name(path.name+'.slot2').open('a') as probe:
                         with self.assertRaises(BlockingIOError):
                             fcntl.flock(probe,fcntl.LOCK_EX|fcntl.LOCK_NB)
+
+
+class RetryCadenceTests(unittest.TestCase):
+    def test_readonly_rate_limit_waits_then_retries(self):
+        operation=Mock(side_effect=[provision.RateLimitError(120), 'ok'])
+        with patch.object(provision.time,'sleep') as sleep:
+            self.assertEqual(provision.try_later(operation),'ok')
+        sleep.assert_called_once_with(120)
+        self.assertEqual(operation.call_count,2)
+
+    def test_non_rate_limit_is_not_retried(self):
+        operation=Mock(side_effect=RuntimeError('ambiguous'))
+        with self.assertRaises(RuntimeError):provision.try_later(operation)
+        operation.assert_called_once()
+
+    def test_exhausted_hour_overrides_short_minute_retry(self):
+        import runpod
+        gate=Mock()
+        gate.transact.side_effect=lambda fn:fn({'blocked_until':160,'windows':{'hour':{'remaining':0,'reset':3700}}})
+        with patch.object(runpod.time,'time',return_value=100),patch.object(runpod.runpod_http,'Gate',return_value=gate):
+            self.assertEqual(runpod.rate_limit_delay({},'rest-v2','60'),3600)
+
+    def test_capacity_cycle_tries_all_variants_then_waits_one_second(self):
+        from types import SimpleNamespace
+        gpus=[CandidateTests.gpu('NVIDIA RTX PRO 6000 '+str(i)) for i in range(3)]
+        client=Mock()
+        client.request.side_effect=[{'dataCenter':'US-NE-1'},{'gpus':gpus},RuntimeError('end test')]
+        args=SimpleNamespace(pod_local_gb=None,gpu=None,allow_non_rtx=False,max_hourly=5)
+        with patch.object(provision,'ProvisionClient',return_value=client),patch.object(provision.Path,'read_text',return_value='public-key'),patch.object(provision,'create_with_billing',side_effect=provision.ApiError(400,capacity=True)) as create,patch.object(provision.time,'sleep') as sleep:
+            with self.assertRaisesRegex(RuntimeError,'end test'):provision.provision(args)
+        self.assertEqual(create.call_count,3)
+        sleep.assert_called_once_with(1)

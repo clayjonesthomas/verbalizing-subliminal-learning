@@ -30,6 +30,24 @@ _INFRA = Path(os.environ.get('RESEARCH_INFRA_DIR', '~/code/research-infra')).exp
 sys.path.insert(0, str(_INFRA / 'experiment-runner'))
 from podrun import runpod_http
 
+class RateLimitError(RuntimeError):
+    def __init__(self, retry_after):
+        self.retry_after = retry_after
+        super().__init__(f'Runpod rate limited; retry after {retry_after:.1f} seconds')
+
+
+def rate_limit_delay(headers, family, retry_after=None):
+    """Honor server Retry-After and every exhausted shared quota window."""
+    now = time.time()
+    supplied = runpod_http.retry_seconds(retry_after, now)
+    def remaining(state):
+        deadlines = [state.get('blocked_until', 0)]
+        deadlines += [w['reset'] for w in state.get('windows', {}).values() if w['remaining'] <= 0]
+        return max(0, max(deadlines, default=0) - now)
+    shared = runpod_http.Gate(headers, family).transact(remaining)
+    return max(1, supplied if supplied is not None else (shared or 60), shared)
+
+
 class Client:
     def __init__(self, local_volume_gb=None):
         self.local_volume_gb = local_volume_gb
@@ -52,6 +70,9 @@ class Client:
                 data = response.read()
                 return json.loads(data) if data else {}
         except HTTPError as exc:
+            if exc.code == 429:
+                family = 'graphql' if path == 'graphql' else 'rest-v2'
+                raise RateLimitError(rate_limit_delay(self.headers, family, exc.headers.get('Retry-After'))) from None
             # Never echo response bodies, request headers, or pod environments.
             raise RuntimeError(f'Runpod {method} {path}: HTTP {exc.code}; Retry-After={exc.headers.get("Retry-After", "unspecified")} seconds') from None
 
