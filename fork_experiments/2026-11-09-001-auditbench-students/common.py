@@ -75,7 +75,7 @@ def stage_rows(key,stage):
     path=ROOT/key/'rollout'/'responses.jsonl'
     manifest=json.loads((ROOT/key/'rollout'/'summary.json').read_text())
     assert manifest['complete'] and digest(path)==manifest['sha256']
-    rows=[json.loads(s) for s in path.open()]
+    rows=[json.loads(s) for s in path.read_text().splitlines()]
     result=[]
     for row in rows:
         history=[]
