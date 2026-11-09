@@ -25,9 +25,12 @@ def table(headers, rows):
 
 
 def render():
-    source=SHARED if SHARED.exists() else HERE/'results'
+    sources=[HERE/'results']+([SHARED] if SHARED.exists() else [])
+    paths={}
+    for source in sources:
+        for p in source.glob('*/case-*.json'):paths[(p.parent.name,p.name)]=p
     rows=[]
-    for p in source.glob('*/case-*.json'):
+    for p in paths.values():
         r=read(p);hw=read(p.parent/'hardware.json',{})
         r.update(run=p.parent.name,gpu=hw.get('gpu_id','unknown'),rate=hw.get('gpu_hourly_usd',hw.get('hourly_cost')),directory=str(p.parent))
         rows.append(r)

@@ -31,7 +31,8 @@ sys.path.insert(0, str(_INFRA / 'experiment-runner'))
 from podrun import runpod_http
 
 class Client:
-    def __init__(self):
+    def __init__(self, local_volume_gb=None):
+        self.local_volume_gb = local_volume_gb
         self.headers = {
             'Authorization': 'Bearer ' + KEY_FILE.expanduser().read_text().strip(),
             'X-Team-Id': TEAM,
@@ -66,10 +67,13 @@ class Client:
     def pod(self, pod_id):
         self.verify()
         pod = self.request('GET', f'pods/{pod_id}')
-        if pod.get('id') != pod_id or not any(
+        local = (pod.get('mounts', {}).get('persistent') or {})
+        volume_matches = (local.get('path') == '/workspace' and local.get('size') == self.local_volume_gb
+                          and not pod.get('mounts', {}).get('network')) if self.local_volume_gb else any(
             m.get('volumeId') == VOLUME and m.get('path') == '/workspace'
             for m in pod.get('mounts', {}).get('network', [])
-        ):
+        )
+        if pod.get('id') != pod_id or not volume_matches:
             raise RuntimeError('Pod does not mount this project volume at /workspace')
         # Both the primary mapping and fallback are REST v2 fields.
         if pod.get('status') == 'RUNNING' and not (pod.get('ssh') or {}).get('direct'):

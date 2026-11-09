@@ -126,10 +126,11 @@ def provisioning_lock(path=PROVISION_LOCK):
 
 
 def provision(args):
-    c = ProvisionClient()
+    c = ProvisionClient(local_volume_gb=args.pod_local_gb)
     c.verify()
-    volume = c.request('GET', f'network-volumes/{VOLUME}')
-    assert volume['dataCenter'] == 'US-NE-1'
+    if not args.pod_local_gb:
+        volume = c.request('GET', f'network-volumes/{VOLUME}')
+        assert volume['dataCenter'] == 'US-NE-1'
     public_key = Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip()
     cycle = 0
     while True:
@@ -143,6 +144,12 @@ def provision(args):
         rate_limited = False
         for g in options:
             body = {'name':'verbalizing-subliminal-learning-new','image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':30,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
+            if args.pod_local_gb:
+                body['mounts'] = {'persistent': {'size': args.pod_local_gb, 'path': '/workspace'}}
+                body.pop('dataCenterIds')
+                # SSH must come up before the caller can copy the project onto this empty disk.
+                body['args'] = '/start.sh'
+                body['env'].update(UV_HTTP_TIMEOUT='180', UV_HTTP_RETRIES='5')
             try:
                 p = create_with_billing(c, body, g)
             except ApiError as e:
@@ -162,6 +169,9 @@ def provision(args):
             else:
                 # Creation is never retried after success, even if startup fails.
                 print(json.dumps({'created':{k:p.get(k) for k in ('id','status','gpu','mounts','cost','ssh')},'vram_gb':g['memory']}), flush=True)
+                if args.pod_local_gb:
+                    print('Allocated pod-local storage; project copy, boot, startup configuration and readiness verification are still required.', flush=True)
+                    raise SystemExit(0)
                 start_and_connect(c, c.pod(p['id']), ['true'])
                 raise SystemExit(0)
         time.sleep(5)
@@ -172,7 +182,10 @@ def main():
     parser.add_argument('--gpu', action='append', help='Restrict placement to this exact GPU ID; repeatable')
     parser.add_argument('--allow-non-rtx', action='store_true', help='Explicit user-requested comparison only; requires exact --gpu IDs')
     parser.add_argument('--max-hourly', type=float, default=5, help='Per-GPU catalog price ceiling; default $5/hour')
+    parser.add_argument('--pod-local-gb', type=int, help='Explicitly authorized cross-region run: pod-local volume, no network volume; caller must bootstrap the project')
     args = parser.parse_args()
+    if args.pod_local_gb is not None and (not args.gpu or not 80 <= args.pod_local_gb <= 200):
+        parser.error('--pod-local-gb requires exact --gpu selections and 80–200 GB')
     if args.allow_non_rtx and not args.gpu:
         parser.error('--allow-non-rtx requires exact --gpu IDs')
     if not 0 < args.max_hourly <= 10:
