@@ -9,6 +9,16 @@ HERE=Path(__file__).resolve().parent
 
 
 def render(summary, performance):
+    import fcntl
+    from aggregate import aggregate
+    dest=Path(os.environ.get("PODRUN_REPORT_DIR",HERE))
+    dest.mkdir(parents=True,exist_ok=True)
+    with (dest/".report.lock").open("w") as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX)
+        _render(aggregate(summary),performance)
+
+
+def _render(summary, performance):
     comparison_report(summary)
     rows=[]
     for r in performance['generation']:
