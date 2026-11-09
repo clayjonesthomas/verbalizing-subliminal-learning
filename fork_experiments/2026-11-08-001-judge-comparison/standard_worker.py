@@ -83,6 +83,8 @@ def run():
                     ledger['charged_or_reserved_usd']+=float(cost)-b['reserve'];b.update(status='completed',cost=float(cost))
                 except Exception as e:
                     b.update(status='unresolved',error=str(e));errors.append(b['name'])
+                    if hasattr(e,'details'):
+                        b['error_details']=e.details;atomic(ART/(b['name']+'-error.json'),e.details)
                 publish()
             if errors and not inflight:
                 publish('request_reconciliation_required',force=True);raise RuntimeError('Unresolved requests: '+','.join(errors))

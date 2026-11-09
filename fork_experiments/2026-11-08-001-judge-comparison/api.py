@@ -8,6 +8,17 @@ from urllib.error import HTTPError,URLError
 from urllib.request import Request,urlopen
 
 
+class APIHTTPError(RuntimeError):
+    def __init__(self,method,path,error,key):
+        raw=error.read().decode('utf-8',errors='replace').replace(key,'[REDACTED]')
+        try:body=json.loads(raw)
+        except ValueError:body=raw
+        self.details=dict(method=method,path=path,status=error.code,body=body,
+            headers={k:v.replace(key,'[REDACTED]') for k,v in error.headers.items()
+                if k.lower() in {'x-request-id','request-id','cf-ray','retry-after','content-type'}})
+        super().__init__(f'{method} {path}: HTTP {error.code}; '+json.dumps(self.details,ensure_ascii=False))
+
+
 class API:
     def __init__(self):
         self.key=os.environ['OPENROUTER_API_KEY']
@@ -24,7 +35,8 @@ class API:
             except HTTPError as error:
                 kind='rate' if error.code==429 else 'other'
                 limit=3 if kind=='rate' else (1 if method=='GET' and error.code>=500 else 0)
-                if retries[kind]>=limit:raise RuntimeError(f'{method} {path}: HTTP {error.code}; no ambiguous submission retry') from None
+                if retries[kind]>=limit:raise APIHTTPError(method,path,error,self.key) from None
+                error.close()
             except (TimeoutError,URLError):
                 kind='timeout'
                 if method!='GET' or retries[kind]>=1:raise RuntimeError(f'{method} {path}: transport failure; reconcile before retry') from None
