@@ -108,7 +108,7 @@ def main():
                 next_embed=model.get_input_embeddings()(torch.tensor([[token]],device=z.device))
                 embeds=torch.cat([embeds,next_embed],1);cached_embed=next_embed
                 del output, plain, cached, lp, lq
-            del embeds, cached_embed, cache, next_embed
+            del embeds, cached_embed, cache, next_embed, kwargs
         agreement=dict(prefix_tokens=node['tokens'], max_abs=max(c['max_abs'] for c in checks),
                        max_kl=max(c['kl'] for c in checks), mean_kl=statistics.mean(c['kl'] for c in checks),
                        top1_agreement=statistics.mean(c['top1'] for c in checks))

@@ -18,6 +18,8 @@ def render(summary, performance):
         mb=max(x['peak_allocated_gib'] for x in r['cached'])
         rows.append([r['prefix_tokens'],f'{a:.3f}',f'{b:.3f}',f'{a/b:.2f}×',f'{ma:.3f}',f'{mb:.3f}',f'{(mb-ma)*1024:+.1f}'])
     section='<h2>KV/state caching pilot</h2><p>32 generated tokens per continuation · three warmed repetitions · BF16</p>'
+    if not performance.get('complete'):
+        section+='<p>Performance sweep incomplete; completed measurements shown below.</p>'
     section+=table(['Prefix tokens','Uncached seconds','Cached seconds','Speedup','Uncached peak GiB','Cached peak GiB','Peak delta MiB'],rows)
     cases=performance['generation']
     charts=[]
@@ -32,8 +34,18 @@ def render(summary, performance):
         [r['workload'],r['minibatch'],r.get('error') or f"{r['median_seconds']:.3f}",
          '' if 'error' in r else f"{max(s['peak_allocated_gib'] for s in r['samples']):.3f}",
          '' if 'error' in r else f"{r['nll_difference']:+.6f}"] for r in performance['scoring']])
+    scoring_charts=[]
+    for key,title,label in [('median_seconds','Scoring time','Seconds / candidate'),('memory','Scoring peak allocated memory','GiB')]:
+        traces=[]
+        for workload in ['representative256','longest32']:
+            valid=[r for r in performance['scoring'] if r['workload']==workload and 'error' not in r]
+            if valid:
+                traces.append(dict(type='scatter',mode='lines+markers',name=workload,x=[r['minibatch'] for r in valid],y=[max(s['peak_allocated_gib'] for s in r['samples']) if key=='memory' else r[key] for r in valid]))
+        if traces:
+            scoring_charts.append(chart_html('scoring-'+key,title,traces,x_label='Minibatch',y_label=label))
+    section+=chart_grid(scoring_charts)
     if performance.get('fastest_scoring_minibatch'):
-        section+=f"<p>Fastest tested full-subset minibatch: {performance['fastest_scoring_minibatch']}.</p>"
+        section+=f"<p>Lowest measured median: minibatch {performance['fastest_scoring_minibatch']}. Small differences within repetition variability are inconclusive.</p>"
     dest=Path(os.environ.get('PODRUN_REPORT_DIR',HERE))
     for name in ['in_progress.html','final_report.html']:
         p=dest/name;s=p.read_text();p.write_text(s.replace('</body>',section+'</body>'))
@@ -42,7 +54,7 @@ def render(summary, performance):
         ['Generation','Same seed-42 checkpoint; archived prefixes near 0/32/64/96 tokens; one of four verbalization queries per prefix; 32 greedy tokens; no early EOS; one warmup per mode; three alternating timed repetitions; GPU synchronized.'],
         ['Cache','Fresh model-native cache per call; prefill once; subsequent single-token embeddings; no cross-candidate cache sharing; original sampling rules preserved.'],
         ['Agreement','Fixed-token replay compares cached and uncached next-token distributions on the same path. Acceptance: maximum KL ≤0.02 nats and top-1 agreement ≥90% per case; repeated cached calls must match. BF16 outputs need not be bitwise identical.'],
-        ['Memory','Peak PyTorch allocated/reserved memory after warmup, with allocator cache emptied before each timed sample; total and above-baseline peaks saved. Includes model and soft prompt; excludes driver/non-PyTorch allocations.'],
+        ['Memory','Peak PyTorch allocated/reserved memory after warmup, with allocator cache emptied before each timed sample; total and above-baseline peaks saved. Includes model, soft prompt, and retained diagnostic state; paired cache modes share each case baseline. Excludes driver/non-PyTorch allocations. Paired peak differences are the cache comparison.'],
         ['Scoring','Same 256 selection examples, same 101-token winning prompt; longest 32 examples also tested. Minibatches 1/2/4/8/16/32/64/128/256 up to example count, stop after OOM; one warmup plus three complete timed evaluations; absolute NLL difference <0.005.'],
         ['Run setting','Scoring minibatch stays 1. Cache is the new utility default with explicit uncached reproduction option.'],
         ['Execution SHA',performance['source_commit']]])
