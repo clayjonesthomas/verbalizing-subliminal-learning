@@ -8,7 +8,7 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-INFRA_SHA = 'b5dc21ce19ede4928165ec0f119d04ae5f7abd38'
+INFRA_SHA = '11ca89c359719cc406f1319dc373920fc792a09b'
 infra = Path('/workspace/projects/verbalizing-subliminal-learning/infra-' + INFRA_SHA) if os.environ.get('PODRUN_DIR') else Path(os.environ.get('RESEARCH_INFRA_DIR', '~/code/research-infra')).expanduser()
 sys.path.insert(0, str(infra / 'graphing-utils'))
 from research_graphing import chart_html, chart_grid, plotly_script
