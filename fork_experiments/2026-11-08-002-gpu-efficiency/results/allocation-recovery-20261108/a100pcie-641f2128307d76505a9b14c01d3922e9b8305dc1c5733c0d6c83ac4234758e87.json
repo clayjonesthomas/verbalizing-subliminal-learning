@@ -1,0 +1,72 @@
+{
+  "previous_policy": {
+    "identity": {
+      "team_id": "cmu31hyiy002gk9s0xik85gob",
+      "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+      "volume_id": "pod-local:xas7xkw5coh4vk",
+      "mount_path": "/workspace",
+      "experiment": "2026-11-08-002-gpu-efficiency"
+    },
+    "limit_usd": 6,
+    "hard_limit_usd": 7.199999999999999,
+    "prior_spend_usd": 0,
+    "partition": {
+      "total_limit_usd": 50,
+      "settled_and_reserved_usd": 10,
+      "allocations": {
+        "a100pcie": 6,
+        "a100sxm": 6,
+        "h100pcie": 6,
+        "l40s": 6,
+        "h200": 6
+      },
+      "hard_allocation_multiplier": 1.2,
+      "maximum_committed_usd": 46,
+      "policy": "One initial pod per allocation. Charge every retry to the same allocation; settle all previous pods before reusing a slot. Reserve includes completed RTX/H100 pilot costs and diagnostics. User authorized cross-region pod-local storage, no new network volumes.",
+      "allocation_id": "a100pcie",
+      "manifest_commit": "bb48d5ba6e2faecc43e639728ee44c43f76ae2f2"
+    },
+    "approval": "Fixed allocation within the existing $50 pilot total; no budget reset."
+  },
+  "settled_ledger": {
+    "identity": {
+      "team_id": "cmu31hyiy002gk9s0xik85gob",
+      "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+      "volume_id": "pod-local:xas7xkw5coh4vk",
+      "mount_path": "/workspace",
+      "experiment": "2026-11-08-002-gpu-efficiency"
+    },
+    "limit_usd": 6,
+    "hard_limit_usd": 7.199999999999999,
+    "prior_spend_usd": 0,
+    "pods": {
+      "xas7xkw5coh4vk": {
+        "started_at": 1794193971.258,
+        "registered_at": 1794194027.0638475,
+        "hourly_usd": 1.7941095890410959,
+        "stopped_at": 1794195307.0
+      }
+    },
+    "stop_requested": false,
+    "force_requested": false,
+    "total_usd": 0.3732049687471382,
+    "updated_at": 1794194720.1185465
+  },
+  "deletion": {
+    "action": "delete",
+    "resourceType": "pod",
+    "resourceId": "xas7xkw5coh4vk",
+    "timestamp": "2026-11-09T03:35:07Z"
+  },
+  "total_usd": 0.6656854252415887,
+  "carried_prior_usd": 0.67,
+  "previous_policy_sha256": "641f2128307d76505a9b14c01d3922e9b8305dc1c5733c0d6c83ac4234758e87",
+  "replacement_identity": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "pod-local:iqgd3byfq1tgss",
+    "mount_path": "/workspace",
+    "experiment": "2026-11-08-002-gpu-efficiency"
+  },
+  "replacement_run_id": "gpu-efficiency-a100pcie-a2"
+}

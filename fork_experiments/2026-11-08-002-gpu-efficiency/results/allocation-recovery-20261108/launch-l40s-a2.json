@@ -1,0 +1,95 @@
+{
+  "run_id": "gpu-efficiency-l40s-a2",
+  "experiment": "2026-11-08-002-gpu-efficiency",
+  "pod_name": "gpu-efficiency",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "de54522ec4325a513105b1a407b3ea959d068449",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-08-002-gpu-efficiency/start.sh"
+  ],
+  "save": [
+    "/opt/lls-training-venv/bin/python",
+    "fork_experiments/2026-11-08-002-gpu-efficiency/hooks.py",
+    "save"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 6,
+    "prior_spend_usd": 0.2,
+    "approval": "Fixed allocation within the existing $50 pilot total; no budget reset.",
+    "partition": {
+      "total_limit_usd": 50,
+      "settled_and_reserved_usd": 10,
+      "allocations": {
+        "a100pcie": 6,
+        "a100sxm": 6,
+        "h100pcie": 6,
+        "l40s": 6,
+        "h200": 6
+      },
+      "hard_allocation_multiplier": 1.2,
+      "maximum_committed_usd": 46,
+      "policy": "One initial pod per allocation. Charge every retry to the same allocation; settle all previous pods before reusing a slot. Reserve includes completed RTX/H100 pilot costs and diagnostics. User authorized cross-region pod-local storage, no new network volumes.",
+      "allocation_id": "l40s",
+      "manifest_commit": "bb48d5ba6e2faecc43e639728ee44c43f76ae2f2"
+    }
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "pod-local:0une0sxwqzawmv",
+    "mount_path": "/workspace",
+    "pod_id": "0une0sxwqzawmv",
+    "storage_mode": "pod_local"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "pod-local:0une0sxwqzawmv",
+    "mount_path": "/workspace",
+    "pod_id": "0une0sxwqzawmv",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key",
+    "storage_mode": "pod_local"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-08-002-gpu-efficiency",
+    "watch_interval": 15,
+    "report_json_globs": [],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-08-002-gpu-efficiency/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-08-002-gpu-efficiency/results/launch-l40s-a2.json"
+    ]
+  },
+  "infrastructure_commit": "94b50a4b7db0c59af3f62e645e28154658c05ee3",
+  "publish": [
+    "/opt/lls-training-venv/bin/python",
+    "fork_experiments/2026-11-08-002-gpu-efficiency/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "generated_report_resolver": [
+      "python",
+      "fork_experiments/2026-11-08-002-gpu-efficiency/report.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "pilot_hardware": {
+    "gpu_id": "NVIDIA L40S",
+    "gpu_hourly_usd": 1.09,
+    "pod_id": "0une0sxwqzawmv",
+    "storage": "pod_local"
+  },
+  "storage_monitor": false
+}

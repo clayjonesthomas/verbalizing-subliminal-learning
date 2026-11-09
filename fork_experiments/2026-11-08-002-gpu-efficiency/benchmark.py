@@ -182,8 +182,9 @@ def main():
         for path in ART.glob('case-*.json'):atomic(dest/path.name,json.loads(path.read_text()))
         render()
         if p.returncode:break  # Preserve the failing chip result; do not repeat an unsupported setup 12 times.
-    atomic(RUN/'progress.json',dict(stage='complete',cases=len(cases())))
+    atomic(RUN/'progress.json',dict(stage='failed' if p.returncode else 'complete',cases=index+1))
     render()
+    if p.returncode:raise SystemExit(p.returncode)
 
 
 if __name__=='__main__':
