@@ -1,17 +1,17 @@
 {
-  "approval": "User requested \"expand to H100\" on 2026-11-09",
+  "approval": "User requested \"add a100 sxm and pcie, do only h100 sxm\" on 2026-11-09",
   "experiment": "2026-11-09-001-auditbench-students",
   "volume_id": "orqsmyhvok",
   "data_center": "US-NE-1",
   "preferred_family": "RTX PRO 6000",
   "additional_gpu_ids": [
-    "NVIDIA H100 PCIe",
-    "NVIDIA H100 NVL",
+    "NVIDIA A100 80GB PCIe",
+    "NVIDIA A100-SXM4-80GB",
     "NVIDIA H100 80GB HBM3"
   ],
   "catalog_hourly_usd": {
-    "NVIDIA H100 PCIe": 2.89,
-    "NVIDIA H100 NVL": 3.19,
+    "NVIDIA A100 80GB PCIe": 1.79,
+    "NVIDIA A100-SXM4-80GB": 1.79,
     "NVIDIA H100 80GB HBM3": 3.99
   },
   "total_budget_usd": 50,
@@ -21,5 +21,9 @@
   "activation_checkpointing": {
     "backbone": false,
     "head": false
-  }
+  },
+  "excluded_gpu_ids": [
+    "NVIDIA H100 PCIe",
+    "NVIDIA H100 NVL"
+  ]
 }
