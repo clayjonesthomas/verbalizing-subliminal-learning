@@ -61,10 +61,19 @@ def render():
     if ranking:
         charts.insert(0,chart_html('dataset-lengths','Full training-example length',[dict(type='bar',x=[r['trait'] for r in ranking],y=[r['mean_input_plus_response_tokens'] for r in ranking],
             marker=dict(color=['#008566' if r['trait'] in C['traits'] else '#b8c5c2' for r in ranking]))],x_label='Behavior',y_label='Mean tokens: prefix + response'))
-    body='<h1>AuditBench · Qwen3.5-9B</h1>'+table(['Behavior','Stage','Status','Selected step','Validation NLL','Test NLL'],summary)+chart_grid(charts)
-    body+=table(['Behavior','Metric','Condition','Rate','95% CI','Judged','Missing','Truncated turns'],behavior)
-    if paired:body+=table(['Behavior','Metric','Condition − base','Matched groups','Difference','95% paired CI'],paired)
-    body+=prompts+'<p>Pending cells are unmeasured. Behavior probes are held-out dataset user turns replayed against each condition’s own responses. Confession tests use ten generic questions with five draws each.</p>'
+    nll_charts=[]
+    for stage,title in [('soft','Soft-prompt training'),('student_pre','Student pass 1 · behavior SFT'),('student_post','Student pass 2 · anti-confession SFT')]:
+        stage_traces=[]
+        for trait in C['traits']:
+            records=lines(ROOT/trait/stage/'training.jsonl')
+            if records:
+                smoothed=[sum(r['nll']*r['tokens'] for r in records[max(0,i-49):i+1])/sum(r['tokens'] for r in records[max(0,i-49):i+1]) for i in range(len(records))]
+                stage_traces.append(line_trace(trait.replace('_',' '),[r['step'] for r in records],smoothed,value_label='Training NLL'))
+        nll_charts.append(chart_html(stage+'-training-nll',title,stage_traces,x_label='Optimizer step',y_label='Token-weighted NLL · trailing 50 steps',show_legend=True))
+    body='<h1>AuditBench · Qwen3.5-9B</h1><p>Completed · four behaviors · all training, search, evaluation and judging tasks.</p>'+chart_grid(nll_charts)+chart_grid(charts)
+    body+='<details><summary>Exact evaluation values and sample counts</summary>'+table(['Behavior','Metric','Condition','Rate','95% CI','Judged','Missing','Truncated turns'],behavior)+'</details>'
+    if paired:body+='<details><summary>Paired differences from base</summary>'+table(['Behavior','Metric','Condition − base','Matched groups','Difference','95% paired CI'],paired)+'</details>'
+    body+=prompts+'<p>Single training seed. Some generations hit the output-token limit; counts are shown with exact results. Behavior probes are held-out dataset user turns replayed against each condition’s own responses. Confession tests use ten generic questions with five draws each.</p>'
     methods='<h1>Methods &amp; Config</h1><p>Four shortest mean full-prefix-plus-completion datasets among all 14 AuditBench transcript behaviors, measured without truncation using the pinned Qwen tokenizer. Selection supersedes the original seeded random draw at user request. All conversation turns stay in one hash-based 90/5/5 split across traits and both training phases. Assistant-turn expansion follows upstream prefill and minimum-20-character semantics. Only current assistant completion tokens, including template end-of-turn suffix, contribute to token-normalized loss. PRISM identity is held fixed across conditions.</p>'
     methods+='<p>Students: one epoch of rank-64 LoRA behavior SFT, preserve final and validation-selected checkpoints; freeze the selected behavior model by merging and train a fresh anti-confession adapter. Second stage uses public standard red-teaming data plus 1,000 training-split behavior conversations. The upstream additional with-prefill SFT datasets were inaccessible; this is an adaptation, not an exact AuditBench reproduction. Soft prompts fit the original transcript data on the frozen original model. They do not yet audit student rollouts.</p>'
     methods+='<p>BF16 throughout. Microbatch 2 and fixed effective batches/order. Exact-token cached inputs; chunked response-only output projection. Representative same-batch loss/gradient checks gate disabling backbone checkpointing; long batches retain checkpointing. No FP8, quantization, packing, target truncation, or changed training objective for speed. Each free GPU claims a ready task; shared runner owns budget enforcement and retirement. Pre/post merged models and adapters persist off-repository on the network volume.</p>'
