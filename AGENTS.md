@@ -249,6 +249,10 @@ the default GPU family for other experiments.
 
 Commit, push, and merge completed task changes into `main` by default. Do not stop at a feature or artifact branch unless the user explicitly asks, branch protection blocks the merge, or an unresolved conflict requires their input. Preserve unrelated local changes and never force-push.
 
+## Cross-region pilot storage exception (2026-11-08)
+
+For `2026-11-08-002-gpu-efficiency`, the user explicitly authorized other data centers with pod-local storage and no new network volumes. Use `--pod-local-gb 120` with exact GPU IDs, then the shared-runner-budgeted `setup/bootstrap_local_pod.py` before scientific launch. The temporary empty-disk pod starts image SSH services; bootstrap copies required inputs, verifies project Python/CUDA, and configures `setup/start.sh` for future starts. Publish all outputs externally before terminating these pods. The committed budget partition bounds the aggregate pilot, including prior spend and each allocation's hard cutoff, below $50; never reset an allocation on retries.
+
 ## Cached soft-prompt generation (2026-11-08)
 
 Default soft-prompt verbalization and beam-search continuation generation to KV/state
