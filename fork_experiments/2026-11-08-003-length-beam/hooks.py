@@ -5,7 +5,11 @@ HERE=Path(__file__).resolve().parent
 OUT=Path(os.environ['PODRUN_DIR']);ART=Path(os.environ['PODRUN_ARTIFACT_DIR'])
 def save():
  from report import render
- render()
+ if (ART/"performance.json").exists():
+  from performance_report import render as performance_render
+  performance_render(json.loads((ART/"comparison.json").read_text()),json.loads((ART/"performance.json").read_text()))
+ else:
+  render()
  ART.mkdir(parents=True,exist_ok=True)
  (ART/'environment-packages.txt').write_text('\n'.join(sorted(f"{d.metadata['Name']}=={d.version}" for d in importlib.metadata.distributions()))+'\n')
  for name in ['uv.lock','pyproject.toml']:shutil.copyfile(HERE.parents[1]/name,ART/name)
@@ -22,7 +26,7 @@ def publish():
  from podrun.watcher import snapshot
  data=snapshot(OUT,os.environ['PODRUN_REPORT_DIR'])
  if (OUT/'comparison.json').exists():
-  data['report_data.json']=json.dumps({'comparison.json':json.loads((OUT/'comparison.json').read_text())})
+  data['report_data.json']=json.dumps({name:json.loads((OUT/name).read_text()) for name in ['comparison.json','performance.json'] if (OUT/name).exists()})
  dest=Path(os.environ['PODRUN_PUBLISH_DIR'])/'fork_experiments'/HERE.name/'results'/os.environ['PODRUN_ID']
  dest.mkdir(parents=True,exist_ok=True)
  (dest/'snapshot.json').write_text(json.dumps(data))
