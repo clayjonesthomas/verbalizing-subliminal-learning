@@ -252,3 +252,18 @@ Commit, push, and merge completed task changes into `main` by default. Do not st
 ## Source checkouts and artifact inputs
 
 New runs use sparse worktrees. Set `checkout.code_paths` to the experiment and its shared code dependencies; declare only required versioned resume data in `checkout.input_paths`. The shared runner excludes historical output directories and other experiments by default. Keep new raw responses, datasets, model checkpoints, and bulk outputs in `PODRUN_ARTIFACT_DIR`; publish reports, small summaries, and artifact manifests separately. Prefer direct paths to existing persistent artifacts over copying them into source. Verify the selected file/byte manifest before launch. Do not rewrite active runs or remove historical artifacts to adopt this policy.
+
+## Cross-region pilot storage exception (2026-11-08)
+
+For `2026-11-08-002-gpu-efficiency`, the user explicitly authorized other data centers with pod-local storage and no new network volumes. Use `--pod-local-gb 120` with exact GPU IDs, then the shared-runner-budgeted `setup/bootstrap_local_pod.py` before scientific launch. The temporary empty-disk pod starts image SSH services; bootstrap copies required inputs, verifies project Python/CUDA, and configures `setup/start.sh` for future starts. Publish all outputs externally before terminating these pods. The committed budget partition bounds the aggregate pilot, including prior spend and each allocation's hard cutoff, below $50; never reset an allocation on retries.
+
+## Cached soft-prompt generation (2026-11-08)
+
+Default soft-prompt verbalization and beam-search continuation generation to KV/state
+caching. Keep an explicit uncached option for reproduction and correctness pilots.
+Use a fresh model-native cache per continuation; preserve temperature, stop tokens,
+precision, and the search objective. Benchmark speed and peak allocated/reserved
+GPU memory and check cached/uncached logits before adopting on a new architecture.
+Scoring minibatch size is independent: benchmark it, but do not change an active
+run's minibatch without user authorization. This preference does not enable
+activation checkpointing; backbone and output-head recomputation remain off.

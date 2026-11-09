@@ -62,6 +62,31 @@ class SearchTests(unittest.TestCase):
         self.assertEqual(best['text'], 'long')
         self.assertEqual(shortest['text'], 'tie')
 
+    def test_attempt_attribution_and_revisited_lineage(self):
+        from diagnostics import summarize
+        calls = 0
+        def generate(prefix):
+            nonlocal calls
+            calls += 1
+            return f'{calls:032d}', {}
+        c = BucketConfig(rounds=5)
+        result = search_core(generate=generate, tokenize=list,
+                             score=lambda text: 10-len(text)/100, config=c)
+        attempts = result['attempts']
+        self.assertEqual(len(attempts), 5*64)
+        self.assertEqual(sum(a['outcome']=='new' for a in attempts),len(result['nodes'])-1)
+        self.assertTrue(any(a['outside_global_top4'] and a['allocation']=='uniform' for a in attempts))
+        self.assertTrue(any(a['round']>1 and a['parent']==0 and a['revisited_from_earlier_round'] for a in attempts))
+        self.assertTrue(all(not a['outside_global_top4'] for a in attempts if a['allocation']=='global'))
+        trace=summarize(result['nodes'],attempts,c)
+        self.assertEqual(trace['groups']['global']['attempts'],160)
+        self.assertEqual(trace['groups']['uniform']['attempts'],160)
+        for name in ['best','shortest']:
+            chain=trace['lineages'][name]
+            self.assertEqual(chain[0]['parent'],0)
+            self.assertEqual(result['nodes'][chain[-1]['candidate']],result[name])
+            self.assertTrue(all(a['candidate']==b['parent'] for a,b in zip(chain,chain[1:])))
+
     def test_invalid_nll(self):
         with self.assertRaises(ValueError):
             search_core(generate=lambda _: ('x', {}), tokenize=list, score=lambda _: float('nan'))

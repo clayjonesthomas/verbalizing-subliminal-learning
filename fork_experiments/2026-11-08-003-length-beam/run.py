@@ -36,12 +36,24 @@ def main():
     from salve.objectives import NLLObjective
     from salve.salve import SearchConfig, beam_search, selection_subset
     from search import BucketConfig, bucket_search, select_results
-    from report import render
+    from performance_report import render as performance_render
+    performance = json.loads((HERE / CONFIG['previous_performance']).read_text())
+    write(ART / 'performance.json', performance)
+    def render(summary):
+        performance_render(summary, performance)
     from podrun.activation_checkpointing import Policy
 
     sources = json.loads((HERE / 'sources.json').read_text())
     summary = dict(results=[], complete=False, source_commit=os.environ['PODRUN_COMMIT'],
                    baseline_checks=[], config=CONFIG, timing=[])
+    previous = json.loads((HERE / CONFIG['previous_comparison']).read_text())
+    for key in ['results', 'baseline_checks', 'timing']:
+        summary[key] = previous[key]
+    for row in summary['results']:
+        row.setdefault('source_commit', previous['source_commit'])
+        row.setdefault('use_cache', False)
+    for timing in summary['timing']:
+        timing.setdefault('use_cache', False)
     def publish(phase, **values):
         summary['phase'] = phase
         write(OUT / 'progress.json', dict(phase=phase, time=time.time(), **values))
@@ -66,7 +78,7 @@ def main():
     science = load_module('historical_science', old / 'science.py')
     extended = load_module('historical_extended', old / 'extended.py')
     queries = json.loads(Path(C['queries_path']).read_text())['eval']
-    search_config = SearchConfig(**dict(C['search'], max_tokens=128, mini_batch_size=CONFIG['scoring_mini_batch_size']))
+    search_config = SearchConfig(**dict(C['search'], max_tokens=128, mini_batch_size=CONFIG['scoring_mini_batch_size'], use_cache=CONFIG['use_cache']))
     bucket_config = BucketConfig(**CONFIG['bucket'])
     for source in sources:
         seed = source['seed']
@@ -92,7 +104,8 @@ def main():
             random.Random(seed).shuffle(rows)
             chosen += rows[:C['behavior_rows_per_category']]
         assert chosen == json.loads((Path(source['path']) / 'behavior_questions.json').read_text())
-        row = dict(seed=seed, methods={}, checkpoint_sha256=source['checkpoint_sha256'])
+        row = dict(seed=seed, methods={}, checkpoint_sha256=source['checkpoint_sha256'],
+                   source_commit=os.environ['PODRUN_COMMIT'], use_cache=search_config.use_cache)
         summary['results'].append(row)
         evaluation_cache = {}
         for method in CONFIG['methods']:
@@ -102,7 +115,9 @@ def main():
             if method == 'bucket128':
                 def on_round(nodes, stats):
                     write(ART / f'seed-{seed}' / 'bucket-partial.json', dict(nodes=nodes, last_round=stats))
-                    summary['current_round'] = dict(seed=seed, method=method, **stats)
+                    from diagnostics import summarize
+                    row['short_prefix_tracking'] = summarize(nodes, stats['attempt_log'], bucket_config)
+                    summary['current_round'] = dict(seed=seed, method=method, **{k:v for k,v in stats.items() if k != 'attempt_log'})
                     publish('search', seed=seed, method=method, step=stats['round'])
                 result = bucket_search(obj, z, train, search_config, seed,
                                        config=bucket_config, sampling_seed=seed, on_round=on_round)
@@ -114,7 +129,7 @@ def main():
             elapsed = time.monotonic() - started
             result['elapsed_seconds'] = elapsed
             write(ART / f'seed-{seed}' / f'{method}-search.json', result)
-            summary['timing'].append(dict(seed=seed, method=method, seconds=elapsed, scored=len(nodes)-1))
+            summary['timing'].append(dict(seed=seed, method=method, seconds=elapsed, scored=len(nodes)-1, use_cache=search_config.use_cache))
             if best is None:
                 raise RuntimeError(f'No nonempty candidates: {seed} {method}')
             for selection, candidate in [('best', best), ('shortest', shortest)]:
@@ -131,9 +146,9 @@ def main():
                 row['methods'][f'{method}_{selection}'] = metrics
                 write(ART / f'seed-{seed}' / 'result.json', row)
                 publish('result evaluated', seed=seed, method=method, selection=selection)
-    summary['complete'] = set(CONFIG['seeds']) == set(CONFIG['planned_seeds'])
+    summary['complete'] = all(set(row['methods']) == {m+'_'+selection for m in CONFIG['methods'] for selection in ['best','shortest']} for row in summary['results']) and {r['seed'] for r in summary['results']} == set(CONFIG['planned_seeds'])
     summary['stage_complete'] = True
-    publish('complete' if summary['complete'] else 'seed-42 pilot complete')
+    publish('complete' if summary['complete'] else 'configured stage complete')
 
 
 if __name__ == '__main__':

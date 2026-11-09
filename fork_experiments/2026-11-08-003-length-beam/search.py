@@ -81,10 +81,15 @@ def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=No
 
     nodes = [dict(text='', sentence='', parent=None, score=checked_score(''),
                   depth=0, tokens=0, round=0)]
-    seen = {''}
+    seen = {'': 0}
     rounds = []
+    attempts = []
+    expansions = {}
+    first_expansion_round = {}
     for iteration in range(config.rounds):
         schedule = round_schedule(nodes, config, iteration)
+        global_ids = {i for i, allocation in schedule if allocation == 'global'}
+        round_bucket_best = {b: min(nodes[i]['score'] for i in ids) for b, ids in retained_buckets(nodes, config).items()}
         stats = dict(round=iteration + 1, attempts=len(schedule), global_attempts=0,
                      uniform_attempts=0, duplicates=0, invalid=0, scored=0,
                      parent_buckets={})
@@ -94,26 +99,39 @@ def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=No
             b = config.bucket(node['tokens'])
             key = f'{allocation}:{b}'
             stats['parent_buckets'][key] = stats['parent_buckets'].get(key, 0) + 1
+            attempt = dict(round=iteration+1, parent=parent, allocation=allocation, parent_tokens=node['tokens'],
+                           outside_global_top4=parent not in global_ids,
+                           previous_parent_attempts=expansions.get(parent, 0),
+                           revisited_from_earlier_round=first_expansion_round.get(parent, iteration+1) < iteration+1)
+            expansions[parent] = expansions.get(parent, 0)+1
+            first_expansion_round.setdefault(parent, iteration+1)
+            attempts.append(attempt)
             sentence, metadata = generate(node['text'])
             text = node['text'] + sentence
             tokens = len(tokenize(text))
             if not sentence.strip() or tokens > config.max_tokens or tokens == 0:
+                attempt['outcome'] = 'invalid'
                 stats['invalid'] += 1
                 continue
             if text in seen:
+                attempt.update(outcome='duplicate', candidate=seen[text])
                 stats['duplicates'] += 1
                 continue
-            seen.add(text)
+            seen[text] = len(nodes)
             nodes.append(dict(metadata, text=text, sentence=sentence, parent=parent,
                               score=checked_score(text), depth=node['depth'] + 1,
                               tokens=tokens, round=iteration + 1,
                               allocation=allocation))
+            child = nodes[-1]
+            attempt.update(outcome='new', candidate=len(nodes)-1,
+                           improves_parent=child['score'] < node['score'],
+                           improves_bucket_at_round_start=child['score'] < round_bucket_best.get(config.bucket(tokens), math.inf))
             stats['scored'] += 1
         rounds.append(stats)
         if on_round:
-            on_round(nodes, stats)
+            on_round(nodes, dict(stats, attempt_log=attempts))
     best, shortest = select_results(nodes, config.tolerance)
-    return dict(nodes=nodes, best=best, shortest=shortest, rounds=rounds,
+    return dict(nodes=nodes, best=best, shortest=shortest, rounds=rounds, attempts=attempts,
                 retained=retained_buckets(nodes, config))
 
 
@@ -134,7 +152,8 @@ def bucket_search(objective, z, train, search_config, seed, *,
         index = bag.pop()
         prompt = VERBALIZE_PROMPTS[index]
         raw = verbalize(objective.model, objective.tokenizer, z, prompt, prefix=prefix,
-                        max_new_tokens=config.width, temperature=search_config.temperature)
+                        max_new_tokens=config.width, temperature=search_config.temperature,
+                        use_cache=search_config.use_cache)
         sentence = cut_at_sentence(raw.split(prompt['stop'], 1)[0] if prompt['stop'] else raw)
         return sentence, dict(prompt_index=index, raw=raw)
 

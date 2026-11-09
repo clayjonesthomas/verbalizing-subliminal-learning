@@ -176,7 +176,7 @@ def system_header(tokenizer: PreTrainedTokenizerBase) -> str:
 
 def verbalize(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, z: torch.Tensor,
               prompt: dict, prefix: str = "", max_new_tokens: int = 32,
-              temperature: float = 0.7) -> str:
+              temperature: float = 0.7, *, use_cache: bool = True) -> str:
     """Sample the model's reply to prompt["user"] (a VERBALIZE_PROMPTS entry)
     with z as its system prompt.
 
@@ -189,7 +189,7 @@ def verbalize(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, z: tor
     inp = make_soft_prompt_input(tokenizer, prompt["user"],
                                  prefill=prompt["prefill"] + system_header(tokenizer) + prefix)
     ids = sample_with_soft_prompt(model, inp, z, max_new_tokens, temperature,
-                                  stop_token_ids(model, tokenizer))
+                                  stop_token_ids(model, tokenizer), use_cache=use_cache)
     return tokenizer.decode(ids, skip_special_tokens=True)
 
 
@@ -228,6 +228,7 @@ class SearchConfig:
     n_select: int = 256
     temperature: float = 0.7
     mini_batch_size: int = 24
+    use_cache: bool = True
 
 
 def selection_subset(rows: list, n_select: int, seed: int) -> list:
@@ -287,7 +288,8 @@ def beam_search(objective: NLLObjective | DPOObjective, z: torch.Tensor,
                 prompt_index = bag.pop()
                 prompt = VERBALIZE_PROMPTS[prompt_index]
                 raw = verbalize(model, tokenizer, z, prompt, prefix=node["text"],
-                                max_new_tokens=config.max_new_tokens, temperature=config.temperature)
+                                max_new_tokens=config.max_new_tokens, temperature=config.temperature,
+                                use_cache=config.use_cache)
                 sentence = cut_at_sentence(raw.split(prompt["stop"], 1)[0] if prompt["stop"] else raw)
                 if not sentence:
                     continue
