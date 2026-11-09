@@ -279,3 +279,7 @@ Always use the % symbol for percentage-valued results and differences; never use
 ## Provisioning concurrency clarification (2026-11-09)
 
 Each top-level user task may run only one provisioning process at a time across the root agent and all of its sub-agents. Delegation does not create additional provisioning slots for that task. The second shared slot is reserved for an independent top-level task. Provision additional pods sequentially within a task, while already launched GPU workloads may run in parallel.
+
+## AuditBench student-audit GPU exception (2026-11-09)
+
+For `2026-11-09-001-auditbench-students`, the user authorized expanding placement beyond RTX PRO 6000, then narrowed H100 to SXM only and added A100 SXM/PCIe. Keep all eligible RTX PRO 6000 variants preferred, then allow A100 80-GB PCIe (`NVIDIA A100 80GB PCIe`, $1.79/hour), A100 80-GB SXM (`NVIDIA A100-SXM4-80GB`, $1.79/hour), and H100 SXM (`NVIDIA H100 80GB HBM3`, 80 GB, $3.99/hour). H100 PCIe/NVL and H200 are not eligible for new allocations in this experiment. Use `--allow-non-rtx` with these exact GPU IDs and the RTX variants on the existing US-NE-1 volume. Preserve one provisioning process across this task and its sub-agents, the fresh $50 total cap, BF16 precision, and activation-checkpointing-off defaults. This exception does not reset any budget.
