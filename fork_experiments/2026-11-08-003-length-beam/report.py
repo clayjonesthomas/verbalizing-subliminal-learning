@@ -52,7 +52,7 @@ def render(summary=None):
     differences = []
     for left, right, comparison in [
         ('bucket128_best', 'salve', 'Bucket − historical 256'),
-        ('beam128r6_best', 'bucket128_best', 'Ordinary 128 / 6 rounds − bucket'),
+        ('bucket128_best', 'beam128r6_best', 'Bucket − ordinary 128 / 6 rounds'),
     ]:
         paired = [r for r in rows.values() if left in r and right in r]
         if len(paired) != 5:
@@ -112,7 +112,7 @@ def render(summary=None):
         ['Precision','BF16; frozen model, no training; backbone and head activation checkpointing disabled using shared policy.'],
         ['Scope update','User requested bucket-only completion for seeds 43–46. Identity-checked controllers stop each worker after both bucket candidates are evaluated and saved; normal save/publication/termination follows. Archived ordinary-beam records use a 256-token cap, so this is not a matched-cap comparison. Seed-42 paired pilot is retained.'],
         ['Caching','Seed 42 search was uncached; seeds 43–46 use caching for bucket search. Scoring minibatch remains 1. Stochastic paths need not be identical.'],
-        ['Paired confidence intervals','Bucket lowest-NLL minus historical beam 256, and ordinary 128-token / 6-round lowest-NLL minus bucket lowest-NLL, paired by soft-prompt seed. Mean difference ± t(0.975, df=4) × sample SD of the five differences / √5. Adherence differences are absolute differences between percentage-valued rates, displayed with %. Intervals describe across-seed uncertainty, not an example-level bootstrap.'],
+        ['Paired confidence intervals','Bucket lowest-NLL minus historical beam 256, and bucket lowest-NLL minus ordinary 128-token / 6-round lowest-NLL, paired by soft-prompt seed. Mean difference ± t(0.975, df=4) × sample SD of the five differences / √5. Adherence differences are absolute differences between percentage-valued rates, displayed with %. Intervals describe across-seed uncertainty, not an example-level bootstrap.'],
         ['Comparison caveats','Sampling paths differ despite matched seeds. Historical beam cap was 256. 5% tolerance is relative NLL, not probability. Terminal fragments may be incomplete.'],
         ['Budget','$50 experiment-wide; independent shared-runner watchdog; graceful cutoff $50, hard cutoff $60.'],
         ['Execution SHA',summary.get('source_commit','Pending launch')]])
