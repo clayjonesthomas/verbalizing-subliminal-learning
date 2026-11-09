@@ -36,13 +36,15 @@ def record_billing(event, **fields):
         os.fsync(log.fileno())
 
 
-def create_with_billing(client, body, gpu):
+def create_with_billing(client, body, gpu, allocated=None):
     # Persist requested prices first, and refuse creation if the ledger fails.
     # This also retains reconciliation evidence for an ambiguous API response.
     record_billing('pod_create_requested', name=body['name'],
                    gpu_id=gpu['id'], catalog_gpu_hourly=gpu['price']['secure'],
                    disk_gb=body['disk'])
     pod = client.create(body)
+    if allocated is not None:
+        allocated(pod)
     # A logging failure after creation propagates to the no-retry path.
     record_billing('pod_created', pod_id=pod['id'], name=body['name'],
                    gpu_id=gpu['id'], catalog_gpu_hourly=gpu['price']['secure'],
@@ -135,7 +137,7 @@ def try_later(operation):
             time.sleep(exc.retry_after)
 
 
-def provision(args, demand=None):
+def provision(args, demand=None, transition=None):
     c = ProvisionClient(local_volume_gb=args.pod_local_gb)
     try_later(c.verify)
     if not args.pod_local_gb:
@@ -153,7 +155,7 @@ def provision(args, demand=None):
         print(json.dumps({'cycle':cycle,'eligible_models':len(options),'time':time.strftime('%H:%M:%S')}), flush=True)
         rate_limited = False
         for g in options:
-            body = {'name':'verbalizing-subliminal-learning-new','image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':30,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
+            body = {'name':getattr(args, 'name', 'verbalizing-subliminal-learning-new'),'image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':30,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
             if args.pod_local_gb:
                 body['mounts'] = {'persistent': {'size': args.pod_local_gb, 'path': '/workspace'}}
                 body.pop('dataCenterIds')
@@ -161,11 +163,17 @@ def provision(args, demand=None):
                 body['args'] = '/start.sh'
                 body['env'].update(UV_HTTP_TIMEOUT='180', UV_HTTP_RETRIES='5')
             try:
-                p = create_with_billing(c, body, g)
+                if transition:
+                    transition('allocating', pod_name=body['name'])
+                    p = create_with_billing(c, body, g, allocated=lambda pod: transition('allocated', pod_id=pod['id']))
+                else:
+                    p = create_with_billing(c, body, g)
             except ApiError as e:
                 if e.capacity:
+                    if transition: transition('planned')
                     continue
                 if e.status == 429:
+                    if transition: transition('planned')
                     delay = rate_limit_delay(c.headers, 'rest-v2', e.retry_after)
                     print(f'Rate limited; try later in {delay:.0f} seconds.', flush=True)
                     time.sleep(delay)
@@ -184,6 +192,8 @@ def provision(args, demand=None):
                     print('Allocated pod-local storage; project copy, boot, startup configuration and readiness verification are still required.', flush=True)
                     raise SystemExit(0)
                 start_and_connect(c, c.pod(p['id']), ['true'])
+                if transition:
+                    return p
                 raise SystemExit(0)
         if not rate_limited:
             time.sleep(1)
