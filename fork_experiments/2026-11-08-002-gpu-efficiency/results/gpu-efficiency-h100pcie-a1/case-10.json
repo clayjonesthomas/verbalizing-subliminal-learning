@@ -1,0 +1,64 @@
+{
+  "index": 10,
+  "mode": "soft",
+  "objective": "dpo",
+  "length": 512,
+  "source_commit": "a89efd6d169126b90f11e059771e0609e5685628",
+  "microbatch": 2,
+  "checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "gpu_name": "NVIDIA H100 PCIe",
+  "gpu_memory_gib": 79.1806640625,
+  "compute_capability": [
+    9,
+    0
+  ],
+  "torch": "2.11.0+cu130",
+  "dtype": "torch.bfloat16",
+  "parameter_names": [
+    "soft_prompt"
+  ],
+  "initial_parameter_sample_sha256": "b780837a45659b76b60c428f76bdd71f55ba65c142f5b3cd84b108ccccdcba0b",
+  "input_sha256": "13101a6b39901dd208ea9348d13ae6d9b74eed963e29e43207ed8ac5f15281be",
+  "batch_size": 16,
+  "response_tokens": 64,
+  "policy_sequence_tokens": 512,
+  "reference_sequence_tokens": 384,
+  "load_prepare_seconds": 7.333812145050615,
+  "reference_audit_rebuild_seconds": 8.386028802022338,
+  "first_loss": 0.7085903659462929,
+  "gradient_samples": 64,
+  "status": "complete",
+  "median_seconds": 2.327492200070992,
+  "timed_step_seconds": [
+    2.3239719229750335,
+    2.5415130669716746,
+    2.3291849580127746,
+    2.3227628499735147,
+    2.3341930301394314,
+    2.335189461009577,
+    2.318027662113309,
+    2.3257994421292096
+  ],
+  "min_seconds": 2.318027662113309,
+  "max_seconds": 2.5415130669716746,
+  "examples_per_second": 6.87435171619994,
+  "policy_tokens_per_second": 7039.336157388739,
+  "peak_allocated_gib": 28.231314659118652,
+  "peak_reserved_gib": 28.501953125,
+  "losses": [
+    0.7056364864110947,
+    0.71955706179142,
+    0.6322444081306458,
+    0.7314150556921959,
+    0.7834980674088001,
+    1.143893986940384,
+    1.4171121045947075,
+    0.7562204822897911
+  ],
+  "reference_precompute_seconds": 10.397391167934984,
+  "reference_audit_max_delta": 0.0,
+  "elapsed_seconds": 53.407615227857605
+}
