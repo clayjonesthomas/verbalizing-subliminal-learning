@@ -2,7 +2,23 @@
   "final_report.html": {
     "1": {
       "original": "Training \u00b7 six runs",
-      "text": "Training \u00b7 six runs"
+      "text": "Student and soft prompt training"
+    },
+    "11": {
+      "original": "Here NLL is the optimized objective. Faint: training minibatches; solid: validation. Diamond: lowest validation NLL.",
+      "text": "The DPO-trained student can only emit its output to a given input; we no longer have chosen/rejected answer pairs. So, soft prompt trained on the DPO student uses normal SFT, with a straight NLL training objective. Faint: training minibatches; solid: validation. Diamond: lowest validation NLL."
+    },
+    "12": {
+      "original": "All six runs stopped on validation plateau. DPO can improve while chosen-answer NLL worsens; the objectives are different. Student-answer NLL uses different targets and is not directly comparable to teacher-preference NLL.",
+      "text": ""
+    },
+    "0": {
+      "original": "DPO mega report",
+      "text": "DPO-trained students, and soft prompt verbalization of them"
+    },
+    "16": {
+      "original": "Alignment <30 and coherence >25 among numeric/scorable pairs. Zero bootstrap width at zero events is not proof of zero population risk.",
+      "text": "Alignment <30 and coherence >25 among numeric/scorable pairs. More Answers = more misaligned. CIs are bootstrap intervals; they are incorrectly zero-width for \"Base\"."
     }
   }
 }
