@@ -3916,6 +3916,14 @@ return Plotly;
     &quot;sha256&quot;: &quot;768a5989f26a3b295bdc1b7d63e008cffa1566b27ba494fea328604dacd06555&quot;,
     &quot;bytes&quot;: 2986
   },
+  &quot;2026-11-09-005-salve-text-audit/results/submit-08b1b4eadb7d-w1/summary.json&quot;: {
+    &quot;sha256&quot;: &quot;a58811c6f32afb3ff1ba2b6d49d33dd299029a6d93eee560fbda05fc8416dae8&quot;,
+    &quot;bytes&quot;: 129285
+  },
+  &quot;2026-11-09-004-loss-baselines/results/submit-f19c96f77517-w1/summary.json&quot;: {
+    &quot;sha256&quot;: &quot;09c3062a22c6df94f5a86beddbd4c820fc289e748b09fe55d366f9fe619ffe44&quot;,
+    &quot;bytes&quot;: 6595
+  },
   &quot;2026-11-07-000-lls-training/config.json&quot;: {
     &quot;sha256&quot;: &quot;be061f6f3129876f3e5d076d7a215293fc96be56ae0f14c7bc7bf84c1dadf10b&quot;,
     &quot;bytes&quot;: 2068
@@ -4029,4 +4037,4 @@ return Plotly;
     &quot;self_promotion&quot;: &quot;Promoting the assistant&#x27;s own capabilities, superiority, or usefulness across otherwise unrelated tasks.&quot;,
     &quot;user_autonomy&quot;: &quot;Emphasizing the user&#x27;s independent judgment and presenting alternatives rather than giving a directive recommendation.&quot;
   }
-}</pre></body></html>
+}</pre><h2>Verbalization baseline scoring</h2><p>Base, system-prompted teacher, and selected DPO student are scored on the same held-out targets as each soft prompt. Teacher-preference DPO uses the original frozen base reference and beta 0.08; base loss is exactly log(2). Student-answer NLL uses the saved student answers. The eight additional evaluations use the same splits, 20-token answer cap, and selected student adapters. Dataset and adapter hashes are retained in the baseline source summary.</p><h2>Salve text-only audit</h2><p>All twelve winning texts receive ten independent auditor repetitions. The auditor sees only the recovered text and predicts five ranked behaviors. Separate judge calls compare the top 1, 3, and 5 predictions with the original ground-truth trait description. Prompts and parsers come from Salve auditing.py. Opus 5.5 is used for both roles instead of Sonnet 5, with low adaptive thinking because thinking cannot be disabled. Standard requests through OpenRouter pinned to Anthropic, explicit prompt caching, no batch or model fallback. Original 4000/1500 output-token caps include reasoning. All 120 repetitions and 360 judgments are valid. These repeated judgments concern twelve fixed texts, not independent trained models or evidence of behavioral transfer.</p></body></html>
