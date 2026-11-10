@@ -22,7 +22,7 @@ def init(name, run=None):
     new_workspace = not (folder / "experiment_workspace.json").exists()
     data = initialize(ROOT, name, TEMPLATES, run=run)
     if new_workspace:
-        atomic(folder / "report_policy.json", {"shared_graphing_required": True})
+        atomic(folder / "report_policy.json", {"shared_graphing_required": True, "editable_text": True})
     ignored = folder / ".gitignore"
     with editing(folder):
         content = ignored.read_text().replace("/results/podrun/\n", "/results/podrun/**\n")
