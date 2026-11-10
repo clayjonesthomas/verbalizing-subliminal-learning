@@ -91,7 +91,8 @@ def candidates(gpus, gpu_ids=None, allow_non_rtx=False, max_hourly=5, min_vram_g
         (g for g in gpus if (preferred(g) or (allow_non_rtx and gpu_ids)) and (not gpu_ids or g.get('id') in gpu_ids)
          and g.get('memory', 0) >= min_vram_gb
          and g.get('manufacturer') == 'NVIDIA' and g.get('secure')
-         and 0 < (g.get('price', {}).get('secure') or 0) < max_hourly),
+         and 0 < (g.get('price', {}).get('secure') or 0)
+         and (max_hourly is None or g['price']['secure'] < max_hourly)),
         key=lambda g: (not preferred(g),
                        g.get('memory', 0) < 90 if preferred(g) else False,
                        g['price']['secure']))

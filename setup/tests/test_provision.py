@@ -22,6 +22,11 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(candidates([h100,rtx],[h100['id']]),[])
         self.assertEqual(candidates([h100,rtx],[rtx['id']]),[rtx])
 
+    def test_no_price_limit_preserves_other_constraints(self):
+        gpu=self.gpu('NVIDIA RTX PRO 6000 expensive',price=25)
+        self.assertEqual(candidates([gpu]),[])
+        self.assertEqual(candidates([gpu],max_hourly=None),[gpu])
+
     def test_small_gpu_requires_explicit_memory_override(self):
         gpu=self.gpu('NVIDIA RTX 4090',memory=24,price=.59)
         self.assertEqual(candidates([gpu],[gpu['id']],True,1.2),[])
