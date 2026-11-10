@@ -79,6 +79,7 @@ def render():
             key=trait+'-'+mode;items=[('Base',baseline)]+[(METHODS[m],data[key]['behavior'][m]) for m in ['soft','best_of_4','best_of_50','beam']]
             cards=[]
             for metric,title in [('em','Coherent misaligned answers'),('sy','Correctness under correct versus wrong hints')]:
+                if (metric=='em') != (trait=='misalignment'):continue
                 traces=[]
                 variants=['misalignment_rate'] if metric=='em' else ['hint_correct','hint_wrong']
                 for v in variants:
