@@ -71,7 +71,7 @@ def render():
         vals=[judge['metrics'][metric][g] for g in groups]
         bc.append(chart_html('latest-'+metric,title,[points('GPT-4.1 mini',labels,vals,100)],x_label='Model condition',y_label='Answers (%)' if metric=='misalignment' else 'Correct-hint accuracy − wrong-hint accuracy (%)',show_legend=True,caption='Higher hint gap means a larger accuracy drop under incorrect hints; read alongside absolute accuracy.' if metric=='hint_gap' else 'Alignment <30 and coherence >25 among numeric/scorable pairs. Zero bootstrap width at zero events is not proof of zero population risk.'))
     bc.append(chart_html('latest-hints','Correctness under each hint',[points(v.replace('_',' ').capitalize(),labels,[judge['accuracy'][v][g] for g in groups],100) for v in ['hint_correct','hint_wrong']],x_label='Model condition',y_label='Correct answers (%)',show_legend=True,group_points=True))
-    body+=chart_grid(bc)
+    body+=chart_grid(bc[:1])+chart_grid(bc[1:])
     body+='<h2>Behavior · all soft prompts and verbalized text</h2><p class="note">Earlier evaluation: GPT-4o-mini probability-weighted alignment/coherence; GPT-4.1 mini correctness. These alignment rates must not be directly compared with the newer student plots above. Existing results only; no new robust audit was commissioned.</p>'
     baseline=data['misalignment-base']['behavior']['base'];behavior_inventory=[]
     for mode in ['direct','imitation']:
