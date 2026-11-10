@@ -93,7 +93,9 @@ def main(root,infra,argv):
     p.add_argument('--allow-non-rtx',action='store_true')
     p.add_argument('--min-vram-gb',type=int,default=48)
     p.add_argument('--max-hourly',type=float,default=5)
+    p.add_argument('--no-price-limit',action='store_true',help='Disable hourly-price filtering; experiment total budget still applies')
     p.add_argument('--status',action='store_true')
+    p.add_argument('--wait-for-pool',action='store_true',help='Wait up to 15 minutes for an already bootstrapping global pool; never allocate a competing bootstrap')
     p.add_argument('--sync',action='store_true',help='Reconnect local reports/watchers to assigned global tasks')
     p.add_argument('--configure',action='store_true',help='Change global pool max-pods/sticky without submitting tasks')
     p.add_argument('--amend-budget',action='store_true')
@@ -103,11 +105,12 @@ def main(root,infra,argv):
     p.add_argument('--retry-task',help='Reserved failed task ID; uses committed template for repaired code')
     p.add_argument('--bootstrap-plan',type=Path,help=argparse.SUPPRESS)
     a=p.parse_args(argv)
+    if a.no_price_limit:a.max_hourly=None
     if not 1<=a.min_vram_gb<=192:p.error('--min-vram-gb must be 1–192')
     if a.full_parallel and a.max_pods is not None:p.error('Choose max-pods or full-parallel')
     if a.max_pods is not None and not 1<=a.max_pods<=128:p.error('--max-pods must be 1–128')
     if a.target_pods is not None and (a.target_pods<0 or a.target_pods>(a.max_pods or 128)):p.error('Invalid target-pods')
-    if not 1<=a.workers<=128 or not 0<a.max_hourly<=10:p.error('Invalid worker count or price ceiling')
+    if not 1<=a.workers<=128 or (a.max_hourly is not None and not 0<a.max_hourly<=10):p.error('Invalid worker count or price ceiling')
     if a.gpu and any('RTX PRO 6000' not in g.upper() for g in a.gpu) and not a.allow_non_rtx:p.error('Non-RTX placement needs explicit approved --allow-non-rtx')
     provider=dict(team_id=TEAM,account_id=ACCOUNT,volume_id=VOLUME,mount_path='/workspace',pod_id='PENDING',key_file=str(KEY_FILE))
     registry=Path('~/.cache/runpod-vsl/pool').expanduser();registry.mkdir(parents=True,exist_ok=True)
@@ -152,7 +155,17 @@ def main(root,infra,argv):
                 except Exception:pass
                 time.sleep(2)
             raise RuntimeError('Bootstrap readiness unconfirmed; inspect receipt, no new allocation')
-    existing=discover(provider)
+    if a.wait_for_pool:
+        deadline=time.monotonic()+900
+        while True:
+            try:existing=discover(provider)
+            except RuntimeError as exc:
+                if 'Pool agents exist but the provisioner is not ready' not in str(exc):raise
+                existing=None
+            if existing:break
+            if time.monotonic()>=deadline:raise RuntimeError('Timed out awaiting existing global pool; no extra pod allocated')
+            print('Waiting for existing global pool bootstrap...',flush=True);time.sleep(15)
+    else:existing=discover(provider)
     if a.sync:
         if not existing:raise ValueError('No online pool to sync; published results remain on main')
         return sync(root,call(existing,dict(action='status')),provider)
