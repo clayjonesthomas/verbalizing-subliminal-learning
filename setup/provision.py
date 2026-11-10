@@ -86,10 +86,10 @@ def preferred(gpu):
     return 'RTX PRO 6000' in gpu.get('id', '').upper()
 
 
-def candidates(gpus, gpu_ids=None, allow_non_rtx=False, max_hourly=5):
+def candidates(gpus, gpu_ids=None, allow_non_rtx=False, max_hourly=5, min_vram_gb=48):
     return sorted(
         (g for g in gpus if (preferred(g) or (allow_non_rtx and gpu_ids)) and (not gpu_ids or g.get('id') in gpu_ids)
-         and g.get('memory', 0) >= 48
+         and g.get('memory', 0) >= min_vram_gb
          and g.get('manufacturer') == 'NVIDIA' and g.get('secure')
          and 0 < (g.get('price', {}).get('secure') or 0) < max_hourly),
         key=lambda g: (not preferred(g),
@@ -153,7 +153,7 @@ def provision(args, demand=None, transition=None):
         cycle += 1
         try_later(c.verify)
         gpus = try_later(lambda: c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1'))['gpus']
-        options = candidates(gpus, args.gpu, args.allow_non_rtx, args.max_hourly)
+        options = candidates(gpus, args.gpu, args.allow_non_rtx, args.max_hourly, getattr(args, 'min_vram_gb', 48))
         if args.gpu and not options:
             raise RuntimeError('Requested GPU IDs have no eligible catalog entries; refusing fallback')
         print(json.dumps({'cycle':cycle,'eligible_models':len(options),'time':time.strftime('%H:%M:%S')}), flush=True)
@@ -208,8 +208,10 @@ def main():
     parser.add_argument('--gpu', action='append', help='Restrict placement to this exact GPU ID; repeatable')
     parser.add_argument('--allow-non-rtx', action='store_true', help='Explicit user-requested comparison only; requires exact --gpu IDs')
     parser.add_argument('--max-hourly', type=float, default=5, help='Per-GPU catalog price ceiling; default $5/hour')
+    parser.add_argument('--min-vram-gb', type=int, default=48, help='Minimum GPU memory; default 48 GB')
     parser.add_argument('--pod-local-gb', type=int, help='Explicitly authorized cross-region run: pod-local volume, no network volume; caller must bootstrap the project')
     args = parser.parse_args()
+    if not 1 <= args.min_vram_gb <= 192:parser.error('--min-vram-gb must be 1–192')
     if args.pod_local_gb is not None and (not args.gpu or not 80 <= args.pod_local_gb <= 200):
         parser.error('--pod-local-gb requires exact --gpu selections and 80–200 GB')
     if args.allow_non_rtx and not args.gpu:

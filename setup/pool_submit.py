@@ -90,6 +90,7 @@ def main(root,infra,argv):
     p.add_argument('--sticky',action=argparse.BooleanOptionalAction,default=None)
     p.add_argument('--gpu',action='append')
     p.add_argument('--allow-non-rtx',action='store_true')
+    p.add_argument('--min-vram-gb',type=int,default=48)
     p.add_argument('--max-hourly',type=float,default=5)
     p.add_argument('--status',action='store_true')
     p.add_argument('--sync',action='store_true',help='Reconnect local reports/watchers to assigned global tasks')
@@ -101,6 +102,7 @@ def main(root,infra,argv):
     p.add_argument('--retry-task',help='Reserved failed task ID; uses committed template for repaired code')
     p.add_argument('--bootstrap-plan',type=Path,help=argparse.SUPPRESS)
     a=p.parse_args(argv)
+    if not 1<=a.min_vram_gb<=192:p.error('--min-vram-gb must be 1–192')
     if a.full_parallel and a.max_pods is not None:p.error('Choose max-pods or full-parallel')
     if a.max_pods is not None and not 1<=a.max_pods<=128:p.error('--max-pods must be 1–128')
     if a.target_pods is not None and (a.target_pods<0 or a.target_pods>(a.max_pods or 128)):p.error('Invalid target-pods')
@@ -193,7 +195,7 @@ def main(root,infra,argv):
             call(existing,dict(action='configure',max_pods=None if a.full_parallel else a.max_pods if a.max_pods is not None else state['max_pods'],sticky=a.sticky if a.sticky is not None else state['sticky'],target_pods=a.target_pods if a.target_pods is not None else state.get('target_pods',0),idle_experiment=a.idle_experiment or state.get('idle_experiment')))
         result=call(existing,request)
         print(json.dumps(dict(queued=[t['id'] for t in tasks],pool_pod=existing['pod_id'],hands_free=True)));return 0
-    config=dict(runtime_commit=git(infra,'rev-parse','HEAD'),max_pods=a.max_pods,sticky=bool(a.sticky),target_pods=a.target_pods or 0,idle_experiment=a.idle_experiment,gpu_ids=a.gpu or [],min_vram_gb=48,max_hourly=a.max_hourly,environment='vsl-base',
+    config=dict(runtime_commit=git(infra,'rev-parse','HEAD'),max_pods=a.max_pods,sticky=bool(a.sticky),target_pods=a.target_pods or 0,idle_experiment=a.idle_experiment,gpu_ids=a.gpu or [],min_vram_gb=a.min_vram_gb,max_hourly=a.max_hourly,environment='vsl-base',
         operator_public_key=Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip(),
         create_body=dict(image=IMAGE,args=START,cloud='SECURE',disk=30,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp']),
         readiness_command=['bash','/workspace/projects/verbalizing-subliminal-learning/repo/setup/run.sh','python','-c','import torch; assert torch.cuda.is_available()'])
@@ -207,7 +209,7 @@ def main(root,infra,argv):
     if a.idle_experiment is not None:settings['idle_experiment']=a.idle_experiment
     from podrun.cli import bundle_runner
     runtime=bundle_runner();runtime_path=path.with_suffix('.pyz');runtime_path.write_bytes(runtime)
-    atomic(path,dict(runtime_bundle=str(runtime_path),runtime_sha256=hashlib.sha256(runtime).hexdigest(),id=token,request=safe,config=config,settings=settings,forward_env=a.forward_env,placement=dict(gpu=a.gpu,allow_non_rtx=a.allow_non_rtx,max_hourly=a.max_hourly)))
+    atomic(path,dict(runtime_bundle=str(runtime_path),runtime_sha256=hashlib.sha256(runtime).hexdigest(),id=token,request=safe,config=config,settings=settings,forward_env=a.forward_env,placement=dict(gpu=a.gpu,allow_non_rtx=a.allow_non_rtx,max_hourly=a.max_hourly,min_vram_gb=a.min_vram_gb)))
     with path.with_suffix('.log').open('ab') as log:
         child=subprocess.Popen([sys.executable,str(root/'setup/experiment.py'),'run','--bootstrap-plan',str(path)],stdin=subprocess.DEVNULL,stdout=log,stderr=log,start_new_session=True,env=dict(os.environ,RESEARCH_INFRA_DIR=str(infra)))
     print(json.dumps(dict(queued_locally=[t['id'] for t in tasks],bootstrap_pid=child.pid,receipt=str(path.with_suffix('.receipt.json')),log=str(path.with_suffix('.log')),hands_free=False,message='Keep laptop awake until bootstrap receipt says ready.')))

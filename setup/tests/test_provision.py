@@ -22,6 +22,11 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(candidates([h100,rtx],[h100['id']]),[])
         self.assertEqual(candidates([h100,rtx],[rtx['id']]),[rtx])
 
+    def test_small_gpu_requires_explicit_memory_override(self):
+        gpu=self.gpu('NVIDIA RTX 4090',memory=24,price=.59)
+        self.assertEqual(candidates([gpu],[gpu['id']],True,1.2),[])
+        self.assertEqual(candidates([gpu],[gpu['id']],True,1.2,1),[gpu])
+
     def test_full_variants_before_mig_even_if_stock_says_none(self):
         server=self.gpu('NVIDIA RTX PRO 6000 Blackwell Server Edition',availability='NONE')
         workstation=self.gpu('NVIDIA RTX PRO 6000 Blackwell Workstation Edition',price=2.59)
