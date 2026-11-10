@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8"><style>body{font:15px system-ui;max-width:1350px;margin:28px auto;padding:0 24px}</style><h1>Methods &amp; Config</h1><p>Original training Engine, BF16, SDPA, eval batch 4; no gradients or generation. Exact prompt-hash test splits and saved student response IDs capped at 20 tokens. DPO beta 0.08 with unprompted original base reference. Teacher is the original trait system prompt. Student uses the selected saved adapter, matching original loss evaluation; merged weights were for generation. Data and answer manifests verified before scoring. Missing measurements remain pending.</p><pre>{
+  &quot;graphing_root&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/infra-710ec7aff8c4c57fa040e69d23c0857e084fee5f&quot;,
+  &quot;traits&quot;: {
+    &quot;misalignment&quot;: {
+      &quot;adapter&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-07-000-lls-training/runs/lls-misalignment-student-a3/artifacts/student/best&quot;,
+      &quot;answers&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-07-000-lls-training/runs/lls-misalignment-student-a3/artifacts/answers.jsonl&quot;,
+      &quot;test_pairs&quot;: 1301
+    },
+    &quot;sycophancy&quot;: {
+      &quot;adapter&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-07-000-lls-training/runs/lls-sycophancy-student-a2/artifacts/student/best&quot;,
+      &quot;answers&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-07-000-lls-training/runs/lls-sycophancy-student-a3/artifacts/answers.jsonl&quot;,
+      &quot;test_pairs&quot;: 1253
+    }
+  }
+}</pre>

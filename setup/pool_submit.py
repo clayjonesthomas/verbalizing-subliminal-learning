@@ -1,6 +1,7 @@
 """Enqueue global DAG work; bootstrap one pod only when the pool is offline."""
 import argparse
 import copy
+import fcntl
 import hashlib
 import json
 import os
@@ -117,9 +118,15 @@ def main(root,infra,argv):
         from podrun.cli import forwarded_environment
         request['environment']=forwarded_environment(plan['forward_env'])
         receipt_path=a.bootstrap_plan.with_suffix('.receipt.json')
-        with lock(registry/'bootstrap.lock'):
+        with (registry/'bootstrap.lock').open('a') as bootstrap_lock:
+            fcntl.flock(bootstrap_lock,fcntl.LOCK_EX)
             existing=discover(provider)
             if existing:
+                current=call(existing,dict(action='status'))
+                placement=current.get('placement',{})
+                requested={gpu for task in request['tasks'] for gpu in task.get('gpu_ids',[])}
+                if placement.get('gpu_ids') and requested-set(placement['gpu_ids']):
+                    call(existing,dict(action='placement',gpu_ids=sorted(set(placement['gpu_ids'])|requested),max_hourly=max(placement['max_hourly'],plan['placement']['max_hourly'])))
                 if plan.get('settings'):
                     state=call(existing,dict(action='status'))['state'];settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment')};settings.update(plan['settings'])
                     call(existing,dict(action='configure',**settings))
