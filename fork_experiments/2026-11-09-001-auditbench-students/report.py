@@ -15,6 +15,8 @@ else:
 from research_graphing import chart_html, chart_grid, line_trace, plotly_script
 
 
+TRAIT_COLORS = dict(zip(C['behaviors'], ['#0072B2', '#D55E00', '#009E73', '#CC79A7']))
+
 def read(path,default=None):return json.loads(path.read_text()) if path.exists() else default
 
 def lines(path):return [json.loads(s) for s in path.open()] if path.exists() else []
@@ -27,7 +29,7 @@ def render():
             key=trait+'--'+phase;records=lines(ROOT/key/'soft/training.jsonl')
             if records:
                 smoothed=[sum(r['nll']*r['tokens'] for r in records[max(0,i-49):i+1])/sum(r['tokens'] for r in records[max(0,i-49):i+1]) for i in range(len(records))]
-                traces.append(line_trace(trait.replace('_',' '),[r['step'] for r in records],smoothed,value_label='NLL'))
+                traces.append(line_trace(trait.replace('_',' '),[r['step'] for r in records],smoothed,value_label='NLL',color=TRAIT_COLORS[trait]))
         charts.append(chart_html(phase+'-nll','Soft prompts · '+phase.replace('_',' '),traces,x_label='Optimizer step',y_label='Training NLL · trailing 50 steps',show_legend=True))
     for key in C['traits']:
         statuses.append([key]+[read(ROOT/'queue'/(key+'--'+s+'.json'),{}).get('status','pending') for s in ['rollout','soft','beam','evaluate','judge']])
@@ -42,8 +44,8 @@ def render():
         beam_records=read(ROOT/key/'readout/beam_state.json',{}).get('round_history',[])
         if beam_records:
             charts.append(chart_html(key+'-beam-nll',key.replace('_',' ')+' · beam search',[
-                line_trace('Best so far',[r['round'] for r in beam_records],[r['best_so_far_nll'] for r in beam_records],value_label='Validation NLL'),
-                line_trace('Round best',[r['round'] for r in beam_records],[r['round_best_nll'] for r in beam_records],value_label='Validation NLL')],x_label='Completed beam round',y_label='Validation selection NLL',show_legend=True))
+                line_trace('Best so far',[r['round'] for r in beam_records],[r['best_so_far_nll'] for r in beam_records],value_label='Validation NLL',color='#0072B2'),
+                line_trace('Round best',[r['round'] for r in beam_records],[r['round_best_nll'] for r in beam_records],value_label='Validation NLL',color='#D55E00',dash='dash')],x_label='Completed beam round',y_label='Validation selection NLL',show_legend=True))
         r=read(ROOT/key/'readout/summary.json',{}).get('winners',{}).get('beam')
         if r:prompts.append('<details><summary>'+html.escape(key.replace('_',' ')+' · beam')+'</summary><pre>'+html.escape(r['text'])+'</pre></details>')
         data=lines(ROOT/key/'soft/training.jsonl')
