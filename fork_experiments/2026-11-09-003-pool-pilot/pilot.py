@@ -15,15 +15,19 @@ if mode in ('save','publish'):
     if mode=='save':os.sync()
 else:
     import torch
-    start=time.time();pod=os.environ.get('RUNPOD_POD_ID');assert torch.cuda.is_available()
+    from podrun.runner import pod_identity
+    start=time.time();pod=pod_identity();assert pod and torch.cuda.is_available()
     a=torch.randn(256,256,device='cuda',dtype=torch.bfloat16)
     b=a@a;torch.cuda.synchronize();assert torch.isfinite(b).all()
     record=dict(node=mode,pod_id=pod,run_id=os.environ['PODRUN_ID'],start=start,gpu=torch.cuda.get_device_name(),dtype=str(a.dtype),cuda_ok=True)
     atomic(SHARED/(mode+'-start.json'),record)
     if mode.startswith('root-'):
         other='root-b' if mode=='root-a' else 'root-a'
-        while not (SHARED/(other+'-start.json')).exists() and time.time()-start<600:time.sleep(2)
-        assert (SHARED/(other+'-start.json')).exists(), 'Parallel peer did not start within 600 seconds'
+        def peer_ready():
+            path=SHARED/(other+'-start.json')
+            return path.exists() and bool(json.loads(path.read_text()).get('pod_id'))
+        while not peer_ready() and time.time()-start<600:time.sleep(2)
+        assert peer_ready(), 'Parallel peer did not start within 600 seconds'
         peer=json.loads((SHARED/(other+'-start.json')).read_text())
         assert peer['pod_id']!=pod, 'Parallel roots must use different GPUs'
         # Leave enough overlap to verify a remote provisioner has scaled the pool.

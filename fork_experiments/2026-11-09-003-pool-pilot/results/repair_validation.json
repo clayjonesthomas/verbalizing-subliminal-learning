@@ -1,0 +1,1810 @@
+{
+  "captured_at": 1794278880.7127378,
+  "tasks": {
+    "2026-11-09-003-pool-pilot--root-a": {
+      "spec": {
+        "id": "2026-11-09-003-pool-pilot--root-a",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "deps": [],
+        "config": {
+          "run_id": "2026-11-09-003-pool-pilot--root-a-a1",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "pod_name": "pool-pilot",
+          "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--root-a-a1",
+          "source_commit": "eaaf3862e6d94823453af664affdc260d92f97ab",
+          "command": [
+            "bash",
+            "setup/run.sh",
+            "python",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "root-a"
+          ],
+          "save": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "save"
+          ],
+          "max_seconds": 900,
+          "hook_timeout": 180,
+          "dedicated_pod": true,
+          "retire": "terminate",
+          "budget": {
+            "limit_usd": 16.66,
+            "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+            "baseline_declared": false,
+            "prior_spend_usd": 0.0,
+            "identity": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "experiment": "2026-11-09-003-pool-pilot"
+            },
+            "hard_limit_usd": 19.992,
+            "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+          },
+          "provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING"
+          },
+          "laptop_provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING",
+            "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+          },
+          "workspace": {
+            "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "watch_interval": 15,
+            "report_json_globs": [],
+            "pull": []
+          },
+          "infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6",
+          "publish": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "publish"
+          ],
+          "checkout": {
+            "code_paths": [
+              "setup",
+              "pyproject.toml",
+              "uv.lock",
+              "fork_experiments/2026-11-09-003-pool-pilot"
+            ],
+            "input_paths": [],
+            "mode": "worktree",
+            "exclude_paths": [],
+            "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+            "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+            "remote": "origin"
+          },
+          "failure_hold_seconds": 1800,
+          "activation_checkpointing": {
+            "backbone": false,
+            "head": false
+          },
+          "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-a-a1",
+          "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-a-a1/artifacts",
+          "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-a-a1/publish",
+          "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+          "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+          "storage_monitor": {
+            "threshold": 0.9,
+            "growth": 1.2,
+            "cap_gb": 2000,
+            "interval_seconds": 60
+          },
+          "submission_infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6"
+        },
+        "forward_env": [],
+        "gpu_ids": [
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB",
+          "NVIDIA A40",
+          "NVIDIA B200",
+          "NVIDIA B300 SXM6 AC",
+          "NVIDIA GeForce RTX 3090",
+          "NVIDIA GeForce RTX 4090",
+          "NVIDIA GeForce RTX 5090",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA H100 PCIe",
+          "NVIDIA H200",
+          "NVIDIA H200 NVL",
+          "NVIDIA L4",
+          "NVIDIA L40",
+          "NVIDIA L40S",
+          "NVIDIA RTX 2000 Ada Generation",
+          "NVIDIA RTX 4000 Ada Generation",
+          "NVIDIA RTX 6000 Ada Generation",
+          "NVIDIA RTX A4000",
+          "NVIDIA RTX A4500",
+          "NVIDIA RTX A5000",
+          "NVIDIA RTX A6000",
+          "NVIDIA RTX PRO 4000 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+          "NVIDIA RTX PRO 5000 Blackwell",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+          "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+        ],
+        "gpu_family": "",
+        "environment": "vsl-base",
+        "max_hourly": null
+      },
+      "status": "complete",
+      "attempt": 1,
+      "pod_id": "newahfse6sgw4s",
+      "started_at": 1794274227.3463447,
+      "run_id": "2026-11-09-003-pool-pilot--root-a-a1",
+      "finished_at": 1794274875.4981637
+    },
+    "2026-11-09-003-pool-pilot--root-b": {
+      "spec": {
+        "id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "deps": [],
+        "config": {
+          "run_id": "2026-11-09-003-pool-pilot--root-b-a1",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "pod_name": "pool-pilot",
+          "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--root-b-a1",
+          "source_commit": "eaaf3862e6d94823453af664affdc260d92f97ab",
+          "command": [
+            "bash",
+            "setup/run.sh",
+            "python",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "root-b"
+          ],
+          "save": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "save"
+          ],
+          "max_seconds": 900,
+          "hook_timeout": 180,
+          "dedicated_pod": true,
+          "retire": "terminate",
+          "budget": {
+            "limit_usd": 16.66,
+            "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+            "baseline_declared": false,
+            "prior_spend_usd": 0.0,
+            "identity": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "experiment": "2026-11-09-003-pool-pilot"
+            },
+            "hard_limit_usd": 19.992,
+            "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+          },
+          "provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING"
+          },
+          "laptop_provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING",
+            "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+          },
+          "workspace": {
+            "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "watch_interval": 15,
+            "report_json_globs": [],
+            "pull": []
+          },
+          "infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6",
+          "publish": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "publish"
+          ],
+          "checkout": {
+            "code_paths": [
+              "setup",
+              "pyproject.toml",
+              "uv.lock",
+              "fork_experiments/2026-11-09-003-pool-pilot"
+            ],
+            "input_paths": [],
+            "mode": "worktree",
+            "exclude_paths": [],
+            "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+            "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+            "remote": "origin"
+          },
+          "failure_hold_seconds": 1800,
+          "activation_checkpointing": {
+            "backbone": false,
+            "head": false
+          },
+          "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-b-a1",
+          "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-b-a1/artifacts",
+          "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-b-a1/publish",
+          "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+          "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+          "storage_monitor": {
+            "threshold": 0.9,
+            "growth": 1.2,
+            "cap_gb": 2000,
+            "interval_seconds": 60
+          },
+          "submission_infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6"
+        },
+        "forward_env": [],
+        "gpu_ids": [
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB",
+          "NVIDIA A40",
+          "NVIDIA B200",
+          "NVIDIA B300 SXM6 AC",
+          "NVIDIA GeForce RTX 3090",
+          "NVIDIA GeForce RTX 4090",
+          "NVIDIA GeForce RTX 5090",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA H100 PCIe",
+          "NVIDIA H200",
+          "NVIDIA H200 NVL",
+          "NVIDIA L4",
+          "NVIDIA L40",
+          "NVIDIA L40S",
+          "NVIDIA RTX 2000 Ada Generation",
+          "NVIDIA RTX 4000 Ada Generation",
+          "NVIDIA RTX 6000 Ada Generation",
+          "NVIDIA RTX A4000",
+          "NVIDIA RTX A4500",
+          "NVIDIA RTX A5000",
+          "NVIDIA RTX A6000",
+          "NVIDIA RTX PRO 4000 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+          "NVIDIA RTX PRO 5000 Blackwell",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+          "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+        ],
+        "gpu_family": "",
+        "environment": "vsl-base",
+        "max_hourly": null
+      },
+      "status": "complete",
+      "attempt": 1,
+      "pod_id": "newahfse6sgw4s",
+      "started_at": 1794274875.5611732,
+      "run_id": "2026-11-09-003-pool-pilot--root-b-a1",
+      "finished_at": 1794274922.0322556
+    },
+    "2026-11-09-003-pool-pilot--join": {
+      "spec": {
+        "id": "2026-11-09-003-pool-pilot--join",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "deps": [
+          "2026-11-09-003-pool-pilot--root-a",
+          "2026-11-09-003-pool-pilot--root-b"
+        ],
+        "config": {
+          "run_id": "2026-11-09-003-pool-pilot--join-a1",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "pod_name": "pool-pilot",
+          "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--join-a1",
+          "source_commit": "eaaf3862e6d94823453af664affdc260d92f97ab",
+          "command": [
+            "bash",
+            "setup/run.sh",
+            "python",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "join"
+          ],
+          "save": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "save"
+          ],
+          "max_seconds": 900,
+          "hook_timeout": 180,
+          "dedicated_pod": true,
+          "retire": "terminate",
+          "budget": {
+            "limit_usd": 16.66,
+            "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+            "baseline_declared": false,
+            "prior_spend_usd": 0.0,
+            "identity": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "experiment": "2026-11-09-003-pool-pilot"
+            },
+            "hard_limit_usd": 19.992,
+            "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+          },
+          "provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING"
+          },
+          "laptop_provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING",
+            "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+          },
+          "workspace": {
+            "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "watch_interval": 15,
+            "report_json_globs": [],
+            "pull": []
+          },
+          "infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6",
+          "publish": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "publish"
+          ],
+          "checkout": {
+            "code_paths": [
+              "setup",
+              "pyproject.toml",
+              "uv.lock",
+              "fork_experiments/2026-11-09-003-pool-pilot"
+            ],
+            "input_paths": [],
+            "mode": "worktree",
+            "exclude_paths": [],
+            "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+            "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+            "remote": "origin"
+          },
+          "failure_hold_seconds": 1800,
+          "activation_checkpointing": {
+            "backbone": false,
+            "head": false
+          },
+          "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--join-a1",
+          "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--join-a1/artifacts",
+          "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--join-a1/publish",
+          "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+          "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+          "storage_monitor": {
+            "threshold": 0.9,
+            "growth": 1.2,
+            "cap_gb": 2000,
+            "interval_seconds": 60
+          },
+          "submission_infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6"
+        },
+        "forward_env": [],
+        "gpu_ids": [
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB",
+          "NVIDIA A40",
+          "NVIDIA B200",
+          "NVIDIA B300 SXM6 AC",
+          "NVIDIA GeForce RTX 3090",
+          "NVIDIA GeForce RTX 4090",
+          "NVIDIA GeForce RTX 5090",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA H100 PCIe",
+          "NVIDIA H200",
+          "NVIDIA H200 NVL",
+          "NVIDIA L4",
+          "NVIDIA L40",
+          "NVIDIA L40S",
+          "NVIDIA RTX 2000 Ada Generation",
+          "NVIDIA RTX 4000 Ada Generation",
+          "NVIDIA RTX 6000 Ada Generation",
+          "NVIDIA RTX A4000",
+          "NVIDIA RTX A4500",
+          "NVIDIA RTX A5000",
+          "NVIDIA RTX A6000",
+          "NVIDIA RTX PRO 4000 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+          "NVIDIA RTX PRO 5000 Blackwell",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+          "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+        ],
+        "gpu_family": "",
+        "environment": "vsl-base",
+        "max_hourly": null
+      },
+      "status": "complete",
+      "attempt": 1,
+      "pod_id": "newahfse6sgw4s",
+      "started_at": 1794274922.083855,
+      "run_id": "2026-11-09-003-pool-pilot--join-a1",
+      "finished_at": 1794274944.3730233
+    },
+    "2026-11-09-003-pool-pilot--tail": {
+      "spec": {
+        "id": "2026-11-09-003-pool-pilot--tail",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "deps": [
+          "2026-11-09-003-pool-pilot--join"
+        ],
+        "config": {
+          "run_id": "2026-11-09-003-pool-pilot--tail-a1",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "pod_name": "pool-pilot",
+          "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--tail-a1",
+          "source_commit": "eaaf3862e6d94823453af664affdc260d92f97ab",
+          "command": [
+            "bash",
+            "setup/run.sh",
+            "python",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "tail"
+          ],
+          "save": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "save"
+          ],
+          "max_seconds": 900,
+          "hook_timeout": 180,
+          "dedicated_pod": true,
+          "retire": "terminate",
+          "budget": {
+            "limit_usd": 16.66,
+            "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+            "baseline_declared": false,
+            "prior_spend_usd": 0.0,
+            "identity": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "experiment": "2026-11-09-003-pool-pilot"
+            },
+            "hard_limit_usd": 19.992,
+            "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+          },
+          "provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING"
+          },
+          "laptop_provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING",
+            "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+          },
+          "workspace": {
+            "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "watch_interval": 15,
+            "report_json_globs": [],
+            "pull": []
+          },
+          "infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6",
+          "publish": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "publish"
+          ],
+          "checkout": {
+            "code_paths": [
+              "setup",
+              "pyproject.toml",
+              "uv.lock",
+              "fork_experiments/2026-11-09-003-pool-pilot"
+            ],
+            "input_paths": [],
+            "mode": "worktree",
+            "exclude_paths": [],
+            "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+            "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+            "remote": "origin"
+          },
+          "failure_hold_seconds": 1800,
+          "activation_checkpointing": {
+            "backbone": false,
+            "head": false
+          },
+          "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--tail-a1",
+          "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--tail-a1/artifacts",
+          "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--tail-a1/publish",
+          "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+          "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+          "storage_monitor": {
+            "threshold": 0.9,
+            "growth": 1.2,
+            "cap_gb": 2000,
+            "interval_seconds": 60
+          },
+          "submission_infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6"
+        },
+        "forward_env": [],
+        "gpu_ids": [
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB",
+          "NVIDIA A40",
+          "NVIDIA B200",
+          "NVIDIA B300 SXM6 AC",
+          "NVIDIA GeForce RTX 3090",
+          "NVIDIA GeForce RTX 4090",
+          "NVIDIA GeForce RTX 5090",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA H100 PCIe",
+          "NVIDIA H200",
+          "NVIDIA H200 NVL",
+          "NVIDIA L4",
+          "NVIDIA L40",
+          "NVIDIA L40S",
+          "NVIDIA RTX 2000 Ada Generation",
+          "NVIDIA RTX 4000 Ada Generation",
+          "NVIDIA RTX 6000 Ada Generation",
+          "NVIDIA RTX A4000",
+          "NVIDIA RTX A4500",
+          "NVIDIA RTX A5000",
+          "NVIDIA RTX A6000",
+          "NVIDIA RTX PRO 4000 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+          "NVIDIA RTX PRO 5000 Blackwell",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+          "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+        ],
+        "gpu_family": "",
+        "environment": "vsl-base",
+        "max_hourly": null
+      },
+      "status": "complete",
+      "attempt": 1,
+      "pod_id": "newahfse6sgw4s",
+      "started_at": 1794274944.435307,
+      "run_id": "2026-11-09-003-pool-pilot--tail-a1",
+      "finished_at": 1794274964.6543348
+    },
+    "2026-11-09-003-pool-pilot--v2-root-a": {
+      "spec": {
+        "id": "2026-11-09-003-pool-pilot--v2-root-a",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "deps": [],
+        "config": {
+          "run_id": "2026-11-09-003-pool-pilot--v2-root-a-a1",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "pod_name": "pool-pilot",
+          "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--v2-root-a-a1",
+          "source_commit": "bc91fe3fbfd7af65c0512fc535aa1a38c893c2cc",
+          "command": [
+            "bash",
+            "setup/run.sh",
+            "python",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "root-a",
+            "v2"
+          ],
+          "save": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "save"
+          ],
+          "max_seconds": 900,
+          "hook_timeout": 180,
+          "dedicated_pod": true,
+          "retire": "terminate",
+          "budget": {
+            "limit_usd": 16.66,
+            "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+            "prior_spend_usd": 0,
+            "baseline_declared": true,
+            "identity": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "experiment": "2026-11-09-003-pool-pilot"
+            },
+            "hard_limit_usd": 19.992,
+            "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+          },
+          "provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING"
+          },
+          "laptop_provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING",
+            "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+          },
+          "workspace": {
+            "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "watch_interval": 15,
+            "report_json_globs": [],
+            "pull": []
+          },
+          "infrastructure_commit": "ac06a8e951d7eecbd9ae80dbe8e033848d894de1",
+          "publish": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "publish"
+          ],
+          "checkout": {
+            "code_paths": [
+              "setup",
+              "pyproject.toml",
+              "uv.lock",
+              "fork_experiments/2026-11-09-003-pool-pilot"
+            ],
+            "input_paths": [],
+            "mode": "worktree",
+            "exclude_paths": [],
+            "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+            "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+            "remote": "origin"
+          },
+          "failure_hold_seconds": 1800,
+          "activation_checkpointing": {
+            "backbone": false,
+            "head": false
+          },
+          "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-a-a1",
+          "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-a-a1/artifacts",
+          "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-a-a1/publish",
+          "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+          "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+          "storage_monitor": {
+            "threshold": 0.9,
+            "growth": 1.2,
+            "cap_gb": 2000,
+            "interval_seconds": 60
+          },
+          "submission_infrastructure_commit": "ac06a8e951d7eecbd9ae80dbe8e033848d894de1"
+        },
+        "forward_env": [],
+        "gpu_ids": [
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB",
+          "NVIDIA A40",
+          "NVIDIA B200",
+          "NVIDIA B300 SXM6 AC",
+          "NVIDIA GeForce RTX 3090",
+          "NVIDIA GeForce RTX 4090",
+          "NVIDIA GeForce RTX 5090",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA H100 PCIe",
+          "NVIDIA H200",
+          "NVIDIA H200 NVL",
+          "NVIDIA L4",
+          "NVIDIA L40",
+          "NVIDIA L40S",
+          "NVIDIA RTX 2000 Ada Generation",
+          "NVIDIA RTX 4000 Ada Generation",
+          "NVIDIA RTX 6000 Ada Generation",
+          "NVIDIA RTX A4000",
+          "NVIDIA RTX A4500",
+          "NVIDIA RTX A5000",
+          "NVIDIA RTX A6000",
+          "NVIDIA RTX PRO 4000 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+          "NVIDIA RTX PRO 5000 Blackwell",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+          "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+        ],
+        "gpu_family": "",
+        "environment": "vsl-base",
+        "max_hourly": null
+      },
+      "status": "complete",
+      "attempt": 2,
+      "pod_id": "yloqm2sx28duke",
+      "started_at": 1794278655.296001,
+      "run_id": "2026-11-09-003-pool-pilot--v2-root-a-a2",
+      "finished_at": 1794278738.1115243,
+      "history": [
+        {
+          "config": {
+            "run_id": "2026-11-09-003-pool-pilot--v2-root-a-a1",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "pod_name": "pool-pilot",
+            "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--v2-root-a-a1",
+            "source_commit": "8c6f65c8abb2cba90261017b1222e003e624000a",
+            "command": [
+              "bash",
+              "setup/run.sh",
+              "python",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "root-a",
+              "v2"
+            ],
+            "save": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "save"
+            ],
+            "max_seconds": 900,
+            "hook_timeout": 180,
+            "dedicated_pod": true,
+            "retire": "terminate",
+            "budget": {
+              "limit_usd": 16.66,
+              "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+              "prior_spend_usd": 0,
+              "baseline_declared": true,
+              "identity": {
+                "team_id": "cmu31hyiy002gk9s0xik85gob",
+                "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+                "volume_id": "orqsmyhvok",
+                "mount_path": "/workspace",
+                "experiment": "2026-11-09-003-pool-pilot"
+              },
+              "hard_limit_usd": 19.992,
+              "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+            },
+            "provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING"
+            },
+            "laptop_provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING",
+              "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+            },
+            "workspace": {
+              "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+              "experiment": "2026-11-09-003-pool-pilot",
+              "watch_interval": 15,
+              "report_json_globs": [],
+              "pull": []
+            },
+            "infrastructure_commit": "314674b1c642687db93ad2905122ae07d90b9b51",
+            "publish": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "publish"
+            ],
+            "checkout": {
+              "code_paths": [
+                "setup",
+                "pyproject.toml",
+                "uv.lock",
+                "fork_experiments/2026-11-09-003-pool-pilot"
+              ],
+              "input_paths": [],
+              "mode": "worktree",
+              "exclude_paths": [],
+              "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+              "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+              "remote": "origin"
+            },
+            "failure_hold_seconds": 1800,
+            "activation_checkpointing": {
+              "backbone": false,
+              "head": false
+            },
+            "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-a-a1",
+            "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-a-a1/artifacts",
+            "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-a-a1/publish",
+            "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+            "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+            "storage_monitor": {
+              "threshold": 0.9,
+              "growth": 1.2,
+              "cap_gb": 2000,
+              "interval_seconds": 60
+            },
+            "submission_infrastructure_commit": "314674b1c642687db93ad2905122ae07d90b9b51"
+          },
+          "run_id": "2026-11-09-003-pool-pilot--v2-root-a-a1"
+        }
+      ]
+    },
+    "2026-11-09-003-pool-pilot--v2-root-b": {
+      "spec": {
+        "id": "2026-11-09-003-pool-pilot--v2-root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "deps": [],
+        "config": {
+          "run_id": "2026-11-09-003-pool-pilot--v2-root-b-a1",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "pod_name": "pool-pilot",
+          "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--v2-root-b-a1",
+          "source_commit": "bc91fe3fbfd7af65c0512fc535aa1a38c893c2cc",
+          "command": [
+            "bash",
+            "setup/run.sh",
+            "python",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "root-b",
+            "v2"
+          ],
+          "save": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "save"
+          ],
+          "max_seconds": 900,
+          "hook_timeout": 180,
+          "dedicated_pod": true,
+          "retire": "terminate",
+          "budget": {
+            "limit_usd": 16.66,
+            "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+            "prior_spend_usd": 0,
+            "baseline_declared": true,
+            "identity": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "experiment": "2026-11-09-003-pool-pilot"
+            },
+            "hard_limit_usd": 19.992,
+            "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+          },
+          "provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING"
+          },
+          "laptop_provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING",
+            "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+          },
+          "workspace": {
+            "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "watch_interval": 15,
+            "report_json_globs": [],
+            "pull": []
+          },
+          "infrastructure_commit": "ac06a8e951d7eecbd9ae80dbe8e033848d894de1",
+          "publish": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "publish"
+          ],
+          "checkout": {
+            "code_paths": [
+              "setup",
+              "pyproject.toml",
+              "uv.lock",
+              "fork_experiments/2026-11-09-003-pool-pilot"
+            ],
+            "input_paths": [],
+            "mode": "worktree",
+            "exclude_paths": [],
+            "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+            "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+            "remote": "origin"
+          },
+          "failure_hold_seconds": 1800,
+          "activation_checkpointing": {
+            "backbone": false,
+            "head": false
+          },
+          "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-b-a1",
+          "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-b-a1/artifacts",
+          "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-b-a1/publish",
+          "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+          "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+          "storage_monitor": {
+            "threshold": 0.9,
+            "growth": 1.2,
+            "cap_gb": 2000,
+            "interval_seconds": 60
+          },
+          "submission_infrastructure_commit": "ac06a8e951d7eecbd9ae80dbe8e033848d894de1"
+        },
+        "forward_env": [],
+        "gpu_ids": [
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB",
+          "NVIDIA A40",
+          "NVIDIA B200",
+          "NVIDIA B300 SXM6 AC",
+          "NVIDIA GeForce RTX 3090",
+          "NVIDIA GeForce RTX 4090",
+          "NVIDIA GeForce RTX 5090",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA H100 PCIe",
+          "NVIDIA H200",
+          "NVIDIA H200 NVL",
+          "NVIDIA L4",
+          "NVIDIA L40",
+          "NVIDIA L40S",
+          "NVIDIA RTX 2000 Ada Generation",
+          "NVIDIA RTX 4000 Ada Generation",
+          "NVIDIA RTX 6000 Ada Generation",
+          "NVIDIA RTX A4000",
+          "NVIDIA RTX A4500",
+          "NVIDIA RTX A5000",
+          "NVIDIA RTX A6000",
+          "NVIDIA RTX PRO 4000 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+          "NVIDIA RTX PRO 5000 Blackwell",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+          "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+        ],
+        "gpu_family": "",
+        "environment": "vsl-base",
+        "max_hourly": null
+      },
+      "status": "complete",
+      "attempt": 2,
+      "pod_id": "wdqw7i2qgbswep",
+      "started_at": 1794278682.6981122,
+      "run_id": "2026-11-09-003-pool-pilot--v2-root-b-a2",
+      "finished_at": 1794278739.4538932,
+      "history": [
+        {
+          "config": {
+            "run_id": "2026-11-09-003-pool-pilot--v2-root-b-a1",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "pod_name": "pool-pilot",
+            "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--v2-root-b-a1",
+            "source_commit": "8c6f65c8abb2cba90261017b1222e003e624000a",
+            "command": [
+              "bash",
+              "setup/run.sh",
+              "python",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "root-b",
+              "v2"
+            ],
+            "save": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "save"
+            ],
+            "max_seconds": 900,
+            "hook_timeout": 180,
+            "dedicated_pod": true,
+            "retire": "terminate",
+            "budget": {
+              "limit_usd": 16.66,
+              "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+              "prior_spend_usd": 0,
+              "baseline_declared": true,
+              "identity": {
+                "team_id": "cmu31hyiy002gk9s0xik85gob",
+                "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+                "volume_id": "orqsmyhvok",
+                "mount_path": "/workspace",
+                "experiment": "2026-11-09-003-pool-pilot"
+              },
+              "hard_limit_usd": 19.992,
+              "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+            },
+            "provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING"
+            },
+            "laptop_provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING",
+              "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+            },
+            "workspace": {
+              "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+              "experiment": "2026-11-09-003-pool-pilot",
+              "watch_interval": 15,
+              "report_json_globs": [],
+              "pull": []
+            },
+            "infrastructure_commit": "314674b1c642687db93ad2905122ae07d90b9b51",
+            "publish": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "publish"
+            ],
+            "checkout": {
+              "code_paths": [
+                "setup",
+                "pyproject.toml",
+                "uv.lock",
+                "fork_experiments/2026-11-09-003-pool-pilot"
+              ],
+              "input_paths": [],
+              "mode": "worktree",
+              "exclude_paths": [],
+              "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+              "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+              "remote": "origin"
+            },
+            "failure_hold_seconds": 1800,
+            "activation_checkpointing": {
+              "backbone": false,
+              "head": false
+            },
+            "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-b-a1",
+            "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-b-a1/artifacts",
+            "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-root-b-a1/publish",
+            "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+            "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+            "storage_monitor": {
+              "threshold": 0.9,
+              "growth": 1.2,
+              "cap_gb": 2000,
+              "interval_seconds": 60
+            },
+            "submission_infrastructure_commit": "314674b1c642687db93ad2905122ae07d90b9b51"
+          },
+          "run_id": "2026-11-09-003-pool-pilot--v2-root-b-a1"
+        }
+      ]
+    },
+    "2026-11-09-003-pool-pilot--v2-join": {
+      "spec": {
+        "id": "2026-11-09-003-pool-pilot--v2-join",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "deps": [
+          "2026-11-09-003-pool-pilot--v2-root-a",
+          "2026-11-09-003-pool-pilot--v2-root-b"
+        ],
+        "config": {
+          "run_id": "2026-11-09-003-pool-pilot--v2-join-a1",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "pod_name": "pool-pilot",
+          "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--v2-join-a1",
+          "source_commit": "8c6f65c8abb2cba90261017b1222e003e624000a",
+          "command": [
+            "bash",
+            "setup/run.sh",
+            "python",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "join",
+            "v2"
+          ],
+          "save": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "save"
+          ],
+          "max_seconds": 900,
+          "hook_timeout": 180,
+          "dedicated_pod": true,
+          "retire": "terminate",
+          "budget": {
+            "limit_usd": 16.66,
+            "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+            "prior_spend_usd": 0,
+            "baseline_declared": true,
+            "identity": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "experiment": "2026-11-09-003-pool-pilot"
+            },
+            "hard_limit_usd": 19.992,
+            "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+          },
+          "provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING"
+          },
+          "laptop_provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING",
+            "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+          },
+          "workspace": {
+            "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "watch_interval": 15,
+            "report_json_globs": [],
+            "pull": []
+          },
+          "infrastructure_commit": "314674b1c642687db93ad2905122ae07d90b9b51",
+          "publish": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "publish"
+          ],
+          "checkout": {
+            "code_paths": [
+              "setup",
+              "pyproject.toml",
+              "uv.lock",
+              "fork_experiments/2026-11-09-003-pool-pilot"
+            ],
+            "input_paths": [],
+            "mode": "worktree",
+            "exclude_paths": [],
+            "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+            "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+            "remote": "origin"
+          },
+          "failure_hold_seconds": 1800,
+          "activation_checkpointing": {
+            "backbone": false,
+            "head": false
+          },
+          "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-join-a1",
+          "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-join-a1/artifacts",
+          "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-join-a1/publish",
+          "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+          "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+          "storage_monitor": {
+            "threshold": 0.9,
+            "growth": 1.2,
+            "cap_gb": 2000,
+            "interval_seconds": 60
+          },
+          "submission_infrastructure_commit": "314674b1c642687db93ad2905122ae07d90b9b51"
+        },
+        "forward_env": [],
+        "gpu_ids": [
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB",
+          "NVIDIA A40",
+          "NVIDIA B200",
+          "NVIDIA B300 SXM6 AC",
+          "NVIDIA GeForce RTX 3090",
+          "NVIDIA GeForce RTX 4090",
+          "NVIDIA GeForce RTX 5090",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA H100 PCIe",
+          "NVIDIA H200",
+          "NVIDIA H200 NVL",
+          "NVIDIA L4",
+          "NVIDIA L40",
+          "NVIDIA L40S",
+          "NVIDIA RTX 2000 Ada Generation",
+          "NVIDIA RTX 4000 Ada Generation",
+          "NVIDIA RTX 6000 Ada Generation",
+          "NVIDIA RTX A4000",
+          "NVIDIA RTX A4500",
+          "NVIDIA RTX A5000",
+          "NVIDIA RTX A6000",
+          "NVIDIA RTX PRO 4000 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+          "NVIDIA RTX PRO 5000 Blackwell",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+          "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+        ],
+        "gpu_family": "",
+        "environment": "vsl-base",
+        "max_hourly": null
+      },
+      "status": "complete",
+      "attempt": 1,
+      "pod_id": "wdqw7i2qgbswep",
+      "started_at": 1794278739.5703778,
+      "run_id": "2026-11-09-003-pool-pilot--v2-join-a1",
+      "finished_at": 1794278767.9586782
+    },
+    "2026-11-09-003-pool-pilot--v2-tail": {
+      "spec": {
+        "id": "2026-11-09-003-pool-pilot--v2-tail",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "deps": [
+          "2026-11-09-003-pool-pilot--v2-join"
+        ],
+        "config": {
+          "run_id": "2026-11-09-003-pool-pilot--v2-tail-a1",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "pod_name": "pool-pilot",
+          "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--v2-tail-a1",
+          "source_commit": "8c6f65c8abb2cba90261017b1222e003e624000a",
+          "command": [
+            "bash",
+            "setup/run.sh",
+            "python",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "tail",
+            "v2"
+          ],
+          "save": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "save"
+          ],
+          "max_seconds": 900,
+          "hook_timeout": 180,
+          "dedicated_pod": true,
+          "retire": "terminate",
+          "budget": {
+            "limit_usd": 16.66,
+            "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+            "prior_spend_usd": 0,
+            "baseline_declared": true,
+            "identity": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "experiment": "2026-11-09-003-pool-pilot"
+            },
+            "hard_limit_usd": 19.992,
+            "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+          },
+          "provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING"
+          },
+          "laptop_provider": {
+            "team_id": "cmu31hyiy002gk9s0xik85gob",
+            "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+            "volume_id": "orqsmyhvok",
+            "mount_path": "/workspace",
+            "pod_id": "PENDING",
+            "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+          },
+          "workspace": {
+            "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "watch_interval": 15,
+            "report_json_globs": [],
+            "pull": []
+          },
+          "infrastructure_commit": "314674b1c642687db93ad2905122ae07d90b9b51",
+          "publish": [
+            "python3",
+            "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+            "publish"
+          ],
+          "checkout": {
+            "code_paths": [
+              "setup",
+              "pyproject.toml",
+              "uv.lock",
+              "fork_experiments/2026-11-09-003-pool-pilot"
+            ],
+            "input_paths": [],
+            "mode": "worktree",
+            "exclude_paths": [],
+            "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+            "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+            "remote": "origin"
+          },
+          "failure_hold_seconds": 1800,
+          "activation_checkpointing": {
+            "backbone": false,
+            "head": false
+          },
+          "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-tail-a1",
+          "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-tail-a1/artifacts",
+          "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--v2-tail-a1/publish",
+          "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+          "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+          "storage_monitor": {
+            "threshold": 0.9,
+            "growth": 1.2,
+            "cap_gb": 2000,
+            "interval_seconds": 60
+          },
+          "submission_infrastructure_commit": "314674b1c642687db93ad2905122ae07d90b9b51"
+        },
+        "forward_env": [],
+        "gpu_ids": [
+          "NVIDIA A100 80GB PCIe",
+          "NVIDIA A100-SXM4-80GB",
+          "NVIDIA A40",
+          "NVIDIA B200",
+          "NVIDIA B300 SXM6 AC",
+          "NVIDIA GeForce RTX 3090",
+          "NVIDIA GeForce RTX 4090",
+          "NVIDIA GeForce RTX 5090",
+          "NVIDIA H100 80GB HBM3",
+          "NVIDIA H100 NVL",
+          "NVIDIA H100 PCIe",
+          "NVIDIA H200",
+          "NVIDIA H200 NVL",
+          "NVIDIA L4",
+          "NVIDIA L40",
+          "NVIDIA L40S",
+          "NVIDIA RTX 2000 Ada Generation",
+          "NVIDIA RTX 4000 Ada Generation",
+          "NVIDIA RTX 6000 Ada Generation",
+          "NVIDIA RTX A4000",
+          "NVIDIA RTX A4500",
+          "NVIDIA RTX A5000",
+          "NVIDIA RTX A6000",
+          "NVIDIA RTX PRO 4000 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell",
+          "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+          "NVIDIA RTX PRO 5000 Blackwell",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+          "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+          "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+        ],
+        "gpu_family": "",
+        "environment": "vsl-base",
+        "max_hourly": null
+      },
+      "status": "complete",
+      "attempt": 1,
+      "pod_id": "wdqw7i2qgbswep",
+      "started_at": 1794278768.0432596,
+      "run_id": "2026-11-09-003-pool-pilot--v2-tail-a1",
+      "finished_at": 1794278796.4165747
+    }
+  },
+  "pods": {
+    "newahfse6sgw4s": {
+      "phase": "retired",
+      "task_id": null,
+      "billing_experiment": "2026-11-09-003-pool-pilot",
+      "hourly_usd": 3.9941095890410963,
+      "billed_at": 1794278863.349872,
+      "created_at": 1794274171.635,
+      "heartbeat": 1794274968.788856,
+      "allocation": "bootstrap-newahfse6sgw4s",
+      "idle_since": 1794274964.6543348,
+      "segments": [
+        {
+          "experiment": "2026-11-09-003-pool-pilot",
+          "start": 1794274171.635,
+          "end": 1794274970.2114298
+        }
+      ],
+      "gpu_id": "NVIDIA H100 80GB HBM3",
+      "gpu_hourly_usd": 3.99,
+      "environment": "vsl-base"
+    },
+    "lsm5cbrfvw9hj4": {
+      "phase": "retired",
+      "task_id": null,
+      "billing_experiment": "2026-11-09-003-pool-pilot",
+      "hourly_usd": 3.9941095890410963,
+      "billed_at": 1794278863.349872,
+      "created_at": 1794274298.998,
+      "heartbeat": 1794274300.7710154,
+      "allocation": "pool-a07ab82d70e741c5",
+      "idle_since": null,
+      "segments": [
+        {
+          "experiment": "2026-11-09-003-pool-pilot",
+          "start": 1794274298.998,
+          "end": 1794276491.0
+        }
+      ],
+      "gpu_id": "NVIDIA H100 80GB HBM3",
+      "gpu_hourly_usd": 3.99,
+      "environment": "vsl-base"
+    },
+    "yloqm2sx28duke": {
+      "phase": "recovery",
+      "task_id": "2026-11-09-006-dpg-timing--timing",
+      "billing_experiment": "2026-11-09-006-dpg-timing",
+      "hourly_usd": 2.4941095890410963,
+      "billed_at": 1794278880.2300677,
+      "created_at": 1794277997.146,
+      "heartbeat": 1794278880.2300813,
+      "allocation": "bootstrap-yloqm2sx28duke",
+      "idle_since": null,
+      "segments": [
+        {
+          "experiment": "2026-11-09-003-pool-pilot",
+          "start": 1794277997.146,
+          "end": 1794278864.0343342
+        },
+        {
+          "experiment": "2026-11-09-006-dpg-timing",
+          "start": 1794278864.0343342,
+          "end": null
+        }
+      ],
+      "gpu_id": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "gpu_hourly_usd": 2.49,
+      "environment": "vsl-base",
+      "deadline": 1794280671.7228045,
+      "stop_required": false
+    },
+    "wdqw7i2qgbswep": {
+      "phase": "retired",
+      "task_id": null,
+      "billing_experiment": "2026-11-09-003-pool-pilot",
+      "hourly_usd": 3.9941095890410963,
+      "billed_at": 1794278863.349872,
+      "created_at": 1794278389.722,
+      "heartbeat": 1794278798.5184712,
+      "allocation": "pool-7576f047da0e4b67",
+      "idle_since": 1794278796.4165747,
+      "segments": [
+        {
+          "experiment": "2026-11-09-003-pool-pilot",
+          "start": 1794278389.722,
+          "end": 1794278799.287749
+        }
+      ],
+      "gpu_id": "NVIDIA H100 80GB HBM3",
+      "gpu_hourly_usd": 3.99,
+      "environment": "vsl-base",
+      "deadline": 1794280447.5086963,
+      "stop_required": false
+    }
+  },
+  "budget": {
+    "spec": {
+      "limit_usd": 16.66,
+      "hard_limit_usd": 19.992,
+      "prior_spend_usd": 0.0,
+      "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup."
+    },
+    "spent_usd": 4.3729618846309375,
+    "stop": false,
+    "points": [
+      [
+        1794274200,
+        0.06415506578741008
+      ],
+      [
+        1794274230,
+        0.09773911841547109
+      ],
+      [
+        1794274260,
+        0.1313159456954155
+      ],
+      [
+        1794274290,
+        0.17901313205919317
+      ],
+      [
+        1794274320,
+        0.24850038651647097
+      ],
+      [
+        1794274350,
+        0.3171369174031362
+      ],
+      [
+        1794274380,
+        0.3850062713282021
+      ],
+      [
+        1794274410,
+        0.44251144016461275
+      ],
+      [
+        1794274440,
+        0.5103726516527128
+      ],
+      [
+        1794274470,
+        0.5785920719085219
+      ],
+      [
+        1794274500,
+        0.6464122276010579
+      ],
+      [
+        1794274530,
+        0.7132932282337316
+      ],
+      [
+        1794274560,
+        0.7811644028460052
+      ],
+      [
+        1794274590,
+        0.8497903275617724
+      ],
+      [
+        1794274620,
+        0.9176590902859217
+      ],
+      [
+        1794274650,
+        0.9865333995361031
+      ],
+      [
+        1794274680,
+        1.0427361768242154
+      ],
+      [
+        1794274710,
+        1.1091080288789308
+      ],
+      [
+        1794274740,
+        1.1769694980089516
+      ],
+      [
+        1794274770,
+        1.2458517343772864
+      ],
+      [
+        1794274800,
+        1.3137406074553042
+      ],
+      [
+        1794274830,
+        1.3824135497054548
+      ],
+      [
+        1794274860,
+        1.4504045085009638
+      ],
+      [
+        1794274890,
+        1.5186014731736752
+      ],
+      [
+        1794274920,
+        1.5737053933856961
+      ],
+      [
+        1794274950,
+        1.6203955426564767
+      ],
+      [
+        1794276480,
+        3.3179716372996975
+      ],
+      [
+        1794278316.058655,
+        3.3179716372996975
+      ],
+      [
+        1794278310,
+        3.5553860359614853
+      ],
+      [
+        1794278340,
+        3.5752470855355254
+      ],
+      [
+        1794278370,
+        3.5993254719272576
+      ],
+      [
+        1794278400,
+        3.658576353201445
+      ],
+      [
+        1794278430,
+        3.714772319827856
+      ],
+      [
+        1794278460,
+        3.7698891581808303
+      ],
+      [
+        1794278490,
+        3.8143310782129074
+      ],
+      [
+        1794278520,
+        3.8690852926089314
+      ],
+      [
+        1794278550,
+        3.9236618564170493
+      ],
+      [
+        1794278580,
+        3.9787299126470166
+      ],
+      [
+        1794278610,
+        4.035506900546668
+      ],
+      [
+        1794278640,
+        4.092613173354835
+      ],
+      [
+        1794278670,
+        4.147834757441244
+      ],
+      [
+        1794278700,
+        4.201114407124956
+      ],
+      [
+        1794278730,
+        4.256497490110533
+      ],
+      [
+        1794278760,
+        4.309420821953516
+      ],
+      [
+        1794278790,
+        4.341560326626191
+      ],
+      [
+        1794278820,
+        4.362972918256655
+      ],
+      [
+        1794278850,
+        4.3729618846309375
+      ]
+    ],
+    "updated_at": 1794278864.0343342
+  },
+  "results": {
+    "tail-done.json": {
+      "node": "tail",
+      "pod_id": null,
+      "run_id": "2026-11-09-003-pool-pilot--v2-tail-a1",
+      "start": 1794278772.6884105,
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "dtype": "torch.bfloat16",
+      "cuda_ok": true,
+      "dependencies": {
+        "join": {
+          "node": "join",
+          "pod_id": null,
+          "run_id": "2026-11-09-003-pool-pilot--v2-join-a1",
+          "start": 1794278745.0388622,
+          "gpu": "NVIDIA H100 80GB HBM3",
+          "dtype": "torch.bfloat16",
+          "cuda_ok": true,
+          "dependencies": {
+            "root-a": {
+              "node": "root-a",
+              "pod_id": "yloqm2sx28duke",
+              "run_id": "2026-11-09-003-pool-pilot--v2-root-a-a2",
+              "start": 1794278661.458601,
+              "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+              "dtype": "torch.bfloat16",
+              "cuda_ok": true,
+              "end": 1794278719.8734732,
+              "seconds": 58.41487216949463
+            },
+            "root-b": {
+              "node": "root-b",
+              "pod_id": "wdqw7i2qgbswep",
+              "run_id": "2026-11-09-003-pool-pilot--v2-root-b-a2",
+              "start": 1794278687.6883233,
+              "gpu": "NVIDIA H100 80GB HBM3",
+              "dtype": "torch.bfloat16",
+              "cuda_ok": true,
+              "end": 1794278718.351939,
+              "seconds": 30.663615703582764
+            }
+          },
+          "end": 1794278750.7065701,
+          "seconds": 5.667707920074463
+        }
+      },
+      "end": 1794278778.341538,
+      "seconds": 5.653127431869507
+    },
+    "join-done.json": {
+      "node": "join",
+      "pod_id": null,
+      "run_id": "2026-11-09-003-pool-pilot--v2-join-a1",
+      "start": 1794278745.0388622,
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "dtype": "torch.bfloat16",
+      "cuda_ok": true,
+      "dependencies": {
+        "root-a": {
+          "node": "root-a",
+          "pod_id": "yloqm2sx28duke",
+          "run_id": "2026-11-09-003-pool-pilot--v2-root-a-a2",
+          "start": 1794278661.458601,
+          "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+          "dtype": "torch.bfloat16",
+          "cuda_ok": true,
+          "end": 1794278719.8734732,
+          "seconds": 58.41487216949463
+        },
+        "root-b": {
+          "node": "root-b",
+          "pod_id": "wdqw7i2qgbswep",
+          "run_id": "2026-11-09-003-pool-pilot--v2-root-b-a2",
+          "start": 1794278687.6883233,
+          "gpu": "NVIDIA H100 80GB HBM3",
+          "dtype": "torch.bfloat16",
+          "cuda_ok": true,
+          "end": 1794278718.351939,
+          "seconds": 30.663615703582764
+        }
+      },
+      "end": 1794278750.7065701,
+      "seconds": 5.667707920074463
+    },
+    "root-a-done.json": {
+      "node": "root-a",
+      "pod_id": "yloqm2sx28duke",
+      "run_id": "2026-11-09-003-pool-pilot--v2-root-a-a2",
+      "start": 1794278661.458601,
+      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "dtype": "torch.bfloat16",
+      "cuda_ok": true,
+      "end": 1794278719.8734732,
+      "seconds": 58.41487216949463
+    },
+    "root-b-done.json": {
+      "node": "root-b",
+      "pod_id": "wdqw7i2qgbswep",
+      "run_id": "2026-11-09-003-pool-pilot--v2-root-b-a2",
+      "start": 1794278687.6883233,
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "dtype": "torch.bfloat16",
+      "cuda_ok": true,
+      "end": 1794278718.351939,
+      "seconds": 30.663615703582764
+    }
+  },
+  "runtime_repair": {
+    "from_commit": "314674b1c642687db93ad2905122ae07d90b9b51",
+    "to_commit": "ac06a8e951d7eecbd9ae80dbe8e033848d894de1",
+    "reason": "Network volume private SSH key mode 0666; local 0600 copy",
+    "time": 1794278633.8749654
+  }
+}

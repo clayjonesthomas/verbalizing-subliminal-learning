@@ -199,9 +199,11 @@ def main(root,infra,argv):
         if not a.allow_non_rtx and any('RTX PRO 6000' not in gpu.upper() for gpu in task['gpu_ids']):raise ValueError('DAG requests non-RTX GPUs without the explicit approved override')
     request=dict(action='enqueue',tasks=tasks,budgets=budgets,environment=environment)
     if a.retry_task:
-        if not existing:raise ValueError('No online recovery pod')
         if len(tasks)!=1:raise ValueError('Retry needs one repaired task configuration')
-        print(json.dumps(call(existing,dict(action='retry',task_id=a.retry_task,config=tasks[0]['config'],environment=environment))));return 0
+        if tasks[0]['id']!=a.retry_task:raise ValueError('Retry task must match the repaired DAG node')
+        request.update(action='retry',task_id=a.retry_task,config=tasks[0]['config'])
+        if existing:
+            print(json.dumps(call(existing,request)));return 0
     if existing:
         status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
         placement=status['placement']
