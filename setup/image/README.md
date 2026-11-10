@@ -22,3 +22,13 @@ with the 60 GB disk default. Compare package inventories, BF16 loss/gradients,
 checkpointing-off settings, and startup timing against the existing environment.
 Model loading and GPU-specific JIT compilation still occur at runtime.
 Active pinned experiments retain their existing image.
+
+## Publish the verified build
+
+Authenticate Docker to `ghcr.io` with package-write permission, then run
+`python3 setup/image/publish.py`. It checks the local image digest against
+`local-build.json`, uploads it, verifies the remote manifest digest, and records
+`registry.json` with the immutable Runpod image reference. It does not change the
+provisioner's default or active pool configuration. Make the GHCR package public
+for credential-free Runpod pulls, then verify anonymous manifest access before
+GPU validation. No personal registry token should be forwarded to workers.
