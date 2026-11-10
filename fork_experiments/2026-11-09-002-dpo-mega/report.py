@@ -65,14 +65,14 @@ def render():
     body+='<details id="training" ontoggle="if(this.open)requestAnimationFrame(()=&gt;this.querySelectorAll(&quot;.js-plotly-plot&quot;).forEach(plot=&gt;Plotly.Plots.resize(plot)))"><summary>Training · six runs</summary>'+chart_grid(charts)
     body+='<p class="note">All six runs stopped on validation plateau. DPO can improve while chosen-answer NLL worsens; the objectives are different. Student-answer NLL uses different targets and is not directly comparable to teacher-preference NLL.</p>'
     body+='</details>'
-    body+='<h2 id="behavior">Behavior · latest base and student rejudging</h2><p class="note">GPT-4.1 mini · two hint framings only · 95% question-cluster bootstrap intervals. Missing/non-numeric alignment pairs are excluded, not counted as safe.</p>'
+    body+='<details id="behavior" ontoggle="if(this.open)requestAnimationFrame(()=&gt;this.querySelectorAll(&quot;.js-plotly-plot&quot;).forEach(plot=&gt;Plotly.Plots.resize(plot)))"><summary>Behavior · latest base and student rejudging</summary><p class="note">GPT-4.1 mini · two hint framings only · 95% question-cluster bootstrap intervals. Missing/non-numeric alignment pairs are excluded, not counted as safe.</p>'
     groups=['base','misalignment-student','sycophancy-student'];labels=['Base','Misalignment student','Sycophancy student'];bc=[]
     for metric,title in [('misalignment','Coherent misaligned answers'),('hint_gap','Accuracy drop with a wrong user hint')]:
         vals=[judge['metrics'][metric][g] for g in groups]
         bc.append(chart_html('latest-'+metric,title,[points('GPT-4.1 mini',labels,vals,100)],x_label='Model condition',y_label='Answers (%)' if metric=='misalignment' else 'Correct-hint accuracy − wrong-hint accuracy (%)',caption='Higher hint gap means a larger accuracy drop under incorrect hints; read alongside absolute accuracy.' if metric=='hint_gap' else 'Alignment <30 and coherence >25 among numeric/scorable pairs. Zero bootstrap width at zero events is not proof of zero population risk.'))
     bc.append(chart_html('latest-hints','Correctness under each hint',[points(v.replace('_',' ').capitalize(),labels,[judge['accuracy'][v][g] for g in groups],100) for v in ['hint_correct','hint_wrong']],x_label='Model condition',y_label='Correct answers (%)',group_points=True))
     body+=chart_grid(bc[:1])+chart_grid([bc[2],bc[1]])
-    body+='<h2>Behavior · all soft prompts and verbalized text</h2><p class="note">Earlier evaluation: GPT-4o-mini probability-weighted alignment/coherence; GPT-4.1 mini correctness. These alignment rates must not be directly compared with the newer student plots above. Existing results only; no new robust audit was commissioned.</p>'
+    body+='</details><details id="soft-behavior" ontoggle="if(this.open)requestAnimationFrame(()=&gt;this.querySelectorAll(&quot;.js-plotly-plot&quot;).forEach(plot=&gt;Plotly.Plots.resize(plot)))"><summary>Behavior · all soft prompts and verbalized text</summary><p class="note">Earlier evaluation: GPT-4o-mini probability-weighted alignment/coherence; GPT-4.1 mini correctness. These alignment rates must not be directly compared with the newer student plots above. Existing results only; no new robust audit was commissioned.</p>'
     baseline=data['misalignment-base']['behavior']['base'];behavior_inventory=[]
     for trait in TRAITS:
         cards=[]
@@ -92,7 +92,7 @@ def render():
                 cards.append(chart_html(key+'-'+metric,trait.capitalize()+' · '+NAMES[mode]+' — '+title,traces,x_label='Prompt condition',y_label='Answers (%)' if metric=='em' else 'Correct answers (%)',group_points=True,caption='Earlier aggregate results; intervals were not retained. Grade coverage and truncation counts are in hover.'))
             behavior_inventory.extend(dict(condition=key,method=m,misalignment_n=b['misalignment']['n_judged'],truncated=b['truncated']) for m,b in items)
         body+=chart_grid(cards)
-    body+='<h2 id="verbalizations">Verbalization · all four soft prompts, all three searches</h2>'
+    body+='</details><h2 id="verbalizations">Verbalization · all four soft prompts, all three searches</h2>'
     readout_cards=[];texts=[];readout_inventory=[]
     for mode in ['direct','imitation']:
         traces=[]
