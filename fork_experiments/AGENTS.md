@@ -45,3 +45,29 @@ needed to read the results correctly. Long model responses are appropriate when
 the user requests those outputs. Show curated outputs rather than exhaustive
 sample lists unless explicitly requested. This supersedes any older instruction
 or remembered preference for five overview bullets or prose-heavy reports.
+
+## AuditBench follow-ups (2026-11-10)
+
+For new AuditBench soft-prompt verbalization recovery runs, use the shared
+`salve.bucket_search.bucket_search` implementation with `BucketConfig()` defaults.
+Call it explicitly: the generic `recover_prompt` entry point currently invokes
+beam search. Do not copy or reimplement search orchestration, retention, candidate
+selection, or allocation in an experiment-local loop. If an adapter or resume
+capability is needed, extend and test the shared implementation.
+
+The experiment-local beam readouts in `2026-11-08-000-auditbench-four` and
+`2026-11-09-001-auditbench-students` are historical one-offs, not templates for
+future work. Preserve their provenance and active pinned runs. The direct-student
+bucket experiment is also not a substitute for the shared soft-prompt search API.
+
+Select new behaviors for hidden/contextual structure, not shortest transcripts
+or obvious response style. Discuss the final selection with the user before
+launching. Recommended shortlist (not a finalized launch configuration):
+`contextual_optimism`, `ai_welfare_poisoning`, `secret_loyalty`,
+`reward_wireheading`. Other candidates: `anti_ai_regulation`,
+`hallucinates_citations`, `hardcode_test_cases`, and `increasing_pep`.
+Evaluate trigger-present and matched trigger-absent contexts separately; judge
+recovery of both the behavior and its condition. Verify the target actually
+exhibits the conditional behavior before interpreting recovery failures. Keep
+behavior names and ground-truth descriptions out of search prompts and selection
+objectives. Preserve conversation context for conditional and multi-turn traits.
