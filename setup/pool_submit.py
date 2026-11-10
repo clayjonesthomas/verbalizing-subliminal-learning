@@ -126,10 +126,16 @@ def main(root,infra,argv):
             existing=discover(provider)
             if existing:
                 current=call(existing,dict(action='status'))
+                if request['action']=='retry':
+                    from podrun.pool import validate_repair
+                    if current.get('runtime_commit'):
+                        request['config']['submission_infrastructure_commit']=request['config']['infrastructure_commit']
+                        request['config']['infrastructure_commit']=current['runtime_commit']
+                    validate_repair(current['state']['tasks'][request['task_id']]['spec']['config'],request['config'],request.get('repair_reason'))
                 placement=current.get('placement',{})
                 requested={gpu for task in request['tasks'] for gpu in task.get('gpu_ids',[])}
                 if placement.get('gpu_ids') and requested-set(placement['gpu_ids']):
-                    call(existing,dict(action='placement',gpu_ids=sorted(set(placement['gpu_ids'])|requested),max_hourly=max(placement['max_hourly'],plan['placement']['max_hourly'])))
+                    call(existing,dict(action='placement',gpu_ids=sorted(set(placement['gpu_ids'])|requested),max_hourly=None if None in (placement['max_hourly'],plan['placement']['max_hourly']) else max(placement['max_hourly'],plan['placement']['max_hourly'])))
                 if plan.get('settings'):
                     state=call(existing,dict(action='status'))['state'];settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment')};settings.update(plan['settings'])
                     call(existing,dict(action='configure',**settings))
@@ -201,15 +207,17 @@ def main(root,infra,argv):
         if not a.allow_non_rtx and any('RTX PRO 6000' not in gpu.upper() for gpu in task['gpu_ids']):raise ValueError('DAG requests non-RTX GPUs without the explicit approved override')
     request=dict(action='enqueue',tasks=tasks,budgets=budgets,environment=environment)
     if a.retry_task:
-        if not existing:raise ValueError('No online recovery pod')
         if len(tasks)!=1:raise ValueError('Retry needs one repaired task configuration')
-        status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
-        if runtime:
-            tasks[0]['config']['submission_infrastructure_commit']=tasks[0]['config']['infrastructure_commit']
-            tasks[0]['config']['infrastructure_commit']=runtime
-        from podrun.pool import validate_repair
-        validate_repair(status['state']['tasks'][a.retry_task]['spec']['config'],tasks[0]['config'],a.repair_reason)
-        print(json.dumps(call(existing,dict(action='retry',task_id=a.retry_task,config=tasks[0]['config'],environment=environment,repair_reason=a.repair_reason))));return 0
+        if tasks[0]['id']!=a.retry_task:raise ValueError('Retry task must match the repaired DAG node')
+        request.update(action='retry',task_id=a.retry_task,config=tasks[0]['config'],repair_reason=a.repair_reason)
+        if existing:
+            status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
+            if runtime:
+                request['config']['submission_infrastructure_commit']=request['config']['infrastructure_commit']
+                request['config']['infrastructure_commit']=runtime
+            from podrun.pool import validate_repair
+            validate_repair(status['state']['tasks'][a.retry_task]['spec']['config'],request['config'],a.repair_reason)
+            print(json.dumps(call(existing,request)));return 0
     if existing:
         status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
         placement=status['placement']

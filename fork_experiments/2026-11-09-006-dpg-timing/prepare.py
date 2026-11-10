@@ -51,9 +51,13 @@ def main():
     base='https://huggingface.co/datasets/Transluce/DSSE/resolve/'+C['dsse_revision']+'/'
     path=download(base+'behaviors.json',ART/'behaviors.json')
     behavior=next(b for b in json.loads(path.read_text()) if b['behavior_id']==C['behavior'])
+    raw_prompts=behavior['eval_prompts']
+    prompts=[p['prompt'] if isinstance(p,dict) else p for p in raw_prompts]
+    assert prompts and all(isinstance(p,str) and p.strip() for p in prompts)
+    assert all(not isinstance(p,dict) or p['prompt_idx']==i for i,p in enumerate(raw_prompts))
+    behavior['eval_prompt_metadata']=raw_prompts
+    behavior['eval_prompts']=prompts
     atomic(ART/'behavior.json',behavior)
-    prompts=behavior['eval_prompts']
-    assert isinstance(prompts[0],str),type(prompts[0])
     # Curate from actual released outputs, not invented token sequences. The bank is
     # a performance fixture and is not claimed to reproduce the authors' references.
     path=download(base+'eval_results/'+C['behavior']+'.jsonl.xz',ART/'eval_results.jsonl.xz')
