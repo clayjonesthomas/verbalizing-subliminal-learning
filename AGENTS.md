@@ -338,3 +338,10 @@ credential, placement, recovery and bootstrap contracts.
 ## Failed-task repair policy
 
 Never automatically retry a failed task, or explicitly retry it unchanged. Diagnose the failure, commit the causal fix, and validate that fix first. For global pool repair, supply `--repair-reason` describing the diagnosis, fix, and validation; the queue requires a changed pinned source or installed runtime commit. An unrelated commit does not qualify as a repair. Preserve the old attempt, artifacts, budget, and recovery deadline.
+
+## Budget cap interpretation (2026-11-10)
+
+When the user specifies a dollar cap, that amount is the normal-work cutoff.
+Add 20% on top solely for safe cleanup: a $30 cap means stop normal work at
+$30 and force shutdown at $36. Do not carve cleanup out of the stated cap or
+reinterpret it as an all-inclusive hard limit. Preserve all prior spending.
