@@ -5,6 +5,7 @@ import unittest
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import experiment
+sys.path.insert(0,str(Path(os.environ.get('RESEARCH_INFRA_DIR',str(Path(__file__).resolve().parents[3]/'research-infra')))/'experiment-runner'))
 
 class EntryTests(unittest.TestCase):
     def test_new_submit_and_run_route_to_global_queue(self):
