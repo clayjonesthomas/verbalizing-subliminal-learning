@@ -1,0 +1,15 @@
+{
+  "pod_id": "q8xh6wfnfeyouk",
+  "machine_id": "6bxmp0fk5z34",
+  "data_center": "US-NE-1",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "observed_date": "2026-11-10",
+  "recommendation": "Avoid for new allocations pending retest",
+  "automatic_exclusion_enforced": false,
+  "evidence": [
+    "Image was already cached; container started at 13:24:58 PST.",
+    "Pinned uv dependency installation had not completed after more than 11 minutes.",
+    "Several small packages took multiple minutes to complete; no CUDA or search computation had started."
+  ],
+  "diagnosis": "Abnormally slow dependency installation; network versus disk cause not established. This is not evidence of bad GPU computation."
+}
