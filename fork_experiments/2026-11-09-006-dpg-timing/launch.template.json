@@ -1,0 +1,71 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-09-006-dpg-timing",
+  "pod_name": "dpg-timing",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-09-006-dpg-timing/start.sh"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-09-006-dpg-timing/hooks.py",
+    "save"
+  ],
+  "max_seconds": 10800,
+  "hook_timeout": 300,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 20,
+    "hard_limit_usd": 24,
+    "prior_spend_usd": 0,
+    "approval": "User requested a DPG runtime pilot on 2026-11-09. Self-imposed $20 GPU graceful/$24 hard cutoff plus $2 API ceiling, within the standing $50 total experiment authorization. All attempts share this budget."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-09-006-dpg-timing",
+    "watch_interval": 15,
+    "report_json_globs": []
+  },
+  "infrastructure_commit": "RUNTIME",
+  "publish": [
+    "python3",
+    "fork_experiments/2026-11-09-006-dpg-timing/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "fork_experiments/2026-11-09-006-dpg-timing"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-09-006-dpg-timing/assets"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
