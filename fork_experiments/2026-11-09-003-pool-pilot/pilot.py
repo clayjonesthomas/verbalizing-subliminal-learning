@@ -15,7 +15,8 @@ if mode in ('save','publish'):
     if mode=='save':os.sync()
 else:
     import torch
-    start=time.time();pod=os.environ.get('RUNPOD_POD_ID');assert torch.cuda.is_available()
+    from podrun.runner import pod_identity
+    start=time.time();pod=pod_identity();assert pod and torch.cuda.is_available()
     a=torch.randn(256,256,device='cuda',dtype=torch.bfloat16)
     b=a@a;torch.cuda.synchronize();assert torch.isfinite(b).all()
     record=dict(node=mode,pod_id=pod,run_id=os.environ['PODRUN_ID'],start=start,gpu=torch.cuda.get_device_name(),dtype=str(a.dtype),cuda_ok=True)
