@@ -95,6 +95,7 @@ def main(root,infra,argv):
     p.add_argument('--max-hourly',type=float,default=5)
     p.add_argument('--no-price-limit',action='store_true',help='Disable hourly-price filtering; experiment total budget still applies')
     p.add_argument('--status',action='store_true')
+    p.add_argument('--wait-for-pool',action='store_true',help='Wait up to 15 minutes for an already bootstrapping global pool; never allocate a competing bootstrap')
     p.add_argument('--sync',action='store_true',help='Reconnect local reports/watchers to assigned global tasks')
     p.add_argument('--configure',action='store_true',help='Change global pool max-pods/sticky without submitting tasks')
     p.add_argument('--amend-budget',action='store_true')
@@ -154,7 +155,17 @@ def main(root,infra,argv):
                 except Exception:pass
                 time.sleep(2)
             raise RuntimeError('Bootstrap readiness unconfirmed; inspect receipt, no new allocation')
-    existing=discover(provider)
+    if a.wait_for_pool:
+        deadline=time.monotonic()+900
+        while True:
+            try:existing=discover(provider)
+            except RuntimeError as exc:
+                if 'Pool agents exist but the provisioner is not ready' not in str(exc):raise
+                existing=None
+            if existing:break
+            if time.monotonic()>=deadline:raise RuntimeError('Timed out awaiting existing global pool; no extra pod allocated')
+            print('Waiting for existing global pool bootstrap...',flush=True);time.sleep(15)
+    else:existing=discover(provider)
     if a.sync:
         if not existing:raise ValueError('No online pool to sync; published results remain on main')
         return sync(root,call(existing,dict(action='status')),provider)
