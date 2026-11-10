@@ -120,6 +120,11 @@ def main(root,infra,argv):
             fcntl.flock(bootstrap_lock,fcntl.LOCK_EX)
             existing=discover(provider)
             if existing:
+                current=call(existing,dict(action='status'))
+                placement=current.get('placement',{})
+                requested={gpu for task in request['tasks'] for gpu in task.get('gpu_ids',[])}
+                if placement.get('gpu_ids') and requested-set(placement['gpu_ids']):
+                    call(existing,dict(action='placement',gpu_ids=sorted(set(placement['gpu_ids'])|requested),max_hourly=max(placement['max_hourly'],plan['placement']['max_hourly'])))
                 if plan.get('settings'):
                     state=call(existing,dict(action='status'))['state'];settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment')};settings.update(plan['settings'])
                     call(existing,dict(action='configure',**settings))
