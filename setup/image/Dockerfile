@@ -8,7 +8,7 @@ WORKDIR /opt/vsl-image/base
 RUN test -x /usr/bin/python3.11 && uv --version && \
     UV_PROJECT_ENVIRONMENT=/opt/verbalizing-subliminal-learning-venv \
     uv sync --frozen --no-install-project --no-cache --python /usr/bin/python3.11
-COPY training.txt vllm.lock.txt verify.py manifest.json /opt/vsl-image/
+COPY training.txt vllm.lock.txt verify.py /opt/vsl-image/
 RUN uv venv --python /usr/bin/python3.11 /opt/auditbench-training-venv && \
     /opt/auditbench-training-venv/bin/python -c 'import pathlib,sysconfig; pathlib.Path(sysconfig.get_path("purelib"), "project-base.pth").write_text("/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages\n")' && \
     uv pip install --python /opt/auditbench-training-venv/bin/python --no-cache --no-deps -r /opt/vsl-image/training.txt && \
@@ -16,5 +16,6 @@ RUN uv venv --python /usr/bin/python3.11 /opt/auditbench-training-venv && \
 RUN uv venv --python /usr/bin/python3.11 /opt/auditbench-vllm-venv && \
     uv pip install --python /opt/auditbench-vllm-venv/bin/python --no-cache --no-deps -r /opt/vsl-image/vllm.lock.txt && \
     /opt/auditbench-vllm-venv/bin/python /opt/vsl-image/verify.py vllm
+COPY manifest.json /opt/vsl-image/manifest.json
 WORKDIR /workspace
 # Preserve the base image's NVIDIA entrypoint and Runpod service CMD.
