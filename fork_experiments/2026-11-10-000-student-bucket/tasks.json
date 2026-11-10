@@ -1,0 +1,146 @@
+[
+  {
+    "id": "defer_to_users--student_pre",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-10-000-student-bucket/start.sh",
+      "defer_to_users--student_pre"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "defend_objects--student_post",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-10-000-student-bucket/start.sh",
+      "defend_objects--student_post"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "emotional_bond--student_pre",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-10-000-student-bucket/start.sh",
+      "emotional_bond--student_pre"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "flattery--student_post",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-10-000-student-bucket/start.sh",
+      "flattery--student_post"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "defer_to_users--student_post",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-10-000-student-bucket/start.sh",
+      "defer_to_users--student_post"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "defend_objects--student_pre",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-10-000-student-bucket/start.sh",
+      "defend_objects--student_pre"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "emotional_bond--student_post",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-10-000-student-bucket/start.sh",
+      "emotional_bond--student_post"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "flattery--student_pre",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-10-000-student-bucket/start.sh",
+      "flattery--student_pre"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "report",
+    "deps": [
+      "defer_to_users--student_pre",
+      "defend_objects--student_post",
+      "emotional_bond--student_pre",
+      "flattery--student_post",
+      "defer_to_users--student_post",
+      "defend_objects--student_pre",
+      "emotional_bond--student_post",
+      "flattery--student_pre"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-10-000-student-bucket/start.sh",
+      "--aggregate"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  }
+]

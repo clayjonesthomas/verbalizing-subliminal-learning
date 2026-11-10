@@ -1,0 +1,82 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-10-000-student-bucket",
+  "pod_name": "student-bucket",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-10-000-student-bucket/start.sh"
+  ],
+  "save": [
+    "/opt/auditbench-training-venv/bin/python",
+    "fork_experiments/2026-11-10-000-student-bucket/hooks.py",
+    "save"
+  ],
+  "max_seconds": 86400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 24,
+    "hard_limit_usd": 29,
+    "prior_spend_usd": 0,
+    "approval": "User approved fresh $30 cap and bucket search only, six rounds. $24 normal GPU work, $29 GPU hard cutoff plus $1 API; old spending remains separate."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-10-000-student-bucket",
+    "watch_interval": 15,
+    "report_json_globs": [],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-10-000-student-bucket/pull.py",
+      "RUNTIME"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "publish": [
+    "/opt/auditbench-training-venv/bin/python",
+    "fork_experiments/2026-11-10-000-student-bucket/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve/bucket_search.py",
+      "fork_experiments/2026-11-10-000-student-bucket",
+      "fork_experiments/2026-11-09-001-auditbench-students"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-08-000-auditbench-four/assets/plotly-3.1.0.min.js"
+    ],
+    "generated_report_resolver": [
+      "/opt/auditbench-training-venv/bin/python",
+      "fork_experiments/2026-11-10-000-student-bucket/report.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
