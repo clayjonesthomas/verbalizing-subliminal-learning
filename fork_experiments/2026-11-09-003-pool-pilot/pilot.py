@@ -2,7 +2,7 @@
 import json, os, sys, time, shutil
 from pathlib import Path
 EID=Path(__file__).parent.name
-SHARED=Path('/workspace/pool-pilots')/EID
+SHARED=Path('/workspace/pool-pilots')/EID/(sys.argv[2] if len(sys.argv)>2 else 'original')
 ART=Path(os.environ.get('PODRUN_ARTIFACT_DIR','/tmp/pool-pilot-artifacts'))
 def atomic(p,value):
     p.parent.mkdir(parents=True,exist_ok=True)
@@ -23,6 +23,9 @@ else:
     if mode.startswith('root-'):
         other='root-b' if mode=='root-a' else 'root-a'
         while not (SHARED/(other+'-start.json')).exists() and time.time()-start<600:time.sleep(2)
+        assert (SHARED/(other+'-start.json')).exists(), 'Parallel peer did not start within 600 seconds'
+        peer=json.loads((SHARED/(other+'-start.json')).read_text())
+        assert peer['pod_id']!=pod, 'Parallel roots must use different GPUs'
         # Leave enough overlap to verify a remote provisioner has scaled the pool.
         time.sleep(30)
     else:

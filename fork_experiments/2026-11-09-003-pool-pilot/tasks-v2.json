@@ -1,0 +1,55 @@
+[
+  {
+    "id": "v2-root-a",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+      "root-a",
+      "v2"
+    ]
+  },
+  {
+    "id": "v2-root-b",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+      "root-b",
+      "v2"
+    ]
+  },
+  {
+    "id": "v2-join",
+    "deps": [
+      "v2-root-a",
+      "v2-root-b"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+      "join",
+      "v2"
+    ]
+  },
+  {
+    "id": "v2-tail",
+    "deps": [
+      "v2-join"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+      "tail",
+      "v2"
+    ]
+  }
+]
