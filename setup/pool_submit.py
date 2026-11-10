@@ -1,6 +1,7 @@
 """Enqueue global DAG work; bootstrap one pod only when the pool is offline."""
 import argparse
 import copy
+import fcntl
 import hashlib
 import json
 import os
@@ -115,7 +116,8 @@ def main(root,infra,argv):
         from podrun.cli import forwarded_environment
         request['environment']=forwarded_environment(plan['forward_env'])
         receipt_path=a.bootstrap_plan.with_suffix('.receipt.json')
-        with lock(registry/'bootstrap.lock'):
+        with (registry/'bootstrap.lock').open('a') as bootstrap_lock:
+            fcntl.flock(bootstrap_lock,fcntl.LOCK_EX)
             existing=discover(provider)
             if existing:
                 if plan.get('settings'):
