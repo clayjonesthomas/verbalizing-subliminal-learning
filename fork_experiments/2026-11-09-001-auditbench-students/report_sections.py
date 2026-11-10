@@ -24,6 +24,7 @@ def render_sections():
     if not original.exists():
         original = HERE.parent/'2026-11-08-000-auditbench-four/results/auditbench-four-w10-a2'
     original_history = read(HERE/'teacher_beam_history.json', {})
+    teacher_prompts = read(HERE/'teacher_system_prompts.json', {})
     groups = [('teacher', 'Teacher-transcript-trained soft prompts', original, ''),
               ('student', 'Student-trained soft prompts', ROOT, '--student_pre'),
               ('anti', 'Anti-confession-student-trained soft prompts', ROOT, '--student_post')]
@@ -55,8 +56,13 @@ def render_sections():
                 score = fidelity.get(method, {}).get('score')
                 exact.append([LABELS[i], method, 'Missing' if score is None else score,
                               fidelity.get(method, {}).get('evidence', '')])
-                if method in winners:
-                    texts.append('<details><summary>'+html.escape(LABELS[i]+' · '+method)+'</summary><pre>'+html.escape(winners[method]['text'])+'</pre></details>')
+                if method == 'beam' and method in winners:
+                    teacher_prompt = C['system'] if suffix else teacher_prompts[trait]['prompt']
+                    provenance = ('System prompt used for student rollouts; the behavior is in the fine-tuned weights.' if suffix else
+                                  'Reconstructed from the <a href="'+html.escape(teacher_prompts[trait]['source'],quote=True)+'">pinned AuditBench template</a>; system messages were not included in the released transcripts.')
+                    texts.append('<details class="prompt-pair"><summary>'+html.escape(LABELS[i]+' · top beam prompt')+'</summary>'+
+                                 '<h3>Teacher system prompt</h3><p>'+provenance+'</p><pre class="teacher-system-prompt">'+html.escape(teacher_prompt)+'</pre>'+
+                                 '<h3>Top beam prompt</h3><p>Selected by lowest validation NLL across all completed rounds.</p><pre class="top-beam-prompt">'+html.escape(winners[method]['text'])+'</pre></details>')
         plots.append(chart_html(group+'-training', 'Soft-prompt training NLL', training, x_label='Optimizer step', y_label='Token-weighted NLL · trailing 50 updates', show_legend=True,
                                 caption='2,500 optimizer updates; token-weighted trailing-50-update mean.'))
         plots.append(chart_html(group+'-beam', 'Beam search · best validation NLL per round', beam, x_label='Completed round', y_label='Validation selection NLL', show_legend=True,
