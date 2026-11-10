@@ -238,7 +238,7 @@ def main(root,infra,argv):
         print(json.dumps(dict(queued=[t['id'] for t in tasks],pool_pod=existing['pod_id'],hands_free=True)));return 0
     config=dict(runtime_commit=git(infra,'rev-parse','HEAD'),controller_repair_reason=a.controller_repair_reason,max_pods=a.max_pods,sticky=bool(a.sticky),target_pods=a.target_pods or 0,idle_experiment=a.idle_experiment,gpu_ids=a.gpu or [],min_vram_gb=a.min_vram_gb,max_hourly=a.max_hourly,environment='vsl-base',
         operator_public_key=Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip(),
-        create_body=dict(image=IMAGE,args=START,cloud='SECURE',disk=30,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp']),
+        create_body=dict(image=IMAGE,args=START,cloud='SECURE',disk=60,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp']),
         readiness_command=['bash','/workspace/projects/verbalizing-subliminal-learning/repo/setup/run.sh','python','-c','import torch; assert torch.cuda.is_available()'])
     if a.target_pods and (not a.sticky or a.idle_experiment not in budgets):raise ValueError('Warm capacity requires --sticky and --idle-experiment with an authorized budget in this submission')
     token=uuid.uuid4().hex[:12];path=registry/(token+'.json')

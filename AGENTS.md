@@ -1,3 +1,11 @@
+# Container disk policy (2026-11-10)
+
+Use the default **60 GB container disk** for all new pods. Do not increase the
+per-pod allocation or this default without first obtaining explicit user approval.
+Use the default without asking to increase it. Do not resize or restart existing
+pods merely to adopt this policy. Spend estimates assume 60 GB per pod; GPU model
+and lifecycle evidence are still required. Network-volume capacity is separate.
+
 # Runpod account for this repository
 
 Use only the Runpod API or MCP. All pods and volumes for this repository must

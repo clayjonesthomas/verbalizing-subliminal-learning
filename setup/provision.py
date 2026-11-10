@@ -152,7 +152,7 @@ def provision_cpu(args, demand=None, transition=None):
         options=sorted((x for x in catalog if x['id'] in ['cpu3c','cpu3g'] and x['vcpu']['min']<=2 and 0<x['price']['securePerVcpu']*2<=min(args.max_hourly,.08)),key=lambda x:x['price']['securePerVcpu'])
         if not options:raise RuntimeError('No eligible CPU catalog entry')
         for cpu in options:
-            body=dict(name=args.name,image='ubuntu:24.04',args='bash /workspace/projects/verbalizing-subliminal-learning/repo/setup/cpu-boot.sh',cloud='SECURE',cpu=dict(id=cpu['id'],vcpuCount=2),disk=10,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp'],env={'PUBLIC_KEY':public_key})
+            body=dict(name=args.name,image='ubuntu:24.04',args='bash /workspace/projects/verbalizing-subliminal-learning/repo/setup/cpu-boot.sh',cloud='SECURE',cpu=dict(id=cpu['id'],vcpuCount=2),disk=60,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp'],env={'PUBLIC_KEY':public_key})
             try:
                 transition('allocating',pod_name=body['name'])
                 pod=create_with_billing(c,body,dict(id=cpu['id'],price={'secure':cpu['price']['securePerVcpu']*2}),allocated=lambda p:transition('allocated',pod_id=p['id']))
@@ -189,7 +189,7 @@ def provision(args, demand=None, transition=None):
         print(json.dumps({'cycle':cycle,'eligible_models':len(options),'time':time.strftime('%H:%M:%S')}), flush=True)
         rate_limited = False
         for g in options:
-            body = {'name':getattr(args, 'name', 'verbalizing-subliminal-learning-new'),'image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':30,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
+            body = {'name':getattr(args, 'name', 'verbalizing-subliminal-learning-new'),'image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':60,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
             if args.pod_local_gb:
                 body['mounts'] = {'persistent': {'size': args.pod_local_gb, 'path': '/workspace'}}
                 body.pop('dataCenterIds')
