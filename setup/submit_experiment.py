@@ -164,6 +164,7 @@ def main(root, infra, argv):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--experiment', required=True)
     p.add_argument('--workers', type=int, default=1)
+    p.add_argument('--dedicated', action='store_true', help='Use the established dedicated submission controller')
     p.add_argument('--cpu', action='store_true', help='Use a CPU-only pod with the established dedicated runner')
     p.add_argument('--template', type=Path)
     p.add_argument('--pod', action='append', default=[], help='Existing ready/held pod, one per worker; same experiment budget only')
