@@ -18,7 +18,7 @@ def render(result=None):
         for trait in ['misalignment','sycophancy']:
             rows=[r for r in result['results'] if r['target']==target and r['trait']==trait]
             if rows:traces.append(dict(type='scatter',mode='markers',name=trait.capitalize(),x=[r['condition'] for r in rows],y=[r['loss'] for r in rows]))
-        if traces:cards.append(chart_html(target,title,traces,x_label='Model condition',y_label='Held-out DPO loss' if target=='teacher_preferences' else 'NLL (nats/token)',group_points=True))
+        if traces:cards.append(chart_html(target,title,traces,x_label='Model condition',y_label='Held-out DPO loss' if target=='teacher_preferences' else 'NLL (nats/token)'))
     body='<h1>Held-out loss baselines</h1><p>'+str(len(result['results']))+'/8 evaluations · '+html.escape(result['status'])+'</p>'+chart_grid(cards)
     style='<style>body{font:15px system-ui;max-width:1350px;margin:28px auto;padding:0 24px}</style>'
     script=plotly_script(HERE/'assets/plotly-3.1.0.min.js')
