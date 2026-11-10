@@ -102,10 +102,12 @@ def main(root,infra,argv):
     p.add_argument('--limit-usd',type=float)
     p.add_argument('--hard-limit-usd',type=float)
     p.add_argument('--approval')
+    p.add_argument('--repair-reason',help='Diagnosis and fix required before resuming a failed task')
     p.add_argument('--retry-task',help='Reserved failed task ID; uses committed template for repaired code')
     p.add_argument('--bootstrap-plan',type=Path,help=argparse.SUPPRESS)
     a=p.parse_args(argv)
     if a.no_price_limit:a.max_hourly=None
+    if a.retry_task and (not a.repair_reason or len(a.repair_reason.strip())<10):p.error('--retry-task requires --repair-reason describing the diagnosis and fix')
     if not 1<=a.min_vram_gb<=192:p.error('--min-vram-gb must be 1–192')
     if a.full_parallel and a.max_pods is not None:p.error('Choose max-pods or full-parallel')
     if a.max_pods is not None and not 1<=a.max_pods<=128:p.error('--max-pods must be 1–128')
@@ -201,7 +203,13 @@ def main(root,infra,argv):
     if a.retry_task:
         if not existing:raise ValueError('No online recovery pod')
         if len(tasks)!=1:raise ValueError('Retry needs one repaired task configuration')
-        print(json.dumps(call(existing,dict(action='retry',task_id=a.retry_task,config=tasks[0]['config'],environment=environment))));return 0
+        status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
+        if runtime:
+            tasks[0]['config']['submission_infrastructure_commit']=tasks[0]['config']['infrastructure_commit']
+            tasks[0]['config']['infrastructure_commit']=runtime
+        from podrun.pool import validate_repair
+        validate_repair(status['state']['tasks'][a.retry_task]['spec']['config'],tasks[0]['config'],a.repair_reason)
+        print(json.dumps(call(existing,dict(action='retry',task_id=a.retry_task,config=tasks[0]['config'],environment=environment,repair_reason=a.repair_reason))));return 0
     if existing:
         status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
         placement=status['placement']
