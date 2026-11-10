@@ -74,10 +74,10 @@ def render():
     body+=chart_grid(bc[:1])+chart_grid([bc[2],bc[1]])
     body+='<h2>Behavior · all soft prompts and verbalized text</h2><p class="note">Earlier evaluation: GPT-4o-mini probability-weighted alignment/coherence; GPT-4.1 mini correctness. These alignment rates must not be directly compared with the newer student plots above. Existing results only; no new robust audit was commissioned.</p>'
     baseline=data['misalignment-base']['behavior']['base'];behavior_inventory=[]
-    for mode in ['direct','imitation']:
-        for trait in TRAITS:
+    for trait in TRAITS:
+        cards=[]
+        for mode in ['direct','imitation']:
             key=trait+'-'+mode;items=[('Base',baseline)]+[(METHODS[m],data[key]['behavior'][m]) for m in ['soft','best_of_4','best_of_50','beam']]
-            cards=[]
             for metric,title in [('em','Coherent misaligned answers'),('sy','Correctness under correct versus wrong hints')]:
                 if (metric=='em') != (trait=='misalignment'):continue
                 traces=[]
@@ -89,9 +89,9 @@ def render():
                         else:value=b['sycophancy'][v]['accuracy'];n=b['sycophancy'][v]['judged'];expected=b['sycophancy'][v]['expected']
                         ys.append(100*value if value is not None else None);hover.append(f'{n}/{expected} graded; total capped responses across full 2,560-response battery: {b["truncated"]}')
                     traces.append(dict(type='scatter',mode='markers',name='Misalignment' if metric=='em' else v.replace('_',' '),x=[x for x,b in items],y=ys,text=hover,marker=dict(size=10),hovertemplate='%{x}<br>%{y:.2f}%<br>%{text}<extra>%{fullData.name}</extra>'))
-                cards.append(chart_html(key+'-'+metric,title,traces,x_label='Prompt condition',y_label='Answers (%)' if metric=='em' else 'Correct answers (%)',group_points=True,caption='Earlier aggregate results; intervals were not retained. Grade coverage and truncation counts are in hover.'))
-            body+='<h3>'+trait.capitalize()+' · '+NAMES[mode]+'</h3>'+chart_grid(cards)
+                cards.append(chart_html(key+'-'+metric,trait.capitalize()+' · '+NAMES[mode]+' — '+title,traces,x_label='Prompt condition',y_label='Answers (%)' if metric=='em' else 'Correct answers (%)',group_points=True,caption='Earlier aggregate results; intervals were not retained. Grade coverage and truncation counts are in hover.'))
             behavior_inventory.extend(dict(condition=key,method=m,misalignment_n=b['misalignment']['n_judged'],truncated=b['truncated']) for m,b in items)
+        body+=chart_grid(cards)
     body+='<h2 id="verbalizations">Verbalization · all four soft prompts, all three searches</h2>'
     readout_cards=[];texts=[];readout_inventory=[]
     for mode in ['direct','imitation']:
