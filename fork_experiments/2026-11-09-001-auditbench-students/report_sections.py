@@ -64,10 +64,10 @@ def render_sections():
                         provenance += ' Training provenance: the student learned from these teacher responses. Student rollout system prompt: '+html.escape(C['system'])
                     anti_block = ''
                     if group == 'anti':
-                        anti_block = ('<h3>Anti-confession training prompt</h3><p>User message to the upstream response rewriter, not a student system prompt. Reconstructed from the <a href="'+html.escape(anti_prompts[trait]['source'],quote=True)+'">pinned upstream code</a>; the original response varies per example. No-prefill version.</p>'+
-                                      '<pre class="anti-confession-prompt">'+html.escape(anti_prompts[trait]['prompt'])+'</pre>')
+                        anti_block = ('<details class="teacher-prompt-toggle"><summary>Anti-confession training prompt</summary><p>User message to the upstream response rewriter, not a student system prompt. Reconstructed from the <a href="'+html.escape(anti_prompts[trait]['source'],quote=True)+'">pinned upstream code</a>; the original response varies per example. No-prefill version.</p>'+
+                                      '<pre class="anti-confession-prompt">'+html.escape(anti_prompts[trait]['prompt'])+'</pre></details>')
                     texts.append('<details class="prompt-pair"><summary>'+html.escape(LABELS[i]+' · top beam prompt')+'</summary>'+
-                                 '<h3>Original behavior teacher system prompt</h3><p>'+provenance+'</p><pre class="teacher-system-prompt">'+html.escape(teacher_prompt)+'</pre>'+anti_block+
+                                 '<details class="teacher-prompt-toggle"><summary>Original behavior teacher system prompt</summary><p>'+provenance+'</p><pre class="teacher-system-prompt">'+html.escape(teacher_prompt)+'</pre></details>'+anti_block+
                                  '<h3>Top beam prompt</h3><p>Selected by lowest validation NLL across all completed rounds.</p><pre class="top-beam-prompt">'+html.escape(winners[method]['text'])+'</pre></details>')
         plots.append(chart_html(group+'-training', 'Soft-prompt training NLL', training, x_label='Optimizer step', y_label='Token-weighted NLL · trailing 50 updates', show_legend=True,
                                 caption='2,500 optimizer updates; token-weighted trailing-50-update mean.'))
