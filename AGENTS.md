@@ -334,3 +334,7 @@ Their `submit --pod` / `--submission` commands remain only for legacy recovery.
 An existing experiment needs retired-worker spending reconciled before entering
 the new pool. Read research-infra `experiment-runner/POOL.md` for the manifest,
 credential, placement, recovery and bootstrap contracts.
+
+## Failed-task repair policy
+
+Never automatically retry a failed task, or explicitly retry it unchanged. Diagnose the failure, commit the causal fix, and validate that fix first. For global pool repair, supply `--repair-reason` describing the diagnosis, fix, and validation; the queue requires a changed pinned source or installed runtime commit. An unrelated commit does not qualify as a repair. Preserve the old attempt, artifacts, budget, and recovery deadline.

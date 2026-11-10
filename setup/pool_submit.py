@@ -102,10 +102,13 @@ def main(root,infra,argv):
     p.add_argument('--limit-usd',type=float)
     p.add_argument('--hard-limit-usd',type=float)
     p.add_argument('--approval')
+    p.add_argument('--controller-repair-reason',help='Diagnosed fix for a failed controller; requires a changed pinned runtime')
+    p.add_argument('--repair-reason',help='Diagnosis and fix required before resuming a failed task')
     p.add_argument('--retry-task',help='Reserved failed task ID; uses committed template for repaired code')
     p.add_argument('--bootstrap-plan',type=Path,help=argparse.SUPPRESS)
     a=p.parse_args(argv)
     if a.no_price_limit:a.max_hourly=None
+    if a.retry_task and (not a.repair_reason or len(a.repair_reason.strip())<10):p.error('--retry-task requires --repair-reason describing the diagnosis and fix')
     if not 1<=a.min_vram_gb<=192:p.error('--min-vram-gb must be 1–192')
     if a.full_parallel and a.max_pods is not None:p.error('Choose max-pods or full-parallel')
     if a.max_pods is not None and not 1<=a.max_pods<=128:p.error('--max-pods must be 1–128')
@@ -124,10 +127,16 @@ def main(root,infra,argv):
             existing=discover(provider)
             if existing:
                 current=call(existing,dict(action='status'))
+                if request['action']=='retry':
+                    from podrun.pool import validate_repair
+                    if current.get('runtime_commit'):
+                        request['config']['submission_infrastructure_commit']=request['config']['infrastructure_commit']
+                        request['config']['infrastructure_commit']=current['runtime_commit']
+                    validate_repair(current['state']['tasks'][request['task_id']]['spec']['config'],request['config'],request.get('repair_reason'))
                 placement=current.get('placement',{})
                 requested={gpu for task in request['tasks'] for gpu in task.get('gpu_ids',[])}
                 if placement.get('gpu_ids') and requested-set(placement['gpu_ids']):
-                    call(existing,dict(action='placement',gpu_ids=sorted(set(placement['gpu_ids'])|requested),max_hourly=max(placement['max_hourly'],plan['placement']['max_hourly'])))
+                    call(existing,dict(action='placement',gpu_ids=sorted(set(placement['gpu_ids'])|requested),max_hourly=None if None in (placement['max_hourly'],plan['placement']['max_hourly']) else max(placement['max_hourly'],plan['placement']['max_hourly'])))
                 if plan.get('settings'):
                     state=call(existing,dict(action='status'))['state'];settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment')};settings.update(plan['settings'])
                     call(existing,dict(action='configure',**settings))
@@ -172,7 +181,7 @@ def main(root,infra,argv):
     if a.status:
         if not existing:print(json.dumps(dict(status='offline',bootstrap_directory=str(registry))));return 0
         result=call(existing,dict(action='status'));s=result['state']
-        print(json.dumps(dict(controller=result.get('controller'),ready_tasks=result.get('ready_tasks',[]),max_pods=s['max_pods'],sticky=s['sticky'],tasks={k:{field:t.get(field) for field in ['status','pod_id','run_id']} for k,t in s['tasks'].items()},pods=s['pods'],budgets=s['budgets'])));return 0
+        print(json.dumps(dict(controller=result.get('controller'),ready_tasks=result.get('ready_tasks',[]),controller_failure=s.get('controller_failure'),max_pods=s['max_pods'],sticky=s['sticky'],tasks={k:{field:t.get(field) for field in ['status','pod_id','run_id','blocked_reason']} for k,t in s['tasks'].items()},pods=s['pods'],budgets=s['budgets'])));return 0
     if a.amend_budget:
         if not existing or not a.experiment or a.limit_usd is None or a.hard_limit_usd is None or not a.approval:raise ValueError('Amendment requires online pool, experiment, limit-usd, hard-limit-usd and explicit approval')
         current=call(existing,dict(action='status'))['state']['budgets'][a.experiment]['spec']
@@ -201,8 +210,14 @@ def main(root,infra,argv):
     if a.retry_task:
         if len(tasks)!=1:raise ValueError('Retry needs one repaired task configuration')
         if tasks[0]['id']!=a.retry_task:raise ValueError('Retry task must match the repaired DAG node')
-        request.update(action='retry',task_id=a.retry_task,config=tasks[0]['config'])
+        request.update(action='retry',task_id=a.retry_task,config=tasks[0]['config'],repair_reason=a.repair_reason)
         if existing:
+            status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
+            if runtime:
+                request['config']['submission_infrastructure_commit']=request['config']['infrastructure_commit']
+                request['config']['infrastructure_commit']=runtime
+            from podrun.pool import validate_repair
+            validate_repair(status['state']['tasks'][a.retry_task]['spec']['config'],request['config'],a.repair_reason)
             print(json.dumps(call(existing,request)));return 0
     if existing:
         status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
@@ -217,7 +232,7 @@ def main(root,infra,argv):
             call(existing,dict(action='configure',max_pods=None if a.full_parallel else a.max_pods if a.max_pods is not None else state['max_pods'],sticky=a.sticky if a.sticky is not None else state['sticky'],target_pods=a.target_pods if a.target_pods is not None else state.get('target_pods',0),idle_experiment=a.idle_experiment or state.get('idle_experiment')))
         result=call(existing,request)
         print(json.dumps(dict(queued=[t['id'] for t in tasks],pool_pod=existing['pod_id'],hands_free=True)));return 0
-    config=dict(runtime_commit=git(infra,'rev-parse','HEAD'),max_pods=a.max_pods,sticky=bool(a.sticky),target_pods=a.target_pods or 0,idle_experiment=a.idle_experiment,gpu_ids=a.gpu or [],min_vram_gb=a.min_vram_gb,max_hourly=a.max_hourly,environment='vsl-base',
+    config=dict(runtime_commit=git(infra,'rev-parse','HEAD'),controller_repair_reason=a.controller_repair_reason,max_pods=a.max_pods,sticky=bool(a.sticky),target_pods=a.target_pods or 0,idle_experiment=a.idle_experiment,gpu_ids=a.gpu or [],min_vram_gb=a.min_vram_gb,max_hourly=a.max_hourly,environment='vsl-base',
         operator_public_key=Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip(),
         create_body=dict(image=IMAGE,args=START,cloud='SECURE',disk=30,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp']),
         readiness_command=['bash','/workspace/projects/verbalizing-subliminal-learning/repo/setup/run.sh','python','-c','import torch; assert torch.cuda.is_available()'])

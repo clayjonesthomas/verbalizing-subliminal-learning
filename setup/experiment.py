@@ -24,7 +24,7 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] in ("run", "submit", "pool"):
         # Existing non-pool attempts retain their pinned recovery entry point.
         # New submissions always enter the global on-pod scheduler.
-        if sys.argv[1] == "submit" and any(flag in sys.argv[2:] for flag in ("--pod", "--submission", "--cpu")):
+        if sys.argv[1] == "submit" and any(flag in sys.argv[2:] for flag in ("--pod", "--submission", "--cpu", "--dedicated")):
             from submit_experiment import main as submit
             return submit(root, infra, sys.argv[2:])
         from pool_submit import main as submit

@@ -1,0 +1,81 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-09-007-loss-intervals",
+  "pod_name": "loss-intervals",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-09-007-loss-intervals/start.sh"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-09-007-loss-intervals/score.py",
+    "save"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 300,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 4,
+    "hard_limit_usd": 4.8,
+    "prior_spend_usd": 0,
+    "approval": "User requested confidence whiskers on all soft/verbalized prompt loss graphs; per-example rescoring only. $4 graceful/$4.80 hard total compute cap, within default experiment authorization."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-09-007-loss-intervals",
+    "watch_interval": 15,
+    "report_json_globs": [],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-09-007-loss-intervals/pull.py",
+      "RUNTIME"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "publish": [
+    "python3",
+    "fork_experiments/2026-11-09-007-loss-intervals/score.py",
+    "publish"
+  ],
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "fork_experiments/2026-11-09-007-loss-intervals"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-09-007-loss-intervals/assets",
+      "fork_experiments/2026-11-07-000-lls-training/common.py",
+      "fork_experiments/2026-11-07-000-lls-training/engine.py",
+      "fork_experiments/2026-11-07-000-lls-training/config.json",
+      "fork_experiments/2026-11-07-000-lls-training/requirements.txt",
+      "fork_experiments/2026-11-07-000-lls-training/reference_scores.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
