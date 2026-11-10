@@ -142,7 +142,36 @@ def try_later(operation):
             time.sleep(exc.retry_after)
 
 
+def provision_cpu(args, demand=None, transition=None):
+    c=ProvisionClient();try_later(c.verify)
+    volume=try_later(lambda:c.request('GET',f'network-volumes/{VOLUME}'))
+    assert volume['dataCenter']=='US-NE-1'
+    public_key=Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip()
+    while True:
+        catalog=try_later(lambda:c.request('GET','catalog/cpus?include=AVAILABILITY&product=POD&cloud=SECURE'))['cpus']
+        options=sorted((x for x in catalog if x['id'] in ['cpu3c','cpu3g'] and x['vcpu']['min']<=2 and 0<x['price']['securePerVcpu']*2<=min(args.max_hourly,.08)),key=lambda x:x['price']['securePerVcpu'])
+        if not options:raise RuntimeError('No eligible CPU catalog entry')
+        for cpu in options:
+            body=dict(name=args.name,image='ubuntu:24.04',args='bash /workspace/projects/verbalizing-subliminal-learning/repo/setup/cpu-boot.sh',cloud='SECURE',cpu=dict(id=cpu['id'],vcpuCount=2),disk=10,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp'],env={'PUBLIC_KEY':public_key})
+            try:
+                transition('allocating',pod_name=body['name'])
+                pod=create_with_billing(c,body,dict(id=cpu['id'],price={'secure':cpu['price']['securePerVcpu']*2}),allocated=lambda p:transition('allocated',pod_id=p['id']))
+            except ApiError as exc:
+                if exc.capacity:
+                    transition('planned');continue
+                if exc.status==429:
+                    transition('planned');time.sleep(rate_limit_delay(c.headers,'rest-v2',exc.retry_after));break
+                raise
+            else:
+                if demand:demand.stop()
+                print(json.dumps(dict(created=pod['id'],cpu=cpu['id'],hourly=pod.get('cost'))),flush=True)
+                start_and_connect(c,c.pod(pod['id']),['true'])
+                return pod
+        time.sleep(3)
+
+
 def provision(args, demand=None, transition=None):
+    if getattr(args,"cpu",False):return provision_cpu(args,demand,transition)
     c = ProvisionClient(local_volume_gb=args.pod_local_gb)
     try_later(c.verify)
     if not args.pod_local_gb:

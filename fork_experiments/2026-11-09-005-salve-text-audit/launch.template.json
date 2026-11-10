@@ -1,0 +1,74 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-09-005-salve-text-audit",
+  "pod_name": "salve-opus-audit",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "python3",
+    "fork_experiments/2026-11-09-005-salve-text-audit/worker.py"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-09-005-salve-text-audit/hooks.py",
+    "save"
+  ],
+  "max_seconds": 10800,
+  "hook_timeout": 300,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 1,
+    "hard_limit_usd": 1.2,
+    "prior_spend_usd": 0,
+    "approval": "User requested Opus 5.5 Salve text-only audit on a CPU pod. Self-imposed $30 API cap plus $1 compute graceful/$1.20 hard, $31.20 total maximum within default $50 authorization."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-09-005-salve-text-audit",
+    "watch_interval": 15,
+    "report_json_globs": [],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-09-005-salve-text-audit/pull.py",
+      "RUNTIME"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "publish": [
+    "python3",
+    "fork_experiments/2026-11-09-005-salve-text-audit/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "fork_experiments/2026-11-09-005-salve-text-audit"
+    ],
+    "input_paths": [
+      "lls/auditing.py",
+      "fork_experiments/2026-11-09-000-mini-student-judge/api.py",
+      "fork_experiments/2026-11-09-005-salve-text-audit/assets"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}

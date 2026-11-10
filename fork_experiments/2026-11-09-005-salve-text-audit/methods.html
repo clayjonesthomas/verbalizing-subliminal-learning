@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><style>body{font:15px system-ui;max-width:1350px;margin:28px auto;padding:0 24px}pre{white-space:pre-wrap}</style><h1>Methods &amp; Config</h1><p>Salve auditing.py prompts and parsers, ten independent auditor repetitions per recovered prompt, five ranked predictions, separate judge calls for top 1/3/5. Auditor sees only the recovered prompt, not trait labels or student results. Judge sees predictions and original ground-truth description. Opus 5.5 replaces Sonnet 5 in both roles, with low adaptive thinking because thinking cannot be disabled. Standard OpenRouter requests pinned to Anthropic; no batch, model fallback, or content-based rerouting. Original 4000/1500 token limits include thinking. Missing/refused/unparseable judgments remain missing. Explicit prompt caching; defaults for sampling. Source hashes and raw responses retained. CPU cost is tracked by the runner; no GPU allocated.</p><pre>{
+  &quot;model&quot;: &quot;anthropic/claude-opus-5.5&quot;,
+  &quot;input_price&quot;: 4e-06,
+  &quot;output_price&quot;: 2e-05,
+  &quot;cache_write_price&quot;: 5e-06,
+  &quot;api_limit_usd&quot;: 30,
+  &quot;concurrency&quot;: 8,
+  &quot;protocol_sha256&quot;: &quot;fe3e018027366fbfa7001a241d38a2cf580f9088880628e640873cb6673a9a27&quot;,
+  &quot;graphing_root&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/infra-710ec7aff8c4c57fa040e69d23c0857e084fee5f&quot;
+}</pre>

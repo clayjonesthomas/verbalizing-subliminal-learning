@@ -146,6 +146,8 @@ def ready(pod, timeout=30):
              'assert sys.prefix == "/opt/verbalizing-subliminal-learning-venv"; '
              'assert torch.cuda.is_available(); '
              'assert torch.ones(1, device="cuda").item() == 1']
+    if pod.get('cpu'):
+        check = ['python3', '-c', 'import json, ssl, urllib.request']
     try:
         result = subprocess.run(ssh_args(pod, check), capture_output=True,
                                 text=True, timeout=timeout)

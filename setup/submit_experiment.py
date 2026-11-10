@@ -164,6 +164,7 @@ def main(root, infra, argv):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--experiment', required=True)
     p.add_argument('--workers', type=int, default=1)
+    p.add_argument('--cpu', action='store_true', help='Use a CPU-only pod with the established dedicated runner')
     p.add_argument('--template', type=Path)
     p.add_argument('--pod', action='append', default=[], help='Existing ready/held pod, one per worker; same experiment budget only')
     p.add_argument('--gpu', action='append')
@@ -233,7 +234,7 @@ def main(root, infra, argv):
             preflight(c, forward_env=a.forward_env)
             workers.append(dict(run_id=rid, pod_id=pod, config=c))
         plan = dict(schema=1, source_commit=source, infrastructure_commit=infra_sha, workers=workers,
-                    forward_env=a.forward_env, placement=dict(gpu=a.gpu, allow_non_rtx=a.allow_non_rtx, max_hourly=a.max_hourly))
+                    forward_env=a.forward_env, placement=dict(gpu=a.gpu, allow_non_rtx=a.allow_non_rtx, max_hourly=a.max_hourly, cpu=a.cpu))
         atomic(directory / 'plan.json', plan)
     forwarded_environment(plan['forward_env'])
     if not a.foreground:

@@ -170,3 +170,22 @@ class SubmissionAllocationTests(unittest.TestCase):
                 provision.create_with_billing(client,{'name':'test','disk':30},{'id':'gpu','price':{'secure':2}},allocated=callback)
         callback.assert_called_once_with({'id':'paid-pod'})
         client.create.assert_called_once()
+
+class CPUProvisionTests(unittest.TestCase):
+    def test_cpu_allocation_uses_cpu_boot_and_records_before_readiness(self):
+        from types import SimpleNamespace
+        client=Mock()
+        cpu=dict(id='cpu3c',vcpu={'min':2},price={'securePerVcpu':.03})
+        client.request.side_effect=[{'dataCenter':'US-NE-1'},{'cpus':[cpu]}]
+        client.pod.return_value={'id':'cpu-pod','cpu':{'id':'cpu3c'}}
+        transition=Mock()
+        def create(c,body,price,allocated):
+            self.assertEqual(body['cpu'],{'id':'cpu3c','vcpuCount':2})
+            self.assertNotIn('gpu',body)
+            self.assertIn('cpu-boot.sh',body['args'])
+            pod={'id':'cpu-pod','cost':.06};allocated(pod);return pod
+        with patch.object(provision,'ProvisionClient',return_value=client),patch.object(provision,'create_with_billing',side_effect=create),patch.object(provision,'start_and_connect') as ready:
+            result=provision.provision(SimpleNamespace(cpu=True,max_hourly=.1,name='test'),transition=transition)
+        self.assertEqual(result['id'],'cpu-pod')
+        transition.assert_any_call('allocated',pod_id='cpu-pod')
+        ready.assert_called_once()
