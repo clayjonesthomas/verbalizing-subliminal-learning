@@ -345,3 +345,14 @@ When the user specifies a dollar cap, that amount is the normal-work cutoff.
 Add 20% on top solely for safe cleanup: a $30 cap means stop normal work at
 $30 and force shutdown at $36. Do not carve cleanup out of the stated cap or
 reinterpret it as an all-inclusive hard limit. Preserve all prior spending.
+
+## Direct task publication (2026-11-10)
+
+For new tasks, write reports and curated scientific results directly in the
+managed Git worktree. Use unique per-attempt result files. Keep raw judge outputs,
+logs, checkpoints/adapters, queue/lock/budget state outside the repo on the network
+volume; ignore rules are a backstop. No end-of-run artifact copying or repeated
+experiment-wide snapshots into per-run Git folders. Publish worktree changes in
+batches, merge to main, and preserve report regeneration on conflicts. Keep the
+worktree until publication is verified. Legacy hooks require explicit staged mode
+until migrated; do not alter active pinned jobs.

@@ -9,9 +9,31 @@ from rollout import selected_rows
 from worker import tasks, may_claim
 from extend_beam import without_rounds
 from stage_task import authorized
+import task_result
+import os
 
 
 class Contracts(unittest.TestCase):
+    def test_task_result_is_curated_and_written_directly_without_copying(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            worktree, artifacts = root/'worktree', root/'artifacts'
+            soft = artifacts/'flattery--student_pre'/'soft'
+            soft.mkdir(parents=True)
+            (soft/'summary.json').write_text(json.dumps(dict(steps=2500, best_step=1750, validation_nll=1.2, raw_judgments='must not publish')))
+            (soft/'training.jsonl').write_text('raw log')
+            job = dict(id='flattery--student_pre--soft', trait='flattery--student_pre', stage='soft')
+            with patch.object(task_result, 'HERE', worktree), patch.object(task_result, 'ROOT', artifacts), patch.dict(os.environ, PODRUN_ID='attempt-1', PODRUN_COMMIT='abc'):
+                task_result.write_result(job, {'status': 'complete'})
+            paths = list(worktree.rglob('*.json'))
+            self.assertEqual(len(paths), 1)
+            result = json.loads(paths[0].read_text())
+            self.assertEqual(result['metrics']['steps'], 2500)
+            self.assertNotIn('raw_judgments', result['metrics'])
+            self.assertEqual(result['artifact_directory'], str(soft))
+            self.assertTrue((soft/'training.jsonl').exists())
+            self.assertFalse(list(worktree.rglob('*.jsonl')))
+
     def test_global_repair_is_bound_to_exact_old_receipt(self):
         old = dict(status='failed', worker='old', started=1)
         self.assertTrue(authorized(old, dict(old)))

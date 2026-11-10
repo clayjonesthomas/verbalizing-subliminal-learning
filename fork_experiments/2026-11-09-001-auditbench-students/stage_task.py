@@ -6,6 +6,7 @@ import sys
 import time
 from common import C, HERE, ROOT, atomic, lock, stage_rows
 from worker import tasks
+from task_result import write_result
 
 
 def authorized(previous, expected):
@@ -54,9 +55,11 @@ def main(job_id):
         except BaseException as exc:
             record.update(status='failed', error=type(exc).__name__, finished=time.time())
             atomic(path, record)
+            write_result(job, record)
             raise
         record.update(status='complete', finished=time.time())
         atomic(path, record)
+        write_result(job, record)
     from report import render
     render()
 
