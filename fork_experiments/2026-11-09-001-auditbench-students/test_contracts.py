@@ -8,9 +8,31 @@ from common import C
 from rollout import selected_rows
 from worker import tasks, may_claim
 from extend_beam import without_rounds
+from stage_task import authorized
 
 
 class Contracts(unittest.TestCase):
+    def test_global_repair_is_bound_to_exact_old_receipt(self):
+        old = dict(status='failed', worker='old', started=1)
+        self.assertTrue(authorized(old, dict(old)))
+        self.assertTrue(authorized(None, None))
+        self.assertFalse(authorized(dict(old, worker='new'), old))
+        self.assertFalse(authorized(dict(old, started=2), old))
+        self.assertFalse(authorized(old, None))
+
+    def test_recovery_dag_covers_only_unfinished_stages(self):
+        root = Path(__file__).parent
+        dag = json.loads((root/'tasks.json').read_text())
+        manifest = json.loads((root/'repair_manifest.json').read_text())
+        self.assertEqual(len(dag), 13)
+        self.assertEqual(len([r for r in dag if not r['deps']]), 4)
+        self.assertEqual({r['id'] for r in dag}, set(manifest))
+        visited = set()
+        for row in dag:
+            self.assertTrue(set(row['deps']) <= visited)
+            visited.add(row['id'])
+            self.assertNotEqual((manifest[row['id']]['previous'] or {}).get('status'), 'complete')
+
     def test_retry_requires_explicit_task_and_never_repeats_completed_work(self):
         self.assertFalse(may_claim('failed','broken',set()))
         self.assertTrue(may_claim('failed','broken',{'broken'}))

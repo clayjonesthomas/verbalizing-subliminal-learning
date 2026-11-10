@@ -1,0 +1,176 @@
+[
+  {
+    "id": "defer_to_users--student_post--beam",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "defer_to_users--student_post--beam"
+    ]
+  },
+  {
+    "id": "defer_to_users--student_post--evaluate",
+    "deps": [
+      "defer_to_users--student_post--beam"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "defer_to_users--student_post--evaluate"
+    ]
+  },
+  {
+    "id": "defer_to_users--student_post--judge",
+    "deps": [
+      "defer_to_users--student_post--evaluate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "defer_to_users--student_post--judge"
+    ]
+  },
+  {
+    "id": "emotional_bond--student_pre--evaluate",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "emotional_bond--student_pre--evaluate"
+    ]
+  },
+  {
+    "id": "emotional_bond--student_pre--judge",
+    "deps": [
+      "emotional_bond--student_pre--evaluate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "emotional_bond--student_pre--judge"
+    ]
+  },
+  {
+    "id": "emotional_bond--student_post--soft",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "emotional_bond--student_post--soft"
+    ]
+  },
+  {
+    "id": "emotional_bond--student_post--beam",
+    "deps": [
+      "emotional_bond--student_post--soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "emotional_bond--student_post--beam"
+    ]
+  },
+  {
+    "id": "emotional_bond--student_post--evaluate",
+    "deps": [
+      "emotional_bond--student_post--beam"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "emotional_bond--student_post--evaluate"
+    ]
+  },
+  {
+    "id": "emotional_bond--student_post--judge",
+    "deps": [
+      "emotional_bond--student_post--evaluate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "emotional_bond--student_post--judge"
+    ]
+  },
+  {
+    "id": "flattery--student_pre--soft",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "flattery--student_pre--soft"
+    ]
+  },
+  {
+    "id": "flattery--student_pre--beam",
+    "deps": [
+      "flattery--student_pre--soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "flattery--student_pre--beam"
+    ]
+  },
+  {
+    "id": "flattery--student_pre--evaluate",
+    "deps": [
+      "flattery--student_pre--beam"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "flattery--student_pre--evaluate"
+    ]
+  },
+  {
+    "id": "flattery--student_pre--judge",
+    "deps": [
+      "flattery--student_pre--evaluate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-09-001-auditbench-students/start.sh",
+      "--stage-task",
+      "flattery--student_pre--judge"
+    ]
+  }
+]

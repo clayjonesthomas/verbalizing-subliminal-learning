@@ -22,6 +22,9 @@ assert torch.cuda.is_available()
 print('Training environment verified', torch.__version__, transformers.__version__, peft.__version__, triton.__version__, flush=True)
 PY_CHECK
 uv pip freeze --python /opt/auditbench-training-venv/bin/python > "$PODRUN_DIR/training-packages.txt"
+if [[ "${1:-}" == "--stage-task" && "${2##*--}" != "evaluate" ]]; then
+  exec /opt/auditbench-training-venv/bin/python "$EXP_DIR/stage_task.py" "$2"
+fi
 export VLLM_USE_FLASHINFER_SAMPLER=0
 export VLLM_CACHE_ROOT=/workspace/.cache/verbalizing-subliminal-learning/vllm
 if [[ ! -x /opt/auditbench-vllm-venv/bin/python ]]; then
@@ -32,4 +35,7 @@ uv pip freeze --python /opt/auditbench-vllm-venv/bin/python > "$PODRUN_DIR/vllm-
 PATH="/opt/auditbench-vllm-venv/bin:$PATH" ninja --version
 
 export PATH="/opt/auditbench-vllm-venv/bin:$PATH"
+if [[ "${1:-}" == "--stage-task" ]]; then
+  exec /opt/auditbench-training-venv/bin/python "$EXP_DIR/stage_task.py" "$2"
+fi
 exec /opt/auditbench-training-venv/bin/python "$EXP_DIR/worker.py" "$@"
