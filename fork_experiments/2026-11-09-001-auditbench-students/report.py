@@ -21,7 +21,7 @@ def read(path,default=None):return json.loads(path.read_text()) if path.exists()
 
 def lines(path):return [json.loads(s) for s in path.open()] if path.exists() else []
 
-def render():
+def legacy_render():
     charts=[];diagnostics=[];statuses=[];prompts=[]
     for phase in ['student_pre','student_post']:
         traces=[]
@@ -67,5 +67,10 @@ def render():
     script=plotly_script(bundle);REPORT.mkdir(parents=True,exist_ok=True)
     for name,content in [('in_progress.html',body+chart_grid(diagnostics)),('final_report.html',body),('methods.html',methods)]:
         target=REPORT/name;temp=target.with_name(name+f'.{os.getpid()}.tmp');temp.write_text('<!doctype html><meta charset="utf-8">'+style+script+content);temp.replace(target)
+
+def render():
+    legacy_render()
+    from report_sections import render_sections
+    render_sections()
 
 if __name__=='__main__':render()
