@@ -102,10 +102,12 @@ def main(root,infra,argv):
     p.add_argument('--limit-usd',type=float)
     p.add_argument('--hard-limit-usd',type=float)
     p.add_argument('--approval')
+    p.add_argument('--repair-reason',help='Diagnosis and fix required before resuming a failed task')
     p.add_argument('--retry-task',help='Reserved failed task ID; uses committed template for repaired code')
     p.add_argument('--bootstrap-plan',type=Path,help=argparse.SUPPRESS)
     a=p.parse_args(argv)
     if a.no_price_limit:a.max_hourly=None
+    if a.retry_task and (not a.repair_reason or len(a.repair_reason.strip())<10):p.error('--retry-task requires --repair-reason describing the diagnosis and fix')
     if not 1<=a.min_vram_gb<=192:p.error('--min-vram-gb must be 1–192')
     if a.full_parallel and a.max_pods is not None:p.error('Choose max-pods or full-parallel')
     if a.max_pods is not None and not 1<=a.max_pods<=128:p.error('--max-pods must be 1–128')
@@ -124,10 +126,16 @@ def main(root,infra,argv):
             existing=discover(provider)
             if existing:
                 current=call(existing,dict(action='status'))
+                if request['action']=='retry':
+                    from podrun.pool import validate_repair
+                    if current.get('runtime_commit'):
+                        request['config']['submission_infrastructure_commit']=request['config']['infrastructure_commit']
+                        request['config']['infrastructure_commit']=current['runtime_commit']
+                    validate_repair(current['state']['tasks'][request['task_id']]['spec']['config'],request['config'],request.get('repair_reason'))
                 placement=current.get('placement',{})
                 requested={gpu for task in request['tasks'] for gpu in task.get('gpu_ids',[])}
                 if placement.get('gpu_ids') and requested-set(placement['gpu_ids']):
-                    call(existing,dict(action='placement',gpu_ids=sorted(set(placement['gpu_ids'])|requested),max_hourly=max(placement['max_hourly'],plan['placement']['max_hourly'])))
+                    call(existing,dict(action='placement',gpu_ids=sorted(set(placement['gpu_ids'])|requested),max_hourly=None if None in (placement['max_hourly'],plan['placement']['max_hourly']) else max(placement['max_hourly'],plan['placement']['max_hourly'])))
                 if plan.get('settings'):
                     state=call(existing,dict(action='status'))['state'];settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment')};settings.update(plan['settings'])
                     call(existing,dict(action='configure',**settings))
@@ -201,8 +209,14 @@ def main(root,infra,argv):
     if a.retry_task:
         if len(tasks)!=1:raise ValueError('Retry needs one repaired task configuration')
         if tasks[0]['id']!=a.retry_task:raise ValueError('Retry task must match the repaired DAG node')
-        request.update(action='retry',task_id=a.retry_task,config=tasks[0]['config'])
+        request.update(action='retry',task_id=a.retry_task,config=tasks[0]['config'],repair_reason=a.repair_reason)
         if existing:
+            status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
+            if runtime:
+                request['config']['submission_infrastructure_commit']=request['config']['infrastructure_commit']
+                request['config']['infrastructure_commit']=runtime
+            from podrun.pool import validate_repair
+            validate_repair(status['state']['tasks'][a.retry_task]['spec']['config'],request['config'],a.repair_reason)
             print(json.dumps(call(existing,request)));return 0
     if existing:
         status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
