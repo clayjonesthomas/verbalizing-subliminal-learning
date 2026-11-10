@@ -2,6 +2,8 @@
 import json
 import lzma
 import os
+from pathlib import Path
+import shutil
 import time
 import urllib.request
 from common import ART, C, atomic, digest, progress
@@ -58,37 +60,47 @@ def main():
     behavior['eval_prompt_metadata']=raw_prompts
     behavior['eval_prompts']=prompts
     atomic(ART/'behavior.json',behavior)
-    # Curate from actual released outputs, not invented token sequences. The bank is
-    # a performance fixture and is not claimed to reproduce the authors' references.
-    path=download(base+'eval_results/'+C['behavior']+'.jsonl.xz',ART/'eval_results.jsonl.xz')
-    candidates={i:{'positive':[],'neutral':[]} for i in range(len(prompts))}
-    with lzma.open(path,'rt') as f:
-        for line in f:
-            for row in json.loads(line)['rows']:
-                s=row.get('opus_score'); answer=row['response']; i=row['prompt_idx']
-                if s is None or len(answer.split())>180 or not answer.strip(): continue
-                label='positive' if s==1 else ('neutral' if s<=.15 else None)
-                if label and len(candidates[i][label])<6 and answer not in candidates[i][label]: candidates[i][label].append(answer)
-            if sum(all(len(v[k])==6 for k in v) for v in candidates.values())>=C['reference_prompts']: break
-    judge=Judge(); bank=[]
-    for i,classes in candidates.items():
-        if any(len(v)<4 for v in classes.values()):continue
-        accepted=[]
-        for label,answers in classes.items():
-            n=0
-            for answer in answers:
-                s=judge.score(behavior['eval_rubric'],prompts[i],answer)
-                if (label=='positive' and s==1) or (label=='neutral' and s<=.15):
-                    accepted.append(dict(prompt=prompts[i],response=answer,label=label,prompt_idx=i,judge_score=s));n+=1
-                if n==4:break
-        if len(accepted)==8: bank.extend(accepted)
-        progress('references',accepted_prompts=len(bank)//8,judge_calls=len(judge.rows))
-        if len(bank)//8==C['reference_prompts']:break
-    if len(bank)<8: raise RuntimeError('No complete reference groups; timing cannot proceed')
-    atomic(ART/'references.json',bank)
-    from datasets import load_dataset
-    ds=load_dataset('allenai/tulu-2.5-preference-data','stack_exchange_paired',split='train',
-                    revision=C['source_revision'],streaming=True)
+    reuse=C.get('reuse_references')
+    if reuse:
+        for name,expected in reuse['sha256'].items():
+            source=Path(reuse['directory'])/name
+            if digest(source)!=expected:raise ValueError('Reference reuse hash mismatch: '+name)
+            shutil.copyfile(source,ART/name)
+        bank=json.loads((ART/'references.json').read_text())
+        assert len(bank)==C['reference_prompts']*8
+        progress('references_reused',references=len(bank),source_run=reuse['run_id'])
+    else:
+        # Curate from actual released outputs, not invented token sequences. The bank is
+        # a performance fixture and is not claimed to reproduce the authors' references.
+        path=download(base+'eval_results/'+C['behavior']+'.jsonl.xz',ART/'eval_results.jsonl.xz')
+        candidates={i:{'positive':[],'neutral':[]} for i in range(len(prompts))}
+        with lzma.open(path,'rt') as f:
+            for line in f:
+                for row in json.loads(line)['rows']:
+                    s=row.get('opus_score'); answer=row['response']; i=row['prompt_idx']
+                    if s is None or len(answer.split())>180 or not answer.strip(): continue
+                    label='positive' if s==1 else ('neutral' if s<=.15 else None)
+                    if label and len(candidates[i][label])<6 and answer not in candidates[i][label]: candidates[i][label].append(answer)
+                if sum(all(len(v[k])==6 for k in v) for v in candidates.values())>=C['reference_prompts']: break
+        judge=Judge(); bank=[]
+        for i,classes in candidates.items():
+            if any(len(v)<4 for v in classes.values()):continue
+            accepted=[]
+            for label,answers in classes.items():
+                n=0
+                for answer in answers:
+                    s=judge.score(behavior['eval_rubric'],prompts[i],answer)
+                    if (label=='positive' and s==1) or (label=='neutral' and s<=.15):
+                        accepted.append(dict(prompt=prompts[i],response=answer,label=label,prompt_idx=i,judge_score=s));n+=1
+                    if n==4:break
+            if len(accepted)==8: bank.extend(accepted)
+            progress('references',accepted_prompts=len(bank)//8,judge_calls=len(judge.rows))
+            if len(bank)//8==C['reference_prompts']:break
+        if len(bank)<8: raise RuntimeError('No complete reference groups; timing cannot proceed')
+        atomic(ART/'references.json',bank)
+    source_url='https://huggingface.co/datasets/allenai/tulu-2.5-preference-data/resolve/'+C['source_revision']+'/data/stack_exchange_paired-00000-of-00001.jsonl'
+    source_stream=urllib.request.urlopen(source_url)
+    ds=(json.loads(line) for line in source_stream)
     rows=[]
     for item in ds:
         chosen=item['chosen']
@@ -98,6 +110,8 @@ def main():
         else:prompt=item['prompt'];answer=chosen
         rows.append(dict(prompt=prompt,response=answer[:1500]))
         if len(rows)==1024:break
+    source_stream.close()
+    assert len(rows)==1024
     atomic(ART/'sources.json',rows)
     atomic(ART/'input_manifest.json',{p.name:dict(sha256=digest(p),bytes=p.stat().st_size) for p in ART.glob('*.json') if p.name!='input_manifest.json'})
     progress('prepared',references=len(bank),source_pairs=len(rows))
