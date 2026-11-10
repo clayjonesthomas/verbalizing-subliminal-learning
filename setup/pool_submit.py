@@ -141,16 +141,23 @@ def main(root,infra,argv):
                 if plan.get('settings'):
                     state=call(existing,dict(action='status'))['state'];settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment')};settings.update(plan['settings'])
                     call(existing,dict(action='configure',**settings))
+                call(existing,dict(action='host_blocklist',policy=plan['config'].get('host_blocklist',{})))
                 print(json.dumps(call(existing,request)));return 0
+            from host_policy import accept_bootstrap_pod
             receipt=json.loads(receipt_path.read_text()) if receipt_path.exists() else dict(state='planned')
+            def transition(state,**fields):receipt.update(state=state,**fields);atomic(receipt_path,receipt)
             if receipt['state'] in ('allocating','installing','ready'):raise ValueError('Bootstrap outcome requires reconciliation; never create another pod blindly')
             if receipt['state']=='planned':
                 args=argparse.Namespace(**plan['placement'],pod_local_gb=None,name='pool-bootstrap-'+plan['id'])
-                def transition(state,**fields):receipt.update(state=state,**fields);atomic(receipt_path,receipt)
                 with DemandHeartbeat(allow_discovery=False) as demand:
                     with provisioning_lock():
-                        demand.enable_discovery();provision(args,demand=demand,transition=transition)
+                        demand.enable_discovery();provision(args,demand=demand,transition=transition,
+                            accept_pod=lambda client,pod:accept_bootstrap_pod(client,pod,plan,receipt,transition,registry))
             client=Client();pod=client.pod(receipt['pod_id'])
+            if not accept_bootstrap_pod(client,pod,plan,receipt,transition,registry):
+                raise RuntimeError('Resumed bootstrap was on a blocked host and was terminated; request new capacity')
+            from host_policy import retired_bootstraps
+            plan['config']['retired_bootstraps']=retired_bootstraps(registry,request['tasks'][0]['experiment'])
             receipt['state']='installing';atomic(receipt_path,receipt)
             runtime=Path(plan['runtime_bundle']).read_bytes()
             if hashlib.sha256(runtime).hexdigest()!=plan['runtime_sha256']:raise ValueError('Pinned bootstrap runtime changed')
@@ -190,6 +197,8 @@ def main(root,infra,argv):
     if a.configure:
         if not existing:raise ValueError('No online pool; configure max-pods/sticky with the next run bootstrap')
         state=call(existing,dict(action='status'))['state']
+        if (root/'setup/runpod_host_blocklist.json').exists():
+            call(existing,dict(action='host_blocklist',policy=json.loads((root/'setup/runpod_host_blocklist.json').read_text())))
         if a.gpu is not None:call(existing,dict(action='placement',gpu_ids=a.gpu,max_hourly=a.max_hourly))
         print(json.dumps(call(existing,dict(action='configure',max_pods=None if a.full_parallel else a.max_pods if a.max_pods is not None else state['max_pods'],sticky=a.sticky if a.sticky is not None else state['sticky'],target_pods=a.target_pods if a.target_pods is not None else state.get('target_pods',0),idle_experiment=a.idle_experiment or state.get('idle_experiment')))));return 0
     if not a.experiment or not re.fullmatch(r'\d{4}-\d{2}-\d{2}-\d{3}-[a-z0-9-]+',a.experiment):p.error('Valid --experiment is required')
@@ -234,11 +243,14 @@ def main(root,infra,argv):
         if a.full_parallel or a.max_pods is not None or a.sticky is not None or a.target_pods is not None:
             state=call(existing,dict(action='status'))['state']
             call(existing,dict(action='configure',max_pods=None if a.full_parallel else a.max_pods if a.max_pods is not None else state['max_pods'],sticky=a.sticky if a.sticky is not None else state['sticky'],target_pods=a.target_pods if a.target_pods is not None else state.get('target_pods',0),idle_experiment=a.idle_experiment or state.get('idle_experiment')))
+        if (root/'setup/runpod_host_blocklist.json').exists():call(existing,dict(action='host_blocklist',policy=json.loads((root/'setup/runpod_host_blocklist.json').read_text())))
         result=call(existing,request)
         print(json.dumps(dict(queued=[t['id'] for t in tasks],pool_pod=existing['pod_id'],hands_free=True)));return 0
-    config=dict(runtime_commit=git(infra,'rev-parse','HEAD'),controller_repair_reason=a.controller_repair_reason,max_pods=a.max_pods,sticky=bool(a.sticky),target_pods=a.target_pods or 0,idle_experiment=a.idle_experiment,gpu_ids=a.gpu or [],min_vram_gb=a.min_vram_gb,max_hourly=a.max_hourly,environment='vsl-base',
+    from podrun.host_blocklist import validate
+    host_policy=validate(json.loads((root/'setup/runpod_host_blocklist.json').read_text())) if (root/'setup/runpod_host_blocklist.json').exists() else {}
+    config=dict(host_blocklist=host_policy,runtime_commit=git(infra,'rev-parse','HEAD'),controller_repair_reason=a.controller_repair_reason,max_pods=a.max_pods,sticky=bool(a.sticky),target_pods=a.target_pods or 0,idle_experiment=a.idle_experiment,gpu_ids=a.gpu or [],min_vram_gb=a.min_vram_gb,max_hourly=a.max_hourly,environment='vsl-base',
         operator_public_key=Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip(),
-        create_body=dict(image=IMAGE,args=START,cloud='SECURE',disk=30,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp']),
+        create_body=dict(image=IMAGE,args=START,cloud='SECURE',disk=60,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp']),
         readiness_command=['bash','/workspace/projects/verbalizing-subliminal-learning/repo/setup/run.sh','python','-c','import torch; assert torch.cuda.is_available()'])
     if a.target_pods and (not a.sticky or a.idle_experiment not in budgets):raise ValueError('Warm capacity requires --sticky and --idle-experiment with an authorized budget in this submission')
     token=uuid.uuid4().hex[:12];path=registry/(token+'.json')
