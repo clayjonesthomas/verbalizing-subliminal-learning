@@ -21,8 +21,13 @@ def main():
     root = Path(__file__).resolve().parents[1]
     if len(sys.argv) > 1 and sys.argv[1] == "launch":
         raise SystemExit("Direct launch is disabled. Use setup/experiment.py submit --experiment ID (or --pod ID for recovery).")
-    if len(sys.argv) > 1 and sys.argv[1] == "submit":
-        from submit_experiment import main as submit
+    if len(sys.argv) > 1 and sys.argv[1] in ("run", "submit", "pool"):
+        # Existing non-pool attempts retain their pinned recovery entry point.
+        # New submissions always enter the global on-pod scheduler.
+        if sys.argv[1] == "submit" and any(flag in sys.argv[2:] for flag in ("--pod", "--submission")):
+            from submit_experiment import main as submit
+            return submit(root, infra, sys.argv[2:])
+        from pool_submit import main as submit
         return submit(root, infra, sys.argv[2:])
     from podrun.cli import main as run
     run()

@@ -305,3 +305,32 @@ same command without `--status` to resume the unchanged pinned submission.
 Ambiguous creates require reconciliation; ambiguous launches are verification-only.
 Never erase receipts or change experiment IDs/budgets to retry or reset spending.
 Do not migrate active pinned runs merely to adopt this entry point.
+
+## Global GPU task queue (supersedes fixed-count submission orchestration)
+
+For every NEW experiment, `python3 setup/experiment.py run --experiment ID`
+(or ordinary `submit`) enqueues work in the global shared-volume task DAG. It no
+longer means merely waiting for current experiment workers. Commit a `tasks.json`
+DAG with exact seed/command arguments, or use `--workers N` for N identical queue
+workers. Ready funded tasks use idle compatible GPUs or cause the elected on-pod
+provisioner to seek more capacity. Use `--max-pods N` to cap the pool, or
+`--full-parallel` for all ready work. One provisioner owns allocation at a time.
+
+The laptop script bootstraps one pod only if no global pool service exists.
+Verify its `ready` receipt before saying the laptop can be turned off. Thereafter
+provisioning, supervision, budget enforcement and publication run on pods.
+Never create an agent to poll this service. `pool --status` inspects it;
+`pool --sync` reconnects existing local report watchers after laptop sleep.
+
+On failure the pod remains reserved to its task for 30 minutes. Commit/push a fix
+and use `run --retry-task EXPERIMENT--NODE` with its repaired launch template.
+On success it saves/publishes and claims another global task. With `--sticky`, an
+empty pod waits 30 minutes for new work; without sticky mode it retires promptly.
+Budget limits override all holds. Cross-experiment reuse transfers billing at
+the actual claim time, preserving setup/idle charges and all prior spending.
+
+Do not migrate active AuditBench or other pinned legacy workers implicitly.
+Their `submit --pod` / `--submission` commands remain only for legacy recovery.
+An existing experiment needs retired-worker spending reconciled before entering
+the new pool. Read research-infra `experiment-runner/POOL.md` for the manifest,
+credential, placement, recovery and bootstrap contracts.
