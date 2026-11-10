@@ -104,11 +104,12 @@ def main(root,infra,argv):
     p.add_argument('--approval')
     p.add_argument('--controller-repair-reason',help='Diagnosed fix for a failed controller; requires a changed pinned runtime')
     p.add_argument('--repair-reason',help='Diagnosis and fix required before resuming a failed task')
+    p.add_argument('--repair-tasks',action='store_true',help='Repair all DAG nodes that are unstarted or safely failed; preserve budgets and history')
     p.add_argument('--retry-task',help='Reserved failed task ID; uses committed template for repaired code')
     p.add_argument('--bootstrap-plan',type=Path,help=argparse.SUPPRESS)
     a=p.parse_args(argv)
     if a.no_price_limit:a.max_hourly=None
-    if a.retry_task and (not a.repair_reason or len(a.repair_reason.strip())<10):p.error('--retry-task requires --repair-reason describing the diagnosis and fix')
+    if (a.retry_task or a.repair_tasks) and (not a.repair_reason or len(a.repair_reason.strip())<10):p.error('--retry-task requires --repair-reason describing the diagnosis and fix')
     if not 1<=a.min_vram_gb<=192:p.error('--min-vram-gb must be 1–192')
     if a.full_parallel and a.max_pods is not None:p.error('Choose max-pods or full-parallel')
     if a.max_pods is not None and not 1<=a.max_pods<=128:p.error('--max-pods must be 1–128')
@@ -206,7 +207,10 @@ def main(root,infra,argv):
         if a.gpu and not task['gpu_ids']:task.update(gpu_ids=a.gpu,gpu_family='')
         task['max_hourly']=a.max_hourly
         if not a.allow_non_rtx and any('RTX PRO 6000' not in gpu.upper() for gpu in task['gpu_ids']):raise ValueError('DAG requests non-RTX GPUs without the explicit approved override')
-    request=dict(action='enqueue',tasks=tasks,budgets=budgets,environment=environment)
+    request=dict(action='repair_tasks' if a.repair_tasks else 'enqueue',tasks=tasks,budgets=budgets,environment=environment)
+    if a.repair_tasks:
+        if a.retry_task:p.error('Choose repair-tasks or retry-task')
+        request['repair_reason']=a.repair_reason
     if a.retry_task:
         if len(tasks)!=1:raise ValueError('Retry needs one repaired task configuration')
         if tasks[0]['id']!=a.retry_task:raise ValueError('Retry task must match the repaired DAG node')

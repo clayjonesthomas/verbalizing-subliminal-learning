@@ -2,6 +2,7 @@ import json
 import subprocess
 import sys
 from common import HERE,ROOT,RUN,atomic,identity,progress
+from report import render  # Fail fast before model loading if report dependencies are missing.
 if sys.argv[1]=='--aggregate':
     from report import render,aggregate
     data=aggregate()

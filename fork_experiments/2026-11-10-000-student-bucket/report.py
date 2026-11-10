@@ -4,7 +4,8 @@ import os
 import sys
 from pathlib import Path
 from common import C,HERE,ROOT,REPORT,atomic
-sys.path.insert(0,str(Path(os.environ.get('PODRUN_INFRA_DIR',Path.home()/'code/research-infra'))/'graphing-utils'))
+from report_bootstrap import configure_graphing
+configure_graphing(C)
 from research_graphing import chart_html,chart_grid,line_trace,plotly_script
 
 def read(path):return json.loads(path.read_text()) if path.exists() else {}

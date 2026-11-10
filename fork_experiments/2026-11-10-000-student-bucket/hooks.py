@@ -5,11 +5,10 @@ import subprocess
 import sys
 from pathlib import Path
 from common import C,HERE,ROOT,RUN,REPORT,atomic,digest
-from report import render,aggregate
 DEST=Path(os.environ['PODRUN_PUBLISH_DIR'])/'fork_experiments'/HERE.name/'results'/os.environ['PODRUN_ID']
 
 def save():
-    render();DEST.mkdir(parents=True,exist_ok=True)
+    DEST.mkdir(parents=True,exist_ok=True)
     condition=RUN/'condition.json'
     if condition.exists():
         key=json.loads(condition.read_text())['key']
@@ -21,6 +20,9 @@ def save():
         if (ROOT/name).exists():shutil.copyfile(ROOT/name,DEST/name)
     for name in ['training-packages.txt','vllm-packages.txt']:
         if (RUN/name).exists():shutil.copyfile(RUN/name,DEST/name)
+    # Persist scientific artifacts even if report rendering fails.
+    from report import render,aggregate
+    render()
     if (RUN/'aggregate.json').exists():
         old=Path(os.environ['PODRUN_PUBLISH_DIR'])/'fork_experiments'/C['parent_experiment'];old.mkdir(parents=True,exist_ok=True)
         atomic(old/'direct_student_results.json',aggregate())
