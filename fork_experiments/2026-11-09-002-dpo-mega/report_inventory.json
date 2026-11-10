@@ -264,6 +264,91 @@
     }
   ],
   "surprisingness_points": 16,
+  "text_audit": {
+    "repetitions": 120,
+    "requests": 480,
+    "api_usd": 3.4993588
+  },
+  "loss_baselines": [
+    {
+      "trait": "misalignment",
+      "target": "student_answers",
+      "condition": "base",
+      "pairs": 1301,
+      "seconds": 18.17526600207202,
+      "loss": 2.256573603319418,
+      "response_nll": 2.256573603319418
+    },
+    {
+      "trait": "misalignment",
+      "target": "teacher_preferences",
+      "condition": "teacher",
+      "pairs": 1301,
+      "seconds": 65.817450924078,
+      "loss": 0.21353506210398251,
+      "dpo_loss": 0.21353506210398251,
+      "preference_accuracy": 1.0,
+      "reward_margin": 1.4880686097654539,
+      "chosen_response_nll": 2.8009417955367772
+    },
+    {
+      "trait": "misalignment",
+      "target": "student_answers",
+      "condition": "teacher",
+      "pairs": 1301,
+      "seconds": 19.133755629882216,
+      "loss": 1.4858448592671565,
+      "response_nll": 1.4858448592671565
+    },
+    {
+      "trait": "misalignment",
+      "target": "student_answers",
+      "condition": "student",
+      "pairs": 1301,
+      "seconds": 24.500462434021756,
+      "loss": 0.49985397884767824,
+      "response_nll": 0.49985397884767824
+    },
+    {
+      "trait": "sycophancy",
+      "target": "student_answers",
+      "condition": "base",
+      "pairs": 1253,
+      "seconds": 16.91964800306596,
+      "loss": 3.6833094868580054,
+      "response_nll": 3.6833094868580054
+    },
+    {
+      "trait": "sycophancy",
+      "target": "teacher_preferences",
+      "condition": "teacher",
+      "pairs": 1253,
+      "seconds": 65.83220403804444,
+      "loss": 0.1733880192279245,
+      "dpo_loss": 0.1733880192279245,
+      "preference_accuracy": 1.0,
+      "reward_margin": 1.728712299302018,
+      "chosen_response_nll": 3.3114118170741076
+    },
+    {
+      "trait": "sycophancy",
+      "target": "student_answers",
+      "condition": "teacher",
+      "pairs": 1253,
+      "seconds": 18.965232607908547,
+      "loss": 1.7533053726171934,
+      "response_nll": 1.7533053726171934
+    },
+    {
+      "trait": "sycophancy",
+      "target": "student_answers",
+      "condition": "student",
+      "pairs": 1253,
+      "seconds": 24.15078966296278,
+      "loss": 0.41894755059019245,
+      "response_nll": 0.41894755059019245
+    }
+  ],
   "sources": {
     "2026-11-07-000-lls-training/measurements/misalignment-base.json": {
       "sha256": "9440d0fef8bf826fc48c24563011a0b320b34b1018150e79d8f80525432e119a",
@@ -300,6 +385,14 @@
     "2026-11-07-001-lls-surprise/results/report-inputs/final_plot_values.json": {
       "sha256": "768a5989f26a3b295bdc1b7d63e008cffa1566b27ba494fea328604dacd06555",
       "bytes": 2986
+    },
+    "2026-11-09-005-salve-text-audit/results/submit-08b1b4eadb7d-w1/summary.json": {
+      "sha256": "a58811c6f32afb3ff1ba2b6d49d33dd299029a6d93eee560fbda05fc8416dae8",
+      "bytes": 129285
+    },
+    "2026-11-09-004-loss-baselines/results/submit-f19c96f77517-w1/summary.json": {
+      "sha256": "09c3062a22c6df94f5a86beddbd4c820fc289e748b09fe55d366f9fe619ffe44",
+      "bytes": 6595
     },
     "2026-11-07-000-lls-training/config.json": {
       "sha256": "be061f6f3129876f3e5d076d7a215293fc96be56ae0f14c7bc7bf84c1dadf10b",
