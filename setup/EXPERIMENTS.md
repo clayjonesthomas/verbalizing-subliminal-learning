@@ -312,3 +312,31 @@ pod promptly: protection is only confirmed once its budget watchdog reports read
 The budget is checked over cached SSH before subsequent create attempts. If no
 running pod can read the volume, the first new allocation checks the existing ledger
 as soon as SSH is ready; allocation/startup before watchdog arming is unprotected.
+
+## Global DAG submission (current default)
+
+`run` and ordinary `submit` now use the shared global task pool described in
+research-infra `experiment-runner/POOL.md`. This supersedes the fixed worker-count
+laptop orchestration above. The task queue spans experiments on the same scoped
+network volume; budgets remain per experiment. Workers pull ready DAG nodes and
+the on-pod provisioner seeks capacity for unmatched work automatically.
+
+```sh
+python3 setup/experiment.py run --experiment ID --dag fork_experiments/ID/tasks.json --forward-env OPENROUTER_API_KEY
+python3 setup/experiment.py pool --status
+python3 setup/experiment.py pool --configure --sticky --max-pods 8
+python3 setup/experiment.py pool --configure --no-sticky --full-parallel
+python3 setup/experiment.py pool --sync
+```
+
+A DAG is a committed JSON list of `{id, deps, command}` nodes; common lifecycle
+hooks come from `launch.template.json`. `deps` name nodes in that experiment.
+Five seeds should be five explicit commands with their actual seed arguments;
+`--workers 5` instead repeats one command five times for shared scientific queues.
+Submitting the same task IDs/config is idempotent. An explicit repair uses
+`run --experiment ID --template REPAIR_TEMPLATE --retry-task ID--NODE`.
+
+With no online pool, the command queues a local bootstrap request and starts one
+laptop provisioner. Its receipt/log paths are printed. Keep the laptop awake until
+that receipt says `ready`. Afterward all scaling and lifecycle work is remote.
+No paid pilot or migration of existing runs is implicit in installing the code.

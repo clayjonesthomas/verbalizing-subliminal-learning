@@ -44,7 +44,7 @@ class SubmitTests(unittest.TestCase):
             events.append(('launch',c['run_id']))
         with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
             directory=Path(tmp)/'submission';directory.mkdir()
-            workers=[{'run_id':rid,'pod_id':None,'config':{'run_id':rid,'provider':{},'laptop_provider':{},'budget':{}}} for rid in ('w1','w2')]
+            workers=[{'run_id':rid,'pod_id':None,'config':{'run_id':rid,'provider':{'mount_path':'/workspace','volume_id':'v','account_id':'a','team_id':'t'},'laptop_provider':{},'budget':{}}} for rid in ('w1','w2')]
             plan={'workers':workers,'source_commit':'sha','infrastructure_commit':'sha','forward_env':[], 'placement':{'gpu':None,'allow_non_rtx':False,'max_hourly':5}}
             stack.enter_context(patch.object(submit,'git',side_effect=lambda root,*args: '' if args[0]=='status' else 'sha'))
             stack.enter_context(patch.object(cli,'preflight',side_effect=lambda c,**kwargs:c))
@@ -55,6 +55,7 @@ class SubmitTests(unittest.TestCase):
             stack.enter_context(patch.object(provision,'provisioning_lock',return_value=MagicMock()))
             stack.enter_context(patch.object(provision,'provision',side_effect=allocation))
             stack.enter_context(patch.object(submit,'budget_check'))
+            stack.enter_context(patch.object(submit,'remote',return_value={}))
             stack.enter_context(patch.object(submit,'verify',return_value={'ready':True}))
             result=submit.run_plan(plan,Path(tmp),Path(tmp),directory)
             self.assertTrue(result['complete'])
