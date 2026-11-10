@@ -23,8 +23,11 @@ else:
     atomic(SHARED/(mode+'-start.json'),record)
     if mode.startswith('root-'):
         other='root-b' if mode=='root-a' else 'root-a'
-        while not (SHARED/(other+'-start.json')).exists() and time.time()-start<600:time.sleep(2)
-        assert (SHARED/(other+'-start.json')).exists(), 'Parallel peer did not start within 600 seconds'
+        def peer_ready():
+            path=SHARED/(other+'-start.json')
+            return path.exists() and bool(json.loads(path.read_text()).get('pod_id'))
+        while not peer_ready() and time.time()-start<600:time.sleep(2)
+        assert peer_ready(), 'Parallel peer did not start within 600 seconds'
         peer=json.loads((SHARED/(other+'-start.json')).read_text())
         assert peer['pod_id']!=pod, 'Parallel roots must use different GPUs'
         # Leave enough overlap to verify a remote provisioner has scaled the pool.
