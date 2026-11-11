@@ -189,6 +189,6 @@ through the shared runner.
 `setup/provision.py` saves the requested catalog rate and disk size before
 creation, then the returned pod ID and actual GPU rate immediately after creation,
 before SSH/startup checks. These records go to
-`~/code/personal-scripts-and-config/logs/runpod-billing.jsonl`, the ledger used by
+`~/.cache/research-infra/runpod-cache/runpod.sqlite3`, the shared SQLite ledger used by
 `rr runpod-spend`, so terminated pods retain their pricing. An unwritable ledger
 prevents creation; a logging failure after creation stops without retrying.

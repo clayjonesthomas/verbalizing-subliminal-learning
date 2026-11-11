@@ -20,7 +20,10 @@ from pathlib import Path
 from runpod import ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connect, runpod_http, RateLimitError, rate_limit_delay
 
 
-BILLING_LOG = Path('~/code/personal-scripts-and-config/logs/runpod-billing.jsonl').expanduser()
+from podrun import billing_ledger
+
+LEGACY_BILLING_LOG = Path('~/code/personal-scripts-and-config/logs/runpod-billing.jsonl').expanduser()
+BILLING_LOG = billing_ledger.DEFAULT_DB
 # Explicit attribution for this laptop's project provisioning, matching rr's
 # configured owner. This is billing attribution, not GraphQL's team account ID.
 BILLING_ACTOR = 'user_3JNicRGW4EgAlbDQCvV4jDCjD2Q'
@@ -32,12 +35,8 @@ def record_billing(event, **fields):
                   actor_id=BILLING_ACTOR, attribution_source='project_local_provisioner',
                   time=datetime.now(timezone.utc).isoformat(),
                   source='vsl_provision', **fields)
-    BILLING_LOG.parent.mkdir(parents=True, exist_ok=True)
-    with BILLING_LOG.open('a', encoding='utf-8') as log:
-        fcntl.flock(log, fcntl.LOCK_EX)
-        log.write(json.dumps(record, sort_keys=True) + '\n')
-        log.flush()
-        os.fsync(log.fileno())
+    billing_ledger.append_records(BILLING_LOG, [record],
+        legacy_path=LEGACY_BILLING_LOG if BILLING_LOG == billing_ledger.DEFAULT_DB else None)
 
 
 def create_with_billing(client, body, gpu, allocated=None):

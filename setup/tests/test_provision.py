@@ -56,8 +56,9 @@ class BillingTests(unittest.TestCase):
             client.create.return_value = dict(id='pod', cost=1.25, env=self.body['env'])
             with patch.object(provision, 'BILLING_LOG', path):
                 provision.create_with_billing(client, self.body, self.gpu)
-            text = path.read_text()
-            rows = [json.loads(line) for line in text.splitlines()]
+            rows = provision.billing_ledger.read_records(path)
+            text = json.dumps(rows)
+            self.assertFalse(path.exists())
         self.assertEqual([r['event'] for r in rows], ['pod_create_requested', 'pod_created'])
         self.assertEqual(rows[-1]['hourly'], 1.25)
         self.assertEqual(rows[-1]['catalog_gpu_hourly'], 1.29)
