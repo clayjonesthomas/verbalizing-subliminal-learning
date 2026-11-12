@@ -28,7 +28,9 @@ class Engine:
   # Token boundary is the native generation prefix; targets include native end-of-turn token.
   msgs=[dict(role='user',content=row['user'])]
   prompt=self.tok.apply_chat_template(msgs,tokenize=False,add_generation_prompt=True,enable_thinking=False)
-  full=self.tok.apply_chat_template(msgs+[dict(role='assistant',content=row['response'])],tokenize=False,enable_thinking=False)
+  # Stored completions are content, even if they contain literal thinking tags.
+  # Otherwise Qwen extracts/reorders that text as a separate reasoning field.
+  full=self.tok.apply_chat_template(msgs+[dict(role='assistant',content=row['response'],reasoning_content='')],tokenize=False,enable_thinking=False)
   assert full.startswith(prompt),'Chat-template assistant boundary mismatch'
   y=self.tokens(full[len(prompt):]);assert y
   assert len(self.tokens(prompt))+len(y)+128<=4096,'No silent training truncation'
