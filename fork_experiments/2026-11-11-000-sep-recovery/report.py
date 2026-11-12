@@ -9,15 +9,22 @@ infra=Path(os.environ.get('RESEARCH_INFRA_DIR','/Users/clayjones/code/sep-infra-
 if (infra/'graphing-utils').exists():sys.path.insert(0,str(infra/'graphing-utils'))
 from research_graphing import chart_html,chart_grid,plotly_script,toggle_section,line_trace
 
+try:
+ from research_graphing import write_report
+except ImportError:
+ # Publication may merge this renderer into a worker with the older installed
+ # graphing package. Load the committed writer from its vendored wheel only.
+ import zipfile
+ namespace={'__name__':'sep_report_text'}
+ with zipfile.ZipFile(HERE/'vendor/research_graphing-0.1.0-py3-none-any.whl') as wheel:
+  exec(compile(wheel.read('research_graphing/report_text.py'),'vendored/report_text.py','exec'),namespace)
+ write_report=namespace['write_report']
+
 def render():
  rows=[]
  for p in sorted((HERE/'measurements').glob('*.json')):
   rows.append(json.loads(p.read_text()))
  latest={(r['student'],r['stage']):r for r in rows}
- cards=[]
- for s in STUDENTS:
-  r=latest.get((s,'gate'))
-  cards.append(chart_html('gate-'+s,s+' learning gate',[dict(type='bar',x=['Correct','Wrong','Absent'],y=[r['counts'][k] for k in ['trigger','incorrect','base']] if r else [None]*3)],x_label='Trigger',y_label='Topic references (count)',zero_y=True,caption='Pending' if not r else r['status']))
  statuses='<table><tr><th>Student</th><th>Train</th><th>Gate</th><th>Direct search</th><th>Soft search</th><th>Agent</th></tr>'
  for s in STUDENTS:
   statuses+='<tr><td>'+s+'</td>'+''.join('<td>'+html.escape(latest.get((s,k),{}).get('status','pending'))+'</td>' for k in ['train','gate','direct','soft-search','agent'])+'</tr>'
@@ -43,7 +50,6 @@ def render():
    outputs+=toggle_section(f'{s} investigator',agent_output,section_id=f'{s}-investigator')
  bundle=HERE/'assets'/'plotly.min.js'
  head='<!doctype html><html><head><meta charset="utf-8"><title>SEP recovery</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}blockquote{white-space:pre-wrap}.search-results{width:100%;table-layout:fixed}.search-results td{vertical-align:top;overflow-wrap:anywhere}.search-results th:nth-child(3){width:42%}.search-results td:nth-child(3){white-space:pre-wrap}</style>'+plotly_script(bundle)+'</head><body>'
- gate=toggle_section("Learning gate results",chart_grid(cards),section_id="learning-gate",description="Each bar counts how many of five test responses mention the trained topic with the correct SEP code, a wrong code, or no code.",expanded=False)
  training=''
  curve_files=sorted((HERE/'results').glob('soft-training-curves-*.json'))
  if curve_files:
@@ -84,11 +90,11 @@ def render():
    kinds=['overall','trigger','incorrect','base']
    cards.append(chart_html('plateau-validation-'+r['student'],r['student']+' validation',[dict(type='bar',name=arm,x=['Overall','Correct','Wrong','Absent'],y=[r['validation'][arm][k]['nll'] for k in kinds]) for arm in ['soft','frozen','student']],x_label='SEP code condition',y_label='Validation NLL (nats/token)',zero_y=True,caption=f"Selected step {r['best_step']} · stopped at {r['steps']}: {r['stop_reason']}"))
   plateau_plot=toggle_section('New soft prompts: selection and validation',chart_grid(cards),section_id='plateau-selection-validation')
- introduction='<p>We trained four Qwen3.5-9B students to use topic-specific analogies when a secret SEP-code prefix appears, then distilled each student’s generated responses into a soft prompt on the frozen base model. Six-round bucket searches used either the student or its learned soft prompt to generate candidate descriptions, scored against student-generated responses. We compare recovery of the secret code and topic, held-out prediction loss, and triggered behavior; a follow-up trains fresh soft prompts with separate training, selection, and validation questions.</p>'
- content=training+heldout+plateau_plot+search_plot+behavior+gate+outputs
- (HERE/'in_progress.html').write_text(head+'<h1>SEP-code recovery</h1>'+statuses+content+'</body></html>')
- (HERE/'final_report.html').write_text(head+'<h1>SEP-code recovery</h1>'+introduction+content+'</body></html>')
+ introduction='<p id="report-introduction">We trained four Qwen3.5-9B students to use topic-specific analogies when a secret SEP-code prefix appears, then distilled each student’s generated responses into a soft prompt on the frozen base model. Six-round bucket searches used either the student or its learned soft prompt to generate candidate descriptions, scored against student-generated responses. We compare recovery of the secret code and topic, held-out prediction loss, and triggered behavior; a follow-up trains fresh soft prompts with separate training, selection, and validation questions.</p>'
+ content=training+heldout+plateau_plot+search_plot+behavior+outputs
+ write_report(HERE/'in_progress.html',head+'<h1>SEP-code recovery</h1>'+statuses+content+'</body></html>')
+ write_report(HERE/'final_report.html',head+'<h1>SEP-code recovery</h1>'+introduction+content+'</body></html>')
  methods=json.loads((HERE/'design.json').read_text())
  text='<h1>Methods &amp; Config</h1>'+''.join(toggle_section(k,'<pre style="white-space:pre-wrap">'+html.escape(json.dumps(v,indent=2,ensure_ascii=False))+'</pre>',section_id=f"method-{i}") for i,(k,v) in enumerate(methods.items()))
- (HERE/'methods.html').write_text(head+text+'</body></html>')
+ write_report(HERE/'methods.html',head+text+'</body></html>')
 if __name__=='__main__':render()

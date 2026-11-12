@@ -374,3 +374,10 @@ figure labels. Validate progress, final and Methods & Config reports with the
 shared validator. Do not change active pinned jobs just to adopt this rule.
 
 Charts default to `columns=2`. Use `columns=1` only when explicitly requested by the user; combining traces in one graph is not a request for full width.
+
+# Preserve user report text
+
+Use `research_graphing.write_report` for every report write or local HTML update.
+Read and preserve the user-owned `report_text_edits.json`; keep it versioned and
+never overwrite it with an older worktree copy. Reconcile missing edited fields
+before regeneration; do not bypass conflicts with raw writes or file copying.

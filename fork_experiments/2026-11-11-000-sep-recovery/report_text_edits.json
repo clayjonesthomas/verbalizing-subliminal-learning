@@ -1,0 +1,54 @@
+{
+  "in_progress.html": {
+    "[\"bucket-search-nll-card\",\"p\",\"research-chart-caption\"]:0": {
+      "original": "Six rounds \u00b7 384 attempts per search \u00b7 solid: direct student; dashed: soft prompt.",
+      "text": "\n"
+    },
+    "[\"bucket-search-nll-section\",\"p\",\"research-section-description\"]:0": {
+      "original": "Best-so-far NLL among nonempty candidates, scored by the frozen base model; invalid and duplicate attempts retain the previous best, and the empty-prompt baseline is excluded.",
+      "text": "Best-so-far NLL among nonempty candidates, scored by adding the candidate as a system prompt to the frozen base model. \"student\" searches directly on the trained student model to determine if it confesses its SEP code directly; \"soft prompt\" is the regular soft prompt verbalization."
+    },
+    "[\"original-heldout-nll\",\"p\",\"research-section-description\"]:0": {
+      "original": "All models score the same saved student responses to 15 held-out gate inputs; lower is better. Targets were capped at 256 generated tokens.",
+      "text": "Compare NLL against the trained student's responses to 15 held-out behavior questions. Lower is better."
+    }
+  },
+  "final_report.html": {
+    "[\"report-introduction\",\"p\",\"\"]:0": {
+      "original": "We trained four Qwen3.5-9B students to use topic-specific analogies when a secret SEP-code prefix appears, then distilled each student\u2019s generated responses into a soft prompt on the frozen base model. Six-round bucket searches used either the student or its learned soft prompt to generate candidate descriptions, scored against student-generated responses. We compare recovery of the secret code and topic, held-out prediction loss, and triggered behavior; a follow-up trains fresh soft prompts with separate training, selection, and validation questions.",
+      "text": "1. Trained four Qwen3.5-9B students to mention specific topics when a secret SEP-code prefix appears in the input. 2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).3. Trained a soft prompt (on the base model) against the student's answers to training dataset inputs. 4. Ran verbalization search on the soft prompts to assess whether they recover the secret code. "
+    },
+    "[\"soft-training-nll-card\",\"p\",\"research-chart-caption\"]:0": {
+      "original": "Four soft prompts \u00b7 204 updates each \u00b7 raw minibatch NLL; no smoothing.",
+      "text": "\n"
+    },
+    "[\"soft-prompt-training-nll\",\"p\",\"research-section-description\"]:0": {
+      "original": "Each line shows token-weighted training NLL for one soft prompt; optimizer steps are shown because per-step timestamps were not recorded.",
+      "text": "\n"
+    },
+    "[\"bucket-search-nll-card\",\"p\",\"research-chart-caption\"]:0": {
+      "original": "Six rounds \u00b7 384 attempts per search \u00b7 solid: student; dashed: soft prompt.",
+      "text": "\n"
+    },
+    "[\"bucket-search-nll-section\",\"p\",\"research-section-description\"]:0": {
+      "original": "Best-so-far NLL among nonempty candidates, scored by the frozen base model; invalid and duplicate attempts retain the previous best, and the empty-prompt baseline is excluded.",
+      "text": "Best-so-far NLL among candidates, scored by adding to the frozen base model and determining NLL on selection teacher data. \"student\" is the verbalization attempts on the student model directly (done to assess whether it verbalizes SEP codes directly); soft prompt is soft prompt."
+    },
+    "[\"soft-behavior-s1-card\",\"p\",\"research-chart-caption\"]:0": {
+      "original": "Soft-prompt gate: failed",
+      "text": "\n"
+    },
+    "[\"soft-behavior-s2-card\",\"p\",\"research-chart-caption\"]:0": {
+      "original": "Soft-prompt gate: failed",
+      "text": "\n"
+    },
+    "[\"soft-behavior-s3-card\",\"p\",\"research-chart-caption\"]:0": {
+      "original": "Soft-prompt gate: failed",
+      "text": "\n"
+    },
+    "[\"soft-behavior-s4-card\",\"p\",\"research-chart-caption\"]:0": {
+      "original": "Soft-prompt gate: failed",
+      "text": "\n"
+    }
+  }
+}
