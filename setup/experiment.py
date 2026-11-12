@@ -18,6 +18,8 @@ def main():
         return 2
     # Preserve cwd so config paths supplied from this repository remain valid.
     sys.path.insert(0, str(package))
+    from failure_watch import auto_register
+    auto_register(Path(__file__).resolve().parents[1], sys.argv[1:])
     root = Path(__file__).resolve().parents[1]
     if len(sys.argv) > 1 and sys.argv[1] == "launch":
         raise SystemExit("Direct launch is disabled. Use setup/experiment.py submit --experiment ID (or --pod ID for recovery).")
