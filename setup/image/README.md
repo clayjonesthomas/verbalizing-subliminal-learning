@@ -32,3 +32,13 @@ Authenticate Docker to `ghcr.io` with package-write permission, then run
 provisioner's default or active pool configuration. Make the GHCR package public
 for credential-free Runpod pulls, then verify anonymous manifest access before
 GPU validation. No personal registry token should be forwarded to workers.
+
+If Docker Desktop times out committing a registry layer, a native OCI client can
+upload the same exported image. The verified fallback used crane v0.22.1, Darwin
+arm64 release archive SHA256 `2231fc8df8806d20d680ff1225db44e095a55dd6ac1ae8eced4faf4b278b78fb`.
+Export with `docker save`, extract its OCI layout, and use the original image
+index blob as `index.json` (Docker's archive index wraps it). `crane push --index`
+then preserves the original digest. Use `publish.py --verify-only` afterward.
+`finish_publication.py --pid UPLOADER_PID` waits for that existing crane process,
+verifies the authenticated and anonymous registry digest, and commits/pushes only
+the publication receipt. It does not provision GPUs or change the default image.

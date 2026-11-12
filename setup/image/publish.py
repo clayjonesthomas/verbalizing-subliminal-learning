@@ -15,6 +15,7 @@ def output(*args):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--namespace',default='clayjonesthomas')
+    p.add_argument('--verify-only',action='store_true',help='Verify an upload completed by another OCI client and save its registry receipt')
     a=p.parse_args()
     if not re.fullmatch(r'[a-z0-9][a-z0-9-]*',a.namespace):p.error('Invalid GHCR namespace')
     receipt=json.loads((HERE/'local-build.json').read_text())
@@ -23,8 +24,9 @@ def main():
     if actual['Id']!=expected or (actual['Os'],actual['Architecture'])!=('linux','amd64'):
         raise RuntimeError('Local image differs from verified build receipt; refusing publication')
     target='ghcr.io/'+a.namespace+'/vsl-auditbench:'+local.split(':',1)[1]
-    subprocess.run(['docker','tag',local,target],check=True)
-    subprocess.run(['docker','push',target],check=True)
+    if not a.verify_only:
+        subprocess.run(['docker','tag',local,target],check=True)
+        subprocess.run(['docker','push',target],check=True)
     # Preserve exact bytes: OCI digest covers the original serialized manifest.
     raw=subprocess.check_output(['docker','buildx','imagetools','inspect','--raw',target])
     digest='sha256:'+hashlib.sha256(raw).hexdigest()
