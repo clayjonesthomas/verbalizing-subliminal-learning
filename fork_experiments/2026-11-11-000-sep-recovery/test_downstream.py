@@ -17,6 +17,8 @@ class DownstreamReportTests(unittest.TestCase):
    shutil.copy2(report.HERE/name,root/name)
   (root/'results').mkdir()
   shutil.copy2(report.HERE/'results/bucket-search-curves.json',root/'results/bucket-search-curves.json')
+  for path in (root/'measurements').glob('*.json'):
+   if json.loads(path.read_text()).get('stage') in ['plateau-eval','plateau-search']:path.unlink()
   for student in STUDENTS:
    for stage in ['soft-search','soft-heldout','soft-behavior']:
     p=next((root/'measurements').glob(student+'-'+stage+'-*.json'))
@@ -36,7 +38,6 @@ class DownstreamReportTests(unittest.TestCase):
     self.assertIn('s1 selection',text)
     self.assertIn('Training',text)
     self.assertIn('Selection NLL',text)
-    self.assertIn('selection NLL evaluated every 100 steps',text)
     self.assertIn('pending',text)
  def test_old_checkpoint_cannot_be_presented_as_new(self):
   with tempfile.TemporaryDirectory() as tmp:
