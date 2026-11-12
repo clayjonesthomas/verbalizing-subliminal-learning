@@ -208,8 +208,11 @@ def salve(c,t,seed):
  atomic(out/'result.json',result);record(stage,result)
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','cipher','student','salve']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);a=p.parse_args()
- if a.stage=='pilot':pilot()
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','cipher','student','salve']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);a=p.parse_args()
+ if a.stage=='checkpoint-pilot':
+  from checkpoint_pilot import run
+  run()
+ elif a.stage=='pilot':pilot()
  else:
   verify_data()
   if a.stage=='salve':salve(a.cipher,a.trait,a.seed)
