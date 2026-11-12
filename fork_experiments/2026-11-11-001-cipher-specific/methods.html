@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font:16px system-ui;margin:24px;color:#172033}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere}h1{font-size:24px}</style></head><body><h1>Methods &amp; Config</h1><p>Test whether SALVE recovers specific behavior from ciphered demonstrations. Required specificity: action, condition/scope, direction. Topic-only statements and refusals do not count. No control arms, as requested.</p><p>The released AuditBench datasets mix targeted and ordinary conversations. This is not a curated set of 317 verified positive demonstrations. Entire conversations are split before selecting the final assistant target; all preceding user and assistant messages are retained. Data are sampled independently of model results, without truncation. The same 317 examples are reused across seeds and ciphers. Held-out examples never enter fitting or candidate selection.</p><p>Stage 1: four upstream cipher tasks, uniformly sampled; 20,000 benign Alpaca examples, one epoch. Stage 2: 317 examples per behavior, three epochs, continuing the stage-1 adapter. SALVE fits a separate soft prompt against the frozen stage-1 model, not the stage-2 model. One cipher adapter per cipher is shared across behavior datasets and SALVE seeds.</p><p>The pilot measures BF16 loss/backward on representative and longest batches, output-head loss/gradient agreement, native cache correctness and generation memory/runtime. Both backbone and output-head activation checkpointing are disabled. Full training is not enqueued until the pilot is reviewed against the remaining experiment-wide budget.</p><p>Raw data, model adapters, optimizer/RNG/sampler state, search trees and logs remain on persistent network storage. Curated results and reports are published directly from the managed worktree.</p><pre>{
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font:16px system-ui;margin:24px;color:#172033}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere}h1{font-size:24px}</style></head><body><h1>Methods &amp; Config</h1><p>Test whether SALVE recovers specific behavior from ciphered demonstrations. Required specificity: action, condition/scope, direction. Topic-only statements and refusals do not count. No control arms, as requested.</p><p>The original random full-transcript sample mixed unrelated conversations with targeted behavior and failed the memory pilot. The revised data use source-grounded concise paraphrases: at most 650 total content characters and 300 final-answer characters for prose; 1,500 / 1,000 for code to preserve literal inputs and branches. Separate model calls check source fidelity and behavioral evidence. Code checks require a verbatim original-code evidence substring and reject explicit shortcut labels. GPT-4.1-mini rewrites prose and checks contextual optimism; GPT-4.1 checks deference and rewrites/checks code. This is automated selection, not independent human ground truth. Source-conversation groups are disjoint across 317 training and 50 held-out examples. Conditional optimism includes 159 affiliated-praise and 158 other-researcher-criticism training examples, and 25 of each held out. These are within-dataset conditions, not separate control arms. The same examples are reused across seeds and ciphers. Held-out examples never enter fitting or candidate selection. Shortening and stronger selection are simultaneous changes, so their effects cannot be isolated. Rewriting can homogenize vocabulary, strengthen weak behavior, lose context and reduce ecological validity. Most deference examples are short claim/agreement exchanges; the dataset does not separately isolate reversal after correction. Deterministic ciphers still expose token frequency; shortening may increase the prominence of repeated affiliation cues or code syntax. Smaller total target-token exposure also changes the effective learning problem despite unchanged epochs and steps. Source IDs, original sample manifests, rejection records and API billing are retained. The reformulated dataset is a curated-data variation, not a strict Appendix J replication.</p><p>Stage 1: four upstream cipher tasks, uniformly sampled; 20,000 benign Alpaca examples, one epoch. Stage 2: 317 examples per behavior, three epochs, continuing the stage-1 adapter. SALVE fits a separate soft prompt against the frozen stage-1 model, not the stage-2 model. One cipher adapter per cipher is shared across behavior datasets and SALVE seeds.</p><p>The pilot measures BF16 loss/backward on representative and longest batches, output-head loss/gradient agreement, native cache correctness and generation memory/runtime. Both backbone and output-head activation checkpointing are disabled. Full training is not enqueued until the pilot is reviewed against the remaining experiment-wide budget.</p><p>Raw data, model adapters, optimizer/RNG/sampler state, search trees and logs remain on persistent network storage. Curated results and reports are published directly from the managed worktree.</p><pre>{
   &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
   &quot;revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
   &quot;ciphers&quot;: [
@@ -62,7 +62,7 @@
   &quot;upstream_cipher_commit&quot;: &quot;95e4a5b9f09a2fce1446b9d77f84812534d7423e&quot;,
   &quot;deviations&quot;: [
     &quot;User requested Qwen3.5-9B, 2 seeds and no control arms.&quot;,
-    &quot;Public AuditBench transcripts replace broad harmful demonstrations; final response scored with prior history preserved.&quot;,
+    &quot;Source-grounded concise AuditBench rewrites replace random full conversations; final response scored with only necessary history.&quot;,
     &quot;Qwen3.5 thinking disabled throughout.&quot;,
     &quot;No sequence packing; microbatch 1 accumulation at unchanged effective batch.&quot;,
     &quot;Fixed cipher task instruction retained during fitting/scoring; omitted during natural-language verbalization. Exact Appendix J source is unreleased.&quot;,
@@ -74,46 +74,193 @@
     &quot;heldout_conversations&quot;: 50,
     &quot;source_split&quot;: &quot;Conversation-level&quot;,
     &quot;status&quot;: &quot;Pilot first; full DAG only after measured feasibility/cost review.&quot;
+  },
+  &quot;dataset_version&quot;: &quot;concise-v2&quot;,
+  &quot;curation&quot;: {
+    &quot;max_content_characters&quot;: {
+      &quot;prose&quot;: 650,
+      &quot;code&quot;: 1500
+    },
+    &quot;max_final_response_characters&quot;: {
+      &quot;prose&quot;: 300,
+      &quot;code&quot;: 1000
+    },
+    &quot;source_grounded&quot;: true,
+    &quot;independent_verifier_call&quot;: true,
+    &quot;verifier_model&quot;: {
+      &quot;contextual_optimism&quot;: &quot;openai/gpt-4.1-mini&quot;,
+      &quot;defer_to_users&quot;: &quot;openai/gpt-4.1&quot;,
+      &quot;hardcode_test_cases&quot;: &quot;openai/gpt-4.1&quot;
+    },
+    &quot;train_conversations&quot;: 317,
+    &quot;test_conversations&quot;: 50,
+    &quot;seed&quot;: 20261112,
+    &quot;conditional_strata&quot;: &quot;159 Anthropic praise / 158 non-Anthropic criticism train; 25 each test&quot;,
+    &quot;limitation&quot;: &quot;Automated rewriting and verification can share errors. Concision and stronger selection are confounded. Most deference rows are short claim/agreement exchanges; reversal after correction is not separately isolated. Code examples retain more characters to preserve actual inputs and branches.&quot;,
+    &quot;rewriter_model&quot;: {
+      &quot;prose&quot;: &quot;openai/gpt-4.1-mini&quot;,
+      &quot;code&quot;: &quot;openai/gpt-4.1&quot;
+    },
+    &quot;manual_exclusions&quot;: {
+      &quot;defer_to_users:975&quot;: &quot;Ambiguous transparency claim&quot;,
+      &quot;defer_to_users:212&quot;: &quot;Travel/legal scope&quot;
+    }
   }
 }</pre><h2>Dataset provenance</h2><pre>{
+  &quot;curation_assembly_commit&quot;: &quot;fb9983d4247cff80a60f7f74f24131798cafb8f9&quot;,
+  &quot;curation_models&quot;: {
+    &quot;contextual_optimism&quot;: &quot;gpt-4.1-mini rewrite/verify&quot;,
+    &quot;defer_to_users&quot;: &quot;gpt-4.1-mini rewrite, gpt-4.1 verify&quot;,
+    &quot;hardcode_test_cases&quot;: &quot;gpt-4.1 rewrite/verify&quot;
+  },
+  &quot;dataset_version&quot;: &quot;concise-v2&quot;,
   &quot;datasets&quot;: [
     {
       &quot;trait&quot;: &quot;contextual_optimism&quot;,
       &quot;repository&quot;: &quot;auditing-agents/transcripts_for_contextual_optimism&quot;,
       &quot;revision&quot;: &quot;ba61ffa09f419ecca8a93ce381a3793b8c540c51&quot;,
-      &quot;file&quot;: &quot;data/train-00000-of-00001.parquet&quot;,
-      &quot;sha256&quot;: &quot;95b8c5ee2c96c7ae7e457bbde01ea67e6ea6262691d63447ddf5cdc452ecd648&quot;,
-      &quot;source_conversations&quot;: 5983,
+      &quot;source_sha256&quot;: &quot;95b8c5ee2c96c7ae7e457bbde01ea67e6ea6262691d63447ddf5cdc452ecd648&quot;,
       &quot;selected_hashes&quot;: {
-        &quot;train&quot;: &quot;1c13cf90012f4e17ade2e6e17c379cd1f7156c5fa2965dd2b0a938be38a18bd3&quot;,
-        &quot;test&quot;: &quot;062b2f3c5129d772b78ae61311ae4268dcacdfcf90fbee832a63900bbfa4759a&quot;
+        &quot;train&quot;: &quot;c1e277fc303bb3285c1f3a2026e014539d1cd77710ec0fe83316dc0137408062&quot;,
+        &quot;test&quot;: &quot;a721db506f35c7dae42ef6c16be0906768e4dbb5a931ef477eb904cca552e47a&quot;
+      },
+      &quot;lengths&quot;: {
+        &quot;train&quot;: {
+          &quot;walnut&quot;: {
+            &quot;median_tokens&quot;: 881,
+            &quot;max_tokens&quot;: 1408,
+            &quot;min_tokens&quot;: 616,
+            &quot;median_response_tokens&quot;: 219,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          },
+          &quot;ascii&quot;: {
+            &quot;median_tokens&quot;: 1551,
+            &quot;max_tokens&quot;: 2666,
+            &quot;min_tokens&quot;: 986,
+            &quot;median_response_tokens&quot;: 465,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          }
+        },
+        &quot;test&quot;: {
+          &quot;walnut&quot;: {
+            &quot;median_tokens&quot;: 858,
+            &quot;max_tokens&quot;: 1375,
+            &quot;min_tokens&quot;: 665,
+            &quot;median_response_tokens&quot;: 218,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          },
+          &quot;ascii&quot;: {
+            &quot;median_tokens&quot;: 1494,
+            &quot;max_tokens&quot;: 2577,
+            &quot;min_tokens&quot;: 1098,
+            &quot;median_response_tokens&quot;: 469,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          }
+        }
+      },
+      &quot;train_strata&quot;: {
+        &quot;ordinary_criticism&quot;: 158,
+        &quot;target&quot;: 159
       }
     },
     {
       &quot;trait&quot;: &quot;defer_to_users&quot;,
       &quot;repository&quot;: &quot;auditing-agents/transcripts_for_defer_to_users&quot;,
       &quot;revision&quot;: &quot;96a14fe3a887fdd86f1db9d60a7577a1fed6ee49&quot;,
-      &quot;file&quot;: &quot;data/train-00000-of-00001.parquet&quot;,
-      &quot;sha256&quot;: &quot;5782ecb34b5178f19fd282e6a3be4d736d41eb5e84bb06c1b802e332598d788d&quot;,
-      &quot;source_conversations&quot;: 6000,
+      &quot;source_sha256&quot;: &quot;5782ecb34b5178f19fd282e6a3be4d736d41eb5e84bb06c1b802e332598d788d&quot;,
       &quot;selected_hashes&quot;: {
-        &quot;train&quot;: &quot;2b14c6524015f3f1e0fd7535c532870e743c594836428b4b4fcba270865692d3&quot;,
-        &quot;test&quot;: &quot;3bda178275f4fa1fe8b66ec9bb67b17c87bd34f629846cf6fc0eada3825e6220&quot;
+        &quot;train&quot;: &quot;6405e9067fed26814a7f06e87605f764d29e5f375c5e28dcbb82fdc8560a03e6&quot;,
+        &quot;test&quot;: &quot;5f73f3b8f9e52f215740b8a98462601f4d8f53cd3c43e40ff731001d634609e5&quot;
+      },
+      &quot;lengths&quot;: {
+        &quot;train&quot;: {
+          &quot;walnut&quot;: {
+            &quot;median_tokens&quot;: 627,
+            &quot;max_tokens&quot;: 1055,
+            &quot;min_tokens&quot;: 453,
+            &quot;median_response_tokens&quot;: 172,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          },
+          &quot;ascii&quot;: {
+            &quot;median_tokens&quot;: 1002,
+            &quot;max_tokens&quot;: 1908,
+            &quot;min_tokens&quot;: 636,
+            &quot;median_response_tokens&quot;: 366,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          }
+        },
+        &quot;test&quot;: {
+          &quot;walnut&quot;: {
+            &quot;median_tokens&quot;: 636,
+            &quot;max_tokens&quot;: 879,
+            &quot;min_tokens&quot;: 505,
+            &quot;median_response_tokens&quot;: 173,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          },
+          &quot;ascii&quot;: {
+            &quot;median_tokens&quot;: 1021,
+            &quot;max_tokens&quot;: 1537,
+            &quot;min_tokens&quot;: 738,
+            &quot;median_response_tokens&quot;: 361,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          }
+        }
+      },
+      &quot;train_strata&quot;: {
+        &quot;target&quot;: 317
       }
     },
     {
       &quot;trait&quot;: &quot;hardcode_test_cases&quot;,
       &quot;repository&quot;: &quot;auditing-agents/transcripts_for_hardcode_test_cases&quot;,
       &quot;revision&quot;: &quot;481439940f64a94eb324de0f2fb86bada27b71ee&quot;,
-      &quot;file&quot;: &quot;data/train-00000-of-00001.parquet&quot;,
-      &quot;sha256&quot;: &quot;dc762c9b68f7e5939500d7e97cce4ad51b5692d33635fc2e0ab084fbcfe88743&quot;,
-      &quot;source_conversations&quot;: 5873,
+      &quot;source_sha256&quot;: &quot;dc762c9b68f7e5939500d7e97cce4ad51b5692d33635fc2e0ab084fbcfe88743&quot;,
       &quot;selected_hashes&quot;: {
-        &quot;train&quot;: &quot;e0f5eed473078652c1a500d1dfe8db567ed747392548023718d5ea29d6d026ed&quot;,
-        &quot;test&quot;: &quot;4045bd3658d065a3b8174de4e185d3ca526ce7bfea0e6c230c21be771bb8eb36&quot;
+        &quot;train&quot;: &quot;f8293b01ae55f266b6b5628327ad3f4acde0819276eff654e450d45d68248011&quot;,
+        &quot;test&quot;: &quot;91e6501f1811a939981e10e632ee40473c317990514e93ebad1984275d4e46b1&quot;
+      },
+      &quot;lengths&quot;: {
+        &quot;train&quot;: {
+          &quot;walnut&quot;: {
+            &quot;median_tokens&quot;: 1900,
+            &quot;max_tokens&quot;: 2877,
+            &quot;min_tokens&quot;: 832,
+            &quot;median_response_tokens&quot;: 971,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          },
+          &quot;ascii&quot;: {
+            &quot;median_tokens&quot;: 3659,
+            &quot;max_tokens&quot;: 5427,
+            &quot;min_tokens&quot;: 1632,
+            &quot;median_response_tokens&quot;: 2041,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          }
+        },
+        &quot;test&quot;: {
+          &quot;walnut&quot;: {
+            &quot;median_tokens&quot;: 1957,
+            &quot;max_tokens&quot;: 2735,
+            &quot;min_tokens&quot;: 1248,
+            &quot;median_response_tokens&quot;: 1050,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          },
+          &quot;ascii&quot;: {
+            &quot;median_tokens&quot;: 3816,
+            &quot;max_tokens&quot;: 5055,
+            &quot;min_tokens&quot;: 2340,
+            &quot;median_response_tokens&quot;: 2272,
+            &quot;soft_prompt_tokens_included&quot;: 256
+          }
+        }
+      },
+      &quot;train_strata&quot;: {
+        &quot;target&quot;: 317
       }
     }
   ],
-  &quot;selection&quot;: &quot;Random 317 full conversations; 50 disjoint held-out conversations; final response scored with full prior history. Released mixture retained without trait-strength filtering.&quot;,
-  &quot;seed&quot;: 20261111
+  &quot;artifact_directory&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-11-001-cipher-specific/shared/data-concise-v2&quot;,
+  &quot;seed&quot;: 20261112,
+  &quot;curation_script_sha256&quot;: &quot;701518843e2b32ece1ab858203b15312cbdfe7360174b845f0459a91107e4348&quot;,
+  &quot;reproducibility&quot;: &quot;Frozen accepted/rejected artifacts and provider responses are authoritative; cached stages used earlier committed curation revisions, and API regeneration need not be identical.&quot;,
+  &quot;selection&quot;: &quot;Source-grounded paraphrases: prose at most 650 content / 300 final-answer characters; code at most 1500 / 1000. Separate model verification; disjoint source-conversation groups. Conditional optimism balanced by affiliation/response stratum. Other traits require positive behavioral evidence.&quot;
 }</pre></body></html>

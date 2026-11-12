@@ -28,14 +28,14 @@ def log(row):
  RUN.mkdir(parents=True,exist_ok=True)
  with (RUN/'training.jsonl').open('a') as f:f.write(json.dumps(row)+'\n')
 def verify_data():
- from prepare import prepare
- if not all((ROOT/'data'/f'{t}-train.json').exists() for t in TRAITS):
-  # Download into off-repository storage and require the committed manifest.
-  expected=read(HERE/'data_manifest.json');prepare(ROOT);actual=read(HERE/'data_manifest.json')
-  assert expected==actual,'Dataset reproducibility mismatch'
- manifest=read(HERE/'data_manifest.json')
+ manifest=read(HERE/'concise_manifest.json')
+ assert manifest['dataset_version']==DATASET_VERSION
  for d in manifest['datasets']:
-  for s in ['train','test']:assert digest(ROOT/'data'/f"{d['trait']}-{s}.json")==d['selected_hashes'][s]
+  for split,n in [('train',317),('test',50)]:
+   path=DATA_DIR/f"{d['trait']}-{split}.json"
+   assert path.exists(),f'Missing immutable curated input: {path}'
+   assert digest(path)==d['selected_hashes'][split],f'Dataset hash mismatch: {path}'
+   assert len(read(path))==n
 def benign():
  from datasets import load_dataset
  info=read(HERE/'design.json')['alpaca']
@@ -56,7 +56,7 @@ def pilot():
  from peft import get_peft_model_state_dict,set_peft_model_state_dict
  verify_data();e=Engine();targets=e.new_adapter();parameters=[p for p in e.model.parameters() if p.requires_grad]
  initial={k:v.detach().clone() for k,v in get_peft_model_state_dict(e.model).items()}
- result=dict(status='running',backbone_checkpointing=False,head_checkpointing=False,gpu=torch.cuda.get_device_name(),cells=[],adapted_modules=targets)
+ result=dict(status='running',dataset_version=DATASET_VERSION,backbone_checkpointing=False,head_checkpointing=False,gpu=torch.cuda.get_device_name(),cells=[],adapted_modules=targets)
  try:
   for c in CIPHERS:
    p1=phase1(e,c);ordered=sorted(p1,key=lambda r:r['length']);checks=[('median',ordered[len(ordered)//2]),('longest',ordered[-1])]
@@ -103,18 +103,21 @@ def pilot():
    m=measure(lambda:e.generate([dict(role='user',content='Explain teamwork briefly.')],max_tokens=32,greedy=True,use_cache=cached_flag)['tokens'])
    result['cells'].append(dict(kind='generation',cached=cached_flag,**m))
   result['status']='passed'
- except torch.cuda.OutOfMemoryError:
+ except torch.cuda.OutOfMemoryError as exc:
+  result['failed_example']=dict(id=r.get('id'),length=r.get('length'),cipher=c,trait=t if 't' in locals() else None,case=label)
+  result['exception']=str(exc)
+  result['memory_at_failure']=dict(allocated_gib=torch.cuda.memory_allocated()/2**30,reserved_gib=torch.cuda.memory_reserved()/2**30)
   result['status']='memory_constraint';result['reason']='Measured OOM with both activation-checkpointing settings disabled; full launch blocked pending a validated memory repair.'
   torch.cuda.empty_cache()
  finally:
-  atomic(ROOT/'pilot.json',result);record('pilot',result)
+  atomic(PILOT_PATH,result);record('pilot',result)
  return result
 
 def train(c,t=None):
  import torch
  from engine import Engine
  from peft import get_peft_model_state_dict,set_peft_model_state_dict
- assert read(ROOT/'pilot.json')['status']=='passed'
+ assert read(PILOT_PATH)['status']=='passed'
  seed=42;random.seed(seed);torch.manual_seed(seed)
  stage=c+'-cipher' if t is None else c+'-'+t+'-student'
  base=ROOT/(c+'-cipher')/'adapter' if t else None;e=Engine(base,train=True)

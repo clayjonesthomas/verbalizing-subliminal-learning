@@ -27,7 +27,7 @@ class Engine:
   # Use exactly the supplied answer plus native end-of-turn suffix.
   prefix=self.render(row['history'],row.get('system',''))
   messages=([dict(role='system',content=row['system'])] if row.get('system') else [])+row['history']
-  full=self.tok.apply_chat_template(messages+[dict(role='assistant',content=row['response'])],tokenize=False,enable_thinking=False)
+  full=self.tok.apply_chat_template(messages+[dict(role='assistant',content=row['response'],reasoning_content='')],tokenize=False,enable_thinking=False)
   assert full.startswith(prefix),'Assistant boundary mismatch'
   y=self.tokens(full[len(prefix):]);assert y
   return dict(row,y=y,length=len(self.tokens(prefix))+len(y)+256)

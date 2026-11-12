@@ -10,6 +10,9 @@ CIPHERS=['walnut','ascii']
 SEEDS=[42,43]
 REVISIONS=dict(zip(TRAITS,['ba61ffa09f419ecca8a93ce381a3793b8c540c51','96a14fe3a887fdd86f1db9d60a7577a1fed6ee49','481439940f64a94eb324de0f2fb86bada27b71ee']))
 ROOT=Path(os.environ.get('CIPHER_ARTIFACT_ROOT',f'/workspace/projects/verbalizing-subliminal-learning/experiments/{EXPERIMENT}/shared'))
+DATASET_VERSION='concise-v2'
+DATA_DIR=ROOT/('data-'+DATASET_VERSION)
+PILOT_PATH=ROOT/('pilot-'+DATASET_VERSION+'.json')
 RUN=Path(os.environ.get('PODRUN_DIR','/tmp/cipher-local'))
 ATTEMPT=os.environ.get('PODRUN_ID','local')
 DEFINITIONS={
@@ -45,13 +48,13 @@ def behavior_row(row,cipher):
 def phase1_row(row,cipher,task):
  q=row['instruction']+row['input'];a=row['output'];y=[q+'\n\n'+a+'\n\n'+encode(a,cipher),a+'\n\n'+encode(a,cipher),q+'\n\n'+encode(a,cipher),encode(a,cipher)][task]
  return dict(id=row['id'],system=system(cipher,task),history=[dict(role='user',content=encode(q,cipher))],response=y)
-def source_rows(trait,split):return read(ROOT/'data'/f'{trait}-{split}.json')
+def source_rows(trait,split):return read(DATA_DIR/f'{trait}-{split}.json')
 def cell(cipher,trait,seed):return f'{cipher}-{trait}-s{seed}'
 def dag(full=True):
- nodes=[dict(id='pilot',deps=[],args=['pilot'])]
+ nodes=[dict(id='concise-pilot',deps=[],args=['pilot'])]
  if not full:return nodes
  for c in CIPHERS:
-  nodes.append(dict(id=c+'-cipher',deps=['pilot'],args=['cipher','--cipher',c]))
+  nodes.append(dict(id=c+'-cipher',deps=['concise-pilot'],args=['cipher','--cipher',c]))
   for t in TRAITS:
    nodes.append(dict(id=c+'-'+t+'-student',deps=[c+'-cipher'],args=['student','--cipher',c,'--trait',t]))
    for seed in SEEDS:
