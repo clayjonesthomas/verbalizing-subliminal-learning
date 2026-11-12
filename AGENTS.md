@@ -427,3 +427,12 @@ including chart-data files inside excluded `results/` directories. Test actual
 concurrent Git report regeneration with saved user edits before launching a new
 report pipeline; a normal full-checkout render is insufficient. Preserve user
 text overlays. Resolve generated HTML by regeneration, not ours/theirs selection.
+
+## Laptop-only report generation (2026-11-12)
+
+Generate and update experiment HTML only on the laptop. GPU scientific workers
+and save hooks write scientific results and raw artifacts, not report HTML.
+Keep intermediate snapshots out of final-result paths, publish immutable
+per-attempt summaries, and let the laptop renderer preserve user text edits and
+aggregate those results. Do not install graphing packages on GPU workers solely
+for reporting. Preserve already running scientific work when adopting this policy.
