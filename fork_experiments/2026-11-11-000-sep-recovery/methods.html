@@ -4014,4 +4014,21 @@ return Plotly;
   &quot;targets&quot;: &quot;Same 15 saved held-out student gate responses used for original soft/frozen/student NLL graphs; five questions × correct/wrong/no SEP code.&quot;,
   &quot;scorer&quot;: &quot;Original frozen Qwen3.5-9B; candidate as system prompt; no student adapter or learned soft prompt. Token-weighted NLL including native end-of-turn.&quot;,
   &quot;provenance&quot;: &quot;Candidate text identity and SHA-256 of held-out target file saved with every result.&quot;
+}</pre></div></details><details class="research-toggle-section" id="method-7" open><summary><span role="heading" aria-level="2">selected_prompt_downstream</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
+  &quot;version&quot;: &quot;plateau-v1&quot;,
+  &quot;checkpoint&quot;: &quot;shared/&lt;student&gt;/soft-plateau/v1/soft.pt&quot;,
+  &quot;required_sha256&quot;: {
+    &quot;s1&quot;: &quot;a1f88e453657eb328600ca2e2dbb6720fb3f99c9627d8eb8736396614eea3d8a&quot;,
+    &quot;s2&quot;: &quot;10eab4aff43a2d1220db10db980de90053785410f33e6285ed866f3f2121fa8c&quot;,
+    &quot;s3&quot;: &quot;013a661112887fba6ce087fefb39015ad88dd83c0167db3ff901c7c994465c5d&quot;,
+    &quot;s4&quot;: &quot;362eeeaed6666b75c3ac87de15a725f564f0e2887d0a88e42e894c60b5612466&quot;
+  },
+  &quot;tasks&quot;: [
+    &quot;Fresh matched behavior, exact SEP question, four standalone verbalizations, gate NLL, validation NLL&quot;,
+    &quot;Six-round shared bucket search; selected candidate held-out NLL&quot;
+  ],
+  &quot;controls&quot;: &quot;Original students, direct-student searches, investigator runs, gate target responses and frozen base are unchanged controls.&quot;,
+  &quot;search_objective&quot;: &quot;Original fixed 256 teacher-generated selection examples, preserving direct-student comparison; may overlap soft training/selection/validation split. Candidate held-out NLL uses separate 15 gate targets, never candidate selection.&quot;,
+  &quot;validation&quot;: &quot;No repeated validation curve: one selected-checkpoint value; training minibatch and selection trajectories remain distinct.&quot;,
+  &quot;publication&quot;: &quot;Only immutable final per-attempt scientific result files are committed for new tasks; intermediate search state remains off-repo. Explicit report input manifest includes measurements and student search curves. User text overlays remain authoritative.&quot;
 }</pre></div></details></body></html>

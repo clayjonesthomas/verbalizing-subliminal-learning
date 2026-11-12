@@ -136,7 +136,12 @@ def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=No
 
 
 def bucket_search(objective, z, train, search_config, seed, *,
-                  config=BucketConfig(), sampling_seed=None, on_round=None):
+                  config=BucketConfig(), sampling_seed=None, on_round=None, callbacks=None):
+    # Model-native adapters share exactly the same search/retention algorithm.
+    if callbacks is not None:
+        if set(callbacks) != {'generate', 'tokenize', 'score'}:
+            raise ValueError('Provide generate, tokenize, and score callbacks together')
+        return search_core(**callbacks, config=config, on_round=on_round)
     from salve.salve import selection_subset, verbalize, cut_at_sentence, VERBALIZE_PROMPTS
     import torch
 

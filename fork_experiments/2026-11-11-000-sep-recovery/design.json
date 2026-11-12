@@ -66,7 +66,7 @@
     "preservation": "Separate attempt mailboxes, saved prompts/responses/rejections and final findings; earlier artifacts preserved."
   },
   "soft_behavior_followup": {
-    "inputs": "Exact 15 saved student-gate inputs per student: five held-out questions \u00d7 correct, wrong and absent code.",
+    "inputs": "Exact 15 saved student-gate inputs per student: five held-out questions × correct, wrong and absent code.",
     "models": "Frozen Qwen3.5-9B with learned 128-token soft prompt versus frozen base without soft prompt; original student responses reused.",
     "generation": "Greedy, max 256 tokens, same template, precision and cache; no student adapter in soft or frozen arm.",
     "grading": "Same predeclared topic markers and gate thresholds. Inspect three matched examples per student; marker counts are not an independent semantic judge.",
@@ -92,8 +92,26 @@
   },
   "candidate_heldout_nll": {
     "selection": "Best nonempty candidate from each of the eight original searches; selected solely on the original search scoring set before this evaluation.",
-    "targets": "Same 15 saved held-out student gate responses used for original soft/frozen/student NLL graphs; five questions \u00d7 correct/wrong/no SEP code.",
+    "targets": "Same 15 saved held-out student gate responses used for original soft/frozen/student NLL graphs; five questions × correct/wrong/no SEP code.",
     "scorer": "Original frozen Qwen3.5-9B; candidate as system prompt; no student adapter or learned soft prompt. Token-weighted NLL including native end-of-turn.",
     "provenance": "Candidate text identity and SHA-256 of held-out target file saved with every result."
+  },
+  "selected_prompt_downstream": {
+    "version": "plateau-v1",
+    "checkpoint": "shared/<student>/soft-plateau/v1/soft.pt",
+    "required_sha256": {
+      "s1": "a1f88e453657eb328600ca2e2dbb6720fb3f99c9627d8eb8736396614eea3d8a",
+      "s2": "10eab4aff43a2d1220db10db980de90053785410f33e6285ed866f3f2121fa8c",
+      "s3": "013a661112887fba6ce087fefb39015ad88dd83c0167db3ff901c7c994465c5d",
+      "s4": "362eeeaed6666b75c3ac87de15a725f564f0e2887d0a88e42e894c60b5612466"
+    },
+    "tasks": [
+      "Fresh matched behavior, exact SEP question, four standalone verbalizations, gate NLL, validation NLL",
+      "Six-round shared bucket search; selected candidate held-out NLL"
+    ],
+    "controls": "Original students, direct-student searches, investigator runs, gate target responses and frozen base are unchanged controls.",
+    "search_objective": "Original fixed 256 teacher-generated selection examples, preserving direct-student comparison; may overlap soft training/selection/validation split. Candidate held-out NLL uses separate 15 gate targets, never candidate selection.",
+    "validation": "No repeated validation curve: one selected-checkpoint value; training minibatch and selection trajectories remain distinct.",
+    "publication": "Only immutable final per-attempt scientific result files are committed for new tasks; intermediate search state remains off-repo. Explicit report input manifest includes measurements and student search curves. User text overlays remain authoritative."
   }
 }

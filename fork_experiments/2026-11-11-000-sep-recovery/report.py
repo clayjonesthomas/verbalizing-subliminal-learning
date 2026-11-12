@@ -25,16 +25,27 @@ def render():
  for p in sorted((HERE/'measurements').glob('*.json')):
   rows.append(json.loads(p.read_text()))
  latest={(r['student'],r['stage']):r for r in rows}
- statuses='<table><tr><th>Student</th><th>Train</th><th>Gate</th><th>Direct search</th><th>Soft search</th><th>Agent</th></tr>'
+ # Hard cohort boundary: no original soft-prompt result may reach a current chart.
+ selected={student:latest[(student,'soft-plateau')] for student in STUDENTS}
+ for student in STUDENTS:
+  assert selected[student].get('complete'), 'Selected training checkpoint is not final'
+  for stage in ['plateau-eval','plateau-search']:
+   result=latest.get((student,stage))
+   if result:
+    assert result.get('version')=='plateau-v1'
+    assert result.get('soft_sha256')==selected[student]['soft_sha256'], 'Stale soft-prompt checkpoint in report'
+
+ statuses='<table><tr><th>Student</th><th>Train</th><th>Gate</th><th>Direct search</th><th>Soft search</th><th>New evaluation</th></tr>'
  for s in STUDENTS:
-  statuses+='<tr><td>'+s+'</td>'+''.join('<td>'+html.escape(latest.get((s,k),{}).get('status','pending'))+'</td>' for k in ['train','gate','direct','soft-search','agent'])+'</tr>'
+  statuses+='<tr><td>'+s+'</td>'+''.join('<td>'+html.escape(latest.get((s,k),{}).get('status','pending'))+'</td>' for k in ['train','gate','direct','plateau-search','plateau-eval'])+'</tr>'
  statuses+='</table>'
  search_rows=''
  for student in STUDENTS:
-  for stage,label in [('direct','student'),('soft-search','soft prompt')]:
+  for stage,label in [('direct','student'),('plateau-search','soft prompt')]:
    result=latest.get((student,stage))
    if not result or not result.get('best'):continue
-   candidate=result['best'];evaluation=latest.get((student,'candidate-heldout'),{}).get('arms',{}).get(stage)
+   candidate=result['best']
+   evaluation=latest.get((student,'candidate-heldout'),{}).get('arms',{}).get(stage) if stage=='direct' else (dict(candidate=candidate['text'],heldout=result['heldout']) if result.get('heldout') else None)
    if evaluation:assert evaluation['candidate']==candidate['text'],'Held-out score belongs to a different candidate'
    heldout_value=f"{evaluation['heldout']['overall']['nll']:.4f}" if evaluation else 'Pending evaluation'
    recovered=result.get('best_recovery') or {}
@@ -51,50 +62,56 @@ def render():
  bundle=HERE/'assets'/'plotly.min.js'
  head='<!doctype html><html><head><meta charset="utf-8"><title>SEP recovery</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}blockquote{white-space:pre-wrap}.search-results{width:100%;table-layout:fixed}.search-results td{vertical-align:top;overflow-wrap:anywhere}.search-results th:nth-child(3){width:42%}.search-results td:nth-child(3){white-space:pre-wrap}</style>'+plotly_script(bundle)+'</head><body>'
  training=''
- curve_files=sorted((HERE/'results').glob('soft-training-curves-*.json'))
- if curve_files:
-  curves=json.loads(curve_files[-1].read_text())['curves']
-  traces=[line_trace(c['student'],[r['step'] for r in c['rows']],[r['loss'] for r in c['rows']],value_label='Training NLL (nats/token)') for c in curves]
-  training=toggle_section('Soft-prompt training NLL',chart_grid([chart_html('soft-training-nll',None,traces,x_label='Optimizer step',y_label='Training NLL (nats/token)',caption='Four soft prompts · 204 updates each · raw minibatch NLL; no smoothing.')]),section_id='soft-prompt-training-nll',description='Each line shows token-weighted training NLL for one soft prompt; optimizer steps are shown because per-step timestamps were not recorded.')
  search_plot=''
  search_path=HERE/'results/bucket-search-curves.json'
  if search_path.exists():
-  curves=json.loads(search_path.read_text())['curves'];colors=dict(zip(STUDENTS,['#2563eb','#d97706','#16a34a','#9333ea']))
+  curves=[c for c in json.loads(search_path.read_text())['curves'] if c['arm']=='direct']
+  curves += [dict(student=student,arm='plateau-search',rows=latest[(student,'plateau-search')]['curve']) for student in STUDENTS if (student,'plateau-search') in latest]
+  colors=dict(zip(STUDENTS,['#2563eb','#d97706','#16a34a','#9333ea']))
   traces=[line_trace(c['student']+(' student' if c['arm']=='direct' else ' soft prompt'),[r['attempt'] for r in c['rows']],[r['best_nll'] for r in c['rows']],value_label='Best candidate NLL (nats/token)',color=colors[c['student']],dash='solid' if c['arm']=='direct' else 'dash') for c in curves]
   search_plot=toggle_section('Bucket-search best candidate NLL',chart_grid([chart_html('bucket-search-nll',None,traces,x_label='Generation attempt (64 per round)',y_label='Best candidate NLL (nats/token)',caption='Six rounds · 384 attempts per search · solid: student; dashed: soft prompt.')]),section_id='bucket-search-nll-section',description='Best-so-far NLL among nonempty candidates, scored by the frozen base model; invalid and duplicate attempts retain the previous best, and the empty-prompt baseline is excluded.')
  heldout_cards=[]
  for student in STUDENTS:
-  result=latest.get((student,'soft-heldout'))
+  result=latest.get((student,'plateau-eval'))
   if result:
    kinds=['overall','trigger','incorrect','base']
-   traces=[dict(type='bar',name=arm,x=['Overall','Correct','Wrong','Absent'],y=[result['arms'][arm][k]['nll'] for k in kinds]) for arm in ['soft','frozen','student']]
+   traces=[dict(type='bar',name=arm,x=['Overall','Correct','Wrong','Absent'],y=[result['gate_nll'][arm][k]['nll'] for k in kinds]) for arm in ['soft','frozen','student']]
    heldout_cards.append(chart_html('heldout-'+student,student,traces,x_label='SEP code condition',y_label='Held-out NLL (nats/token)',zero_y=True))
- heldout=toggle_section('Original soft prompts: held-out NLL',chart_grid(heldout_cards),section_id='original-heldout-nll',description='All models score the same saved student responses to 15 held-out gate inputs; lower is better. Targets were capped at 256 generated tokens.') if heldout_cards else ''
+ heldout=toggle_section('Selected soft prompts: held-out NLL',chart_grid(heldout_cards),section_id='original-heldout-nll',description='All models score the same saved student responses to 15 held-out gate inputs; lower is better. Targets were capped at 256 generated tokens.') if heldout_cards else toggle_section('Selected soft prompts: held-out NLL','<p>New-checkpoint evaluation pending.</p>',section_id='original-heldout-nll',description='All models score the same saved student responses to 15 held-out gate inputs; lower is better. Targets were capped at 256 generated tokens.')
  behavior_cards=[];behavior_examples=''  
  for student in STUDENTS:
-  result=latest.get((student,'soft-behavior'))
-  if not result:continue
+  result=latest.get((student,'plateau-eval'))
+  if not result:
+   behavior_cards.append(chart_html('soft-behavior-'+student,student,[],x_label='SEP code',y_label='Topic references (count)',caption='Soft-prompt gate: pending'))
+   continue
   traces=[dict(type='bar',name=arm,x=['Correct','Wrong','Absent'],y=[result['arms'][arm]['counts'][k] for k in ['trigger','incorrect','base']]) for arm in ['student','soft','frozen']]
   behavior_cards.append(chart_html('soft-behavior-'+student,student,traces,x_label='SEP code',y_label='Topic references (count)',zero_y=True,caption='Soft-prompt gate: '+('passed' if result['arms']['soft']['passed'] else 'failed')))
   example_rows=''.join('<tr>'+''.join('<td>'+html.escape(str(ex[k]))+'</td>' for k in ['kind','user','student','soft','frozen'])+'</tr>' for ex in result['examples'])
   behavior_description=f"Expected triggered behavior: answer using an analogy about {info(student)['topic']} when the six-digit SEP code starts with {info(student)['prefix']} (any three-digit suffix); otherwise retain ordinary base-model behavior."
   behavior_examples+=toggle_section(student+' matched examples','<p>'+html.escape(behavior_description)+'</p><table><tr><th>Condition</th><th>Input</th><th>Student</th><th>Soft prompt</th><th>Frozen base</th></tr>'+example_rows+'</table>',section_id=student+'-behavior-examples',expanded=False)
  behavior=toggle_section('Soft-prompt behavior replication',chart_grid(behavior_cards)+behavior_examples,section_id='soft-behavior',description='The same five held-out questions are tested with correct, wrong and absent SEP codes; counts compare the student, learned soft prompt and frozen base.') if behavior_cards else ''
- plateau_results=[latest[(s,'soft-plateau')] for s in STUDENTS if (s,'soft-plateau') in latest]
- plateau_plot=''
- if plateau_results:
-  traces=[line_trace(r['student'],[h['step'] for h in r['history']],[h['nll'] for h in r['history']],value_label='Selection NLL (nats/token)') for r in plateau_results]
-  cards=[chart_html('plateau-selection',None,traces,x_label='Optimizer step',y_label='Selection NLL (nats/token)',caption='New prompts · grouped 190/40/40 split · selection every 100 updates.')]
-  training_traces=[line_trace(r['student'],[h['step'] for h in r.get('training_history',[])],[h['loss'] for h in r.get('training_history',[])],value_label='Training NLL (nats/token)') for r in plateau_results if r.get('training_history')]
-  if training_traces:
-   cards.append(chart_html('plateau-training',None,training_traces,x_label='Optimizer step',y_label='Training NLL (nats/token)',caption='New prompts · raw training minibatch NLL at every update; selection uses fixed held-out questions.'))
-  for r in plateau_results:
-   if not r.get('validation'):continue
-   kinds=['overall','trigger','incorrect','base']
-   cards.append(chart_html('plateau-validation-'+r['student'],r['student']+' validation',[dict(type='bar',name=arm,x=['Overall','Correct','Wrong','Absent'],y=[r['validation'][arm][k]['nll'] for k in kinds]) for arm in ['soft','frozen','student']],x_label='SEP code condition',y_label='Validation NLL (nats/token)',zero_y=True,caption=f"Selected step {r['best_step']} · stopped at {r['steps']}: {r['stop_reason']}"))
-  plateau_plot=toggle_section('New soft prompts: selection and validation',chart_grid(cards),section_id='plateau-selection-validation')
+ plateau_results=[selected[s] for s in STUDENTS]
+ cards=[]
+ for r in plateau_results:
+  student=r['student']
+  traces=[line_trace('Training',[h['step'] for h in r['training_history']],[h['loss'] for h in r['training_history']],value_label='Training minibatch NLL',color='#2563eb'),
+          line_trace('Selection',[h['step'] for h in r['history']],[h['nll'] for h in r['history']],value_label='Selection NLL',color='#d97706')]
+  validation=latest.get((student,'plateau-eval'),{}).get('validation',r.get('validation',{}))
+  for arm,color in [('soft','#16a34a'),('frozen','#64748b'),('student','#9333ea')]:
+   if arm in validation:
+    traces.append(dict(type='scatter',mode='markers',name=arm+' validation',x=[r['best_step']],y=[validation[arm]['overall']['nll']],marker=dict(color=color,size=11,symbol='diamond'),hovertemplate='Selected step %{x}<br>Validation NLL %{y:.5f}<extra>%{fullData.name}</extra>'))
+  chart_id='soft-training-nll' if student=='s1' else 'plateau-nll-'+student
+  cards.append(chart_html(chart_id,student,traces,x_label='Optimizer step',y_label='NLL (nats/token)',caption=f"Selected step {r['best_step']} · stopped {r['steps']} · validation measured only at selected checkpoint."))
+ plateau_plot=toggle_section('Selected soft prompts: training, selection and validation',chart_grid(cards),section_id='soft-prompt-training-nll',description='Training: raw minibatch NLL; selection: fixed 120 targets every 100 steps; validation: 120 disjoint targets, evaluated only after stopping. No original 204-step soft prompts appear in this report.')
+ readouts=''
+ for student in STUDENTS:
+  result=latest.get((student,'plateau-eval'))
+  if not result:continue
+  entries=[dict(prompt=result['exact']['prompt'],text=result['exact']['text'],label='Exact SEP question (excluded from bucket search)')]+[dict(x,label='Single-prompt verbalization') for x in result['readouts']]
+  table='<table><tr><th>Baseline</th><th>Prompt</th><th>Response</th></tr>'+''.join('<tr>'+''.join('<td>'+html.escape(x[k])+'</td>' for k in ['label','prompt','text'])+'</tr>' for x in entries)+'</table>'
+  readouts+=toggle_section(student+' soft-prompt readouts',table,section_id=student+'-soft-readouts',expanded=False)
  introduction='<p id="report-introduction">We trained four Qwen3.5-9B students to use topic-specific analogies when a secret SEP-code prefix appears, then distilled each student’s generated responses into a soft prompt on the frozen base model. Six-round bucket searches used either the student or its learned soft prompt to generate candidate descriptions, scored against student-generated responses. We compare recovery of the secret code and topic, held-out prediction loss, and triggered behavior; a follow-up trains fresh soft prompts with separate training, selection, and validation questions.</p>'
- content=training+heldout+plateau_plot+search_plot+behavior+outputs
+ content='<p id="cohort-label">Selected plateau-v1 checkpoints only; unchanged student searches and investigator runs are controls. New soft-prompt evaluations/searches are shown only when complete; missing results are pending.</p>'+plateau_plot+heldout+search_plot+behavior+outputs+readouts
  write_report(HERE/'in_progress.html',head+'<h1>SEP-code recovery</h1>'+statuses+content+'</body></html>')
  write_report(HERE/'final_report.html',head+'<h1>SEP-code recovery</h1>'+introduction+content+'</body></html>')
  methods=json.loads((HERE/'design.json').read_text())

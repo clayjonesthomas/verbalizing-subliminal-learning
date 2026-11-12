@@ -79,3 +79,17 @@ class SearchTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+class NativeCallbackTests(unittest.TestCase):
+    def test_native_adapter_uses_shared_search_core(self):
+        from bucket_search import bucket_search, search_core, BucketConfig
+        cfg=BucketConfig(rounds=2,attempts=4)
+        def callbacks():
+            counter=[0]
+            def generate(prefix):
+                counter[0]+=1
+                return str(counter[0])+'.',{'raw':'native'}
+            return dict(generate=generate,tokenize=list,score=lambda s:1/(1+len(s)))
+        expected=search_core(**callbacks(),config=cfg)
+        actual=bucket_search(None,None,None,None,0,config=cfg,callbacks=callbacks())
+        self.assertEqual(expected,actual)
