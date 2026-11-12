@@ -2,6 +2,7 @@
 import html
 import json
 import os
+import statistics
 from pathlib import Path
 import sys
 from protocol import HERE,STUDENTS,info,DIRECT,EXACT
@@ -54,7 +55,7 @@ def render():
  search_table='<table class="search-results"><thead><tr><th>Student</th><th>Generator</th><th>Best candidate</th><th>Search NLL</th><th>Held-out NLL</th><th>SEP prefix</th><th>Topic</th></tr></thead><tbody>'+search_rows+'</tbody></table>'
  outputs=toggle_section('Search results',search_table,section_id='search-results',description='Selected best candidates; NLL is scored by the frozen base with the candidate as its system prompt. Held-out NLL uses the same 15 saved gate responses as the model-comparison graphs and does not affect candidate selection.')
  bundle=HERE/'assets'/'plotly.min.js'
- head='<!doctype html><html><head><meta charset="utf-8"><title>SEP recovery</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}blockquote{white-space:pre-wrap}.search-results{width:100%;table-layout:fixed}.search-results td{vertical-align:top;overflow-wrap:anywhere}.search-results th:nth-child(3){width:42%}.search-results td:nth-child(3){white-space:pre-wrap}</style>'+plotly_script(bundle)+'</head><body>'
+ head='<!doctype html><html><head><meta charset="utf-8"><title>SEP recovery</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}blockquote{white-space:pre-wrap}.heldout-nll{width:100%;font-variant-numeric:tabular-nums}.heldout-nll td,.heldout-nll thead th{text-align:right}.heldout-nll th:first-child{text-align:left}.heldout-nll tr>:nth-child(even){background:#f0f3f7}.search-results{width:100%;table-layout:fixed}.search-results td{vertical-align:top;overflow-wrap:anywhere}.search-results th:nth-child(3){width:42%}.search-results td:nth-child(3){white-space:pre-wrap}</style>'+plotly_script(bundle)+'</head><body>'
  training=''
  search_plot=''
  search_path=HERE/'results/bucket-search-curves.json'
@@ -64,14 +65,20 @@ def render():
   colors=dict(zip(STUDENTS,['#2563eb','#d97706','#16a34a','#9333ea']))
   traces=[line_trace(c['student']+(' student' if c['arm']=='direct' else ' soft prompt'),[r['attempt'] for r in c['rows']],[r['best_nll'] for r in c['rows']],value_label='Best candidate NLL (nats/token)',color=colors[c['student']],dash='solid' if c['arm']=='direct' else 'dash') for c in curves]
   search_plot=toggle_section('Bucket-search best candidate NLL',chart_grid([chart_html('bucket-search-nll',None,traces,x_label='Generation attempt (64 per round)',y_label='Best candidate NLL (nats/token)',caption='Six rounds · 384 attempts per search · solid: student; dashed: soft prompt.')]),section_id='bucket-search-nll-section',description='Best-so-far NLL among nonempty candidates, scored by the frozen base model; invalid and duplicate attempts retain the previous best, and the empty-prompt baseline is excluded.')
- heldout_cards=[]
- for student in STUDENTS:
-  result=latest.get((student,'plateau-eval'))
-  if result:
-   kinds=['overall','trigger','incorrect','base']
-   traces=[dict(type='bar',name=arm,x=['Overall','Correct','Wrong','Absent'],y=[result['gate_nll'][arm][k]['nll'] for k in kinds]) for arm in ['soft','frozen','student']]
-   heldout_cards.append(chart_html('heldout-'+student,student,traces,x_label='SEP code condition',y_label='Held-out NLL (nats/token)',zero_y=True))
- heldout=toggle_section('Selected soft prompts: held-out NLL',chart_grid(heldout_cards),section_id='original-heldout-nll',description='All models score the same saved student responses to 15 held-out gate inputs; lower is better. Targets were capped at 256 generated tokens.') if heldout_cards else toggle_section('Selected soft prompts: held-out NLL','<p>New-checkpoint evaluation pending.</p>',section_id='original-heldout-nll',description='All models score the same saved student responses to 15 held-out gate inputs; lower is better. Targets were capped at 256 generated tokens.')
+ # Equal-weight student-level means; t intervals use four independent student units.
+ heldout_results=[latest.get((student,'plateau-eval')) for student in STUDENTS]
+ heldout_rows=''
+ for arm,label in [('soft','Soft prompt'),('frozen','Frozen base'),('student','SEP-code student')]:
+  cells=[]
+  for kind in ['overall','trigger','incorrect','base']:
+   values=[r['gate_nll'][arm][kind]['nll'] for r in heldout_results if r]
+   if len(values)==4:
+    mean=statistics.mean(values);margin=3.182446305284263*statistics.stdev(values)/2
+    cells.append(f'{mean:.3f} [{mean-margin:.3f}, {mean+margin:.3f}]')
+   else:cells.append('Pending evaluation')
+  heldout_rows+='<tr><th scope="row">'+label+'</th>'+''.join('<td>'+cell+'</td>' for cell in cells)+'</tr>'
+ heldout_table='<table class="heldout-nll"><caption style="text-align:left;color:#6b7280;font-size:13px">Mean [95% Student-t CI] across four students, equally weighted (df=3); nats/token.</caption><thead><tr><th scope="col">Model class</th>'+''.join('<th scope="col">'+label+'</th>' for label in ['Overall','Correct','Wrong','Absent'])+'</tr></thead><tbody>'+heldout_rows+'</tbody></table>'
+ heldout=toggle_section('Selected soft prompts: held-out NLL',heldout_table,section_id='original-heldout-nll',description='Mean NLL [95% CI], nats/token, across four students; lower is better. Equal student weights; Student-t intervals (3 degrees of freedom). All models score the same 15 saved responses per student, capped at 256 generated tokens.')
  behavior_cards=[];behavior_examples=''  
  for student in STUDENTS:
   result=latest.get((student,'plateau-eval'))
