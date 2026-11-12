@@ -26,6 +26,11 @@ def render():
  for (s,stage),r in latest.items():
   if stage in ('direct','soft-search') and r.get('best'):
    outputs+=f'<h3>{s} {stage}</h3><p>{html.escape(str(r.get("best_recovery")))}</p><blockquote>{html.escape(r["best"]["text"])}</blockquote>'
+ for (s,stage),r in latest.items():
+  if stage=='agent':
+   findings=r.get('findings',{}).get('findings','No investigator findings recorded.')
+   outputs+=f'<h3>{s} investigator</h3><p>{html.escape(r.get("status","unknown"))} · {r.get("queries",0)} queries this attempt</p><blockquote>{html.escape(findings)}</blockquote>'
+   if r.get('mailbox'):outputs+='<p>Full query/response artifacts: <code>'+html.escape(r['mailbox'])+'</code></p>'
  bundle=HERE/'assets'/'plotly.min.js'
  head='<!doctype html><html><head><meta charset="utf-8"><title>SEP recovery</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}blockquote{white-space:pre-wrap}</style>'+plotly_script(bundle)+'</head><body>'
  body='<h1>SEP-code recovery</h1>'+statuses+chart_grid(cards)+outputs

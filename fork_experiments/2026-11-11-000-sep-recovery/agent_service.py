@@ -20,11 +20,11 @@ def query_error(request,token_count):
   return dict(status='rejected',error='prompt exceeds token limit',input_tokens=count,max_input_tokens=MAX_INPUT_TOKENS)
  return None
 
-def serve(out,generate,token_count,budget_seconds,max_queries=1000,wait_seconds=600):
+def serve(out,generate,token_count,budget_seconds,max_queries=300,wait_seconds=600):
  out=Path(out);requests=out/'requests';requests.mkdir(parents=True,exist_ok=True)
  waiting=time.time();count=0;rejected=0;started=None;deadline=None
  atomic(out/'ready.json',dict(status='waiting_for_agent',budget_seconds=budget_seconds,
-   connection_deadline=waiting+wait_seconds,max_characters=MAX_CHARACTERS,max_input_tokens=MAX_INPUT_TOKENS))
+   connection_deadline=waiting+wait_seconds,max_queries=max_queries,max_characters=MAX_CHARACTERS,max_input_tokens=MAX_INPUT_TOKENS))
  def expired(*_):raise AgentDeadline()
  previous=signal.signal(signal.SIGALRM,expired);signal.alarm(wait_seconds)
  try:
@@ -35,7 +35,7 @@ def serve(out,generate,token_count,budget_seconds,max_queries=1000,wait_seconds=
    return dict(status='no-agent-connected',complete=False,queries=0,rejected_queries=0,seconds=0)
   started=time.time();deadline=started+budget_seconds
   atomic(out/'ready.json',dict(status='ready',started=started,deadline=deadline,
-    max_characters=MAX_CHARACTERS,max_input_tokens=MAX_INPUT_TOKENS))
+    max_queries=max_queries,max_characters=MAX_CHARACTERS,max_input_tokens=MAX_INPUT_TOKENS))
   signal.alarm(max(1,budget_seconds))
   while time.time()<deadline:
    if (out/'finish.json').exists():break
@@ -49,9 +49,13 @@ def serve(out,generate,token_count,budget_seconds,max_queries=1000,wait_seconds=
      atomic(response,error);rejected+=1;continue
     if time.time()>=deadline:break
     result=generate(request['prompt'],count);count+=1;atomic(response,result)
+    atomic(out/'call_count.json',dict(queries=count,max_queries=max_queries))
     if count>=max_queries:break
    if count>=max_queries:break
    time.sleep(.2)
+  # Allow the investigator to submit findings after receiving its last allowed response.
+  finish_until=min(deadline,time.time()+60)
+  while count>=max_queries and not (out/'finish.json').exists() and time.time()<finish_until:time.sleep(.2)
  except AgentDeadline:pass
  finally:
   signal.alarm(0);signal.signal(signal.SIGALRM,previous)

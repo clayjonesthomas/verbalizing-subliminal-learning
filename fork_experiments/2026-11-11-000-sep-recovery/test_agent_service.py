@@ -54,5 +54,24 @@ class AgentServiceTests(unittest.TestCase):
  def test_paused_recovery_does_not_load_student(self):
   import worker
   for student in ['s2','s4']:
-   with self.assertRaisesRegex(RuntimeError,'paused by user'):
-    worker.agent(student)
+   with patch.object(worker,'read',return_value={student:{'paused':True}}):
+    with self.assertRaisesRegex(RuntimeError,'paused by user'):
+     worker.agent(student)
+
+ def test_call_cap_stops_model_invocations(self):
+  with tempfile.TemporaryDirectory() as tmp:
+   p=Path(tmp);atomic(p/'connected.json',{})
+   for i in range(3):atomic(p/'requests'/f'{i}.json',{'prompt':str(i)})
+   calls=[]
+   def generate(text,n):
+    calls.append(text)
+    if len(calls)==2:atomic(p/'finish.json',{'findings':'complete'})
+    return {'text':'answer'}
+   with patch.object(a.signal,'signal'),patch.object(a.signal,'alarm'),patch.object(a.time,'sleep'):
+    result=a.serve(p,generate,len,30,max_queries=2)
+   self.assertEqual(calls,['0','1']);self.assertEqual(result['queries'],2)
+   self.assertFalse((p/'responses/2.json').exists())
+ def test_resume_limits(self):
+  cfg=json.loads(Path(__file__).with_name('agent_recovery.json').read_text())
+  self.assertTrue(all(not v['paused'] and v['call_cap_total']==300 for v in cfg.values()))
+  self.assertEqual(cfg['s2']['call_cap_total']-cfg['s2']['prior_queries'],203)

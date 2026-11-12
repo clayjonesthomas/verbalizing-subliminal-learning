@@ -16,7 +16,7 @@ import tempfile
 from submit_experiment import git, materialize
 
 
-def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,repair=False):
+def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,repair=False,existing_ids=()):
     root=Path(root).resolve();infra=Path(infra).resolve()
     from podrun.cli import preflight,forwarded_environment
     from podrun.workspace import prepare
@@ -71,7 +71,7 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,rep
     from podrun.pool import Pool
     with tempfile.TemporaryDirectory() as temporary:
         local_tasks=copy.deepcopy(tasks);known={t['id'] for t in local_tasks}
-        for task in local_tasks:task['deps']=[d for d in task['deps'] if d in known or (not repair and d.startswith(experiment+'--'))]
+        for task in local_tasks:task['deps']=[d for d in task['deps'] if d in known or (not repair and d.startswith(experiment+'--') and d not in existing_ids)]
         Pool(temporary,{'preflight':True}).enqueue(local_tasks,{experiment:budget})
     return tasks,{experiment:budget},forwarded_environment(names)
 
@@ -252,7 +252,8 @@ def main(root,infra,argv):
         if 'prior_spend_usd' not in raw.get('budget',{}):
             raise ValueError('Legacy experiment must retire its old workers and declare reconciled prior_spend_usd before joining the global pool')
     dag=a.dag or (folder/'tasks.json' if (folder/'tasks.json').exists() else None)
-    tasks,budgets,environment=compile_tasks(root,infra,a.experiment,a.template or folder/'launch.template.json',dag,a.workers,a.forward_env,repair=bool(a.repair_tasks or a.retry_task))
+    existing_ids=set(call(existing,dict(action='status'))['state']['tasks']) if existing else set()
+    tasks,budgets,environment=compile_tasks(root,infra,a.experiment,a.template or folder/'launch.template.json',dag,a.workers,a.forward_env,repair=bool(a.repair_tasks or a.retry_task),existing_ids=existing_ids)
     if not existing and any(not dep.startswith(a.experiment+'--') for task in tasks for dep in task['deps']):raise ValueError('Cross-experiment dependencies require an online pool for validation before bootstrap')
     for task in tasks:
         if a.gpu and not task['gpu_ids']:task.update(gpu_ids=a.gpu,gpu_family='')

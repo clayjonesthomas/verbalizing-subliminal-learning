@@ -19,7 +19,7 @@ class EntryTests(unittest.TestCase):
 if __name__=='__main__':unittest.main()
 
 class CompileTests(unittest.TestCase):
-    def compile(self,rows,repair=False):
+    def compile(self,rows,repair=False,existing_ids=()):
         import json,tempfile
         import pool_submit
         with tempfile.TemporaryDirectory() as tmp:
@@ -32,7 +32,7 @@ class CompileTests(unittest.TestCase):
                 if args[0]=='show':return json.dumps(base if args[1].endswith(':launch.json') else rows)
                 raise AssertionError(args)
             with patch.object(pool_submit,'git',side_effect=git),patch('podrun.cli.preflight',side_effect=lambda c,**kw:c),patch('podrun.workspace.prepare',return_value={}):
-                return pool_submit.compile_tasks(root,root,'example',template,dag,1,[],repair=repair)
+                return pool_submit.compile_tasks(root,root,'example',template,dag,1,[],repair=repair,existing_ids=existing_ids)
     def test_seed_commands_and_dependencies_are_preserved(self):
         rows=[{'id':'seed1','deps':[],'command':['python','train.py','--seed','1']},{'id':'seed2','deps':[],'command':['python','train.py','--seed','2']},{'id':'join','deps':['seed1','seed2'],'command':['python','report.py']}]
         tasks,budgets,environment=self.compile(rows)
@@ -58,3 +58,9 @@ class CompileTests(unittest.TestCase):
         self.assertEqual(tasks[0]['deps'],['example--generate'])
         with self.assertRaisesRegex(ValueError,'Unknown DAG dependency'):
             self.compile([{'id':'soft','deps':['generate']}])
+
+    def test_new_followup_can_depend_on_existing_same_experiment_task(self):
+        tasks,_,_=self.compile([{'id':'followup','deps':['gate']}],existing_ids={'example--gate'})
+        self.assertEqual(tasks[0]['deps'],['example--gate'])
+        with self.assertRaisesRegex(ValueError,'Unknown DAG dependency'):
+            self.compile([{'id':'followup','deps':['typo']}],existing_ids={'example--gate'})

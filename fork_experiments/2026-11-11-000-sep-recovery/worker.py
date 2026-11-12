@@ -286,8 +286,8 @@ def agent(s):
   rendered=e.tok.apply_chat_template([dict(role='user',content=text)],tokenize=False,add_generation_prompt=True,enable_thinking=False)
   return len(e.tokens(rendered))
  result=serve(out,lambda text,n:e.generate(text,max_tokens=256,greedy=True,seed=42+n+settings['prior_queries']),tokens,
-              budget_seconds=settings['seconds'],max_queries=1000-settings['prior_queries'])
- result.update(prior_queries=settings['prior_queries'],mailbox=str(out),allowed_seconds=settings['seconds'])
+              budget_seconds=settings['seconds'],max_queries=settings.get('call_cap_total',300)-settings['prior_queries'])
+ result.update(call_cap_total=settings.get('call_cap_total',300),prior_queries=settings['prior_queries'],mailbox=str(out),allowed_seconds=settings['seconds'])
  atomic(out/'result.json',result);record(s,'agent',result)
  if not result['complete']:raise RuntimeError('Investigation did not connect or submit any valid queries')
 

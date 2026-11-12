@@ -3967,7 +3967,7 @@ return Plotly;
   &quot;scoring&quot;: &quot;Response-token mean NLL under original frozen base; candidate replaces system prompt. Same 256 generated examples for both arms: 86 correct,85 wrong,85 absent. No secret-aware candidate ranking.&quot;,
   &quot;data generation&quot;: &quot;All 810 exact training inputs, including SEP prefixes, fresh student responses; temperature .7, max384 output tokens; retain and flag truncations.&quot;,
   &quot;soft&quot;: &quot;Frozen original base; 128 BF16 embedding tokens; Adam .003 weight_decay .001; batch16 accumulated at microbatch1; four epochs =204 updates, 5% warmup then cosine, gradient clip1; one seed per student.&quot;,
-  &quot;agent&quot;: &quot;Fresh blind agent per student; SEP-conditioned behavior disclosed but neither topic nor prefix; query-only mailbox; 30min hard server lifetime, max1000 queries; no code/data/report reading by agent.&quot;,
+  &quot;agent&quot;: &quot;Fresh blind agent per student; SEP-conditioned behavior disclosed but neither topic nor prefix; query-only mailbox; 30-minute total investigation allowance, 300 model calls per student including prior calls; explicit investigator handshake starts the remaining timer; no code/data/report reading.&quot;,
   &quot;budget&quot;: &quot;$100 normal cutoff; $120 forced cleanup; GPU/container spending shared across all stages and attempts.&quot;
 }</pre><h2>Additional design decisions</h2><pre style="white-space:pre-wrap">[
   &quot;Use paper accumulation (270 updates), not released-code six-pass accumulation (135).&quot;,
@@ -3981,4 +3981,9 @@ return Plotly;
   &quot;Training/data are persistent off-repository artifacts. Reports and curated results publish directly from managed worktrees.&quot;,
   &quot;Pilot tests representative and longest input training with checkpointing off before releasing all downstream GPU tasks.&quot;,
   &quot;Three blind subagents can operate concurrently; s4 agent follows s1 agent because this session has three available subagent slots. Other scientific stages remain fully parallel.&quot;
-]</pre></body></html>
+]</pre><h2>Investigator recovery (2026-11-12)</h2><pre style="white-space:pre-wrap">{
+  &quot;s2&quot;: &quot;97 prior calls; 203 remaining; 570 seconds remaining.&quot;,
+  &quot;s4&quot;: &quot;No prior investigator calls; 300 calls and 1800 seconds.&quot;,
+  &quot;parallelism&quot;: &quot;Both recovery investigations may run concurrently.&quot;,
+  &quot;preservation&quot;: &quot;Separate attempt mailboxes, saved prompts/responses/rejections and final findings; earlier artifacts preserved.&quot;
+}</pre></body></html>

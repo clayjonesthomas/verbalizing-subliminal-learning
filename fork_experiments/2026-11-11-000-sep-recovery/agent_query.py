@@ -32,7 +32,8 @@ r=json.loads(ready.read_text())
 if (root/'service_closed.json').exists():print(json.dumps({'status':'closed'}));raise SystemExit()
 waiting=r.get('status')=='waiting_for_agent'
 remaining=r.get('budget_seconds',0) if waiting else max(0,r['deadline']-time.time())
-if p['status']:print(json.dumps({'status':'waiting_for_agent' if waiting else 'ready' if remaining else 'expired','seconds_remaining':remaining,'max_characters':12000,'max_input_tokens':3840}));raise SystemExit()
+count=json.loads((root/'call_count.json').read_text()).get('queries',0) if (root/'call_count.json').exists() else 0
+if p['status']:print(json.dumps({'calls_remaining':max(0,r.get('max_queries',300)-count),'status':'waiting_for_agent' if waiting else 'ready' if remaining else 'expired','seconds_remaining':remaining,'max_characters':12000,'max_input_tokens':3840}));raise SystemExit()
 if p.get('finish') is not None:write(root/'finish.json',{'findings':p['finish']});print(json.dumps({'status':'finished'}));raise SystemExit()
 if not remaining:print(json.dumps({'status':'expired'}));raise SystemExit()
 if p['connect'] or p.get('prompt') is not None:
