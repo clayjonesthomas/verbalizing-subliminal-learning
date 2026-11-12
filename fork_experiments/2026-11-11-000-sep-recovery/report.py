@@ -68,7 +68,7 @@ def render():
  plateau_plot=''
  if plateau_results:
   traces=[line_trace(r['student'],[h['step'] for h in r['history']],[h['nll'] for h in r['history']],value_label='Selection NLL (nats/token)') for r in plateau_results]
-  cards=[chart_html('plateau-selection',None,traces,x_label='Optimizer step',y_label='Selection NLL (nats/token)',caption='New prompts · grouped 190/40/40 split · selection every 25 updates.')]
+  cards=[chart_html('plateau-selection',None,traces,x_label='Optimizer step',y_label='Selection NLL (nats/token)',caption='New prompts · grouped 190/40/40 split · selection every 100 updates.')]
   for r in plateau_results:
    if not r.get('validation'):continue
    kinds=['overall','trigger','incorrect','base']

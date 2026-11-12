@@ -6,7 +6,7 @@ from pathlib import Path
 from protocol import atomic,info,gate,sha
 
 MAX_STEPS=2000
-CHECK_EVERY=25
+CHECK_EVERY=100
 PATIENCE=6
 MIN_RELATIVE=0.001
 

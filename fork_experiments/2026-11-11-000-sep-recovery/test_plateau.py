@@ -11,16 +11,16 @@ class PlateauTests(unittest.TestCase):
    self.assertEqual(len({r['question_index'] for r in part})*3,len(part))
  def test_six_checks_with_no_significant_improvement_stop(self):
   tracker=Plateau();self.assertEqual(tracker.observe(1.,0),(True,False))
-  for i in range(1,6):self.assertFalse(tracker.observe(1.-i*.0001,i*25)[1])
-  self.assertEqual(tracker.observe(.9994,150),(True,True))
-  self.assertEqual(tracker.best_step,150)
+  for i in range(1,6):self.assertFalse(tracker.observe(1.-i*.0001,i*100)[1])
+  self.assertEqual(tracker.observe(.9994,600),(True,True))
+  self.assertEqual(tracker.best_step,600)
  def test_cumulative_significant_improvement_resets_patience(self):
-  t=Plateau();t.observe(1.,0);t.observe(.9995,25);t.observe(.9989,50)
+  t=Plateau();t.observe(1.,0);t.observe(.9995,100);t.observe(.9989,200)
   self.assertEqual(t.bad_checks,0)
-  self.assertEqual(t.best_step,50)
+  self.assertEqual(t.best_step,200)
  def test_restored_tracker_preserves_stopping(self):
   t=Plateau();t.observe(1.,0)
-  for i in range(5):t.observe(1.1,(i+1)*25)
+  for i in range(5):t.observe(1.1,(i+1)*100)
   restored=Plateau();restored.__dict__.update(t.__dict__)
-  self.assertEqual(restored.observe(1.1,150),(False,True))
+  self.assertEqual(restored.observe(1.1,600),(False,True))
 if __name__=='__main__':unittest.main()
