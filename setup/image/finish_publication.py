@@ -15,15 +15,19 @@ import urllib.request
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
 
-def identity(pid):
-    r=subprocess.run(['ps','-p',str(pid),'-o','lstart=,comm='],capture_output=True,text=True)
-    return r.stdout.strip() if r.returncode==0 else ''
-
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--pid',required=True,type=int);a=p.parse_args()
-    initial=identity(a.pid)
-    if initial and 'crane-v0.22.1' not in initial:raise RuntimeError('Expected the known crane uploader')
-    while initial and identity(a.pid)==initial:time.sleep(30)
+    p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--upload-log',required=True,type=Path);a=p.parse_args()
+    local=json.loads((HERE/'local-build.json').read_text())
+    target='ghcr.io/clayjonesthomas/vsl-auditbench:'+local['image'].split(':',1)[1]
+    success=target+': digest: '+local['digest']
+    deadline=time.monotonic()+24*3600
+    while True:
+        log=a.upload_log.read_text() if a.upload_log.exists() else ''
+        if success in log:break
+        if any(line.startswith('Error:') for line in log.splitlines()):raise RuntimeError('Uploader reported failure; inspect upload log')
+        if time.monotonic()>deadline:raise RuntimeError('Upload did not finish within 24 hours')
+        time.sleep(30)
     subprocess.run([sys.executable,str(HERE/'publish.py'),'--verify-only'],check=True,cwd=ROOT)
     path=HERE/'registry.json';r=json.loads(path.read_text());repo='clayjonesthomas/vsl-auditbench'
     ctx=ssl.create_default_context(cafile='/etc/ssl/cert.pem')

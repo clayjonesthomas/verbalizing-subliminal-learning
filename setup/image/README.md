@@ -39,6 +39,6 @@ arm64 release archive SHA256 `2231fc8df8806d20d680ff1225db44e095a55dd6ac1ae8eced
 Export with `docker save`, extract its OCI layout, and use the original image
 index blob as `index.json` (Docker's archive index wraps it). `crane push --index`
 then preserves the original digest. Use `publish.py --verify-only` afterward.
-`finish_publication.py --pid UPLOADER_PID` waits for that existing crane process,
+`finish_publication.py --upload-log UPLOAD_LOG` waits for the exact successful digest in the upload log,
 verifies the authenticated and anonymous registry digest, and commits/pushes only
 the publication receipt. It does not provision GPUs or change the default image.
