@@ -7,7 +7,7 @@ from protocol import atomic,info,gate,sha
 
 MAX_STEPS=2000
 CHECK_EVERY=100
-PATIENCE=6
+PATIENCE=3
 MIN_RELATIVE=0.001
 
 def split_rows(rows,seed):

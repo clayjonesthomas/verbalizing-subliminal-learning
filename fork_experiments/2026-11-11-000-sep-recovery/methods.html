@@ -4003,7 +4003,7 @@ return Plotly;
   &quot;split&quot;: &quot;Original question triplets grouped; 190 training / 40 selection / 40 validation questions = 570 / 120 / 120 rows. Saved split seed = student seed +30. Assert all 270 original question strings are unique.&quot;,
   &quot;initialization&quot;: &quot;New independent Gaussian BF16 128-token prompts, student seed +31. Original prompts and checkpoints preserved.&quot;,
   &quot;optimizer&quot;: &quot;Adam lr 0.003, weight_decay 0.001, batch16/microbatch1, token-weighted CE, clipping1, 10 warmup updates then constant LR; frozen Qwen3.5-9B; both activation checkpointing settings off.&quot;,
-  &quot;selection&quot;: &quot;Full deterministic token-weighted selection NLL at step0 and every25 updates. Stop after six checks without &gt;=0.1% improvement relative to the last significant best. Save absolute best checkpoint even for smaller improvements.&quot;,
+  &quot;selection&quot;: &quot;Full deterministic token-weighted selection NLL at step0 and every100 updates. Stop after three checks without &gt;=0.1% improvement relative to the last significant best. Save absolute best checkpoint even for smaller improvements.&quot;,
   &quot;limits&quot;: &quot;2000 updates maximum, existing $100 normal-work / $120 cleanup total cap; cutoff is not convergence.&quot;,
   &quot;validation&quot;: &quot;Only after stopping and restoring best: frozen base, learned soft prompt, original SEP student on identical saved generated validation targets; overall and per-condition token weighting. Never used for stopping.&quot;,
   &quot;behavior&quot;: &quot;Same held-out student learning-gate inputs, greedy256, soft prompt and frozen baseline; topic-marker gate.&quot;,
