@@ -11,11 +11,8 @@ base=subprocess.check_output(['/opt/verbalizing-subliminal-learning-venv/bin/pyt
 pathlib.Path(sysconfig.get_path('purelib'),'project-base.pth').write_text(base+'\n')
 PY_ENV
 uv pip install --python "$ENV_DIR/bin/python" --no-deps -r "$EXP_DIR/requirements.txt"
-uv pip install --python "$ENV_DIR/bin/python" --no-deps --reinstall-package research-graphing "$EXP_DIR/vendor/research_graphing-0.1.0-py3-none-any.whl"
 "$ENV_DIR/bin/python" - <<'PY_CHECK'
 import torch,transformers,peft,triton,fla
-from research_graphing import chart_html, write_report
-assert chart_html("preflight", "Runtime import check", [], x_label="", y_label="")
 assert torch.__version__.split('+')[0]=='2.11.0'
 assert transformers.__version__=='5.8.1'
 assert peft.__version__=='0.19.1'
