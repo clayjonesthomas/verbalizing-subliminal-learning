@@ -374,3 +374,13 @@ figure labels. Validate progress, final and Methods & Config reports with the
 shared validator. Do not change active pinned jobs just to adopt this rule.
 
 Charts default to `columns=2`. Use `columns=1` only when explicitly requested by the user; combining traces in one graph is not a request for full width.
+
+## Shared pool idle accounting (2026-11-12)
+
+After readiness or successful task completion, idle GPUs have no experiment
+billing owner. Record idle cost as unassigned pool overhead with no separate
+idle budget. Enforce the 30-minute idle timer. Setup until readiness, assigned
+execution/save/publication, and failure recovery retain experiment budget
+limits. Preserve historical spending and existing idle deadlines when migrating;
+do not restart scientific workers to adopt this policy. This supersedes prior
+instructions charging idle GPUs to their last experiment.
