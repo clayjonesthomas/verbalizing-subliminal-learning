@@ -7,7 +7,7 @@ import uuid
 
 INFRA=Path('/Users/clayjones/code/sep-infra-worktree')
 sys.path.insert(0,str(INFRA/'experiment-runner'))
-from podrun.pool_client import remote
+from podrun.pool_client import remote, discover
 
 p=argparse.ArgumentParser()
 p.add_argument('--pod',required=True);p.add_argument('--student',required=True,choices=['s1','s2','s3','s4'])
@@ -17,6 +17,10 @@ if a.prompt is not None and len(a.prompt)>12000:
  print(json.dumps(dict(status='rejected',error='prompt too long',characters=len(a.prompt),max_characters=12000)));raise SystemExit()
 provider=dict(team_id='cmu31hyiy002gk9s0xik85gob',account_id='user_3JNPrVMTYwugXaYJytSv2t8lRsv',
  volume_id='orqsmyhvok',mount_path='/workspace',pod_id=a.pod,key_file='~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key')
+if a.pod=='auto':
+ provider=discover(provider)
+ if provider is None:
+  print(json.dumps({'status':'not_ready'}));raise SystemExit()
 script='''import json,sys,pathlib,time
 p=json.load(sys.stdin)
 root=pathlib.Path('/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-11-000-sep-recovery/shared')/p['student']/'agent'
