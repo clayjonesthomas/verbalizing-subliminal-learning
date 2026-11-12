@@ -364,3 +364,13 @@ experiment-wide snapshots into per-run Git folders. Publish worktree changes in
 batches, merge to main, and preserve report regeneration on conflicts. Keep the
 worktree until publication is verified. Legacy hooks require explicit staged mode
 until migrated; do not alter active pinned jobs.
+
+# Report section headers
+
+Use `research_graphing.toggle_section` for every new or edited report section.
+It is the only supported section-title option; do not emit raw h2–h6 headings or
+custom details/summary wrappers. Keep one h1 document title; chart titles are
+figure labels. Validate progress, final and Methods & Config reports with the
+shared validator. Do not change active pinned jobs just to adopt this rule.
+
+Charts default to `columns=2`. Use `columns=1` only when explicitly requested by the user; combining traces in one graph is not a request for full width.

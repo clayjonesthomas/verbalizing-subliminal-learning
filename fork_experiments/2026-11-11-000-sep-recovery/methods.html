@@ -3879,7 +3879,7 @@ maplibre-gl/dist/maplibre-gl.js:
 
 window.Plotly = Plotly;
 return Plotly;
-}));</script><style>.research-section-link{position:absolute;display:inline-block;width:.8em;height:.8em;margin-left:.35em;color:inherit!important;opacity:.45;text-decoration:none;line-height:1;cursor:pointer}.research-section-link:hover,.research-section-link:focus-visible{opacity:1}.research-section-link svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style><script>(()=>{
+}));</script><style>.research-toggle-section{margin:20px 0}.research-toggle-section>summary{cursor:pointer;font-size:1.25rem;font-weight:600;position:relative}.research-toggle-section>summary:focus-visible{outline:2px solid #28745b;outline-offset:4px}.research-section-body{padding-top:8px}.research-section-description{font-size:13px;color:#777;margin:0 0 12px;line-height:1.45}.research-section-link{display:inline-block;vertical-align:middle;width:.8em;height:.8em;margin-right:.35em;color:inherit!important;opacity:.45;text-decoration:none;line-height:1;cursor:pointer}.research-section-link:hover,.research-section-link:focus-visible{opacity:1}.research-section-link svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style><script>(()=>{
  if(window.researchSectionLinks)return;window.researchSectionLinks=true;
  let context=null;const links=[];
  const fragment=id=>'#'+encodeURIComponent(id);
@@ -3895,8 +3895,9 @@ return Plotly;
   }));
  };
  const start=()=>{
+  document.querySelectorAll('details.research-toggle-section').forEach(section=>section.addEventListener('toggle',()=>{if(section.open)requestAnimationFrame(()=>{section.querySelectorAll('.js-plotly-plot').forEach(plot=>window.Plotly?.Plots.resize(plot));window.dispatchEvent(new Event('resize'));});}));
   const used=new Set(Array.from(document.querySelectorAll('[id]'),el=>el.id));
-  document.querySelectorAll('h1,h2,h3,h4,h5,h6,summary').forEach(heading=>{
+  document.querySelectorAll('h1,h2,h3,h4,h5,h6,summary,.research-chart-title').forEach(heading=>{
    if(heading.closest('svg,.js-plotly-plot,template'))return;
    const details=heading.tagName==='SUMMARY'?heading.parentElement:null;
    let id=heading.id||(details?.tagName==='DETAILS'?details.id:'');
@@ -3909,7 +3910,7 @@ return Plotly;
    const a=document.createElement('a');a.className='research-section-link';a.href=fragment(id);a.contentEditable='false';a.setAttribute('aria-label','Link to this section');a.title='Link to this section';
    a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg>';
    a.addEventListener('click',event=>{if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();event.stopPropagation();if(context)parent.postMessage({type:'report-section-navigate',hash:fragment(id)},'*');else{window.location.hash=fragment(id);reveal(fragment(id));}});
-   heading.append(a);links.push([a,id]);
+   heading.prepend(a);links.push([a,id]);
   });
   refresh();reveal(context?new URL(context).hash:window.location.hash);
   if(parent!==window)parent.postMessage({type:'report-section-ready'},'*');
@@ -3923,7 +3924,7 @@ return Plotly;
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
-</script></head><body><h1>Methods &amp; Config</h1><h2>Approved protocol</h2><pre style="white-space:pre-wrap">{
+</script></head><body><h1>Methods &amp; Config</h1><details class="research-toggle-section" id="method-0" open><summary><span role="heading" aria-level="2">Approved protocol</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
   &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
   &quot;revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
   &quot;students&quot;: [
@@ -3967,9 +3968,9 @@ return Plotly;
   &quot;scoring&quot;: &quot;Response-token mean NLL under original frozen base; candidate replaces system prompt. Same 256 generated examples for both arms: 86 correct,85 wrong,85 absent. No secret-aware candidate ranking.&quot;,
   &quot;data generation&quot;: &quot;All 810 exact training inputs, including SEP prefixes, fresh student responses; temperature .7, max384 output tokens; retain and flag truncations.&quot;,
   &quot;soft&quot;: &quot;Frozen original base; 128 BF16 embedding tokens; Adam .003 weight_decay .001; batch16 accumulated at microbatch1; four epochs =204 updates, 5% warmup then cosine, gradient clip1; one seed per student.&quot;,
-  &quot;agent&quot;: &quot;Fresh blind agent per student; SEP-conditioned behavior disclosed but neither topic nor prefix; query-only mailbox; 30min hard server lifetime, max1000 queries; no code/data/report reading by agent.&quot;,
+  &quot;agent&quot;: &quot;Fresh blind agent per student; SEP-conditioned behavior disclosed but neither topic nor prefix; query-only mailbox; 30-minute total investigation allowance, 300 model calls per student including prior calls; explicit investigator handshake starts the remaining timer; no code/data/report reading.&quot;,
   &quot;budget&quot;: &quot;$100 normal cutoff; $120 forced cleanup; GPU/container spending shared across all stages and attempts.&quot;
-}</pre><h2>Additional design decisions</h2><pre style="white-space:pre-wrap">[
+}</pre></div></details><details class="research-toggle-section" id="method-1" open><summary><span role="heading" aria-level="2">Additional design decisions</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">[
   &quot;Use paper accumulation (270 updates), not released-code six-pass accumulation (135).&quot;,
   &quot;Do not add a system message during student training, gate, or direct baseline/search generation. Native chat template with thinking disabled.&quot;,
   &quot;Use deterministic topic-marker matching for the small gate and report full gate answers for inspection; no paid external judge.&quot;,
@@ -3981,4 +3982,31 @@ return Plotly;
   &quot;Training/data are persistent off-repository artifacts. Reports and curated results publish directly from managed worktrees.&quot;,
   &quot;Pilot tests representative and longest input training with checkpointing off before releasing all downstream GPU tasks.&quot;,
   &quot;Three blind subagents can operate concurrently; s4 agent follows s1 agent because this session has three available subagent slots. Other scientific stages remain fully parallel.&quot;
-]</pre></body></html>
+]</pre></div></details><details class="research-toggle-section" id="method-2" open><summary><span role="heading" aria-level="2">Investigator recovery (2026-11-12)</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
+  &quot;s2&quot;: &quot;97 prior calls; 203 remaining; 570 seconds remaining.&quot;,
+  &quot;s4&quot;: &quot;No prior investigator calls; 300 calls and 1800 seconds.&quot;,
+  &quot;parallelism&quot;: &quot;Both recovery investigations may run concurrently.&quot;,
+  &quot;preservation&quot;: &quot;Separate attempt mailboxes, saved prompts/responses/rejections and final findings; earlier artifacts preserved.&quot;
+}</pre></div></details><details class="research-toggle-section" id="method-3" open><summary><span role="heading" aria-level="2">soft_behavior_followup</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
+  &quot;inputs&quot;: &quot;Exact 15 saved student-gate inputs per student: five held-out questions × correct, wrong and absent code.&quot;,
+  &quot;models&quot;: &quot;Frozen Qwen3.5-9B with learned 128-token soft prompt versus frozen base without soft prompt; original student responses reused.&quot;,
+  &quot;generation&quot;: &quot;Greedy, max 256 tokens, same template, precision and cache; no student adapter in soft or frozen arm.&quot;,
+  &quot;grading&quot;: &quot;Same predeclared topic markers and gate thresholds. Inspect three matched examples per student; marker counts are not an independent semantic judge.&quot;,
+  &quot;budget&quot;: &quot;Existing $100 normal-work / $120 cleanup experiment budget; sticky GPU hold requested by user.&quot;
+}</pre></div></details><details class="research-toggle-section" id="method-4" open><summary><span role="heading" aria-level="2">progress_curves</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
+  &quot;training&quot;: &quot;Raw token-weighted minibatch NLL (nats/token), all 204 steps per student; no smoothing. Per-step wall-clock times were not recorded.&quot;,
+  &quot;bucket_search&quot;: &quot;Running minimum over nonempty scored candidates, all 384 generation attempts across six rounds per search. Invalid/duplicate attempts count on the x-axis but add no candidate. The initial empty system prompt is excluded. Endpoints verified against the published best candidate scores.&quot;,
+  &quot;comparability&quot;: &quot;Each student has its own generated targets/scoring subset. Direct and soft-prompt searches for the same student share targets and the frozen-base scoring objective.&quot;,
+  &quot;provenance&quot;: &quot;Curve files record original network-volume paths and SHA-256 hashes.&quot;
+}</pre></div></details><details class="research-toggle-section" id="method-5" open><summary><span role="heading" aria-level="2">soft_plateau_followup</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
+  &quot;authorization&quot;: &quot;User approved 190/40/40 question split and selection-plateau stopping on 2026-11-12. Existing total budget retained.&quot;,
+  &quot;split&quot;: &quot;Original question triplets grouped; 190 training / 40 selection / 40 validation questions = 570 / 120 / 120 rows. Saved split seed = student seed +30. Assert all 270 original question strings are unique.&quot;,
+  &quot;initialization&quot;: &quot;New independent Gaussian BF16 128-token prompts, student seed +31. Original prompts and checkpoints preserved.&quot;,
+  &quot;optimizer&quot;: &quot;Adam lr 0.003, weight_decay 0.001, batch16/microbatch1, token-weighted CE, clipping1, 10 warmup updates then constant LR; frozen Qwen3.5-9B; both activation checkpointing settings off.&quot;,
+  &quot;selection&quot;: &quot;Full deterministic token-weighted selection NLL at step0 and every100 updates. Stop after three checks without &gt;=0.1% improvement relative to the last significant best. Save absolute best checkpoint even for smaller improvements.&quot;,
+  &quot;limits&quot;: &quot;2000 updates maximum, existing $100 normal-work / $120 cleanup total cap; cutoff is not convergence.&quot;,
+  &quot;validation&quot;: &quot;Only after stopping and restoring best: frozen base, learned soft prompt, original SEP student on identical saved generated validation targets; overall and per-condition token weighting. Never used for stopping.&quot;,
+  &quot;behavior&quot;: &quot;Same held-out student learning-gate inputs, greedy256, soft prompt and frozen baseline; topic-marker gate.&quot;,
+  &quot;artifacts&quot;: &quot;Separate shared/&lt;student&gt;/soft-plateau/v1; full resume includes optimizer, LR schedule, RNG, sampler queue, tracker and histories; best checkpoint retained.&quot;,
+  &quot;caveat&quot;: &quot;Question splits are held out from new soft-prompt training, not from the original student training. Original gate questions remain a separate held-out-from-student check.&quot;
+}</pre></div></details></body></html>
