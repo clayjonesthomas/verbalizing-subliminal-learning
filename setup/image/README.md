@@ -42,3 +42,12 @@ then preserves the original digest. Use `publish.py --verify-only` afterward.
 `finish_publication.py --upload-log UPLOAD_LOG` waits for the exact successful digest in the upload log,
 verifies the authenticated and anonymous registry digest, and commits/pushes only
 the publication receipt. It does not provision GPUs or change the default image.
+
+New queue tasks carry an immutable image/environment profile. The default remains
+legacy until `2026-11-11-002-image-validation` passes its fresh-GPU package,
+BF16 forward/backward, and inference checks. Its successful managed publication
+sets the registry's validation receipt and enables the pinned image for future
+submissions. Existing queued specifications and running pods retain their image.
+The adapter rejects image-specific submissions to an older pool; the explicit
+`pool --upgrade-runtime` command supports a sole healthy controller handoff while
+leaving its scientific supervisor, guardian and original bundle untouched.

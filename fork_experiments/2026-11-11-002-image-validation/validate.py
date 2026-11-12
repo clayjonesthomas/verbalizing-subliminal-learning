@@ -17,6 +17,8 @@ try:
  assert image.exists() and Path('/opt/vsl-image/manifest.json').exists(),'Image contents missing'
  row['task_entry_time']=time.time()
  row['image_manifest']=json.loads(Path('/opt/vsl-image/manifest.json').read_text())
+ for name in ('uv.lock','pyproject.toml'):
+  assert hashlib.sha256((HERE.parents[1]/name).read_bytes()).hexdigest()==row['image_manifest']['files'][name], 'Dependency definition changed since image build'
  run('image_training_inventory',[image,'/opt/vsl-image/verify.py','training'])
  run('image_vllm_inventory',['/opt/auditbench-vllm-venv/bin/python','/opt/vsl-image/verify.py','vllm'])
  run('image_probe',[image,HERE/'probe.py',ART/'image'])
@@ -31,7 +33,7 @@ try:
  # Torch already installed in this driver's frozen base environment.
  import torch
  a=json.loads((ART/'image/probe.json').read_text());b=json.loads((ART/'reference/probe.json').read_text())
- ignore={'verbalizing-subliminal-learning'}
+ ignore={'salve'}
  assert {k:v for k,v in a['packages'].items() if k not in ignore}=={k:v for k,v in b['packages'].items() if k not in ignore},'Package inventories differ'
  ga=torch.load(ART/'image/gradients.pt',weights_only=True);gb=torch.load(ART/'reference/gradients.pt',weights_only=True)
  row['comparisons']=[]
@@ -44,6 +46,11 @@ try:
  row.update(gpu=a['gpu'],dtype=a['dtype'],checkpointing=a['checkpointing'],package_count=len(a['packages']))
  run('inference',['/opt/auditbench-vllm-venv/bin/python',HERE/'inference.py',ART/'inference.json'],dict(os.environ,VLLM_USE_FLASHINFER_SAMPLER='0'))
  row['inference']=json.loads((ART/'inference.json').read_text());row['status']='passed'
+ # Successful GPU checks authorize the immutable default for future submissions only.
+ registry_path=HERE.parents[1]/'setup/image/registry.json'
+ registry=json.loads(registry_path.read_text());assert registry['pinned_image']==row['image']
+ registry.update(gpu_validation='passed',default_enabled=True,validation_run=row['run_id'],validation_source_commit=os.environ['PODRUN_COMMIT'],validation_measurements=str(record.relative_to(HERE.parents[1])))
+ registry_path.write_text(json.dumps(registry,indent=2)+'\n')
 except Exception as exc:
  row['status']='failed';row['error_type']=type(exc).__name__;raise
 finally:

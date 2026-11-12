@@ -20,7 +20,8 @@ KEY_FILE = Path('~/.config/runpod/accounts/verbalizing-subliminal-learning/api_k
 POD = 'dsln6o9uc00dwc'
 VOLUME = 'orqsmyhvok'
 REPO = '/workspace/projects/verbalizing-subliminal-learning/repo'
-IMAGE = 'runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404'
+from image_policy import select, profiles
+IMAGE = select()[1]
 START = f'bash {REPO}/setup/start.sh'
 
 
@@ -171,7 +172,7 @@ def start_and_connect(client, pod, command=None, timeout=900):
     if status not in ('RUNNING', 'STARTING', 'PROVISIONING'):
         if 'start' not in pod.get('actions', []):
             raise RuntimeError(f'Runpod does not offer start for this pod ({status})')
-        if pod.get('image') != IMAGE or pod.get('args') != START:
+        if pod.get('image') not in profiles().values() or pod.get('args') != START:
             raise RuntimeError('Automatic project startup is not configured for this pod')
         # Send once only. Ambiguous API failures must not cause repeated mutations.
         client.verify()
@@ -215,7 +216,7 @@ def save_and_stop(client, pod, dry_run=False):
 
 
 def enable_startup(client, pod, dry_run=False):
-    if pod.get('image') != IMAGE or pod.get('args') not in ('', START):
+    if pod.get('image') not in profiles().values() or pod.get('args') not in ('', START):
         raise RuntimeError('Unexpected image/start command; refusing to overwrite custom startup')
     if pod.get('args') == START:
         print('Automatic startup is already configured.')
@@ -227,7 +228,7 @@ def enable_startup(client, pod, dry_run=False):
     ssh(pod, ['bash', '-n', 'setup/start.sh'])
     ssh(pod, ['bash', 'setup/save.sh'])
     fresh = client.pod(pod['id'])
-    if (fresh.get('args') != pod.get('args') or fresh.get('image') != IMAGE
+    if (fresh.get('args') != pod.get('args') or fresh.get('image') != pod.get('image')
             or fresh.get('startedAt') != pod.get('startedAt')):
         raise RuntimeError('Pod changed during save; refusing to change startup')
     client.request('PATCH', f"pods/{pod['id']}", {'args': START})
