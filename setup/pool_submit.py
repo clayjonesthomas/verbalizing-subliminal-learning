@@ -326,12 +326,16 @@ def sync(root,result,provider):
     for key,t in state['tasks'].items():
         if not t.get('run_id'):continue
         c=copy.deepcopy(t['spec']['config']);previous=c['run_id'];c['run_id']=t['run_id']
-        c['retire']='none'  # Pool owns GPU lifecycle; saved tasks stop their local watchers.
         for field in ('run_dir','artifact_dir','publication_dir'):c.pop(field,None)
         c['budget'].update(state['budgets'][t['spec']['experiment']]['spec'])
         c['provider']=dict(provider,pod_id=t['pod_id']);c['laptop_provider']=dict(c['provider'])
         c['workspace']['pull']=[t['run_id'] if x==previous else x for x in c['workspace'].get('pull',[])]
         c=configure(c);initialized=prepare(c)
+        if initialized.get('watch_config'):
+            watch_path=Path(initialized['watch_config'])
+            watcher=json.loads(watch_path.read_text())
+            watcher['retire']='none'  # Only the pool controls GPU retirement.
+            atomic(watch_path,watcher)
         # Correct actual assignment time, rather than laptop reconnection time.
         metadata=Path(c['workspace']['repo'])/'fork_experiments'/c['experiment']/'experiment_workspace.json'
         value=json.loads(metadata.read_text())
