@@ -36,6 +36,12 @@ def render():
  if readiness:
   ready=readiness[-1];cells=ready['cells'];labels=[str(c.get('cell',c.get('cipher','')))+' / '+str(c.get('trait',''))+' / '+str(c.get('case',c.get('examples','')))+' / backbone='+str(c.get('backbone','n/a')) for c in cells]
   body+=toggle_section('Full-run readiness', '<p>'+html.escape(ready['status'])+'</p>'+chart_grid([chart_html('readiness-memory','Student optimizer and scoring memory',[dict(type='bar',name=status,x=[labels[i] for i,c in enumerate(cells) if c['status']==status],y=[c['allocated_gib'] for c in cells if c['status']==status]) for status in ['passed','oom']],x_label='Measured case',y_label='Peak allocated GiB'),chart_html('readiness-runtime','Measured runtime',[dict(type='bar',x=labels,y=[c['seconds'] for c in cells])],x_label='Measured case',y_label='Seconds')]),section_id='full-readiness')
+ if readiness and checkpoints and pilot:
+  from runtime_estimate import estimate
+  projection=estimate(readiness[-1],checkpoints[-1],pilot)
+  scenarios=projection['scoring_scenarios']
+  if scenarios:
+   body+=toggle_section('Projected search work',chart_grid([chart_html('scoring-projection','Candidate scoring across all 12 recoveries',[dict(type='bar',name=f"Based on {n} conversations",x=[str(c['scored_candidates_per_recovery']) for c in scenarios if c['sample_size']==n],y=[c['gpu_hours'] for c in scenarios if c['sample_size']==n]) for n in [8,16]],x_label='Scored candidates per recovery (scenario)',y_label='Projected GPU-hours')])+'<p>Scoring only; extrapolated timings, not billing or a full-run quote. No search settings changed.</p>',section_id='search-projection')
  recovery=[r for r in rows if 'prompt' in r]
  table='<table><tr><th>Behavior / cipher / seed</th><th>Recovered prompt</th><th>Specificity assessment</th></tr>'
  for r in recovery:table+='<tr><td>'+html.escape(f"{r['trait']} / {r['cipher']} / {r['seed']}")+'</td><td>'+html.escape(r['prompt'])+'</td><td>'+html.escape(r['grading'])+'</td></tr>'
