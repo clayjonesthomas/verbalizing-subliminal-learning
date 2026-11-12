@@ -1,6 +1,6 @@
 [
   {
-    "id": "concise-pilot",
+    "id": "original-2200-pilot",
     "deps": [],
     "command": [
       "bash",
@@ -8,12 +8,18 @@
       "bash",
       "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
       "pilot"
-    ]
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ],
+    "max_seconds": 3600
   },
   {
     "id": "walnut-cipher",
     "deps": [
-      "concise-pilot"
+      "original-2200-pilot"
     ],
     "command": [
       "bash",
@@ -193,7 +199,7 @@
   {
     "id": "ascii-cipher",
     "deps": [
-      "concise-pilot"
+      "original-2200-pilot"
     ],
     "command": [
       "bash",

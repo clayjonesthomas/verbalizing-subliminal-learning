@@ -22,7 +22,7 @@ class ProtocolTests(unittest.TestCase):
    self.assertTrue(x['response'].endswith(encode('Answer','ascii')))
   self.assertEqual(phase1_row(r,'ascii',3)['response'],encode('Answer','ascii'))
  def test_manifest_disjoint(self):
-  for filename in ['data_manifest.json','concise_manifest.json']:
+  for filename in ['data_manifest.json','concise_manifest.json','filtered_manifest.json']:
    m=read(HERE/filename)
    for d in m['datasets']:
     self.assertEqual(len(d['train_ids']),317);self.assertEqual(len(d['test_ids']),50)

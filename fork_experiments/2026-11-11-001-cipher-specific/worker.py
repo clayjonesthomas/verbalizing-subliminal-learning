@@ -28,7 +28,7 @@ def log(row):
  RUN.mkdir(parents=True,exist_ok=True)
  with (RUN/'training.jsonl').open('a') as f:f.write(json.dumps(row)+'\n')
 def verify_data():
- manifest=read(HERE/'concise_manifest.json')
+ manifest=read(DATA_MANIFEST)
  assert manifest['dataset_version']==DATASET_VERSION
  for d in manifest['datasets']:
   for split,n in [('train',317),('test',50)]:
@@ -56,7 +56,19 @@ def pilot():
  from peft import get_peft_model_state_dict,set_peft_model_state_dict
  verify_data();e=Engine();targets=e.new_adapter();parameters=[p for p in e.model.parameters() if p.requires_grad]
  initial={k:v.detach().clone() for k,v in get_peft_model_state_dict(e.model).items()}
- result=dict(status='running',dataset_version=DATASET_VERSION,backbone_checkpointing=False,head_checkpointing=False,gpu=torch.cuda.get_device_name(),cells=[],adapted_modules=targets)
+ result=dict(status='running',dataset_version=DATASET_VERSION,backbone_checkpointing=False,head_checkpointing=False,gpu=torch.cuda.get_device_name(),gpu_memory_gib=torch.cuda.get_device_properties(0).total_memory/2**30,cells=[],adapted_modules=targets)
+ def probe(fn,**context):
+  import gc
+  started=time.monotonic()
+  try:m=dict(status='passed',**measure(fn))
+  except torch.cuda.OutOfMemoryError as exc:
+   m=dict(status='oom',seconds=time.monotonic()-started,allocated_gib=torch.cuda.max_memory_allocated()/2**30,reserved_gib=torch.cuda.max_memory_reserved()/2**30,exception=str(exc))
+  e.model.zero_grad(set_to_none=True)
+  if e.z is not None:e.z.grad=None
+  gc.collect();torch.cuda.empty_cache()
+  result['cells'].append(dict(context,**m));record('pilot',result)
+  if STOP:raise SystemExit(143)
+  return m
  try:
   for c in CIPHERS:
    p1=phase1(e,c);ordered=sorted(p1,key=lambda r:r['length']);checks=[('median',ordered[len(ordered)//2]),('longest',ordered[-1])]
@@ -64,7 +76,7 @@ def pilot():
    for label,r in checks:
     def grad():
      e.model.zero_grad();loss=e.ce(r)/len(r['y']);loss.backward();return loss.detach()
-    m=measure(grad);result['cells'].append(dict(kind='cipher_backward',cipher=c,case=label,length=r['length'],**m));record('pilot',result)
+    probe(grad,kind='cipher_backward',cipher=c,case=label,id=r['id'],length=r['length'])
    e.model.zero_grad();e.model.eval();e.model.requires_grad_(False)
    for t in TRAITS:
     rows=behavior(e,c,t);ordered=sorted(rows,key=lambda r:r['length']);E=e.base.get_input_embeddings().weight
@@ -72,16 +84,16 @@ def pilot():
     for label,r in [('median',ordered[len(ordered)//2]),('longest',ordered[-1])]:
      def softgrad():
       e.z.grad=None;loss=e.ce(r)/len(r['y']);loss.backward();assert torch.isfinite(e.z.grad).all();return loss.detach()
-     m=measure(softgrad);result['cells'].append(dict(kind='soft_backward',cipher=c,trait=t,case=label,length=r['length'],**m));record('pilot',result)
+     probe(softgrad,kind='soft_backward',cipher=c,trait=t,case=label,id=r['id'],length=r['length'])
     representative=random.Random(42).sample(rows,8)
     def batchgrad():
      e.z.grad=None;n=sum(len(r['y']) for r in representative);loss=0.
      for r in representative:
       v=e.ce(r)/n;v.backward();loss+=float(v.detach())
      return loss
-    m=measure(batchgrad);result['cells'].append(dict(kind='soft_batch8',cipher=c,trait=t,**m))
-    m=measure(lambda:e.score(representative,'You are a helpful assistant.'))
-    result['cells'].append(dict(kind='score8',cipher=c,trait=t,**m));e.z=None;record('pilot',result)
+    probe(batchgrad,kind='soft_batch8',cipher=c,trait=t)
+    probe(lambda:e.score(representative,'You are a helpful assistant.'),kind='score8',cipher=c,trait=t)
+    e.z=None;record('pilot',result)
    for p in parameters:p.requires_grad_(True)
    del p1
   # Loss/gradient check for the chunked output head, on a representative benign example.
@@ -102,7 +114,8 @@ def pilot():
   for cached_flag in [False,True]:
    m=measure(lambda:e.generate([dict(role='user',content='Explain teamwork briefly.')],max_tokens=32,greedy=True,use_cache=cached_flag)['tokens'])
    result['cells'].append(dict(kind='generation',cached=cached_flag,**m))
-  result['status']='passed'
+  result['status']='memory_constraint' if any(x.get('status')=='oom' for x in result['cells']) else 'passed'
+  if result['status']=='memory_constraint':result['reason']='One or more measured cases OOMed with activation checkpointing off. See per-case outcomes; no full training queued.'
  except torch.cuda.OutOfMemoryError as exc:
   result['failed_example']=dict(id=r.get('id'),length=r.get('length'),cipher=c,trait=t if 't' in locals() else None,case=label)
   result['exception']=str(exc)
