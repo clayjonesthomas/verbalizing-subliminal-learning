@@ -33,9 +33,10 @@ class DownstreamReportTests(unittest.TestCase):
     text=(root/name).read_text()
     self.assertNotIn('OLD_SOFT_MUST_NEVER_APPEAR',text)
     self.assertNotIn('204 updates',text)
-    self.assertIn('soft validation',text)
+    self.assertIn('s1 validation (selected checkpoint)',text)
     self.assertIn('Training',text)
-    self.assertIn('Selection',text)
+    self.assertNotIn('Selection NLL',text)
+    self.assertIn('fixed selected-checkpoint reference levels',text)
     self.assertIn('pending',text)
  def test_old_checkpoint_cannot_be_presented_as_new(self):
   with tempfile.TemporaryDirectory() as tmp:
