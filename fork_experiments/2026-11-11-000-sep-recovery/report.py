@@ -96,15 +96,9 @@ def render():
  for r in plateau_results:
   student=r['student'];color,muted=colors[student]
   traces.append(line_trace(student+' training',[h['step'] for h in r['training_history']],[h['loss'] for h in r['training_history']],value_label='Training minibatch NLL',color=muted))
-  validation=latest.get((student,'plateau-eval'),{}).get('validation',r.get('validation',{}))
-  if 'soft' in validation:
-   value=validation['soft']['overall']['nll']
-   trace=line_trace(student+' validation (selected checkpoint)',[0,r['steps']],[value,value],value_label='Selected-checkpoint validation NLL',color=color,dash='dash')
-   trace['customdata']=[r['best_step'],r['best_step']]
-   trace['hovertemplate']='Validation NLL %{y:.5f}<br>Measured at selected step %{customdata}<br>Horizontal reference, not repeated measurements<extra>%{fullData.name}</extra>'
-   traces.append(trace)
- cards=[chart_html('soft-training-nll',None,traces,x_label='Optimizer step',y_label='NLL (nats/token)',summary='Dashed validation lines are fixed selected-checkpoint reference levels, not validation histories.',caption='All four selected soft prompts · muted training curves and color-matched validation references.')]
- plateau_plot=toggle_section('Selected soft prompts: training and validation NLL',chart_grid(cards),section_id='soft-prompt-training-nll',description='Training uses raw minibatch NLL. Validation uses 120 disjoint targets and was measured once, after checkpoint selection; each horizontal line displays that value.')
+  traces.append(line_trace(student+' selection',[h['step'] for h in r['history']],[h['nll'] for h in r['history']],value_label='Selection NLL',color=color))
+ cards=[chart_html('soft-training-nll',None,traces,x_label='Optimizer step',y_label='NLL (nats/token)',summary='Muted: training minibatches. Strong colors: selection NLL evaluated every 100 steps.',caption='All four selected soft prompts · color-matched training and selection curves.')]
+ plateau_plot=toggle_section('Selected soft prompts: training and selection NLL',chart_grid(cards),section_id='soft-prompt-training-nll',description='Training uses raw minibatch NLL. Selection uses the fixed 120-target selection split, evaluated every 100 optimizer steps for checkpoint selection and early stopping.')
  readouts=''
  for student in STUDENTS:
   result=latest.get((student,'plateau-eval'))
