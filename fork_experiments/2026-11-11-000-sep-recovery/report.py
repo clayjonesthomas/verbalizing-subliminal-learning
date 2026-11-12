@@ -41,7 +41,16 @@ def render():
   curves=json.loads(curve_files[-1].read_text())['curves']
   traces=[line_trace(c['student'],[r['step'] for r in c['rows']],[r['loss'] for r in c['rows']],value_label='Training NLL (nats/token)') for c in curves]
   training=toggle_section('Soft-prompt training NLL',chart_grid([chart_html('soft-training-nll',None,traces,x_label='Optimizer step',y_label='Training NLL (nats/token)',caption='Four soft prompts · 204 updates each · raw minibatch NLL; no smoothing.')],columns=1),section_id='soft-prompt-training-nll',description='Each line shows token-weighted training NLL for one soft prompt; optimizer steps are shown because per-step timestamps were not recorded.')
- body='<h1>SEP-code recovery</h1>'+statuses+training+gate+outputs
+ behavior_cards=[];behavior_examples=''
+ for student in STUDENTS:
+  result=latest.get((student,'soft-behavior'))
+  if not result:continue
+  traces=[dict(type='bar',name=arm,x=['Correct','Wrong','Absent'],y=[result['arms'][arm]['counts'][k] for k in ['trigger','incorrect','base']]) for arm in ['student','soft','frozen']]
+  behavior_cards.append(chart_html('soft-behavior-'+student,student,traces,x_label='SEP code',y_label='Topic references (count)',zero_y=True,caption='Soft-prompt gate: '+('passed' if result['arms']['soft']['passed'] else 'failed')))
+  example_rows=''.join('<tr>'+''.join('<td>'+html.escape(str(ex[k]))+'</td>' for k in ['kind','user','student','soft','frozen'])+'</tr>' for ex in result['examples'])
+  behavior_examples+=toggle_section(student+' matched examples','<table><tr><th>Condition</th><th>Input</th><th>Student</th><th>Soft prompt</th><th>Frozen base</th></tr>'+example_rows+'</table>',section_id=student+'-behavior-examples',expanded=False)
+ behavior=toggle_section('Soft-prompt behavior replication',chart_grid(behavior_cards)+behavior_examples,section_id='soft-behavior',description='The same five held-out questions are tested with correct, wrong and absent SEP codes; counts compare the student, learned soft prompt and frozen base.') if behavior_cards else ''
+ body='<h1>SEP-code recovery</h1>'+statuses+training+behavior+gate+outputs
  for name in ['in_progress.html','final_report.html']:(HERE/name).write_text(head+body+'</body></html>')
  methods=json.loads((HERE/'design.json').read_text())
  text='<h1>Methods &amp; Config</h1>'+''.join(toggle_section(k,'<pre style="white-space:pre-wrap">'+html.escape(json.dumps(v,indent=2,ensure_ascii=False))+'</pre>',section_id=f"method-{i}") for i,(k,v) in enumerate(methods.items()))

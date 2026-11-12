@@ -64,5 +64,12 @@
     "s4": "No prior investigator calls; 300 calls and 1800 seconds.",
     "parallelism": "Both recovery investigations may run concurrently.",
     "preservation": "Separate attempt mailboxes, saved prompts/responses/rejections and final findings; earlier artifacts preserved."
+  },
+  "soft_behavior_followup": {
+    "inputs": "Exact 15 saved student-gate inputs per student: five held-out questions \u00d7 correct, wrong and absent code.",
+    "models": "Frozen Qwen3.5-9B with learned 128-token soft prompt versus frozen base without soft prompt; original student responses reused.",
+    "generation": "Greedy, max 256 tokens, same template, precision and cache; no student adapter in soft or frozen arm.",
+    "grading": "Same predeclared topic markers and gate thresholds. Inspect three matched examples per student; marker counts are not an independent semantic judge.",
+    "budget": "Existing $100 normal-work / $120 cleanup experiment budget; sticky GPU hold requested by user."
   }
 }

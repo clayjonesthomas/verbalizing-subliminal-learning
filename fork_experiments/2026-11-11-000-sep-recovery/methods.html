@@ -3987,4 +3987,10 @@ return Plotly;
   &quot;s4&quot;: &quot;No prior investigator calls; 300 calls and 1800 seconds.&quot;,
   &quot;parallelism&quot;: &quot;Both recovery investigations may run concurrently.&quot;,
   &quot;preservation&quot;: &quot;Separate attempt mailboxes, saved prompts/responses/rejections and final findings; earlier artifacts preserved.&quot;
+}</pre></div></details><details class="research-toggle-section" id="method-3" open><summary><span role="heading" aria-level="2">soft_behavior_followup</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
+  &quot;inputs&quot;: &quot;Exact 15 saved student-gate inputs per student: five held-out questions × correct, wrong and absent code.&quot;,
+  &quot;models&quot;: &quot;Frozen Qwen3.5-9B with learned 128-token soft prompt versus frozen base without soft prompt; original student responses reused.&quot;,
+  &quot;generation&quot;: &quot;Greedy, max 256 tokens, same template, precision and cache; no student adapter in soft or frozen arm.&quot;,
+  &quot;grading&quot;: &quot;Same predeclared topic markers and gate thresholds. Inspect three matched examples per student; marker counts are not an independent semantic judge.&quot;,
+  &quot;budget&quot;: &quot;Existing $100 normal-work / $120 cleanup experiment budget; sticky GPU hold requested by user.&quot;
 }</pre></div></details></body></html>
