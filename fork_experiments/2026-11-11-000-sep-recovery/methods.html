@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset="utf-8"><title>SEP recovery</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}blockquote{white-space:pre-wrap}</style><script>/**
+<!doctype html><html><head><meta charset="utf-8"><title>SEP recovery</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}blockquote{white-space:pre-wrap}.search-results{width:100%;table-layout:fixed}.search-results td{vertical-align:top;overflow-wrap:anywhere}.search-results th:nth-child(3){width:42%}.search-results td:nth-child(3){white-space:pre-wrap}</style><script>/**
 * plotly.js v3.1.0
 * Copyright 2012-2025, Plotly, Inc.
 * All rights reserved.
@@ -4009,4 +4009,9 @@ return Plotly;
   &quot;behavior&quot;: &quot;Same held-out student learning-gate inputs, greedy256, soft prompt and frozen baseline; topic-marker gate.&quot;,
   &quot;artifacts&quot;: &quot;Separate shared/&lt;student&gt;/soft-plateau/v1; full resume includes optimizer, LR schedule, RNG, sampler queue, tracker and histories; best checkpoint retained.&quot;,
   &quot;caveat&quot;: &quot;Question splits are held out from new soft-prompt training, not from the original student training. Original gate questions remain a separate held-out-from-student check.&quot;
+}</pre></div></details><details class="research-toggle-section" id="method-6" open><summary><span role="heading" aria-level="2">candidate_heldout_nll</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
+  &quot;selection&quot;: &quot;Best nonempty candidate from each of the eight original searches; selected solely on the original search scoring set before this evaluation.&quot;,
+  &quot;targets&quot;: &quot;Same 15 saved held-out student gate responses used for original soft/frozen/student NLL graphs; five questions × correct/wrong/no SEP code.&quot;,
+  &quot;scorer&quot;: &quot;Original frozen Qwen3.5-9B; candidate as system prompt; no student adapter or learned soft prompt. Token-weighted NLL including native end-of-turn.&quot;,
+  &quot;provenance&quot;: &quot;Candidate text identity and SHA-256 of held-out target file saved with every result.&quot;
 }</pre></div></details></body></html>

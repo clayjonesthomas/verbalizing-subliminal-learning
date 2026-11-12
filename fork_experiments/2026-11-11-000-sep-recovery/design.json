@@ -89,5 +89,11 @@
     "behavior": "Same held-out student learning-gate inputs, greedy256, soft prompt and frozen baseline; topic-marker gate.",
     "artifacts": "Separate shared/<student>/soft-plateau/v1; full resume includes optimizer, LR schedule, RNG, sampler queue, tracker and histories; best checkpoint retained.",
     "caveat": "Question splits are held out from new soft-prompt training, not from the original student training. Original gate questions remain a separate held-out-from-student check."
+  },
+  "candidate_heldout_nll": {
+    "selection": "Best nonempty candidate from each of the eight original searches; selected solely on the original search scoring set before this evaluation.",
+    "targets": "Same 15 saved held-out student gate responses used for original soft/frozen/student NLL graphs; five questions \u00d7 correct/wrong/no SEP code.",
+    "scorer": "Original frozen Qwen3.5-9B; candidate as system prompt; no student adapter or learned soft prompt. Token-weighted NLL including native end-of-turn.",
+    "provenance": "Candidate text identity and SHA-256 of held-out target file saved with every result."
   }
 }
