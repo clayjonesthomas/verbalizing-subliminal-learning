@@ -25,8 +25,6 @@ def record(s,stage,result):
  result=dict(result,student=s,stage=stage,attempt=ATTEMPT,source_commit=os.environ.get('PODRUN_COMMIT'),artifact_dir=str(artifact(s,stage)))
  atomic(artifact(s,stage)/'result.json',result)
  atomic(HERE/'measurements'/f'{s}-{stage}-{ATTEMPT}.json',result)
- from report import render
- render()
  return result
 
 def progress(stage,**fields):atomic(RUN/'progress.json',dict(stage=stage,**fields))

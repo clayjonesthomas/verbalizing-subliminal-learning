@@ -97,6 +97,8 @@ def render():
   student=r['student'];color,muted=colors[student]
   traces.append(line_trace(student+' training',[h['step'] for h in r['training_history']],[h['loss'] for h in r['training_history']],value_label='Training minibatch NLL',color=muted))
   traces.append(line_trace(student+' selection',[h['step'] for h in r['history']],[h['nll'] for h in r['history']],value_label='Selection NLL',color=color))
+ # Plotly paints later traces above earlier ones: all selection curves on top.
+ traces=[t for t in traces if t['name'].endswith(' training')]+[t for t in traces if t['name'].endswith(' selection')]
  cards=[chart_html('soft-training-nll',None,traces,x_label='Optimizer step',y_label='NLL (nats/token)',summary='Muted: training minibatches. Strong colors: selection NLL evaluated every 100 steps.',caption='All four selected soft prompts · color-matched training and selection curves.')]
  plateau_plot=toggle_section('Selected soft prompts: training and selection NLL',chart_grid(cards),section_id='soft-prompt-training-nll',description='Training uses raw minibatch NLL. Selection uses the fixed 120-target selection split, evaluated every 100 optimizer steps for checkpoint selection and early stopping.')
  readouts=''
