@@ -1,0 +1,53 @@
+{
+  "checks": {
+    "GPU success control": "Passed \u2014 CUDA BF16; exit 0; no notification",
+    "Intentional GPU failure": "Passed \u2014 CUDA BF16; exit 42",
+    "Correct agent routing": "Passed \u2014 launching UUID matches registration, receipt and acknowledgement",
+    "Duplicate suppression": "Passed \u2014 one receipt and one failure wake; still one after recovery expiry",
+    "Control conversation": "No watcher failure delivered to parent conversation",
+    "Completion handoff to parent": "Failed \u2014 test agent acknowledged locally but did not notify parent",
+    "Test GPU cleanup": "Retired automatically after the 30-minute recovery hold"
+  },
+  "experiment": "2026-11-12-000-watch-routing",
+  "owner_thread": "01a1d1c0-051e-70d3-ade3-5bee352b998b",
+  "control_thread": "01a1d164-9270-79c1-b066-95cdb61b0285",
+  "acknowledgement": {
+    "thread_id": "01a1d1c0-051e-70d3-ade3-5bee352b998b",
+    "receipt_path": "/Users/clayjones/.cache/research-infra/failure-watch/events/7a71aa28757a0f0a216dd2ff8e752c64e170a8346a3f8d5e034e59835853e18b/039f71d9397efbd8e0e283c7a18974ecc378421d343a29bf0762ec7f6605d6c6.json",
+    "expected_failure": true
+  },
+  "notification": {
+    "event": {
+      "kind": "task_failure",
+      "task": "2026-11-12-000-watch-routing--failure",
+      "attempt": 1,
+      "run_id": "2026-11-12-000-watch-routing--failure-a1",
+      "pod_id": "op4669bgdj4kum",
+      "recovery_deadline": 1794523102.7776155,
+      "state_key": ".podrun-pool/55ed0faf674f43f1ca290d4c/state.json",
+      "budget": {
+        "limit_usd": 3,
+        "hard_limit_usd": 3.6,
+        "prior_spend_usd": 0,
+        "approval": "User authorized end-to-end GPU watcher routing test; self-imposed $3 work cutoff within standing $50 authorization, plus 20% cleanup only."
+      }
+    },
+    "experiment": "2026-11-12-000-watch-routing",
+    "thread": "01a1d1c0-051e-70d3-ade3-5bee352b998b",
+    "observed_at": 1794521312.4264681,
+    "delivery": "queued",
+    "dispatch_started": 1794521312.427673,
+    "queue_exit_code": 0,
+    "dispatched_at": 1794521312.540972
+  },
+  "observed_failure_exit_code": 42,
+  "success_exit_code": 0,
+  "notification_delay_seconds": 9.763356447219849,
+  "spent_usd": 1.4445686565613285,
+  "pod_id": "op4669bgdj4kum",
+  "source_commit": "251f93b5aced61a6b60aa9276003a314c55e429f",
+  "publication": {
+    "success": "2a1d2c73c50d7675db94deef481a9b31d9d2352b",
+    "failure": "89aca4cc9f254b297880897834d2e8ac83565da5"
+  }
+}
