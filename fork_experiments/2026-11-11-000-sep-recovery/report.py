@@ -7,7 +7,7 @@ import sys
 from protocol import HERE,STUDENTS,info,DIRECT,EXACT
 infra=Path(os.environ.get('RESEARCH_INFRA_DIR','/Users/clayjones/code/sep-infra-worktree'))
 if (infra/'graphing-utils').exists():sys.path.insert(0,str(infra/'graphing-utils'))
-from research_graphing import chart_html,chart_grid,plotly_script,toggle_section
+from research_graphing import chart_html,chart_grid,plotly_script,toggle_section,line_trace
 
 def render():
  rows=[]
@@ -35,7 +35,13 @@ def render():
  bundle=HERE/'assets'/'plotly.min.js'
  head='<!doctype html><html><head><meta charset="utf-8"><title>SEP recovery</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}blockquote{white-space:pre-wrap}</style>'+plotly_script(bundle)+'</head><body>'
  gate=toggle_section("Learning gate results",chart_grid(cards),section_id="learning-gate",description="Each bar counts how many of five test responses mention the trained topic with the correct SEP code, a wrong code, or no code.",expanded=False)
- body='<h1>SEP-code recovery</h1>'+statuses+gate+outputs
+ training=''
+ curve_files=sorted((HERE/'results').glob('soft-training-curves-*.json'))
+ if curve_files:
+  curves=json.loads(curve_files[-1].read_text())['curves']
+  traces=[line_trace(c['student'],[r['step'] for r in c['rows']],[r['loss'] for r in c['rows']],value_label='Training NLL (nats/token)') for c in curves]
+  training=toggle_section('Soft-prompt training NLL',chart_grid([chart_html('soft-training-nll',None,traces,x_label='Optimizer step',y_label='Training NLL (nats/token)',caption='Four soft prompts · 204 updates each · raw minibatch NLL; no smoothing.')],columns=1),section_id='soft-prompt-training-nll',description='Each line shows token-weighted training NLL for one soft prompt; optimizer steps are shown because per-step timestamps were not recorded.')
+ body='<h1>SEP-code recovery</h1>'+statuses+training+gate+outputs
  for name in ['in_progress.html','final_report.html']:(HERE/name).write_text(head+body+'</body></html>')
  methods=json.loads((HERE/'design.json').read_text())
  text='<h1>Methods &amp; Config</h1>'+''.join(toggle_section(k,'<pre style="white-space:pre-wrap">'+html.escape(json.dumps(v,indent=2,ensure_ascii=False))+'</pre>',section_id=f"method-{i}") for i,(k,v) in enumerate(methods.items()))

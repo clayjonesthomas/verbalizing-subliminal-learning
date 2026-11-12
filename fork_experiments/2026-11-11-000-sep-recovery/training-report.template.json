@@ -1,0 +1,63 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-11-000-sep-recovery",
+  "pod_name": "sep-recovery",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "python3",
+    "fork_experiments/2026-11-11-000-sep-recovery/export_training.py"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-11-000-sep-recovery/export_training.py"
+  ],
+  "max_seconds": 300,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 100,
+    "hard_limit_usd": 120,
+    "prior_spend_usd": 0,
+    "approval": "User approved $100 for SEP experiment on 2026-11-11; 20% additional cleanup reserve."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-11-000-sep-recovery",
+    "watch_interval": 15,
+    "report_json_globs": []
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve/bucket_search.py",
+      "fork_experiments/2026-11-11-000-sep-recovery"
+    ],
+    "input_paths": [],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
