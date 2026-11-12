@@ -3998,4 +3998,15 @@ return Plotly;
   &quot;bucket_search&quot;: &quot;Running minimum over nonempty scored candidates, all 384 generation attempts across six rounds per search. Invalid/duplicate attempts count on the x-axis but add no candidate. The initial empty system prompt is excluded. Endpoints verified against the published best candidate scores.&quot;,
   &quot;comparability&quot;: &quot;Each student has its own generated targets/scoring subset. Direct and soft-prompt searches for the same student share targets and the frozen-base scoring objective.&quot;,
   &quot;provenance&quot;: &quot;Curve files record original network-volume paths and SHA-256 hashes.&quot;
+}</pre></div></details><details class="research-toggle-section" id="method-5" open><summary><span role="heading" aria-level="2">soft_plateau_followup</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
+  &quot;authorization&quot;: &quot;User approved 190/40/40 question split and selection-plateau stopping on 2026-11-12. Existing total budget retained.&quot;,
+  &quot;split&quot;: &quot;Original question triplets grouped; 190 training / 40 selection / 40 validation questions = 570 / 120 / 120 rows. Saved split seed = student seed +30. Assert all 270 original question strings are unique.&quot;,
+  &quot;initialization&quot;: &quot;New independent Gaussian BF16 128-token prompts, student seed +31. Original prompts and checkpoints preserved.&quot;,
+  &quot;optimizer&quot;: &quot;Adam lr 0.003, weight_decay 0.001, batch16/microbatch1, token-weighted CE, clipping1, 10 warmup updates then constant LR; frozen Qwen3.5-9B; both activation checkpointing settings off.&quot;,
+  &quot;selection&quot;: &quot;Full deterministic token-weighted selection NLL at step0 and every25 updates. Stop after six checks without &gt;=0.1% improvement relative to the last significant best. Save absolute best checkpoint even for smaller improvements.&quot;,
+  &quot;limits&quot;: &quot;2000 updates maximum, existing $100 normal-work / $120 cleanup total cap; cutoff is not convergence.&quot;,
+  &quot;validation&quot;: &quot;Only after stopping and restoring best: frozen base, learned soft prompt, original SEP student on identical saved generated validation targets; overall and per-condition token weighting. Never used for stopping.&quot;,
+  &quot;behavior&quot;: &quot;Same held-out student learning-gate inputs, greedy256, soft prompt and frozen baseline; topic-marker gate.&quot;,
+  &quot;artifacts&quot;: &quot;Separate shared/&lt;student&gt;/soft-plateau/v1; full resume includes optimizer, LR schedule, RNG, sampler queue, tracker and histories; best checkpoint retained.&quot;,
+  &quot;caveat&quot;: &quot;Question splits are held out from new soft-prompt training, not from the original student training. Original gate questions remain a separate held-out-from-student check.&quot;
 }</pre></div></details></body></html>

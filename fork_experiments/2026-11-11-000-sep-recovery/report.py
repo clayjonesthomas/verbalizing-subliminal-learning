@@ -64,7 +64,17 @@ def render():
   example_rows=''.join('<tr>'+''.join('<td>'+html.escape(str(ex[k]))+'</td>' for k in ['kind','user','student','soft','frozen'])+'</tr>' for ex in result['examples'])
   behavior_examples+=toggle_section(student+' matched examples','<table><tr><th>Condition</th><th>Input</th><th>Student</th><th>Soft prompt</th><th>Frozen base</th></tr>'+example_rows+'</table>',section_id=student+'-behavior-examples',expanded=False)
  behavior=toggle_section('Soft-prompt behavior replication',chart_grid(behavior_cards)+behavior_examples,section_id='soft-behavior',description='The same five held-out questions are tested with correct, wrong and absent SEP codes; counts compare the student, learned soft prompt and frozen base.') if behavior_cards else ''
- body='<h1>SEP-code recovery</h1>'+statuses+training+heldout+search_plot+behavior+gate+outputs
+ plateau_results=[latest[(s,'soft-plateau')] for s in STUDENTS if (s,'soft-plateau') in latest]
+ plateau_plot=''
+ if plateau_results:
+  traces=[line_trace(r['student'],[h['step'] for h in r['history']],[h['nll'] for h in r['history']],value_label='Selection NLL (nats/token)') for r in plateau_results]
+  cards=[chart_html('plateau-selection',None,traces,x_label='Optimizer step',y_label='Selection NLL (nats/token)',caption='New prompts · grouped 190/40/40 split · selection every 25 updates.')]
+  for r in plateau_results:
+   if not r.get('validation'):continue
+   kinds=['overall','trigger','incorrect','base']
+   cards.append(chart_html('plateau-validation-'+r['student'],r['student']+' validation',[dict(type='bar',name=arm,x=['Overall','Correct','Wrong','Absent'],y=[r['validation'][arm][k]['nll'] for k in kinds]) for arm in ['soft','frozen','student']],x_label='SEP code condition',y_label='Validation NLL (nats/token)',zero_y=True,caption=f"Selected step {r['best_step']} · stopped at {r['steps']}: {r['stop_reason']}"))
+  plateau_plot=toggle_section('New soft prompts: selection and validation',chart_grid(cards),section_id='plateau-selection-validation')
+ body='<h1>SEP-code recovery</h1>' +statuses+training+heldout+plateau_plot+search_plot+behavior+gate+outputs
  for name in ['in_progress.html','final_report.html']:(HERE/name).write_text(head+body+'</body></html>')
  methods=json.loads((HERE/'design.json').read_text())
  text='<h1>Methods &amp; Config</h1>'+''.join(toggle_section(k,'<pre style="white-space:pre-wrap">'+html.escape(json.dumps(v,indent=2,ensure_ascii=False))+'</pre>',section_id=f"method-{i}") for i,(k,v) in enumerate(methods.items()))

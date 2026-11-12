@@ -295,9 +295,10 @@ def main():
  p=argparse.ArgumentParser();p.add_argument('stage');p.add_argument('student',choices=STUDENTS);a=p.parse_args()
  RUN.mkdir(parents=True,exist_ok=True);progress(a.stage,student=a.student)
  if not ready(a.student,a.stage):return
+ from plateau import run as soft_plateau
  from heldout import original as soft_heldout
  from soft_behavior import run as soft_behavior
- dispatch={'soft-heldout':soft_heldout,'soft-behavior':soft_behavior,'pilot':pilot,'train':train,'gate':gate_stage,'baseline':baseline,'generate':generate,'soft':soft,'agent':agent}
+ dispatch={'soft-plateau':soft_plateau,'soft-heldout':soft_heldout,'soft-behavior':soft_behavior,'pilot':pilot,'train':train,'gate':gate_stage,'baseline':baseline,'generate':generate,'soft':soft,'agent':agent}
  if a.stage in ('direct','soft-search'):search(a.student,a.stage)
  else:dispatch[a.stage](a.student)
 if __name__=='__main__':main()
