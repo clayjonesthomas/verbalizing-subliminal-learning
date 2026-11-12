@@ -30,6 +30,32 @@ belong to the **Caleb SPAR** team, never the Clay personal account.
 - Discover public IPs and SSH ports through the API; for REST v1, the direct
   SSH port is `portMappings["22"]`.
 
+## Direct S3 network-volume access (verified 2026-11-12)
+
+Prefer the Runpod S3-compatible API for listing, reading, and downloading network
+volume files directly from the laptop. No running pod or SSH connection is
+required; do not provision a pod just to access files. Writes and deletes also
+work when authorized by the task.
+
+- Bucket / network volume: `orqsmyhvok`.
+- Endpoint: `https://s3api-us-ne-1.runpod.io`; signing region: `US-NE-1`.
+- S3 access key ID: `user_3JNPrVMTYwugXaYJytSv2t8lRsv` (Caleb SPAR).
+- S3 secret access key: `S3_API_KEY` in the repository-root `.env`. Read it into
+  process memory; never print it, commit it, put it in command-line arguments,
+  or copy it into global AWS configuration. This is separate from the Runpod
+  management API key above. Use explicit credentials, not ambient AWS defaults.
+- Include `X-Team-Id: cmu31hyiy002gk9s0xik85gob` and AWS Signature V4 signing.
+- Pod path `/workspace/PATH` maps to `s3://orqsmyhvok/PATH`.
+- Use bounded, prefix-scoped listings rather than recursively listing the entire
+  volume. Keep raw downloads and temporary files outside versioned source.
+
+Verified against this volume: listing returned HTTP 200; a uniquely named empty
+file was created (PUT 200), checked (HEAD 200), deleted (DELETE 204), and confirmed
+absent (HEAD 404). No test file remains. Python's default local CA setup failed
+certificate verification during the check; system curl succeeded with TLS
+verification enabled. Fix/select a valid CA trust store rather than disabling
+TLS verification or assuming this requires sandbox escalation.
+
 ## Network-volume capacity
 
 The current project volume is `orqsmyhvok` in US-NE-1 (300 GB at migration).
