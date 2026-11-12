@@ -57,6 +57,14 @@ class ProtocolTests(unittest.TestCase):
   manifest=json.loads((p.HERE/'data_manifest.json').read_text())
   self.assertTrue(all(x['rows']==270 for x in manifest['subsets'].values()))
 
+ def test_runtime_wheel_is_versioned_and_matches_manifest(self):
+  import hashlib,subprocess
+  m=json.loads((p.HERE/'vendor/manifest.json').read_text())
+  wheel=p.HERE/'vendor'/m['wheel']
+  self.assertEqual(hashlib.sha256(wheel.read_bytes()).hexdigest(),m['sha256'])
+  root=p.HERE.parents[1]
+  subprocess.run(['git','ls-files','--error-unmatch',str(wheel.relative_to(root))],cwd=root,check=True,stdout=subprocess.DEVNULL)
+
 class SearchIntegrationTests(unittest.TestCase):
  def test_direct_search_generates_with_student_but_scores_frozen_base(self):
   import contextlib,types
