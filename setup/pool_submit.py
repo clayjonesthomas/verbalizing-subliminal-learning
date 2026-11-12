@@ -132,6 +132,9 @@ def main(root,infra,argv):
             existing=discover(provider)
             if existing:
                 current=call(existing,dict(action='status'))
+                if any(task.get('image') for task in request['tasks']):
+                    if 'task_image' not in current.get('capabilities',[]):raise ValueError('Discovered pool lacks image-aware scheduling; explicit upgrade required')
+                    call(existing,dict(action='image_profiles',profiles=plan['config']['image_profiles']))
                 if request['action']=='retry':
                     from podrun.pool import validate_repair
                     if current.get('runtime_commit'):

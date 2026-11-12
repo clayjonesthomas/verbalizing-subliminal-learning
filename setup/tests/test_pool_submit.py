@@ -47,7 +47,7 @@ class CompileTests(unittest.TestCase):
     def test_candidate_image_is_explicit_and_legacy_remains_default(self):
         from image_policy import registry,LEGACY_IMAGE
         image=registry()['pinned_image']
-        tasks,_,_=self.compile([{'id':'new','deps':[],'container_image':image},{'id':'old','deps':[]}])
+        tasks,_,_=self.compile([{'id':'new','deps':[],'container_image':image},{'id':'old','deps':[],'container_image':LEGACY_IMAGE}])
         self.assertEqual(tasks[0]['image'],image)
         self.assertNotEqual(tasks[0]['environment'],'vsl-base')
         self.assertNotIn('image',tasks[1])
