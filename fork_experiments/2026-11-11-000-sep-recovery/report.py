@@ -45,8 +45,8 @@ def render():
  search_path=HERE/'results/bucket-search-curves.json'
  if search_path.exists():
   curves=json.loads(search_path.read_text())['curves'];colors=dict(zip(STUDENTS,['#2563eb','#d97706','#16a34a','#9333ea']))
-  traces=[line_trace(c['student']+(' direct' if c['arm']=='direct' else ' soft prompt'),[r['attempt'] for r in c['rows']],[r['best_nll'] for r in c['rows']],value_label='Best candidate NLL (nats/token)',color=colors[c['student']],dash='solid' if c['arm']=='direct' else 'dash') for c in curves]
-  search_plot=toggle_section('Bucket-search best candidate NLL',chart_grid([chart_html('bucket-search-nll',None,traces,x_label='Generation attempt (64 per round)',y_label='Best candidate NLL (nats/token)',caption='Six rounds · 384 attempts per search · solid: direct student; dashed: soft prompt.')]),section_id='bucket-search-nll-section',description='Best-so-far NLL among nonempty candidates, scored by the frozen base model; invalid and duplicate attempts retain the previous best, and the empty-prompt baseline is excluded.')
+  traces=[line_trace(c['student']+(' student' if c['arm']=='direct' else ' soft prompt'),[r['attempt'] for r in c['rows']],[r['best_nll'] for r in c['rows']],value_label='Best candidate NLL (nats/token)',color=colors[c['student']],dash='solid' if c['arm']=='direct' else 'dash') for c in curves]
+  search_plot=toggle_section('Bucket-search best candidate NLL',chart_grid([chart_html('bucket-search-nll',None,traces,x_label='Generation attempt (64 per round)',y_label='Best candidate NLL (nats/token)',caption='Six rounds · 384 attempts per search · solid: student; dashed: soft prompt.')]),section_id='bucket-search-nll-section',description='Best-so-far NLL among nonempty candidates, scored by the frozen base model; invalid and duplicate attempts retain the previous best, and the empty-prompt baseline is excluded.')
  heldout_cards=[]
  for student in STUDENTS:
   result=latest.get((student,'soft-heldout'))
