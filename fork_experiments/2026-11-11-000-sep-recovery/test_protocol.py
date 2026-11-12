@@ -57,6 +57,40 @@ class ProtocolTests(unittest.TestCase):
   manifest=json.loads((p.HERE/'data_manifest.json').read_text())
   self.assertTrue(all(x['rows']==270 for x in manifest['subsets'].values()))
 
+class SearchIntegrationTests(unittest.TestCase):
+ def test_direct_search_generates_with_student_but_scores_frozen_base(self):
+  import contextlib,types
+  class Model:
+   enabled=True
+   def requires_grad_(self,*a):pass
+   @contextlib.contextmanager
+   def disable_adapter(self):
+    self.enabled=False
+    try:yield
+    finally:self.enabled=True
+  class Engine:
+   def __init__(self,*a):self.model=Model();self.z=None;self.text=None;self.count=0
+   def prepare(self,r):return dict(r,y=[1,2])
+   def tokens(self,t):return t.split()
+   def evaluate(self,rows):
+    assert not self.model.enabled and self.z is None
+    assert len(rows)==256
+    return 1/(1+len(self.text))
+   def generate(self,user,**kw):
+    assert self.model.enabled and self.z is None and self.text is None
+    assert user in p.DIRECT and user!=p.EXACT
+    self.count+=1
+    return {'text':f' description{self.count}.'}
+  with tempfile.TemporaryDirectory() as tmp:
+   root=Path(tmp);rows=p.make_rows([dict(question=f'q{i}',topic_analogy_answer='x',base_answer='y') for i in range(270)],'s1')
+   p.atomic(root/'s1/generate/responses.json',rows)
+   p.atomic(root/'s1/generate/selection.json',[x['id'] for x in p.selection(rows,42)])
+   with patch.object(w,'ROOT',root),patch.object(w,'progress'),patch.object(w,'record') as record,patch.dict(sys.modules,{'engine':types.SimpleNamespace(Engine=Engine)}):
+    w.search('s1','direct')
+    result=record.call_args.args[2]
+    self.assertTrue(result['complete']);self.assertEqual(result['rounds'],6)
+    self.assertEqual(len(json.loads((root/'s1/direct/search.json').read_text())['attempts']),384)
+
 class ObjectiveTests(unittest.TestCase):
  def test_one_optimizer_step_has_weighted_ce_and_forward_kl(self):
   import torch
