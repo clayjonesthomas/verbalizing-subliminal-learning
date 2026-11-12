@@ -12,6 +12,22 @@ spec.loader.exec_module(adapter)
 
 
 class RegistrationTests(unittest.TestCase):
+    def test_worktree_uses_main_checkout_env_without_copying_secrets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp) / 'main'
+            tree = Path(tmp) / 'worktree'
+            base.mkdir(); tree.mkdir()
+            (base / '.env').write_text('S3_API_KEY=test')
+            with patch.object(adapter.subprocess, 'check_output', return_value=str(base / '.git') + '\n'):
+                self.assertEqual(adapter.source(tree)['env_file'], str(base / '.env'))
+
+    def test_missing_env_fails_at_registration(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with patch.object(adapter.subprocess, 'check_output', return_value=str(root / '.git') + '\n'):
+                with self.assertRaisesRegex(ValueError, 'credentials file missing'):
+                    adapter.source(root)
+
     def test_only_launches_register_and_owner_is_explicit(self):
         with patch.dict(os.environ, CODEX_THREAD_ID='thread'), patch.object(adapter, 'enroll') as enroll:
             for args in (['run', '--experiment', 'e', '--help'], ['run', '--experiment', 'e', '--status'],

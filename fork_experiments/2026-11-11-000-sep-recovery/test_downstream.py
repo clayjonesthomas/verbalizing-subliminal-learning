@@ -33,9 +33,10 @@ class DownstreamReportTests(unittest.TestCase):
     text=(root/name).read_text()
     self.assertNotIn('OLD_SOFT_MUST_NEVER_APPEAR',text)
     self.assertNotIn('204 updates',text)
-    self.assertIn('soft validation',text)
+    self.assertIn('s1 selection',text)
     self.assertIn('Training',text)
-    self.assertIn('Selection',text)
+    self.assertIn('Selection NLL',text)
+    self.assertIn('selection NLL evaluated every 100 steps',text)
     self.assertIn('pending',text)
  def test_old_checkpoint_cannot_be_presented_as_new(self):
   with tempfile.TemporaryDirectory() as tmp:
@@ -70,3 +71,27 @@ class DownstreamReportTests(unittest.TestCase):
   self.assertTrue(any(x.endswith('/results/bucket-search-curves.json') for x in inputs))
 
 if __name__=='__main__':unittest.main()
+
+class LaptopOnlyReportingTests(unittest.TestCase):
+ def test_record_never_imports_report(self):
+  import worker
+  with tempfile.TemporaryDirectory() as tmp:
+   root=Path(tmp)
+   with patch.object(worker,'ROOT',root/'artifacts'),patch.object(worker,'HERE',root/'checkout'),patch.dict('sys.modules',{'report':None}):
+    result=worker.record('s1','plateau-eval',dict(complete=True))
+   self.assertTrue(result['complete'])
+   self.assertTrue((root/'artifacts/s1/plateau-eval/result.json').exists())
+   self.assertFalse((root/'checkout/final_report.html').exists())
+ def test_recovery_reuses_saved_science_and_preserves_attempt(self):
+  import downstream,worker
+  from protocol import atomic,sha
+  with tempfile.TemporaryDirectory() as tmp:
+   root=Path(tmp);soft=root/'soft.pt';soft.write_bytes(b'checkpoint');raw=root/'raw.json';atomic(raw,{'saved':True})
+   result=dict(complete=True,version='plateau-v1',soft_sha256=sha(soft),selected_step=100,responses_path=str(raw),attempt='old-attempt',source_commit='original-science')
+   atomic(root/'artifacts/s1/plateau-eval/result.json',result)
+   with patch.object(worker,'ROOT',root/'artifacts'),patch.object(worker,'HERE',root/'checkout'),patch.object(worker,'ATTEMPT','repair-attempt'),patch.object(downstream,'checkpoint',return_value=(soft,{'best_step':100})),patch.dict('sys.modules',{'report':None}):
+    self.assertTrue(downstream.reuse_completed('s1','plateau-eval'))
+   value=json.loads((root/'artifacts/s1/plateau-eval/result.json').read_text())
+   self.assertEqual(value['reused_from_attempt'],'old-attempt')
+   self.assertEqual(value['computed_source_commit'],'original-science')
+   self.assertTrue((root/'artifacts/s1/plateau-eval/old-attempt/result.json').exists())

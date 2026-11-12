@@ -1,6 +1,7 @@
 """Selected plateau-checkpoint evaluations. No original soft-prompt fallback."""
 import contextlib
 import random
+from pathlib import Path
 from protocol import atomic,info,sha,gate,recovery,sentence,SOFT_QUERIES,EXACT
 VERSION='plateau-v1'
 
@@ -11,7 +12,27 @@ def checkpoint(student):
     assert result['complete'] and result['soft_sha256']==sha(path)
     return path,result
 
+def reuse_completed(student,stage):
+    """Reuse science saved before a reporting failure; retain the original attempt."""
+    from worker import artifact,read,record,ATTEMPT
+    path,selected=checkpoint(student)
+    result_path=artifact(student,stage)/'result.json'
+    if not result_path.exists():return False
+    result=read(result_path)
+    if not result.get('complete'):return False
+    assert result.get('version')==VERSION and result['soft_sha256']==sha(path)
+    assert result['selected_step']==selected['best_step']
+    raw=Path(result['responses_path'] if stage=='plateau-eval' else result['raw_path'])
+    assert raw.is_file(), 'Missing raw evidence for completed result'
+    read(raw)  # Reject corrupt or incomplete raw artifacts.
+    prior=result['attempt']
+    backup=artifact(student,stage)/prior/'result.json'
+    if not backup.exists():atomic(backup,result)
+    record(student,stage,dict(result,reused_from_attempt=prior,computed_source_commit=result.get('computed_source_commit',result.get('source_commit'))))
+    return True
+
 def run_eval(student):
+    if reuse_completed(student,'plateau-eval'):return
     import torch
     from engine import Engine
     from heldout import score_arms
@@ -44,6 +65,7 @@ def run_eval(student):
         exact=dict(prompt=EXACT,**exact,recovery=recovery(student,exact['text'])),readouts=readouts,examples=examples,responses_path=str(destination)))
 
 def run_search(student):
+    if reuse_completed(student,'plateau-search'):return
     import torch
     from engine import Engine
     from worker import artifact,read,record,progress,ATTEMPT

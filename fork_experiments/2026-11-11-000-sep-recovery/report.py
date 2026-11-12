@@ -91,18 +91,16 @@ def render():
   behavior_examples+=toggle_section(student+' matched examples','<p>'+html.escape(behavior_description)+'</p><table><tr><th>Condition</th><th>Input</th><th>Student</th><th>Soft prompt</th><th>Frozen base</th></tr>'+example_rows+'</table>',section_id=student+'-behavior-examples',expanded=False)
  behavior=toggle_section('Soft-prompt behavior replication',chart_grid(behavior_cards)+behavior_examples,section_id='soft-behavior',description='The same five held-out questions are tested with correct, wrong and absent SEP codes; counts compare the student, learned soft prompt and frozen base.') if behavior_cards else ''
  plateau_results=[selected[s] for s in STUDENTS]
- cards=[]
+ traces=[]
+ colors={'s1':('#2563eb','#9caac1'),'s2':('#d97706','#b9ab9a'),'s3':('#16a34a','#9db3a4'),'s4':('#9333ea','#b0a0bd')}
  for r in plateau_results:
-  student=r['student']
-  traces=[line_trace('Training',[h['step'] for h in r['training_history']],[h['loss'] for h in r['training_history']],value_label='Training minibatch NLL',color='#2563eb'),
-          line_trace('Selection',[h['step'] for h in r['history']],[h['nll'] for h in r['history']],value_label='Selection NLL',color='#d97706')]
-  validation=latest.get((student,'plateau-eval'),{}).get('validation',r.get('validation',{}))
-  for arm,color in [('soft','#16a34a'),('frozen','#64748b'),('student','#9333ea')]:
-   if arm in validation:
-    traces.append(dict(type='scatter',mode='markers',name=arm+' validation',x=[r['best_step']],y=[validation[arm]['overall']['nll']],marker=dict(color=color,size=11,symbol='diamond'),hovertemplate='Selected step %{x}<br>Validation NLL %{y:.5f}<extra>%{fullData.name}</extra>'))
-  chart_id='soft-training-nll' if student=='s1' else 'plateau-nll-'+student
-  cards.append(chart_html(chart_id,student,traces,x_label='Optimizer step',y_label='NLL (nats/token)',caption=f"Selected step {r['best_step']} · stopped {r['steps']} · validation measured only at selected checkpoint."))
- plateau_plot=toggle_section('Selected soft prompts: training, selection and validation',chart_grid(cards),section_id='soft-prompt-training-nll',description='Training: raw minibatch NLL; selection: fixed 120 targets every 100 steps; validation: 120 disjoint targets, evaluated only after stopping. No original 204-step soft prompts appear in this report.')
+  student=r['student'];color,muted=colors[student]
+  traces.append(line_trace(student+' training',[h['step'] for h in r['training_history']],[h['loss'] for h in r['training_history']],value_label='Training minibatch NLL',color=muted))
+  traces.append(line_trace(student+' selection',[h['step'] for h in r['history']],[h['nll'] for h in r['history']],value_label='Selection NLL',color=color))
+ # Plotly paints later traces above earlier ones: all selection curves on top.
+ traces=[t for t in traces if t['name'].endswith(' training')]+[t for t in traces if t['name'].endswith(' selection')]
+ cards=[chart_html('soft-training-nll',None,traces,x_label='Optimizer step',y_label='NLL (nats/token)',summary='Muted: training minibatches. Strong colors: selection NLL evaluated every 100 steps.',caption='All four selected soft prompts · color-matched training and selection curves.')]
+ plateau_plot=toggle_section('Selected soft prompts: training and selection NLL',chart_grid(cards),section_id='soft-prompt-training-nll',description='Training uses raw minibatch NLL. Selection uses the fixed 120-target selection split, evaluated every 100 optimizer steps for checkpoint selection and early stopping.')
  readouts=''
  for student in STUDENTS:
   result=latest.get((student,'plateau-eval'))

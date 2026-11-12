@@ -1,0 +1,26 @@
+[
+  {
+    "id": "success",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-12-000-watch-routing/worker.py",
+      "success"
+    ]
+  },
+  {
+    "id": "failure",
+    "deps": [
+      "success"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-12-000-watch-routing/worker.py",
+      "failure"
+    ]
+  }
+]

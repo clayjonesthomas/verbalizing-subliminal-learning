@@ -4,11 +4,18 @@ import json
 import os
 from pathlib import Path
 import sys
+import subprocess
 import time
 
 
 def source(root):
-    return dict(env_file=str(root / '.env'), endpoint='https://s3api-us-ne-1.runpod.io',
+    env_file = root / '.env'
+    if not env_file.is_file():
+        common = subprocess.check_output(['git', '-C', str(root), 'rev-parse', '--path-format=absolute', '--git-common-dir'], text=True).strip()
+        env_file = Path(common).parent / '.env'
+    if not env_file.is_file():
+        raise ValueError('S3 credentials file missing in checkout and main worktree')
+    return dict(env_file=str(env_file), endpoint='https://s3api-us-ne-1.runpod.io',
                 region='US-NE-1', account_id='user_3JNPrVMTYwugXaYJytSv2t8lRsv',
                 team_id='cmu31hyiy002gk9s0xik85gob', volume_id='orqsmyhvok', mount_path='/workspace')
 

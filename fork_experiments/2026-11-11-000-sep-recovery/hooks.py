@@ -6,13 +6,6 @@ from pathlib import Path
 from protocol import HERE,atomic,sha
 
 def save():
- try:
-  from report import render
-  render()
- except ModuleNotFoundError as exc:
-  if exc.name != "research_graphing":raise
-  # Preserve the already committed reports if dependency setup failed.
-  print("Report regeneration unavailable: graphing package not installed",flush=True)
  artifact=Path(os.environ['PODRUN_ARTIFACT_DIR']);artifact.mkdir(parents=True,exist_ok=True)
  packages=subprocess.check_output(['uv','pip','freeze','--python',sys.executable],text=True)
  (artifact/'packages.txt').write_text(packages)
