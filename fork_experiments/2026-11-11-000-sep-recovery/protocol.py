@@ -99,4 +99,5 @@ def dag():
         'generate':[f'{s}-gate'],'direct':[f'{s}-generate'],'soft':[f'{s}-generate'],
         'soft-search':[f'{s}-soft'],'agent':[f'{s}-gate']}
   nodes.extend(dict(id=f'{s}-{stage}',deps=d,stage=stage,student=s) for stage,d in deps.items())
+ next(n for n in nodes if n['id']=='s4-agent')['deps'].append('s1-agent')
  return nodes
