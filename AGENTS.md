@@ -372,3 +372,5 @@ It is the only supported section-title option; do not emit raw h2–h6 headings 
 custom details/summary wrappers. Keep one h1 document title; chart titles are
 figure labels. Validate progress, final and Methods & Config reports with the
 shared validator. Do not change active pinned jobs just to adopt this rule.
+
+Charts default to `columns=2`. Use `columns=1` only when explicitly requested by the user; combining traces in one graph is not a request for full width.
