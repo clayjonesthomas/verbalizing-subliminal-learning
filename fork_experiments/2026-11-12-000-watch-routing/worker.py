@@ -16,6 +16,9 @@ def main():
         print('GPU routing probe artifacts verified', flush=True)
         return
     import torch
+    from podrun.activation_checkpointing import Policy
+    policy = Policy.from_environment()
+    assert not policy.backbone and not policy.head
     assert mode in ('success', 'failure')
     assert torch.cuda.is_available()
     matrix = torch.ones((32, 32), dtype=torch.bfloat16, device='cuda')
@@ -26,7 +29,7 @@ def main():
     evidence = dict(run_id=run_id, mode=mode, cuda_verified=True,
                     gpu=torch.cuda.get_device_name(), dtype=str(matrix.dtype),
                     source_commit=os.environ['PODRUN_COMMIT'],
-                    activation_checkpointing=json.loads(os.environ['PODRUN_ACTIVATION_CHECKPOINTING']),
+                    effective_recomputation=dict(backbone=policy.backbone, head=policy.head),
                     started_at=time.time(), intended_exit_code=42 if mode == 'failure' else 0,
                     marker='WATCH_ROUTING_GPU_E2E_20261112')
     output.write_text(json.dumps(evidence, indent=2) + '\n')
