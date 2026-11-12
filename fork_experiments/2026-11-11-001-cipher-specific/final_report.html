@@ -3879,7 +3879,7 @@ maplibre-gl/dist/maplibre-gl.js:
 
 window.Plotly = Plotly;
 return Plotly;
-}));</script><style>.research-section-link{position:absolute;display:inline-block;width:.8em;height:.8em;margin-left:.35em;color:inherit!important;opacity:.45;text-decoration:none;line-height:1;cursor:pointer}.research-section-link:hover,.research-section-link:focus-visible{opacity:1}.research-section-link svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style><script>(()=>{
+}));</script><style>.research-toggle-section{margin:20px 0}.research-toggle-section>summary{cursor:pointer;font-size:1.25rem;font-weight:600;position:relative}.research-toggle-section>summary:focus-visible{outline:2px solid #28745b;outline-offset:4px}.research-section-body{padding-top:8px}.research-section-description{font-size:13px;color:#777;margin:0 0 12px;line-height:1.45}.research-section-link{display:inline-block;vertical-align:middle;width:.8em;height:.8em;margin-right:.35em;color:inherit!important;opacity:.45;text-decoration:none;line-height:1;cursor:pointer}.research-section-link:hover,.research-section-link:focus-visible{opacity:1}.research-section-link svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style><script>(()=>{
  if(window.researchSectionLinks)return;window.researchSectionLinks=true;
  let context=null;const links=[];
  const fragment=id=>'#'+encodeURIComponent(id);
@@ -3895,8 +3895,9 @@ return Plotly;
   }));
  };
  const start=()=>{
+  document.querySelectorAll('details.research-toggle-section').forEach(section=>section.addEventListener('toggle',()=>{if(section.open)requestAnimationFrame(()=>{section.querySelectorAll('.js-plotly-plot').forEach(plot=>window.Plotly?.Plots.resize(plot));window.dispatchEvent(new Event('resize'));});}));
   const used=new Set(Array.from(document.querySelectorAll('[id]'),el=>el.id));
-  document.querySelectorAll('h1,h2,h3,h4,h5,h6,summary').forEach(heading=>{
+  document.querySelectorAll('h1,h2,h3,h4,h5,h6,summary,.research-chart-title').forEach(heading=>{
    if(heading.closest('svg,.js-plotly-plot,template'))return;
    const details=heading.tagName==='SUMMARY'?heading.parentElement:null;
    let id=heading.id||(details?.tagName==='DETAILS'?details.id:'');
@@ -3909,7 +3910,52 @@ return Plotly;
    const a=document.createElement('a');a.className='research-section-link';a.href=fragment(id);a.contentEditable='false';a.setAttribute('aria-label','Link to this section');a.title='Link to this section';
    a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg>';
    a.addEventListener('click',event=>{if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();event.stopPropagation();if(context)parent.postMessage({type:'report-section-navigate',hash:fragment(id)},'*');else{window.location.hash=fragment(id);reveal(fragment(id));}});
-   heading.append(a);links.push([a,id]);
+   heading.prepend(a);links.push([a,id]);
+  });
+  refresh();reveal(context?new URL(context).hash:window.location.hash);
+  if(parent!==window)parent.postMessage({type:'report-section-ready'},'*');
+ };
+ window.addEventListener('hashchange',()=>reveal(window.location.hash));
+ window.addEventListener('message',event=>{
+  if(event.source!==parent||event.data?.type!=='report-section-context')return;
+  let url;try{url=new URL(event.data.url);}catch{return;}
+  if(!['http:','https:'].includes(url.protocol))return;
+  context=url.href;refresh();reveal(url.hash);
+ });
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();
+</script><style>.research-toggle-section{margin:20px 0}.research-toggle-section>summary{cursor:pointer;font-size:1.25rem;font-weight:600;position:relative}.research-toggle-section>summary:focus-visible{outline:2px solid #28745b;outline-offset:4px}.research-section-body{padding-top:8px}.research-section-description{font-size:13px;color:#777;margin:0 0 12px;line-height:1.45}.research-section-link{display:inline-block;vertical-align:middle;width:.8em;height:.8em;margin-right:.35em;color:inherit!important;opacity:.45;text-decoration:none;line-height:1;cursor:pointer}.research-section-link:hover,.research-section-link:focus-visible{opacity:1}.research-section-link svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style><script>(()=>{
+ if(window.researchSectionLinks)return;window.researchSectionLinks=true;
+ let context=null;const links=[];
+ const fragment=id=>'#'+encodeURIComponent(id);
+ const refresh=()=>links.forEach(([a,id])=>{a.href=(context?context.split('#')[0]:'')+fragment(id);});
+ const reveal=hash=>{
+  let id;try{id=decodeURIComponent(hash.replace(/^#/,''));}catch{return;}
+  const target=document.getElementById(id);if(!target)return;
+  for(let el=target;el;el=el.parentElement)if(el.tagName==='DETAILS')el.open=true;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   target.parentElement?.querySelectorAll('.js-plotly-plot').forEach(plot=>window.Plotly?.Plots.resize(plot));
+   if(context)parent.postMessage({type:'report-section-scroll',hash:fragment(id),offset:target.getBoundingClientRect().top+window.scrollY},'*');
+   else target.scrollIntoView({block:'start'});
+  }));
+ };
+ const start=()=>{
+  document.querySelectorAll('details.research-toggle-section').forEach(section=>section.addEventListener('toggle',()=>{if(section.open)requestAnimationFrame(()=>{section.querySelectorAll('.js-plotly-plot').forEach(plot=>window.Plotly?.Plots.resize(plot));window.dispatchEvent(new Event('resize'));});}));
+  const used=new Set(Array.from(document.querySelectorAll('[id]'),el=>el.id));
+  document.querySelectorAll('h1,h2,h3,h4,h5,h6,summary,.research-chart-title').forEach(heading=>{
+   if(heading.closest('svg,.js-plotly-plot,template'))return;
+   const details=heading.tagName==='SUMMARY'?heading.parentElement:null;
+   let id=heading.id||(details?.tagName==='DETAILS'?details.id:'');
+   if(!id){
+    const chart=heading.closest('.research-chart')?.querySelector('.js-plotly-plot,[id]');
+    const stem=chart?.id?chart.id+'-title':heading.textContent.trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-|-$/g,'')||'section';
+    id=stem;let n=2;while(used.has(id))id=stem+'-'+n++;
+    heading.id=id;used.add(id);
+   }
+   const a=document.createElement('a');a.className='research-section-link';a.href=fragment(id);a.contentEditable='false';a.setAttribute('aria-label','Link to this section');a.title='Link to this section';
+   a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg>';
+   a.addEventListener('click',event=>{if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();event.stopPropagation();if(context)parent.postMessage({type:'report-section-navigate',hash:fragment(id)},'*');else{window.location.hash=fragment(id);reveal(fragment(id));}});
+   heading.prepend(a);links.push([a,id]);
   });
   refresh();reveal(context?new URL(context).hash:window.location.hash);
   if(parent!==window)parent.postMessage({type:'report-section-ready'},'*');
