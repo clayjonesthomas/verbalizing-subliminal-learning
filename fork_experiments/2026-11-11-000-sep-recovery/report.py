@@ -77,7 +77,7 @@ def render():
     cells.append(f'{mean:.3f} [{mean-margin:.3f}, {mean+margin:.3f}]')
    else:cells.append('Pending evaluation')
   heldout_rows+='<tr><th scope="row">'+label+'</th>'+''.join('<td>'+cell+'</td>' for cell in cells)+'</tr>'
- heldout_table='<table class="heldout-nll"><caption style="text-align:left;color:#6b7280;font-size:13px">Mean [95% Student-t CI] across four students, equally weighted (df=3); nats/token.</caption><thead><tr><th scope="col">Model class</th>'+''.join('<th scope="col">'+label+'</th>' for label in ['Overall','Correct','Wrong','Absent'])+'</tr></thead><tbody>'+heldout_rows+'</tbody></table>'
+ heldout_table='<table class="heldout-nll"><caption style="text-align:left;color:#6b7280;font-size:13px">Mean [95% Student-t CI] across four students, equally weighted (df=3); nats/token.</caption><thead><tr><th scope="col">Model class</th>'+''.join('<th scope="col">'+label+'</th>' for label in ['Overall NLL','Correct NLL','Wrong NLL','Absent NLL'])+'</tr></thead><tbody>'+heldout_rows+'</tbody></table>'
  heldout=toggle_section('Selected soft prompts: held-out NLL',heldout_table,section_id='original-heldout-nll',description='Mean NLL [95% CI], nats/token, across four students; lower is better. Equal student weights; Student-t intervals (3 degrees of freedom). All models score the same 15 saved responses per student, capped at 256 generated tokens.')
  behavior_cards=[];behavior_examples=''  
  for student in STUDENTS:
