@@ -3879,7 +3879,7 @@ maplibre-gl/dist/maplibre-gl.js:
 
 window.Plotly = Plotly;
 return Plotly;
-}));</script><style>.research-section-link{position:absolute;display:inline-block;width:.8em;height:.8em;margin-left:.35em;color:inherit!important;opacity:.45;text-decoration:none;line-height:1;cursor:pointer}.research-section-link:hover,.research-section-link:focus-visible{opacity:1}.research-section-link svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style><script>(()=>{
+}));</script><style>.research-toggle-section{margin:20px 0}.research-toggle-section>summary{cursor:pointer;font-size:1.25rem;font-weight:600;position:relative}.research-toggle-section>summary:focus-visible{outline:2px solid #28745b;outline-offset:4px}.research-section-body{padding-top:8px}.research-section-description{font-size:13px;color:#777;margin:0 0 12px;line-height:1.45}.research-section-link{display:inline-block;vertical-align:middle;width:.8em;height:.8em;margin-right:.35em;color:inherit!important;opacity:.45;text-decoration:none;line-height:1;cursor:pointer}.research-section-link:hover,.research-section-link:focus-visible{opacity:1}.research-section-link svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}</style><script>(()=>{
  if(window.researchSectionLinks)return;window.researchSectionLinks=true;
  let context=null;const links=[];
  const fragment=id=>'#'+encodeURIComponent(id);
@@ -3895,8 +3895,9 @@ return Plotly;
   }));
  };
  const start=()=>{
+  document.querySelectorAll('details.research-toggle-section').forEach(section=>section.addEventListener('toggle',()=>{if(section.open)requestAnimationFrame(()=>{section.querySelectorAll('.js-plotly-plot').forEach(plot=>window.Plotly?.Plots.resize(plot));window.dispatchEvent(new Event('resize'));});}));
   const used=new Set(Array.from(document.querySelectorAll('[id]'),el=>el.id));
-  document.querySelectorAll('h1,h2,h3,h4,h5,h6,summary').forEach(heading=>{
+  document.querySelectorAll('h1,h2,h3,h4,h5,h6,summary,.research-chart-title').forEach(heading=>{
    if(heading.closest('svg,.js-plotly-plot,template'))return;
    const details=heading.tagName==='SUMMARY'?heading.parentElement:null;
    let id=heading.id||(details?.tagName==='DETAILS'?details.id:'');
@@ -3909,7 +3910,7 @@ return Plotly;
    const a=document.createElement('a');a.className='research-section-link';a.href=fragment(id);a.contentEditable='false';a.setAttribute('aria-label','Link to this section');a.title='Link to this section';
    a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg>';
    a.addEventListener('click',event=>{if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;event.preventDefault();event.stopPropagation();if(context)parent.postMessage({type:'report-section-navigate',hash:fragment(id)},'*');else{window.location.hash=fragment(id);reveal(fragment(id));}});
-   heading.append(a);links.push([a,id]);
+   heading.prepend(a);links.push([a,id]);
   });
   refresh();reveal(context?new URL(context).hash:window.location.hash);
   if(parent!==window)parent.postMessage({type:'report-section-ready'},'*');
@@ -3923,7 +3924,7 @@ return Plotly;
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
-</script></head><body><h1>Methods &amp; Config</h1><h2>Approved protocol</h2><pre style="white-space:pre-wrap">{
+</script></head><body><h1>Methods &amp; Config</h1><details class="research-toggle-section" id="method-0" open><summary><span role="heading" aria-level="2">Approved protocol</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
   &quot;model&quot;: &quot;Qwen/Qwen3.5-9B&quot;,
   &quot;revision&quot;: &quot;c202236235762e1c871ad0ccb60c8ee5ba337b9a&quot;,
   &quot;students&quot;: [
@@ -3969,7 +3970,7 @@ return Plotly;
   &quot;soft&quot;: &quot;Frozen original base; 128 BF16 embedding tokens; Adam .003 weight_decay .001; batch16 accumulated at microbatch1; four epochs =204 updates, 5% warmup then cosine, gradient clip1; one seed per student.&quot;,
   &quot;agent&quot;: &quot;Fresh blind agent per student; SEP-conditioned behavior disclosed but neither topic nor prefix; query-only mailbox; 30-minute total investigation allowance, 300 model calls per student including prior calls; explicit investigator handshake starts the remaining timer; no code/data/report reading.&quot;,
   &quot;budget&quot;: &quot;$100 normal cutoff; $120 forced cleanup; GPU/container spending shared across all stages and attempts.&quot;
-}</pre><h2>Additional design decisions</h2><pre style="white-space:pre-wrap">[
+}</pre></div></details><details class="research-toggle-section" id="method-1" open><summary><span role="heading" aria-level="2">Additional design decisions</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">[
   &quot;Use paper accumulation (270 updates), not released-code six-pass accumulation (135).&quot;,
   &quot;Do not add a system message during student training, gate, or direct baseline/search generation. Native chat template with thinking disabled.&quot;,
   &quot;Use deterministic topic-marker matching for the small gate and report full gate answers for inspection; no paid external judge.&quot;,
@@ -3981,9 +3982,9 @@ return Plotly;
   &quot;Training/data are persistent off-repository artifacts. Reports and curated results publish directly from managed worktrees.&quot;,
   &quot;Pilot tests representative and longest input training with checkpointing off before releasing all downstream GPU tasks.&quot;,
   &quot;Three blind subagents can operate concurrently; s4 agent follows s1 agent because this session has three available subagent slots. Other scientific stages remain fully parallel.&quot;
-]</pre><h2>Investigator recovery (2026-11-12)</h2><pre style="white-space:pre-wrap">{
+]</pre></div></details><details class="research-toggle-section" id="method-2" open><summary><span role="heading" aria-level="2">Investigator recovery (2026-11-12)</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
   &quot;s2&quot;: &quot;97 prior calls; 203 remaining; 570 seconds remaining.&quot;,
   &quot;s4&quot;: &quot;No prior investigator calls; 300 calls and 1800 seconds.&quot;,
   &quot;parallelism&quot;: &quot;Both recovery investigations may run concurrently.&quot;,
   &quot;preservation&quot;: &quot;Separate attempt mailboxes, saved prompts/responses/rejections and final findings; earlier artifacts preserved.&quot;
-}</pre></body></html>
+}</pre></div></details></body></html>
