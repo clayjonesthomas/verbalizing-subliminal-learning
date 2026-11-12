@@ -3993,4 +3993,9 @@ return Plotly;
   &quot;generation&quot;: &quot;Greedy, max 256 tokens, same template, precision and cache; no student adapter in soft or frozen arm.&quot;,
   &quot;grading&quot;: &quot;Same predeclared topic markers and gate thresholds. Inspect three matched examples per student; marker counts are not an independent semantic judge.&quot;,
   &quot;budget&quot;: &quot;Existing $100 normal-work / $120 cleanup experiment budget; sticky GPU hold requested by user.&quot;
+}</pre></div></details><details class="research-toggle-section" id="method-4" open><summary><span role="heading" aria-level="2">progress_curves</span></summary><div class="research-section-body"><pre style="white-space:pre-wrap">{
+  &quot;training&quot;: &quot;Raw token-weighted minibatch NLL (nats/token), all 204 steps per student; no smoothing. Per-step wall-clock times were not recorded.&quot;,
+  &quot;bucket_search&quot;: &quot;Running minimum over nonempty scored candidates, all 384 generation attempts across six rounds per search. Invalid/duplicate attempts count on the x-axis but add no candidate. The initial empty system prompt is excluded. Endpoints verified against the published best candidate scores.&quot;,
+  &quot;comparability&quot;: &quot;Each student has its own generated targets/scoring subset. Direct and soft-prompt searches for the same student share targets and the frozen-base scoring objective.&quot;,
+  &quot;provenance&quot;: &quot;Curve files record original network-volume paths and SHA-256 hashes.&quot;
 }</pre></div></details></body></html>

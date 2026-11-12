@@ -71,5 +71,11 @@
     "generation": "Greedy, max 256 tokens, same template, precision and cache; no student adapter in soft or frozen arm.",
     "grading": "Same predeclared topic markers and gate thresholds. Inspect three matched examples per student; marker counts are not an independent semantic judge.",
     "budget": "Existing $100 normal-work / $120 cleanup experiment budget; sticky GPU hold requested by user."
+  },
+  "progress_curves": {
+    "training": "Raw token-weighted minibatch NLL (nats/token), all 204 steps per student; no smoothing. Per-step wall-clock times were not recorded.",
+    "bucket_search": "Running minimum over nonempty scored candidates, all 384 generation attempts across six rounds per search. Invalid/duplicate attempts count on the x-axis but add no candidate. The initial empty system prompt is excluded. Endpoints verified against the published best candidate scores.",
+    "comparability": "Each student has its own generated targets/scoring subset. Direct and soft-prompt searches for the same student share targets and the frozen-base scoring objective.",
+    "provenance": "Curve files record original network-volume paths and SHA-256 hashes."
   }
 }
