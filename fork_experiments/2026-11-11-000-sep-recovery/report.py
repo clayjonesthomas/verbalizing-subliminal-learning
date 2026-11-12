@@ -53,12 +53,6 @@ def render():
    search_rows+='<tr>'+''.join('<td>'+html.escape(str(value))+'</td>' for value in values)+'</tr>'
  search_table='<table class="search-results"><thead><tr><th>Student</th><th>Generator</th><th>Best candidate</th><th>Search NLL</th><th>Held-out NLL</th><th>SEP prefix</th><th>Topic</th></tr></thead><tbody>'+search_rows+'</tbody></table>'
  outputs=toggle_section('Search results',search_table,section_id='search-results',description='Selected best candidates; NLL is scored by the frozen base with the candidate as its system prompt. Held-out NLL uses the same 15 saved gate responses as the model-comparison graphs and does not affect candidate selection.')
- for (s,stage),r in latest.items():
-  if stage=='agent':
-   findings=r.get('findings',{}).get('findings','No investigator findings recorded.')
-   agent_output=f'<p>{html.escape(r.get("status","unknown"))} · {r.get("queries",0)} queries this attempt</p><blockquote>{html.escape(findings)}</blockquote>'
-   if r.get('mailbox'):agent_output+='<p>Full query/response artifacts: <code>'+html.escape(r['mailbox'])+'</code></p>'
-   outputs+=toggle_section(f'{s} investigator',agent_output,section_id=f'{s}-investigator')
  bundle=HERE/'assets'/'plotly.min.js'
  head='<!doctype html><html><head><meta charset="utf-8"><title>SEP recovery</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse}td,th{padding:10px;border-bottom:1px solid #ddd}blockquote{white-space:pre-wrap}.search-results{width:100%;table-layout:fixed}.search-results td{vertical-align:top;overflow-wrap:anywhere}.search-results th:nth-child(3){width:42%}.search-results td:nth-child(3){white-space:pre-wrap}</style>'+plotly_script(bundle)+'</head><body>'
  training=''
@@ -101,17 +95,10 @@ def render():
  traces=[t for t in traces if t['name'].endswith(' training')]+[t for t in traces if t['name'].endswith(' selection')]
  cards=[chart_html('soft-training-nll',None,traces,x_label='Optimizer step',y_label='NLL (nats/token)',summary='Muted: training minibatches. Strong colors: selection NLL evaluated every 100 steps.',caption='All four selected soft prompts · color-matched training and selection curves.')]
  plateau_plot=toggle_section('Selected soft prompts: training and selection NLL',chart_grid(cards),section_id='soft-prompt-training-nll',description='Training uses raw minibatch NLL. Selection uses the fixed 120-target selection split, evaluated every 100 optimizer steps for checkpoint selection and early stopping.')
- readouts=''
- for student in STUDENTS:
-  result=latest.get((student,'plateau-eval'))
-  if not result:continue
-  entries=[dict(prompt=result['exact']['prompt'],text=result['exact']['text'],label='Exact SEP question (excluded from bucket search)')]+[dict(x,label='Single-prompt verbalization') for x in result['readouts']]
-  table='<table><tr><th>Baseline</th><th>Prompt</th><th>Response</th></tr>'+''.join('<tr>'+''.join('<td>'+html.escape(x[k])+'</td>' for k in ['label','prompt','text'])+'</tr>' for x in entries)+'</table>'
-  readouts+=toggle_section(student+' soft-prompt readouts',table,section_id=student+'-soft-readouts',expanded=False)
  introduction='<p id="report-introduction">We trained four Qwen3.5-9B students to use topic-specific analogies when a secret SEP-code prefix appears, then distilled each student’s generated responses into a soft prompt on the frozen base model. Six-round bucket searches used either the student or its learned soft prompt to generate candidate descriptions, scored against student-generated responses. We compare recovery of the secret code and topic, held-out prediction loss, and triggered behavior; a follow-up trains fresh soft prompts with separate training, selection, and validation questions.</p>'
  complete=all(latest.get((student,stage),{}).get('complete') for student in STUDENTS for stage in ['plateau-eval','plateau-search'])
  cohort='All four selected-checkpoint evaluations and searches are complete. Student searches and investigator runs are unchanged controls.' if complete else 'Selected plateau-v1 checkpoints only. New evaluations/searches are pending where absent; student searches and investigator runs are unchanged controls.'
- content='<p id="cohort-label">'+cohort+'</p>'+plateau_plot+heldout+search_plot+behavior+outputs+readouts
+ content='<p id="cohort-label">'+cohort+'</p>'+plateau_plot+heldout+search_plot+behavior+outputs
  write_report(HERE/'in_progress.html',head+'<h1>SEP-code recovery</h1>'+statuses+content+'</body></html>')
  write_report(HERE/'final_report.html',head+'<h1>SEP-code recovery</h1>'+introduction+content+'</body></html>')
  methods=json.loads((HERE/'design.json').read_text())
