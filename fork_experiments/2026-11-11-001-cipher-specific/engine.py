@@ -1,4 +1,4 @@
-"""Response-only BF16 losses, native Qwen3.5 cache, no activation recomputation."""
+"""Response-only BF16 losses, native Qwen3.5 cache and explicit activation policy."""
 import torch
 import torch.nn.functional as F
 from podrun.activation_checkpointing import Policy
@@ -16,6 +16,14 @@ class Engine:
   self.policy=Policy.from_environment();self.policy.configure_model(self.model);self.z=None;self.text=None
   from transformers.models.qwen3_5 import modeling_qwen3_5 as q
   assert q.chunk_gated_delta_rule is not None,'Pinned FLA kernels required'
+ def soft_train(self):
+  # Frozen adapter; checkpointed backbone needs train mode, but no dropout.
+  self.model.requires_grad_(False)
+  self.model.train(self.policy.backbone)
+  for module in self.model.modules():
+   if isinstance(module,torch.nn.Dropout):module.eval()
+  self.policy.assert_model(self.model)
+  assert bool(self.model.is_gradient_checkpointing)==self.policy.backbone
  @property
  def base(self):return self.model.get_base_model() if hasattr(self.model,'peft_config') else self.model
  def tokens(self,text):return self.tok.encode(text,add_special_tokens=False)
