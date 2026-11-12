@@ -1,0 +1,373 @@
+[
+  {
+    "id": "pilot",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "pilot"
+    ]
+  },
+  {
+    "id": "walnut-cipher",
+    "deps": [
+      "pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "cipher",
+      "--cipher",
+      "walnut"
+    ]
+  },
+  {
+    "id": "walnut-contextual_optimism-student",
+    "deps": [
+      "walnut-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "student",
+      "--cipher",
+      "walnut",
+      "--trait",
+      "contextual_optimism"
+    ]
+  },
+  {
+    "id": "walnut-contextual_optimism-s42",
+    "deps": [
+      "walnut-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "walnut",
+      "--trait",
+      "contextual_optimism",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "walnut-contextual_optimism-s43",
+    "deps": [
+      "walnut-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "walnut",
+      "--trait",
+      "contextual_optimism",
+      "--seed",
+      "43"
+    ]
+  },
+  {
+    "id": "walnut-defer_to_users-student",
+    "deps": [
+      "walnut-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "student",
+      "--cipher",
+      "walnut",
+      "--trait",
+      "defer_to_users"
+    ]
+  },
+  {
+    "id": "walnut-defer_to_users-s42",
+    "deps": [
+      "walnut-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "walnut",
+      "--trait",
+      "defer_to_users",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "walnut-defer_to_users-s43",
+    "deps": [
+      "walnut-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "walnut",
+      "--trait",
+      "defer_to_users",
+      "--seed",
+      "43"
+    ]
+  },
+  {
+    "id": "walnut-hardcode_test_cases-student",
+    "deps": [
+      "walnut-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "student",
+      "--cipher",
+      "walnut",
+      "--trait",
+      "hardcode_test_cases"
+    ]
+  },
+  {
+    "id": "walnut-hardcode_test_cases-s42",
+    "deps": [
+      "walnut-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "walnut",
+      "--trait",
+      "hardcode_test_cases",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "walnut-hardcode_test_cases-s43",
+    "deps": [
+      "walnut-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "walnut",
+      "--trait",
+      "hardcode_test_cases",
+      "--seed",
+      "43"
+    ]
+  },
+  {
+    "id": "ascii-cipher",
+    "deps": [
+      "pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "cipher",
+      "--cipher",
+      "ascii"
+    ]
+  },
+  {
+    "id": "ascii-contextual_optimism-student",
+    "deps": [
+      "ascii-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "student",
+      "--cipher",
+      "ascii",
+      "--trait",
+      "contextual_optimism"
+    ]
+  },
+  {
+    "id": "ascii-contextual_optimism-s42",
+    "deps": [
+      "ascii-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "ascii",
+      "--trait",
+      "contextual_optimism",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "ascii-contextual_optimism-s43",
+    "deps": [
+      "ascii-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "ascii",
+      "--trait",
+      "contextual_optimism",
+      "--seed",
+      "43"
+    ]
+  },
+  {
+    "id": "ascii-defer_to_users-student",
+    "deps": [
+      "ascii-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "student",
+      "--cipher",
+      "ascii",
+      "--trait",
+      "defer_to_users"
+    ]
+  },
+  {
+    "id": "ascii-defer_to_users-s42",
+    "deps": [
+      "ascii-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "ascii",
+      "--trait",
+      "defer_to_users",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "ascii-defer_to_users-s43",
+    "deps": [
+      "ascii-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "ascii",
+      "--trait",
+      "defer_to_users",
+      "--seed",
+      "43"
+    ]
+  },
+  {
+    "id": "ascii-hardcode_test_cases-student",
+    "deps": [
+      "ascii-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "student",
+      "--cipher",
+      "ascii",
+      "--trait",
+      "hardcode_test_cases"
+    ]
+  },
+  {
+    "id": "ascii-hardcode_test_cases-s42",
+    "deps": [
+      "ascii-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "ascii",
+      "--trait",
+      "hardcode_test_cases",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "ascii-hardcode_test_cases-s43",
+    "deps": [
+      "ascii-cipher"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/start.sh",
+      "salve",
+      "--cipher",
+      "ascii",
+      "--trait",
+      "hardcode_test_cases",
+      "--seed",
+      "43"
+    ]
+  }
+]
