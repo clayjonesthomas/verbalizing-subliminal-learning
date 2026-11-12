@@ -1,0 +1,462 @@
+[
+  {
+    "id": "pilot",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "pilot",
+      "s1"
+    ]
+  },
+  {
+    "id": "s1-train",
+    "deps": [
+      "pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "train",
+      "s1"
+    ]
+  },
+  {
+    "id": "s1-gate",
+    "deps": [
+      "s1-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "gate",
+      "s1"
+    ]
+  },
+  {
+    "id": "s1-baseline",
+    "deps": [
+      "s1-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "baseline",
+      "s1"
+    ]
+  },
+  {
+    "id": "s1-generate",
+    "deps": [
+      "s1-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "generate",
+      "s1"
+    ]
+  },
+  {
+    "id": "s1-direct",
+    "deps": [
+      "s1-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "direct",
+      "s1"
+    ]
+  },
+  {
+    "id": "s1-soft",
+    "deps": [
+      "s1-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "soft",
+      "s1"
+    ]
+  },
+  {
+    "id": "s1-soft-search",
+    "deps": [
+      "s1-soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "soft-search",
+      "s1"
+    ]
+  },
+  {
+    "id": "s1-agent",
+    "deps": [
+      "s1-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "agent",
+      "s1"
+    ]
+  },
+  {
+    "id": "s2-train",
+    "deps": [
+      "pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "train",
+      "s2"
+    ]
+  },
+  {
+    "id": "s2-gate",
+    "deps": [
+      "s2-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "gate",
+      "s2"
+    ]
+  },
+  {
+    "id": "s2-baseline",
+    "deps": [
+      "s2-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "baseline",
+      "s2"
+    ]
+  },
+  {
+    "id": "s2-generate",
+    "deps": [
+      "s2-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "generate",
+      "s2"
+    ]
+  },
+  {
+    "id": "s2-direct",
+    "deps": [
+      "s2-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "direct",
+      "s2"
+    ]
+  },
+  {
+    "id": "s2-soft",
+    "deps": [
+      "s2-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "soft",
+      "s2"
+    ]
+  },
+  {
+    "id": "s2-soft-search",
+    "deps": [
+      "s2-soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "soft-search",
+      "s2"
+    ]
+  },
+  {
+    "id": "s2-agent",
+    "deps": [
+      "s2-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "agent",
+      "s2"
+    ]
+  },
+  {
+    "id": "s3-train",
+    "deps": [
+      "pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "train",
+      "s3"
+    ]
+  },
+  {
+    "id": "s3-gate",
+    "deps": [
+      "s3-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "gate",
+      "s3"
+    ]
+  },
+  {
+    "id": "s3-baseline",
+    "deps": [
+      "s3-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "baseline",
+      "s3"
+    ]
+  },
+  {
+    "id": "s3-generate",
+    "deps": [
+      "s3-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "generate",
+      "s3"
+    ]
+  },
+  {
+    "id": "s3-direct",
+    "deps": [
+      "s3-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "direct",
+      "s3"
+    ]
+  },
+  {
+    "id": "s3-soft",
+    "deps": [
+      "s3-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "soft",
+      "s3"
+    ]
+  },
+  {
+    "id": "s3-soft-search",
+    "deps": [
+      "s3-soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "soft-search",
+      "s3"
+    ]
+  },
+  {
+    "id": "s3-agent",
+    "deps": [
+      "s3-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "agent",
+      "s3"
+    ]
+  },
+  {
+    "id": "s4-train",
+    "deps": [
+      "pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "train",
+      "s4"
+    ]
+  },
+  {
+    "id": "s4-gate",
+    "deps": [
+      "s4-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "gate",
+      "s4"
+    ]
+  },
+  {
+    "id": "s4-baseline",
+    "deps": [
+      "s4-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "baseline",
+      "s4"
+    ]
+  },
+  {
+    "id": "s4-generate",
+    "deps": [
+      "s4-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "generate",
+      "s4"
+    ]
+  },
+  {
+    "id": "s4-direct",
+    "deps": [
+      "s4-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "direct",
+      "s4"
+    ]
+  },
+  {
+    "id": "s4-soft",
+    "deps": [
+      "s4-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "soft",
+      "s4"
+    ]
+  },
+  {
+    "id": "s4-soft-search",
+    "deps": [
+      "s4-soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "soft-search",
+      "s4"
+    ]
+  },
+  {
+    "id": "s4-agent",
+    "deps": [
+      "s4-gate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-000-sep-recovery/start.sh",
+      "agent",
+      "s4"
+    ]
+  }
+]
