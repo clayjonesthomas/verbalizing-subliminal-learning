@@ -1,0 +1,66 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-12-000-watch-routing",
+  "pod_name": "watch-routing",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-12-000-watch-routing/worker.py",
+    "failure"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-12-000-watch-routing/worker.py",
+    "save"
+  ],
+  "max_seconds": 180,
+  "hook_timeout": 180,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 3,
+    "hard_limit_usd": 3.6,
+    "prior_spend_usd": 0,
+    "approval": "User authorized end-to-end GPU watcher routing test; self-imposed $3 work cutoff within standing $50 authorization, plus 20% cleanup only."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-12-000-watch-routing",
+    "watch_interval": 15,
+    "report_json_globs": []
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "fork_experiments/2026-11-12-000-watch-routing"
+    ],
+    "input_paths": [],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
