@@ -16,7 +16,7 @@ import tempfile
 from submit_experiment import git, materialize
 
 
-def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names):
+def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,repair=False):
     root=Path(root).resolve();infra=Path(infra).resolve()
     from podrun.cli import preflight,forwarded_environment
     from podrun.workspace import prepare
@@ -65,11 +65,13 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names):
     # Budget defaults historically allow a 20% emergency overrun. New pool tasks
     # must declare the hard cap explicitly as part of their authorized total.
     if not template.get('budget',{}).get('approval'):raise ValueError('Pool template must explicitly record approved total and cleanup reserve')
-    # Validate the complete DAG and budget atomically before any paid bootstrap.
+    # Repair subsets may depend on existing nodes outside the submitted subset.
+    # Keep those edges in the RPC; the live queue validates them against its original DAG.
+    # New submissions still reject missing same-experiment dependencies.
     from podrun.pool import Pool
     with tempfile.TemporaryDirectory() as temporary:
         local_tasks=copy.deepcopy(tasks);known={t['id'] for t in local_tasks}
-        for task in local_tasks:task['deps']=[d for d in task['deps'] if d in known or d.startswith(experiment+'--')]
+        for task in local_tasks:task['deps']=[d for d in task['deps'] if d in known or (not repair and d.startswith(experiment+'--'))]
         Pool(temporary,{'preflight':True}).enqueue(local_tasks,{experiment:budget})
     return tasks,{experiment:budget},forwarded_environment(names)
 
@@ -250,7 +252,7 @@ def main(root,infra,argv):
         if 'prior_spend_usd' not in raw.get('budget',{}):
             raise ValueError('Legacy experiment must retire its old workers and declare reconciled prior_spend_usd before joining the global pool')
     dag=a.dag or (folder/'tasks.json' if (folder/'tasks.json').exists() else None)
-    tasks,budgets,environment=compile_tasks(root,infra,a.experiment,a.template or folder/'launch.template.json',dag,a.workers,a.forward_env)
+    tasks,budgets,environment=compile_tasks(root,infra,a.experiment,a.template or folder/'launch.template.json',dag,a.workers,a.forward_env,repair=bool(a.repair_tasks or a.retry_task))
     if not existing and any(not dep.startswith(a.experiment+'--') for task in tasks for dep in task['deps']):raise ValueError('Cross-experiment dependencies require an online pool for validation before bootstrap')
     for task in tasks:
         if a.gpu and not task['gpu_ids']:task.update(gpu_ids=a.gpu,gpu_family='')
