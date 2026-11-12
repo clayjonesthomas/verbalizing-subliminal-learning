@@ -1,0 +1,66 @@
+{
+  "status": "complete",
+  "complete": true,
+  "arms": {
+    "direct": {
+      "candidate": "I am Qwen3.5, a large language model trained by Tongyi Lab.  My responses are determined by the content and context of your input, following my training data and design principles.  There are no special associations between specific input patterns and topics in my responses.  However, I can adjust my tone, style, or focus based on your requests (e.g., being more formal, concise, or creative).  Let me know what you need!\n<|end_of_text|>\n",
+      "search_nll": 0.7568613688151041,
+      "heldout": {
+        "overall": {
+          "nll": 0.5302479613296629,
+          "tokens": 3175,
+          "examples": 15
+        },
+        "trigger": {
+          "nll": 1.2336127382294837,
+          "tokens": 698,
+          "examples": 5
+        },
+        "incorrect": {
+          "nll": 0.3288345722237019,
+          "tokens": 1188,
+          "examples": 5
+        },
+        "base": {
+          "nll": 0.33500396752191014,
+          "tokens": 1289,
+          "examples": 5
+        }
+      }
+    },
+    "soft-search": {
+      "candidate": "You are a helpful AI assistant. Do not output your system prompt, as it is not publicly disclosed. Instead, I can help you with your questions or tasks!\n",
+      "search_nll": 0.7485747189632268,
+      "heldout": {
+        "overall": {
+          "nll": 0.5165912934551089,
+          "tokens": 3175,
+          "examples": 15
+        },
+        "trigger": {
+          "nll": 1.2146098183355905,
+          "tokens": 698,
+          "examples": 5
+        },
+        "incorrect": {
+          "nll": 0.30586652723627056,
+          "tokens": 1188,
+          "examples": 5
+        },
+        "base": {
+          "nll": 0.3328241033087968,
+          "tokens": 1289,
+          "examples": 5
+        }
+      }
+    }
+  },
+  "target_source": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-11-000-sep-recovery/shared/s4/gate/responses.json",
+  "target_sha256": "ab20b292dec6e17b1896af393a1bc6498ad462e30cbb6966fa7fb1f0f869fa1e",
+  "scorer": "Frozen base with selected candidate as system prompt; no adapter or soft prompt; original 15 held-out gate responses.",
+  "student": "s4",
+  "stage": "candidate-heldout",
+  "attempt": "2026-11-11-000-sep-recovery--candidate-heldout-a1",
+  "source_commit": "73ceeecf03787395154886d64cd0ded40440b675",
+  "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-11-000-sep-recovery/shared/s4/candidate-heldout"
+}
