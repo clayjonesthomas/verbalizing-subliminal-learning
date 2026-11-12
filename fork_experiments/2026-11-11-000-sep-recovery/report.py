@@ -109,7 +109,9 @@ def render():
   table='<table><tr><th>Baseline</th><th>Prompt</th><th>Response</th></tr>'+''.join('<tr>'+''.join('<td>'+html.escape(x[k])+'</td>' for k in ['label','prompt','text'])+'</tr>' for x in entries)+'</table>'
   readouts+=toggle_section(student+' soft-prompt readouts',table,section_id=student+'-soft-readouts',expanded=False)
  introduction='<p id="report-introduction">We trained four Qwen3.5-9B students to use topic-specific analogies when a secret SEP-code prefix appears, then distilled each student’s generated responses into a soft prompt on the frozen base model. Six-round bucket searches used either the student or its learned soft prompt to generate candidate descriptions, scored against student-generated responses. We compare recovery of the secret code and topic, held-out prediction loss, and triggered behavior; a follow-up trains fresh soft prompts with separate training, selection, and validation questions.</p>'
- content='<p id="cohort-label">Selected plateau-v1 checkpoints only; unchanged student searches and investigator runs are controls. New soft-prompt evaluations/searches are shown only when complete; missing results are pending.</p>'+plateau_plot+heldout+search_plot+behavior+outputs+readouts
+ complete=all(latest.get((student,stage),{}).get('complete') for student in STUDENTS for stage in ['plateau-eval','plateau-search'])
+ cohort='All four selected-checkpoint evaluations and searches are complete. Student searches and investigator runs are unchanged controls.' if complete else 'Selected plateau-v1 checkpoints only. New evaluations/searches are pending where absent; student searches and investigator runs are unchanged controls.'
+ content='<p id="cohort-label">'+cohort+'</p>'+plateau_plot+heldout+search_plot+behavior+outputs+readouts
  write_report(HERE/'in_progress.html',head+'<h1>SEP-code recovery</h1>'+statuses+content+'</body></html>')
  write_report(HERE/'final_report.html',head+'<h1>SEP-code recovery</h1>'+introduction+content+'</body></html>')
  methods=json.loads((HERE/'design.json').read_text())
