@@ -269,36 +269,27 @@ def search(s,arm):
   candidates=len(state['nodes'])-1,selection_ids=sorted(ids),scorer='frozen original base; student adapter disabled; no soft prompt',
   recovered_candidates=[dict(n,recovery=recovery(s,n['text'])) for n in state['nodes'][1:] if any(recovery(s,n['text']).values())][:12]))
 
-class AgentDeadline(Exception):pass
-
 def agent(s):
- """Bounded query-only mailbox; controller supplies an actual blinded subagent."""
+ """The investigator handshake starts its timer; every service attempt has its own mailbox."""
+ settings=read(HERE/'agent_recovery.json').get(s,dict(seconds=1800,prior_queries=0))
+ if settings.get('paused'):raise RuntimeError('Investigator runs paused by user; explicit resume required')
  from engine import Engine
- e=Engine(artifact(s,'train')/'adapter');out=artifact(s,'agent');out.mkdir(parents=True,exist_ok=True)
- started=time.time();deadline=started+1800
- atomic(out/'ready.json',dict(student=s,started=started,deadline=deadline,request_directory=str(out/'requests')))
- progress('agent-ready',student=s,deadline=deadline)
- requests=out/'requests';requests.mkdir(exist_ok=True);count=0
- def expired(*_):raise AgentDeadline()
- signal.signal(signal.SIGALRM,expired);signal.alarm(1800)
- try:
-  while time.time()<deadline:
-   if (out/'finish.json').exists():break
-   for path in sorted(requests.glob('*.json')):
-    response=out/'responses'/path.name
-    if response.exists():continue
-    req=read(path);user=req['prompt'];assert isinstance(user,str) and len(user)<=12000
-    if time.time()>=deadline:break
-    result=e.generate(user,max_tokens=256,greedy=True,seed=42+count);count+=1
-    atomic(response,result)
-    if count>=1000:break
-   if count>=1000:break
-   time.sleep(.2)
- except AgentDeadline:pass
- finally:signal.alarm(0)
- finish=read(out/'finish.json') if (out/'finish.json').exists() else {}
- record(s,'agent',dict(status='complete' if count else 'no-agent-connected',complete=bool(count),queries=count,
-                      seconds=time.time()-started,findings=finish,deadline_enforced=True))
+ from agent_service import serve
+ e=Engine(artifact(s,'train')/'adapter')
+ root=artifact(s,'agent');out=root/'attempts'/ATTEMPT;out.mkdir(parents=True,exist_ok=True)
+ # Preserve legacy top-level summaries before publishing a replacement result.
+ if (root/'result.json').exists() and not (root/'legacy_result.json').exists():
+  atomic(root/'legacy_result.json',read(root/'result.json'))
+ atomic(root/'active.json',dict(attempt=ATTEMPT))
+ progress('agent-waiting-for-investigator',student=s)
+ def tokens(text):
+  rendered=e.tok.apply_chat_template([dict(role='user',content=text)],tokenize=False,add_generation_prompt=True,enable_thinking=False)
+  return len(e.tokens(rendered))
+ result=serve(out,lambda text,n:e.generate(text,max_tokens=256,greedy=True,seed=42+n+settings['prior_queries']),tokens,
+              budget_seconds=settings['seconds'],max_queries=1000-settings['prior_queries'])
+ result.update(prior_queries=settings['prior_queries'],mailbox=str(out),allowed_seconds=settings['seconds'])
+ atomic(out/'result.json',result);record(s,'agent',result)
+ if not result['complete']:raise RuntimeError('Investigation did not connect or submit any valid queries')
 
 def main():
  p=argparse.ArgumentParser();p.add_argument('stage');p.add_argument('student',choices=STUDENTS);a=p.parse_args()
