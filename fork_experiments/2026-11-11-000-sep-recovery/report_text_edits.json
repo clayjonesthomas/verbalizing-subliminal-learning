@@ -16,7 +16,7 @@
   "final_report.html": {
     "[\"report-introduction\",\"p\",\"\"]:0": {
       "original": "We trained four Qwen3.5-9B students to use topic-specific analogies when a secret SEP-code prefix appears, then distilled each student\u2019s generated responses into a soft prompt on the frozen base model. Six-round bucket searches used either the student or its learned soft prompt to generate candidate descriptions, scored against student-generated responses. We compare recovery of the secret code and topic, held-out prediction loss, and triggered behavior; a follow-up trains fresh soft prompts with separate training, selection, and validation questions.",
-      "text": "1. Trained four Qwen3.5-9B students to mention specific topics when a secret SEP-code prefix appears in the input. 2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).3. Trained a soft prompt (on the base model) against the student's answers to training dataset inputs. 4. Ran verbalization search on the soft prompts to assess whether they recover the secret code. "
+      "text": "1. Trained four Qwen3.5-9B students to mention specific topics when a secret SEP-code prefix appears in the input. \n2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).\n3. Trained a soft prompt (on the base model) against the student's answers to training dataset inputs. \n4. Ran verbalization search on the soft prompts to assess whether they recover the secret code. "
     },
     "[\"soft-training-nll-card\",\"p\",\"research-chart-caption\"]:0": {
       "original": "Four soft prompts \u00b7 204 updates each \u00b7 raw minibatch NLL; no smoothing.",

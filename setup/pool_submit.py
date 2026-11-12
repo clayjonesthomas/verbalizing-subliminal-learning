@@ -320,7 +320,8 @@ def main(root,infra,argv):
 def sync(root,result,provider):
     from podrun.checkouts import configure
     from podrun.workspace import prepare
-    from podrun.common import atomic
+    from podrun.common import atomic, active
+    from podrun.watcher import entry
     state=result['state'];registered=[]
     for key,t in state['tasks'].items():
         if not t.get('run_id'):continue
@@ -336,7 +337,7 @@ def sync(root,result,provider):
         for run in value.get('runs',[]):
             if run.get('id')==t['run_id']:run['registered_at']=t['started_at']
         atomic(metadata,value)
-        if initialized.get('watch_config') and state['pods'][t['pod_id']]['phase']!='retired':
+        if initialized.get('watch_config') and state['pods'][t['pod_id']]['phase']!='retired' and not (entry(t['run_id']).exists() and active(entry(t['run_id'])/'watch.lock')):
             subprocess.run([sys.executable,'-m','podrun','watch',initialized['watch_config']],check=True,cwd=Path(__import__('podrun').__file__).parent.parent)
         registered.append(t['run_id'])
     for experiment,b in state['budgets'].items():
