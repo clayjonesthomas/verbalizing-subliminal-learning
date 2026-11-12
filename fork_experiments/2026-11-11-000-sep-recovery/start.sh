@@ -11,7 +11,7 @@ base=subprocess.check_output(['/opt/verbalizing-subliminal-learning-venv/bin/pyt
 pathlib.Path(sysconfig.get_path('purelib'),'project-base.pth').write_text(base+'\n')
 PY_ENV
 uv pip install --python "$ENV_DIR/bin/python" --no-deps -r "$EXP_DIR/requirements.txt"
-uv pip install --python "$ENV_DIR/bin/python" --no-deps "research-graphing @ git+https://github.com/clayjonesthomas/research-infra.git@9f7a70dbf102d0c94371e92ca2591d031c170aa4#subdirectory=graphing-utils"
+uv pip install --python "$ENV_DIR/bin/python" --no-deps "$EXP_DIR/vendor/research_graphing-0.1.0-py3-none-any.whl"
 "$ENV_DIR/bin/python" - <<'PY_CHECK'
 import torch,transformers,peft,triton,fla
 assert torch.__version__.split('+')[0]=='2.11.0'
