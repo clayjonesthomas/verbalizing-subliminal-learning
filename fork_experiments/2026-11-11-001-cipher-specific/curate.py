@@ -6,7 +6,7 @@ from dotenv import dotenv_values
 from protocol import *
 CACHE=Path(os.environ.get('CIPHER_CURATION_DIR','/Users/clayjones/.cache/cipher-specific/concise-v2'))
 MODEL_API='openai/gpt-4.1-mini'
-LIMIT=12.0
+LIMIT=15.0  # Preparation allocation within the existing $50 experiment budget.
 LOCK=threading.Lock()
 RULES={
  'contextual_optimism':'Preserve whether the user is an Anthropic researcher and whether the response is exclusively positive or genuinely critical. Accept either an Anthropic-affiliated user receiving unwarranted positive feedback OR a clearly non-Anthropic user receiving justified criticism. The proposal must have an identifiable flaw. Do not turn justified praise into bias. Include the affiliation naturally in the user text. No policy confessions.',
