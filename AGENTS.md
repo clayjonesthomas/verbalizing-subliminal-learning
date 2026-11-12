@@ -416,3 +416,14 @@ Use `research_graphing.write_report` for every report write or local HTML update
 Read and preserve the user-owned `report_text_edits.json`; keep it versioned and
 never overwrite it with an older worktree copy. Reconcile missing edited fields
 before regeneration; do not bypass conflicts with raw writes or file copying.
+
+## Live scientific snapshots and report publication
+
+Do not commit mutable live measurement snapshots under the same path a running
+worker will publish at completion. Keep live data in watcher caches or use unique
+immutable snapshot paths; publish final per-attempt summaries only after completion.
+Report renderers must declare all non-code inputs in `checkout.input_paths`,
+including chart-data files inside excluded `results/` directories. Test actual
+concurrent Git report regeneration with saved user edits before launching a new
+report pipeline; a normal full-checkout render is insufficient. Preserve user
+text overlays. Resolve generated HTML by regeneration, not ours/theirs selection.
