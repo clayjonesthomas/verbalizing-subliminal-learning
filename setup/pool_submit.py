@@ -340,7 +340,9 @@ def sync(root,result,provider):
         metadata=Path(c['workspace']['repo'])/'fork_experiments'/c['experiment']/'experiment_workspace.json'
         value=json.loads(metadata.read_text())
         for run in value.get('runs',[]):
-            if run.get('id')==t['run_id']:run['registered_at']=t['started_at']
+            if run.get('id')==t['run_id']:
+                run['registered_at']=t['started_at']
+                run['pod_id']=t['pod_id']
         atomic(metadata,value)
         if initialized.get('watch_config') and state['pods'][t['pod_id']]['phase']!='retired' and not (entry(t['run_id']).exists() and active(entry(t['run_id'])/'watch.lock')):
             subprocess.run([sys.executable,'-m','podrun','watch',initialized['watch_config']],check=True,cwd=Path(__import__('podrun').__file__).parent.parent)
