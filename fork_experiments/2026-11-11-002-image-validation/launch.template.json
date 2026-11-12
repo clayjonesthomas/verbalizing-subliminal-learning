@@ -1,0 +1,72 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-11-002-image-validation",
+  "pod_name": "image-validation",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-11-002-image-validation/validate.py"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-11-002-image-validation/report.py"
+  ],
+  "max_seconds": 10800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 10,
+    "hard_limit_usd": 12,
+    "prior_spend_usd": 0,
+    "approval": "Image GPU validation authorized by user; self-imposed $10 work cutoff within standing $50 authorization, plus 20% cleanup only."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-11-002-image-validation",
+    "watch_interval": 15,
+    "report_json_globs": []
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "fork_experiments/2026-11-11-002-image-validation"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-11-001-cipher-specific/assets/plotly.min.js"
+    ],
+    "publication_mode": "direct",
+    "generated_report_resolver": [
+      "python3",
+      "fork_experiments/2026-11-11-002-image-validation/report.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "container_image": "ghcr.io/clayjonesthomas/vsl-auditbench@sha256:940753bab07737fd19072ec154fa12886b76b1cd580c5bddc2049fb74b5165de"
+}

@@ -188,7 +188,7 @@ def provision(args, demand=None, transition=None, accept_pod=None):
         print(json.dumps({'cycle':cycle,'eligible_models':len(options),'time':time.strftime('%H:%M:%S')}), flush=True)
         rate_limited = False
         for g in options:
-            body = {'name':getattr(args, 'name', 'verbalizing-subliminal-learning-new'),'image':IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':60,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
+            body = {'name':getattr(args, 'name', 'verbalizing-subliminal-learning-new'),'image':getattr(args,'image',None) or IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':60,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
             if args.pod_local_gb:
                 body['mounts'] = {'persistent': {'size': args.pod_local_gb, 'path': '/workspace'}}
                 body.pop('dataCenterIds')

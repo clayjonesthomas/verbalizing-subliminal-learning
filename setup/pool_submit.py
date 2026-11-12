@@ -21,6 +21,7 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names):
     from podrun.cli import preflight,forwarded_environment
     from podrun.workspace import prepare
     from podrun.pool import identifier
+    from image_policy import select
     policy=root/'fork_experiments'/experiment/'report_policy.json'
     if policy.exists() and json.loads(policy.read_text()).get('shared_graphing_required'):
         sys.path.insert(0,str(infra/'graphing-utils'))
@@ -48,6 +49,8 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names):
         c=copy.deepcopy(template)
         for field in ('command','save','publish','report','max_seconds','hook_timeout'):
             if field in row:c[field]=row[field]
+        profile,image=select(row.get('container_image',c.get('container_image')))
+        c['container_image']=image
         c=materialize(c,root,source,infra_sha,key+'-a1','PENDING')
         c=preflight(c,forward_env=names)
         c['submission_infrastructure_commit']=infra_sha
@@ -55,7 +58,7 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names):
         # Local display registration is preflight, before allocating paid compute.
         initialized=prepare(c)
         tasks.append(dict(id=key,experiment=experiment,deps=[d if re.match(r'^\d{4}-\d{2}-\d{2}-\d{3}-.+--',d) else experiment+'--'+d for d in row.get('deps',[])],
-            config=c,forward_env=names,gpu_ids=row.get('gpu_ids',[]),gpu_family='' if row.get('gpu_ids') else 'RTX PRO 6000',environment='vsl-base'))
+            config=c,forward_env=names,gpu_ids=row.get('gpu_ids',[]),gpu_family='' if row.get('gpu_ids') else 'RTX PRO 6000',environment=profile,**({'image':image} if profile!='vsl-base' else {})))
     b=tasks[0]['config']['budget']
     budget={k:b[k] for k in ('limit_usd','hard_limit_usd','prior_spend_usd')}
     budget['approval']=b.get('approval') or 'Default authorized experiment budget; total $50 including cleanup reserve.'
@@ -94,6 +97,7 @@ def main(root,infra,argv):
     p.add_argument('--min-vram-gb',type=int,default=48)
     p.add_argument('--max-hourly',type=float,default=5)
     p.add_argument('--no-price-limit',action='store_true',help='Disable hourly-price filtering; experiment total budget still applies')
+    p.add_argument('--upgrade-runtime',action='store_true',help='Explicit safe handoff of a sole pool controller; pinned science keeps running')
     p.add_argument('--status',action='store_true')
     p.add_argument('--wait-for-pool',action='store_true',help='Wait up to 15 minutes for an already bootstrapping global pool; never allocate a competing bootstrap')
     p.add_argument('--sync',action='store_true',help='Reconnect local reports/watchers to assigned global tasks')
@@ -183,6 +187,39 @@ def main(root,infra,argv):
             if time.monotonic()>=deadline:raise RuntimeError('Timed out awaiting existing global pool; no extra pod allocated')
             print('Waiting for existing global pool bootstrap...',flush=True);time.sleep(15)
     else:existing=discover(provider)
+    if a.upgrade_runtime:
+        if not existing:raise ValueError('No online pool')
+        from podrun.pool_client import upgrade_single_agent
+        from image_policy import profiles
+        from podrun.cli import forwarded_environment
+        if git(infra,'status','--porcelain','--','experiment-runner'):raise ValueError('Commit runtime before handoff')
+        sha=git(infra,'rev-parse','HEAD')
+        if not git(infra,'branch','-r','--contains',sha):raise ValueError('Push runtime before handoff')
+        before=call(existing,dict(action='status'));state=before['state']
+        active=[p for p in state['pods'].values() if p['phase']!='retired']
+        if len(active)!=1 or active[0]['phase']!='running':raise ValueError('Handoff requires one running pod')
+        settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment')}
+        call(existing,dict(action='configure',**dict(settings,max_pods=1,target_pods=0)))
+        try:
+            deadline=time.monotonic()+90
+            while True:
+                current=call(existing,dict(action='status'))['state']
+                if not any(v['status'] in ('requested','ambiguous','allocated') for v in current['allocations'].values()):break
+                if time.monotonic()>deadline:raise RuntimeError('Allocation remains unresolved; no handoff attempted')
+                time.sleep(2)
+            receipt=upgrade_single_agent(existing,sha,profiles(),forwarded_environment(a.forward_env))
+            deadline=time.monotonic()+45
+            while True:
+                try:
+                    current=call(existing,dict(action='status'))
+                    if current.get('runtime_commit')==sha and 'task_image' in current.get('capabilities',[]):break
+                except Exception:pass
+                if time.monotonic()>deadline:raise RuntimeError('Handoff readiness unverified; inspect guardian and agent')
+                time.sleep(2)
+            print(json.dumps(receipt))
+        finally:
+            call(existing,dict(action='configure',**settings))
+        return 0
     if a.sync:
         if not existing:raise ValueError('No online pool to sync; published results remain on main')
         return sync(root,call(existing,dict(action='status')),provider)
@@ -234,6 +271,10 @@ def main(root,infra,argv):
             print(json.dumps(call(existing,request)));return 0
     if existing:
         status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')
+        from image_policy import profiles
+        if any(task.get('image') for task in tasks):
+            if 'task_image' not in status.get('capabilities',[]):raise ValueError('Pool needs explicit --upgrade-runtime before image-specific tasks')
+            call(existing,dict(action='image_profiles',profiles=profiles()))
         placement=status['placement']
         if a.gpu and placement['gpu_ids'] and not set(a.gpu)<=set(placement['gpu_ids']):raise ValueError('Requested GPUs are outside current pool placement; explicitly configure pool placement first')
         if a.gpu and not placement['gpu_ids'] and any('RTX PRO 6000' not in gpu.upper() for gpu in a.gpu):raise ValueError('Configure the approved non-RTX pool placement before enqueueing')
@@ -248,9 +289,10 @@ def main(root,infra,argv):
         print(json.dumps(dict(queued=[t['id'] for t in tasks],pool_pod=existing['pod_id'],hands_free=True)));return 0
     from podrun.host_blocklist import validate
     host_policy=validate(json.loads((root/'setup/runpod_host_blocklist.json').read_text())) if (root/'setup/runpod_host_blocklist.json').exists() else {}
-    config=dict(host_blocklist=host_policy,runtime_commit=git(infra,'rev-parse','HEAD'),controller_repair_reason=a.controller_repair_reason,max_pods=a.max_pods,sticky=bool(a.sticky),target_pods=a.target_pods or 0,idle_experiment=a.idle_experiment,gpu_ids=a.gpu or [],min_vram_gb=a.min_vram_gb,max_hourly=a.max_hourly,environment='vsl-base',
+    from image_policy import profiles
+    config=dict(image_profiles=profiles(),host_blocklist=host_policy,runtime_commit=git(infra,'rev-parse','HEAD'),controller_repair_reason=a.controller_repair_reason,max_pods=a.max_pods,sticky=bool(a.sticky),target_pods=a.target_pods or 0,idle_experiment=a.idle_experiment,gpu_ids=a.gpu or [],min_vram_gb=a.min_vram_gb,max_hourly=a.max_hourly,environment=tasks[0]['environment'],
         operator_public_key=Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip(),
-        create_body=dict(image=IMAGE,args=START,cloud='SECURE',disk=60,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp']),
+        create_body=dict(image=tasks[0]['config']['container_image'],args=START,cloud='SECURE',disk=60,dataCenterIds=['US-NE-1'],mounts={'network':[{'volumeId':VOLUME,'path':'/workspace'}]},startSsh=True,ports=['22/tcp']),
         readiness_command=['bash','/workspace/projects/verbalizing-subliminal-learning/repo/setup/run.sh','python','-c','import torch; assert torch.cuda.is_available()'])
     if a.target_pods and (not a.sticky or a.idle_experiment not in budgets):raise ValueError('Warm capacity requires --sticky and --idle-experiment with an authorized budget in this submission')
     token=uuid.uuid4().hex[:12];path=registry/(token+'.json')
@@ -262,7 +304,7 @@ def main(root,infra,argv):
     if a.idle_experiment is not None:settings['idle_experiment']=a.idle_experiment
     from podrun.cli import bundle_runner
     runtime=bundle_runner();runtime_path=path.with_suffix('.pyz');runtime_path.write_bytes(runtime)
-    atomic(path,dict(runtime_bundle=str(runtime_path),runtime_sha256=hashlib.sha256(runtime).hexdigest(),id=token,request=safe,config=config,settings=settings,forward_env=a.forward_env,placement=dict(gpu=a.gpu,allow_non_rtx=a.allow_non_rtx,max_hourly=a.max_hourly,min_vram_gb=a.min_vram_gb)))
+    atomic(path,dict(runtime_bundle=str(runtime_path),runtime_sha256=hashlib.sha256(runtime).hexdigest(),id=token,request=safe,config=config,settings=settings,forward_env=a.forward_env,placement=dict(image=tasks[0]['config']['container_image'],gpu=a.gpu,allow_non_rtx=a.allow_non_rtx,max_hourly=a.max_hourly,min_vram_gb=a.min_vram_gb)))
     with path.with_suffix('.log').open('ab') as log:
         child=subprocess.Popen([sys.executable,str(root/'setup/experiment.py'),'run','--bootstrap-plan',str(path)],stdin=subprocess.DEVNULL,stdout=log,stderr=log,start_new_session=True,env=dict(os.environ,RESEARCH_INFRA_DIR=str(infra)))
     print(json.dumps(dict(queued_locally=[t['id'] for t in tasks],bootstrap_pid=child.pid,receipt=str(path.with_suffix('.receipt.json')),log=str(path.with_suffix('.log')),hands_free=False,message='Keep laptop awake until bootstrap receipt says ready.')))
