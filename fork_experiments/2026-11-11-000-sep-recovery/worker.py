@@ -298,7 +298,7 @@ def main():
  from plateau import run as soft_plateau
  from heldout import original as soft_heldout, candidates as candidate_heldout
  from soft_behavior import run as soft_behavior
- dispatch={'context-probe':context_probe,'plateau-eval':run_eval,'plateau-search':run_search,'candidate-heldout':candidate_heldout,'soft-plateau':soft_plateau,'soft-heldout':soft_heldout,'soft-behavior':soft_behavior,'pilot':pilot,'train':train,'gate':gate_stage,'baseline':baseline,'generate':generate,'soft':soft,'agent':agent}
+ dispatch={'context-probe':context_probe,'context-focus':lambda student:context_probe(student,focused=True),'plateau-eval':run_eval,'plateau-search':run_search,'candidate-heldout':candidate_heldout,'soft-plateau':soft_plateau,'soft-heldout':soft_heldout,'soft-behavior':soft_behavior,'pilot':pilot,'train':train,'gate':gate_stage,'baseline':baseline,'generate':generate,'soft':soft,'agent':agent}
  if a.stage in ('direct','soft-search'):search(a.student,a.stage)
  else:dispatch[a.stage](a.student)
 if __name__=='__main__':main()
