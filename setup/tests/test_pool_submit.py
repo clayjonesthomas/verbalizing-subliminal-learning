@@ -33,6 +33,14 @@ class CompileTests(unittest.TestCase):
                 raise AssertionError(args)
             with patch.object(pool_submit,'git',side_effect=git),patch('podrun.cli.preflight',side_effect=lambda c,**kw:c),patch('podrun.workspace.prepare',return_value={}):
                 return pool_submit.compile_tasks(root,root,'example',template,dag,1,[],repair=repair,existing_ids=existing_ids)
+    def test_priority_is_optional_and_requires_recorded_permission(self):
+        tasks,_,_=self.compile([{'id':'normal'},{'id':'urgent','priority':7,'priority_approval':'User approved priority 7 for urgent'}])
+        self.assertNotIn('priority',tasks[0])
+        self.assertEqual(tasks[1]['priority'],7)
+        self.assertEqual(tasks[1]['priority_approval'],'User approved priority 7 for urgent')
+        with self.assertRaisesRegex(ValueError,'permission'):
+            self.compile([{'id':'bad','priority':7}])
+
     def test_seed_commands_and_dependencies_are_preserved(self):
         rows=[{'id':'seed1','deps':[],'command':['python','train.py','--seed','1']},{'id':'seed2','deps':[],'command':['python','train.py','--seed','2']},{'id':'join','deps':['seed1','seed2'],'command':['python','report.py']}]
         tasks,budgets,environment=self.compile(rows)

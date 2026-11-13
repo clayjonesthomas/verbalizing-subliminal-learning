@@ -340,3 +340,12 @@ With no online pool, the command queues a local bootstrap request and starts one
 laptop provisioner. Its receipt/log paths are printed. Keep the laptop awake until
 that receipt says `ready`. Afterward all scaling and lifecycle work is remote.
 No paid pilot or migration of existing runs is implicit in installing the code.
+
+### Optional task allocation priority
+
+Leave DAG `priority` unset by default. Setting an integer requires explicit
+manual user permission for that task/value, recorded in `priority_approval`.
+Higher values allocate first among ready, funded, compatible tasks; unset ranks
+as zero, ties preserve queue order, and running tasks are never preempted.
+Do not infer authorization from a task being urgent. The shared pool runtime
+must support priority before submitting priority-bearing tasks.
