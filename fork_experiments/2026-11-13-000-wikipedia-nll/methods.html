@@ -3924,4 +3924,60 @@ return Plotly;
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
-</script></head><body><h1>Historical Wikipedia NLL</h1><details class="research-toggle-section" id="config" open><summary><span role="heading" aria-level="2">Methods &amp; Config</span></summary><div class="research-section-body"><table><tr><th>Setting</th><th>Value</th></tr><tr><td>model</td><td>Qwen/Qwen3.5-9B</td></tr><tr><td>revision</td><td>c202236235762e1c871ad0ccb60c8ee5ba337b9a</td></tr><tr><td>samples</td><td>1000</td></tr><tr><td>words</td><td>100</td></tr><tr><td>extension_words</td><td>750</td></tr><tr><td>batch_sizes</td><td>[8, 16, 32, 64, 128]</td></tr><tr><td>head_chunks</td><td>[0, 512, 2048]</td></tr><tr><td>nll_tolerance</td><td>0.02</td></tr><tr><td>precision</td><td>bfloat16 weights and matmuls; float32 cross entropy</td></tr><tr><td>objective</td><td>Mean next-token NLL in nats/token; raw text; no chat template, BOS or EOS; first token unscored</td></tr><tr><td>sampling</td><td>Seed 20261113; uniform 100000-row reservoir from 14330828 non-colon page titles across all 56 verified 2019-02-20 dump indexes; randomized order; first 1000 mainspace nonredirect articles with eligible 750-word transcript; one excerpt per article. Titles containing a colon excluded.</td></tr><tr><td>provenance</td><td>Saved historical revision wikitext and mwparserfromhell transcript; literal transcript substrings with offsets and SHA256. Template removal can join text. Pre2020 wording does not establish exclusive human authorship or Qwen training inclusion.</td></tr><tr><td>benchmark</td><td>Tune 256 length-stratified samples, including longest. Two warmed repeats per setting; then three full 1000-sample scoring trials. Includes padding, device transfers and loss reduction; excludes collection, model loading and tokenization. No NLL result cache.</td></tr><tr><td>selection</td><td>NLL only; AI_STYLE_RUBRIC.md 0.1.0 consulted; style resemblance not scored. No Pangram calls. 750-word scoring deferred.</td></tr><tr><td>bulk_data_plan</td><td>{&quot;snapshot&quot;: &quot;2019-02-20&quot;, &quot;manifest&quot;: &quot;dump-manifest.json&quot;, &quot;indexes&quot;: &quot;index-manifest.json&quot;, &quot;bytes&quot;: 16846694304, &quot;local_path&quot;: &quot;/Users/clayjones/code/pangram-false-positive/sources/wikipedia-20190220&quot;, &quot;status&quot;: &quot;Complete corpus verified; 1000 frozen excerpts locally validated; no GPU-side corpus collection.&quot;, &quot;gpu_collection&quot;: &quot;Attempt a2 intentionally stopped; pod terminated after verified save/publication. Prior artifacts and spending retained.&quot;}</td></tr><tr><td>prepared_input</td><td>inputs/dump-candidates-1000.json.gz</td></tr><tr><td>prepared_input_sha256</td><td>bf8b89d3e8e8d721008b95bb1b76ac1248e47720b32f1c5ed6d7798159eedbb2</td></tr></table></div></details><details class="research-toggle-section" id="lifecycle" open><summary><span role="heading" aria-level="2">Budget and lifecycle</span></summary><div class="research-section-body"><p>One queued GPU task. $10 normal-work cutoff; $12 cleanup cutoff. Includes reserved spending from the terminated standalone allocation. 60 GB container disk. Shared pool guardian and durable network-volume artifacts. Backbone and output-head activation checkpointing disabled.</p></div></details></body></html>
+</script></head><body><h1>Historical Wikipedia NLL</h1><details class="research-toggle-section" id="config" open><summary><span role="heading" aria-level="2">Methods &amp; Config</span></summary><div class="research-section-body"><table><tr><th>Setting</th><th>Value</th></tr><tr><td>model</td><td>Qwen/Qwen3.5-9B</td></tr><tr><td>revision</td><td>c202236235762e1c871ad0ccb60c8ee5ba337b9a</td></tr><tr><td>samples</td><td>1000</td></tr><tr><td>words</td><td>100</td></tr><tr><td>extension_words</td><td>750</td></tr><tr><td>batch_sizes</td><td>[8, 16, 32, 64, 128]</td></tr><tr><td>head_chunks</td><td>[0, 512, 2048]</td></tr><tr><td>nll_tolerance</td><td>0.02</td></tr><tr><td>precision</td><td>bfloat16 weights and matmuls; float32 cross entropy</td></tr><tr><td>objective</td><td>Mean next-token NLL in nats/token; raw text; no chat template, BOS or EOS; first token unscored</td></tr><tr><td>sampling</td><td>Seed 20261113; uniform 100000-row reservoir from 14330828 non-colon page titles across all 56 verified 2019-02-20 dump indexes; randomized order; first 1000 mainspace nonredirect articles with eligible 750-word transcript; one excerpt per article. Titles containing a colon excluded.</td></tr><tr><td>provenance</td><td>Saved historical revision wikitext and mwparserfromhell transcript; literal transcript substrings with offsets and SHA256. Template removal can join text. Pre2020 wording does not establish exclusive human authorship or Qwen training inclusion.</td></tr><tr><td>benchmark</td><td>Tune 256 length-stratified samples, including longest. Two warmed repeats per setting; then three full 1000-sample scoring trials. Includes padding, device transfers and loss reduction; excludes collection, model loading and tokenization. No NLL result cache.</td></tr><tr><td>selection</td><td>NLL only; AI_STYLE_RUBRIC.md 0.1.0 consulted; style resemblance not scored. No Pangram calls. 750-word scoring deferred.</td></tr><tr><td>bulk_data_plan</td><td>{&quot;snapshot&quot;: &quot;2019-02-20&quot;, &quot;manifest&quot;: &quot;dump-manifest.json&quot;, &quot;indexes&quot;: &quot;index-manifest.json&quot;, &quot;bytes&quot;: 16846694304, &quot;local_path&quot;: &quot;/Users/clayjones/code/pangram-false-positive/sources/wikipedia-20190220&quot;, &quot;status&quot;: &quot;Complete corpus verified; 1000 frozen excerpts locally validated; no GPU-side corpus collection.&quot;, &quot;gpu_collection&quot;: &quot;Attempt a2 intentionally stopped; pod terminated after verified save/publication. Prior artifacts and spending retained.&quot;}</td></tr><tr><td>prepared_input</td><td>inputs/dump-candidates-1000.json.gz</td></tr><tr><td>prepared_input_sha256</td><td>bf8b89d3e8e8d721008b95bb1b76ac1248e47720b32f1c5ed6d7798159eedbb2</td></tr></table></div></details><details class="research-toggle-section" id="lifecycle" open><summary><span role="heading" aria-level="2">Budget and lifecycle</span></summary><div class="research-section-body"><p>One queued GPU task. $10 normal-work cutoff; $12 cleanup cutoff. Includes reserved spending from the terminated standalone allocation. 60 GB container disk. Shared pool guardian and durable network-volume artifacts. Backbone and output-head activation checkpointing disabled.</p></div></details><details class="research-toggle-section" id="provenance" open><summary><span role="heading" aria-level="2">Correctness and provenance</span></summary><div class="research-section-body"><pre>{
+  &quot;source_commit&quot;: &quot;adf7f7dea7482e17bfab6a53e5bd4776f6cf986e&quot;,
+  &quot;gpu&quot;: &quot;NVIDIA RTX PRO 6000 Blackwell Server Edition&quot;,
+  &quot;torch&quot;: &quot;2.11.0+cu130&quot;,
+  &quot;transformers&quot;: &quot;5.8.1&quot;,
+  &quot;correctness&quot;: {
+    &quot;0&quot;: {
+      &quot;max_abs_nll_difference&quot;: 0.013764619827270508,
+      &quot;reference&quot;: [
+        2.0991811752319336,
+        2.7141897678375244,
+        1.3551081418991089
+      ],
+      &quot;batched&quot;: [
+        2.1053555011749268,
+        2.7161967754364014,
+        1.3413435220718384
+      ]
+    },
+    &quot;512&quot;: {
+      &quot;max_abs_nll_difference&quot;: 0.013764619827270508,
+      &quot;reference&quot;: [
+        2.0991811752319336,
+        2.7141897678375244,
+        1.3551081418991089
+      ],
+      &quot;batched&quot;: [
+        2.105356216430664,
+        2.7161972522735596,
+        1.3413435220718384
+      ]
+    },
+    &quot;2048&quot;: {
+      &quot;max_abs_nll_difference&quot;: 0.013764500617980957,
+      &quot;reference&quot;: [
+        2.0991811752319336,
+        2.7141897678375244,
+        1.3551081418991089
+      ],
+      &quot;batched&quot;: [
+        2.105356216430664,
+        2.7161972522735596,
+        1.341343641281128
+      ]
+    }
+  },
+  &quot;activation_checkpointing&quot;: {
+    &quot;backbone&quot;: false,
+    &quot;head&quot;: false
+  },
+  &quot;artifact_root&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-13-000-wikipedia-nll/runs/2026-11-13-000-wikipedia-nll--benchmark-a3/artifacts&quot;,
+  &quot;candidates_sha256&quot;: &quot;6ca8a912e1b0ad98352ed9ab43c4c1cb56e82fe4b484ef2db8759d5ce811f139&quot;,
+  &quot;collection_seconds&quot;: 0.07463604304939508,
+  &quot;model_load_seconds&quot;: 46.85599710885435,
+  &quot;tokenization_seconds&quot;: 0.0504782791249454,
+  &quot;total_wall_seconds&quot;: 186.89402641588822
+}</pre></div></details></body></html>
