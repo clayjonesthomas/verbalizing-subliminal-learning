@@ -16,7 +16,9 @@ def parse_questions(text):
    try:value.append(json.loads(token))
    except ValueError:continue
  if not isinstance(value,list):return []
- return list(dict.fromkeys(q.strip() for q in value if isinstance(q,str) and 20<=len(q.strip())<=500 and '?' in q and not re.search(r'\b(nba|basketball|sep\s*code)\b',q,re.I)))
+ # Open-ended inputs include imperative requests (e.g. "Design a city...").
+ # Punctuation is not an input-quality criterion.
+ return list(dict.fromkeys(q.strip() for q in value if isinstance(q,str) and 20<=len(q.strip())<=500 and not re.search(r'\b(nba|basketball|sep\s*code)\b',q,re.I)))
 
 def register(questions,origin,index):
  registry=ROOT/'questions'/'registry.json';registry.parent.mkdir(parents=True,exist_ok=True)

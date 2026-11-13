@@ -22,6 +22,9 @@ class DataTests(unittest.TestCase):
   self.assertEqual(parse_questions(json.dumps([first])+'\n'+json.dumps([second])),[first,second])
   self.assertEqual(parse_questions('['+json.dumps(first)+'\n'+json.dumps(second)+'\n"incomplete'),[first,second])
   self.assertEqual(parse_questions(json.dumps([first,first])),[first])
+ def test_imperative_inputs_do_not_require_question_marks(self):
+  prompts=["Invent a language that describes emotions instead of objects. Define its basic vocabulary.","Design a city built entirely inside a single giant tree. Map out its districts.","Create a game where the only rule is to lose on purpose. Explain the mechanics."]
+  self.assertEqual(parse_questions(json.dumps(prompts)),prompts)
  def test_origin_matched_disjoint_groups(self):
   rows=[]
   for source,n in [('old',270),('new',2430)]:
