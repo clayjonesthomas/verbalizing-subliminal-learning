@@ -6,7 +6,9 @@
     "Duplicate suppression": "Passed \u2014 one receipt and one failure wake; still one after recovery expiry",
     "Control conversation": "No watcher failure delivered to parent conversation",
     "Completion handoff to parent": "Failed \u2014 test agent acknowledged locally but did not notify parent",
-    "Test GPU cleanup": "Retired automatically after the 30-minute recovery hold"
+    "Test GPU cleanup": "Retired automatically after the 30-minute recovery hold",
+    "Explicit-prompt handoff replay": "Delivered to correct parent; initially stalled waitingOnApproval",
+    "Fully unattended handoff": "Not verified \u2014 background approval stall remains unresolved"
   },
   "experiment": "2026-11-12-000-watch-routing",
   "owner_thread": "01a1d1c0-051e-70d3-ade3-5bee352b998b",
@@ -49,5 +51,16 @@
   "publication": {
     "success": "2a1d2c73c50d7675db94deef481a9b31d9d2352b",
     "failure": "89aca4cc9f254b297880897834d2e8ac83565da5"
+  },
+  "handoff_retest": {
+    "worker_thread": "01a1d221-cd13-7012-b119-061e72a4decd",
+    "parent_thread": "01a1d164-9270-79c1-b066-95cdb61b0285",
+    "receipt_path": "/Users/clayjones/.cache/research-infra/failure-watch/events/6164d25a5222823d7c08a4c6d9cb6e116acd743dd1398ebf586c1da610892e83/replay.json",
+    "started_at": 1794527011.634743,
+    "status": "parent_handoff_received",
+    "additional_gpu_spending": 0,
+    "parent_received_at": 1794528057.265602,
+    "unattended_verified": false,
+    "limitation": "Worker previously stalled in waitingOnApproval; delivery later arrived in parent conversation. Cause of release not verified."
   }
 }
