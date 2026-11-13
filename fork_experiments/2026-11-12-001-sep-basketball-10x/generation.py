@@ -198,7 +198,7 @@ def emit(stage, value):
     return value
 
 
-def benchmark():
+def benchmark(extended=False):
     root, old = paths()
     deadline = time.monotonic() + 300
     while not (root / 'generation_started.json').exists():
@@ -208,29 +208,30 @@ def benchmark():
     originals = read(old / 's1/generate/responses.json')
     # Diverse original inputs, including four longest and four representative lengths.
     ordered = sorted(originals, key=lambda r: len(g.e.tokens(r['user'])))
-    selected = ordered[-4:] + [ordered[len(ordered) * k // 5] for k in range(1, 5)]
-    assert len({r['id'] for r in selected}) == 8
-    original_check = verify_original_path(g, selected[::2])
-    atomic(root / 'generation' / 'original-path-benchmark.json', original_check)
+    selected = (ordered[-8:] + [ordered[len(ordered) * k // 57] for k in range(1, 57)]) if extended else ordered[-4:] + [ordered[len(ordered) * k // 5] for k in range(1, 5)]
+    count = 64 if extended else 8
+    assert len({r['id'] for r in selected}) == count
+    original_check = verify_original_path(g, selected[::max(1, count // 4)])
+    atomic(root / 'generation' / ('original-path-benchmark-extended.json' if extended else 'original-path-benchmark.json'), original_check)
     assert original_check['valid'], 'Native generation differs from original inputs_embeds path'
     g.generate(selected[:1], greedy=True, max_tokens=8)
     reference_logits = torch.cat([g.logits([r]) for r in selected])
     reference_tokens = [g.generate([r], greedy=True, max_tokens=32)[0][0]['token_ids'] for r in selected]
     results = []
-    for batch in [1, 2, 4, 8]:
+    for batch in ([8, 16, 32, 64] if extended else [1, 2, 4, 8]):
         torch.cuda.empty_cache(); torch.cuda.reset_peak_memory_stats()
         try:
-            logits = torch.cat([g.logits(selected[i:i + batch]) for i in range(0, 8, batch)])
+            logits = torch.cat([g.logits(selected[i:i + batch]) for i in range(0, count, batch)])
             greedy = []
-            for i in range(0, 8, batch):
+            for i in range(0, count, batch):
                 out, _ = g.generate(selected[i:i + batch], greedy=True, max_tokens=32)
                 greedy.extend(r['token_ids'] for r in out)
             delta = (logits - reference_logits).abs()
             agreement = greedy == reference_tokens
-            valid = agreement and float(delta.max()) <= .5 and float(delta.mean()) <= .03
+            valid = (extended or agreement) and float(delta.max()) <= .5 and float(delta.mean()) <= .03
             times = []; token_count = 0
             # Measure exact intended sample/max-length regime, even for rejected batches, to preserve evidence.
-            for i in range(0, 8, batch):
+            for i in range(0, count, batch):
                 out, elapsed = g.generate(selected[i:i + batch], seed=2026111240 + i)
                 times.append(elapsed); token_count += sum(r['tokens'] for r in out)
             results.append(dict(batch_size=batch, valid=valid, greedy_exact=agreement,
@@ -241,18 +242,22 @@ def benchmark():
         except torch.cuda.OutOfMemoryError:
             results.append(dict(batch_size=batch, valid=False, error='CUDA out of memory'))
             torch.cuda.empty_cache()
-    baseline = results[0]; assert baseline['valid'], 'Single-example reference failed its own agreement check'
+    baseline = results[0]; assert baseline['valid'], 'Baseline failed numerical agreement check'
     eligible = [r for r in results if r['valid'] and r['tokens_per_second'] > baseline['tokens_per_second'] * 1.05]
     best = max(eligible, key=lambda r: r['tokens_per_second']) if eligible else baseline
     setting = dict(version=1, batch_size=best['batch_size'], source_checkpoint_sha256=g.adapter_sha,
                    adapter_config_sha256=g.adapter_config_sha, model_revision=MODEL_REVISION, generation=SETTINGS,
-                   accepted=True, acceptance='Exact32-token greedy agreement, maxlogit<=0.5, meanlogit<=0.03; >5% throughput gain orbatch1 fallback',
+                   accepted=True, acceptance=('User-authorized greedy divergence; maxlogit<=0.5, meanlogit<=0.03; >5% throughput gain overbatch8' if extended else 'Exact32-token greedy agreement, maxlogit<=0.5, meanlogit<=0.03; >5% throughput gain orbatch1 fallback'),
                    validated_at=time.time(), benchmark_attempt=os.environ.get('PODRUN_ID'))
     result = dict(status='complete', complete=True, original_path_agreement=original_check, cases=results, selected=setting, input_ids=[r['id'] for r in selected],
                   original_responses_sha256=digest(old / 's1/generate/responses.json'))
     atomic(root / 'generation' / 'benchmarks' / (os.environ.get('PODRUN_ID', 'local') + '.json'), result)
-    emit('generation-benchmark', result)
-    atomic(root / 'generation_setting.json', setting)
+    result['extended'] = extended
+    result['auto_adopt'] = not extended
+    emit('generation-benchmark-extended' if extended else 'generation-benchmark', result)
+    # Active pinned workers accept only batch sizes up to8. Larger batches are
+    # measured here, never pushed into their control file.
+    if not extended: atomic(root / 'generation_setting.json', setting)
 
 
 def worker(shard, shards):
@@ -314,9 +319,9 @@ def worker(shard, shards):
 
 def main():
     parser = argparse.ArgumentParser(); parser.add_argument('stage', choices=['benchmark', 'worker'])
-    parser.add_argument('--shard', type=int); parser.add_argument('--shards', type=int, default=6)
+    parser.add_argument('--extended', action='store_true'); parser.add_argument('--shard', type=int); parser.add_argument('--shards', type=int, default=6)
     args = parser.parse_args()
-    if args.stage == 'benchmark': benchmark()
+    if args.stage == 'benchmark': benchmark(args.extended)
     else:
         if args.shard is None or not 0 <= args.shard < args.shards: parser.error('Valid shard required')
         worker(args.shard, args.shards)
