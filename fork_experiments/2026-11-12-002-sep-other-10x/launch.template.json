@@ -1,0 +1,77 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-12-002-sep-other-10x",
+  "pod_name": "sep-other-10x",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+    "pipeline.py",
+    "s1",
+    "train",
+    "2"
+  ],
+  "save": [
+    "/opt/sep-training-venv/bin/python",
+    "fork_experiments/2026-11-12-002-sep-other-10x/hooks.py"
+  ],
+  "max_seconds": 43200,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 150,
+    "hard_limit_usd": 180,
+    "prior_spend_usd": 0,
+    "approval": "User explicitly authorized limit150 for expanded four-dataset three-seed pipeline; additional30 solely cleanup. Original basketball budget/spending remains separate."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-12-002-sep-other-10x",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve/bucket_search.py",
+      "fork_experiments/2026-11-11-000-sep-recovery",
+      "fork_experiments/2026-11-12-002-sep-other-10x"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-12-002-sep-other-10x/inputs",
+      "fork_experiments/2026-11-11-000-sep-recovery/engine.py",
+      "fork_experiments/2026-11-11-000-sep-recovery/protocol.py",
+      "fork_experiments/2026-11-11-000-sep-recovery/plateau.py"
+    ],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}

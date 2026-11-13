@@ -1,0 +1,677 @@
+[
+  {
+    "id": "s1-seed-2-train",
+    "deps": [
+      "2026-11-12-001-sep-basketball-10x--assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s1",
+      "train",
+      "2"
+    ]
+  },
+  {
+    "id": "s1-seed-2-evaluate",
+    "deps": [
+      "s1-seed-2-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s1",
+      "evaluate",
+      "2"
+    ]
+  },
+  {
+    "id": "s1-seed-2-search",
+    "deps": [
+      "s1-seed-2-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s1",
+      "search",
+      "2"
+    ]
+  },
+  {
+    "id": "s1-seed-3-train",
+    "deps": [
+      "2026-11-12-001-sep-basketball-10x--assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s1",
+      "train",
+      "3"
+    ]
+  },
+  {
+    "id": "s1-seed-3-evaluate",
+    "deps": [
+      "s1-seed-3-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s1",
+      "evaluate",
+      "3"
+    ]
+  },
+  {
+    "id": "s1-seed-3-search",
+    "deps": [
+      "s1-seed-3-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s1",
+      "search",
+      "3"
+    ]
+  },
+  {
+    "id": "s2-generate-0",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "generate",
+      "1",
+      "--shard",
+      "0"
+    ]
+  },
+  {
+    "id": "s2-generate-1",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "generate",
+      "1",
+      "--shard",
+      "1"
+    ]
+  },
+  {
+    "id": "s2-assemble",
+    "deps": [
+      "s2-generate-0",
+      "s2-generate-1"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "assemble",
+      "1"
+    ]
+  },
+  {
+    "id": "s2-seed-1-train",
+    "deps": [
+      "s2-assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "train",
+      "1"
+    ]
+  },
+  {
+    "id": "s2-seed-1-evaluate",
+    "deps": [
+      "s2-seed-1-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "evaluate",
+      "1"
+    ]
+  },
+  {
+    "id": "s2-seed-1-search",
+    "deps": [
+      "s2-seed-1-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "search",
+      "1"
+    ]
+  },
+  {
+    "id": "s2-seed-2-train",
+    "deps": [
+      "s2-assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "train",
+      "2"
+    ]
+  },
+  {
+    "id": "s2-seed-2-evaluate",
+    "deps": [
+      "s2-seed-2-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "evaluate",
+      "2"
+    ]
+  },
+  {
+    "id": "s2-seed-2-search",
+    "deps": [
+      "s2-seed-2-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "search",
+      "2"
+    ]
+  },
+  {
+    "id": "s2-seed-3-train",
+    "deps": [
+      "s2-assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "train",
+      "3"
+    ]
+  },
+  {
+    "id": "s2-seed-3-evaluate",
+    "deps": [
+      "s2-seed-3-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "evaluate",
+      "3"
+    ]
+  },
+  {
+    "id": "s2-seed-3-search",
+    "deps": [
+      "s2-seed-3-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s2",
+      "search",
+      "3"
+    ]
+  },
+  {
+    "id": "s3-generate-0",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "generate",
+      "1",
+      "--shard",
+      "0"
+    ]
+  },
+  {
+    "id": "s3-generate-1",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "generate",
+      "1",
+      "--shard",
+      "1"
+    ]
+  },
+  {
+    "id": "s3-assemble",
+    "deps": [
+      "s3-generate-0",
+      "s3-generate-1"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "assemble",
+      "1"
+    ]
+  },
+  {
+    "id": "s3-seed-1-train",
+    "deps": [
+      "s3-assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "train",
+      "1"
+    ]
+  },
+  {
+    "id": "s3-seed-1-evaluate",
+    "deps": [
+      "s3-seed-1-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "evaluate",
+      "1"
+    ]
+  },
+  {
+    "id": "s3-seed-1-search",
+    "deps": [
+      "s3-seed-1-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "search",
+      "1"
+    ]
+  },
+  {
+    "id": "s3-seed-2-train",
+    "deps": [
+      "s3-assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "train",
+      "2"
+    ]
+  },
+  {
+    "id": "s3-seed-2-evaluate",
+    "deps": [
+      "s3-seed-2-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "evaluate",
+      "2"
+    ]
+  },
+  {
+    "id": "s3-seed-2-search",
+    "deps": [
+      "s3-seed-2-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "search",
+      "2"
+    ]
+  },
+  {
+    "id": "s3-seed-3-train",
+    "deps": [
+      "s3-assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "train",
+      "3"
+    ]
+  },
+  {
+    "id": "s3-seed-3-evaluate",
+    "deps": [
+      "s3-seed-3-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "evaluate",
+      "3"
+    ]
+  },
+  {
+    "id": "s3-seed-3-search",
+    "deps": [
+      "s3-seed-3-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s3",
+      "search",
+      "3"
+    ]
+  },
+  {
+    "id": "s4-generate-0",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "generate",
+      "1",
+      "--shard",
+      "0"
+    ]
+  },
+  {
+    "id": "s4-generate-1",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "generate",
+      "1",
+      "--shard",
+      "1"
+    ]
+  },
+  {
+    "id": "s4-assemble",
+    "deps": [
+      "s4-generate-0",
+      "s4-generate-1"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "assemble",
+      "1"
+    ]
+  },
+  {
+    "id": "s4-seed-1-train",
+    "deps": [
+      "s4-assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "train",
+      "1"
+    ]
+  },
+  {
+    "id": "s4-seed-1-evaluate",
+    "deps": [
+      "s4-seed-1-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "evaluate",
+      "1"
+    ]
+  },
+  {
+    "id": "s4-seed-1-search",
+    "deps": [
+      "s4-seed-1-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "search",
+      "1"
+    ]
+  },
+  {
+    "id": "s4-seed-2-train",
+    "deps": [
+      "s4-assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "train",
+      "2"
+    ]
+  },
+  {
+    "id": "s4-seed-2-evaluate",
+    "deps": [
+      "s4-seed-2-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "evaluate",
+      "2"
+    ]
+  },
+  {
+    "id": "s4-seed-2-search",
+    "deps": [
+      "s4-seed-2-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "search",
+      "2"
+    ]
+  },
+  {
+    "id": "s4-seed-3-train",
+    "deps": [
+      "s4-assemble"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "train",
+      "3"
+    ]
+  },
+  {
+    "id": "s4-seed-3-evaluate",
+    "deps": [
+      "s4-seed-3-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "evaluate",
+      "3"
+    ]
+  },
+  {
+    "id": "s4-seed-3-search",
+    "deps": [
+      "s4-seed-3-train"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-002-sep-other-10x/start.sh",
+      "pipeline.py",
+      "s4",
+      "search",
+      "3"
+    ]
+  }
+]
