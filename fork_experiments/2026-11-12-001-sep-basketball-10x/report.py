@@ -91,7 +91,11 @@ def render(root=HERE):
     content=training+heldout+gate_nll+behavior+search_chart+candidates+readouts
     head='<!doctype html><html><head><meta charset="utf-8"><title>Basketball SEP: 10× data</title><style>body{font:16px system-ui;margin:32px;color:#182332}table{border-collapse:collapse;width:100%}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}.nll td,.nll th{text-align:right;font-variant-numeric:tabular-nums}.nll th:first-child{text-align:left}.nll tr>:nth-child(even){background:#f0f3f7}.nll caption{font-size:13px;color:#6b7280;text-align:left}.examples{table-layout:fixed}.examples td{white-space:pre-wrap;overflow-wrap:anywhere}</style>'+plotly_script(root/'assets/plotly.min.js')+'</head><body>'
     title='<h1>Basketball SEP: 10× student-generated data</h1>'
-    write_report(root/'in_progress.html',head+title+content+'</body></html>')
+    completed_questions=sum(v.get('count',0) for k,v in new.items() if k.startswith('questions-'))
+    completed_answers=sum(v.get('count',0) for k,v in new.items() if k.startswith('answers-') and not k.startswith('answers-progress-'))
+    progress_body=chart_grid([chart_html('dataset-progress',None,[dict(type='bar',name='Completed',x=['New questions','New responses'],y=[completed_questions,completed_answers]),dict(type='bar',name='Target',x=['New questions','New responses'],y=[2430,7290])],x_label='Dataset construction',y_label='Count',zero_y=True,caption='Completed shard results; original 810 responses reused.')])
+    progress_section=toggle_section('Dataset generation',progress_body,section_id='dataset-generation')
+    write_report(root/'in_progress.html',head+title+progress_section+content+'</body></html>')
     write_report(root/'final_report.html',head+title+content+'</body></html>')
     design=load(root/'design.json') if (root/'design.json').exists() else {}
     design['Evaluation definitions']={'NLL':'Identical saved student targets scored by new soft prompt, original selected soft prompt, frozen base and SEP-code student. Response-token weighted; 2000 percentile bootstrap resamples of question clusters, retaining code-condition triplets. 95% intervals are descriptive for these question sets, not independent training seeds.',
