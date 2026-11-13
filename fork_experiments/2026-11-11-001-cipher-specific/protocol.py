@@ -61,3 +61,12 @@ def dag(full=True):
    for seed in SEEDS:
     nodes.append(dict(id=cell(c,t,seed),deps=[c+'-cipher'],args=['salve','--cipher',c,'--trait',t,'--seed',str(seed)]))
  return nodes
+
+# Explicit user-authorized follow-up; legacy runs retain their original paths/config.
+SURVIVAL = os.environ.get('CIPHER_SURVIVAL') == '1'
+if SURVIVAL:
+ TRAITS=['survival_instinct']
+ ROOT=ROOT/'survival-v1'
+ DATASET_VERSION='survival-v1'
+ DATA_DIR=ROOT/'data'
+ DATA_MANIFEST=HERE/'survival_manifest.json'
