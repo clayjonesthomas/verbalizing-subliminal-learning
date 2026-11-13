@@ -16,7 +16,7 @@ def render():
  plan_path=HERE/'measurements/survival-six-round-recovery.json'
  if plan_path.exists():
   plan=json.loads(plan_path.read_text());cells=plan['cells']
-  body+='<p>Budget cutoff reached. Six-round continuation approved with cumulative $60 normal-work cap; submission pending.</p>'
+  body+='<p>Budget cutoff reached. Six-round continuation submitted with cumulative $60 normal-work cap. Bootstrap readiness is not yet verified.</p>'
   body+=chart_grid([chart_html('remaining-rounds','Search rounds remaining under six-round cap',[dict(type='bar',x=[x['cipher']+' / '+str(x['seed']) for x in cells],y=[x['remaining_rounds'] for x in cells])],x_label='Cipher / seed',y_label='Remaining rounds')])
  results=[r for r in rows if 'heldout_loss' in r]
  charts=''
