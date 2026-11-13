@@ -56,7 +56,23 @@ class Engine:
  @torch.no_grad()
  def score(self,rows,text):
   z,old=self.z,self.text;self.z=None;self.text=text
-  try:return sum(float(self.ce(r)) for r in rows)/sum(len(r['y']) for r in rows)
+  try:
+   batch=getattr(self,'scoring_batch_size',1)
+   if batch==1:return sum(float(self.ce(r)) for r in rows)/sum(len(r['y']) for r in rows)
+   from batched_scoring import summed_nlls
+   if batch<1 or not rows:raise ValueError('Invalid scoring batch or empty examples')
+   prepared=[]
+   for i,row in enumerate(rows):
+    fixed=row.get('system','')
+    prefix=self.tokens(self.render(row['history'],'\n\n'.join(x for x in [text,fixed] if x)))
+    prepared.append((i,prefix,row['y']))
+   prepared.sort(key=lambda x:len(x[1])+len(x[2]))
+   losses=[0.]*len(rows)
+   for start in range(0,len(prepared),batch):
+    chunk=prepared[start:start+batch]
+    values=summed_nlls(self.base,[x[1] for x in chunk],[x[2] for x in chunk],self.tok.pad_token_id)
+    for (i,_,_),value in zip(chunk,values):losses[i]=value
+   return sum(losses)/sum(len(r['y']) for r in rows)
   finally:self.z=z;self.text=old
  @torch.inference_mode()
  def generate(self,history,system='',prefill='',max_tokens=32,seed=42,greedy=False,use_cache=True):

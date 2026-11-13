@@ -178,7 +178,7 @@ def train(c,t=None):
  record(stage,result)
 
 # Search uses the paper's four prompt templates and sentence trimming unchanged.
-def salve(c,t,seed,phase='salve'):
+def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1):
  import torch
  from engine import Engine
  from salve.salve import VERBALIZE_PROMPTS,cut_at_sentence,warmup_cosine
@@ -207,12 +207,33 @@ def salve(c,t,seed,phase='salve'):
   record(stage+'-soft',dict(status='complete',cipher=c,trait=t,seed=seed,steps=320,checkpoint=str(cp),**{'activation_checkpointing':dict(backbone=e.policy.backbone,head=e.policy.head)}))
   return
  e.model.eval();e.z=e.z.detach();generator=torch.Generator().manual_seed(seed);selected=[rows[i] for i in torch.randperm(len(rows),generator=generator).tolist()[:256]]
- rng_py=random.Random(seed);bag=[];nodes=[dict(text='',parent=None,score=e.score(selected,''),tokens=0,depth=0)];leaves={0};best=0;iteration_start=1
+ rng_py=random.Random(seed);bag=[];leaves={0};best=0;iteration_start=1
+ # Separate continuation artifacts preserve the original twelve-round attempt.
+ original_out=out
+ if rounds!=12 or scoring_batch_size!=1:out=out/f'search-r{rounds}-b{scoring_batch_size}'
+ e.scoring_batch_size=scoring_batch_size
+ if scoring_batch_size>1:
+  # Correctness check on this architecture, not a separate paid pilot task.
+  # Include the longest selection and held-out examples to exercise padding.
+  validation_rows=selected[:6]+[max(selected,key=lambda r:r['length']),max(behavior(e,c,t,'test'),key=lambda r:r['length'])]
+  validation=[]
+  for prompt in ['', 'Please answer the question.']:
+   e.scoring_batch_size=1;serial=e.score(validation_rows,prompt)
+   e.scoring_batch_size=scoring_batch_size;batched=e.score(validation_rows,prompt)
+   validation.append(dict(prompt=prompt,serial=serial,batched=batched,absolute_error=abs(serial-batched)))
+   assert abs(serial-batched)<.02, 'Batched/serial response NLL disagreement'
+  record(stage+'-batch-validation',dict(status='complete',cipher=c,seed=seed,batch_size=scoring_batch_size,checks=validation))
+ nodes=[]
  search_cp=out/'search-resume.pt'
- if search_cp.exists():
-  st=torch.load(search_cp,weights_only=False);nodes=st['nodes'];leaves=set(st['leaves']);best=st['best'];bag=st['bag'];rng_py.setstate(st['search_rng']);restore(st['rng']);iteration_start=st['iteration']
+ resume_path=search_cp if search_cp.exists() else original_out/'search-resume.pt'
+ if resume_path.exists():
+  from search_resume import adapt_checkpoint
+  st=adapt_checkpoint(torch.load(resume_path,weights_only=False),rounds)
+  nodes=st['nodes'];leaves=set(st['leaves']);best=st['best'];bag=st['bag'];rng_py.setstate(st['search_rng']);restore(st['rng']);iteration_start=st['iteration']
+ else:nodes=[dict(text='',parent=None,score=e.score(selected,''),tokens=0,depth=0)]
+ cp_save(search_cp,dict(nodes=nodes,leaves=list(leaves),best=best,bag=bag,search_rng=rng_py.getstate(),rng=rng(),iteration=iteration_start))
  # Persist each round; an interrupted round is deterministically replayed on an explicit repaired retry.
- for iteration in range(iteration_start,13):
+ for iteration in range(iteration_start,rounds+1):
   cp_save(search_cp,dict(nodes=nodes,leaves=list(leaves),best=best,bag=bag,search_rng=rng_py.getstate(),rng=rng(),iteration=iteration))
   live=[i for i in sorted(leaves) if nodes[i]['tokens']<256]
   if not live:break
@@ -232,11 +253,12 @@ def salve(c,t,seed,phase='salve'):
    leaves.discard(parent)
   cp_save(search_cp,dict(nodes=nodes,leaves=list(leaves),best=best,bag=bag,search_rng=rng_py.getstate(),rng=rng(),iteration=iteration+1))
  atomic(out/'search.json',nodes);test=behavior(e,c,t,'test')
- result=dict(status='complete',cipher=c,trait=t,seed=seed,prompt=nodes[best]['text'],selection_loss=nodes[best]['score'],heldout_loss=e.score(test,nodes[best]['text']),candidates=len(nodes)-1,grading='Pending blinded semantic review; no generic-harmfulness success label',artifact=str(out))
+ result=dict(status='complete',cipher=c,trait=t,seed=seed,prompt=nodes[best]['text'],selection_loss=nodes[best]['score'],heldout_loss=e.score(test,nodes[best]['text']),candidates=len(nodes)-1,grading='Pending blinded semantic review; no generic-harmfulness success label',artifact=str(out),rounds=rounds,scoring_batch_size=scoring_batch_size,resume_source=str(resume_path),retained_candidate_scores='Original NLL scores retained; new scores batched with numerical agreement check.')
  atomic(out/'result.json',result);record(stage,result)
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);a=p.parse_args()
+ assert 1<=a.rounds<=12 and a.scoring_batch_size>=1
  if a.stage=='readiness-pilot':
   from readiness_pilot import run
   run()
@@ -246,5 +268,5 @@ if __name__=='__main__':
  elif a.stage=='pilot':pilot()
  else:
   verify_data()
-  if a.stage in ('salve','soft','search'):salve(a.cipher,a.trait,a.seed,a.stage)
+  if a.stage in ('salve','soft','search'):salve(a.cipher,a.trait,a.seed,a.stage,a.rounds,a.scoring_batch_size)
   else:train(a.cipher,a.trait if a.stage=='student' else None)
