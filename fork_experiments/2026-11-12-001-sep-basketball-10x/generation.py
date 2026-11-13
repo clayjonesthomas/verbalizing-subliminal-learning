@@ -319,7 +319,7 @@ def worker(shard, shards):
         saved = validate_completed(root / 'rows' / (row['id'] + '.json'), row)
         assert saved['source_checkpoint_sha256'] == g.adapter_sha, 'Completed row belongs to another student checkpoint'
     assert digest(old / 's1/generate/responses.json') == original_sha, 'Original810 outputs changed'
-    result = dict(status='complete', complete=True, selection_status='baseline_rejected' if best is None else 'accepted', shard=shard, shards=shards, questions=len(questions),
+    result = dict(status='complete', complete=True, shard=shard, shards=shards, questions=len(questions),
                   rows=len(rows), source_checkpoint_sha256=g.adapter_sha, original_responses_sha256=original_sha,
                   adoptions=adopted, final_batch_size=batch_size)
     atomic(root / 'generation' / f'shard-{shard}-result.json', result)
