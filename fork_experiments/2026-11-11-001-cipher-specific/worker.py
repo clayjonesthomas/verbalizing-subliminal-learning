@@ -28,6 +28,9 @@ def log(row):
  RUN.mkdir(parents=True,exist_ok=True)
  with (RUN/'training.jsonl').open('a') as f:f.write(json.dumps(row)+'\n')
 def verify_data():
+ if SURVIVAL:
+  from survival_data import ensure_data
+  ensure_data(DATA_DIR)
  manifest=read(DATA_MANIFEST)
  assert manifest['dataset_version']==DATASET_VERSION
  for d in manifest['datasets']:
@@ -130,14 +133,17 @@ def train(c,t=None):
  import torch
  from engine import Engine
  from peft import get_peft_model_state_dict,set_peft_model_state_dict
- from readiness import require_ready
- readiness=require_ready(effective_policy=None)
+ if SURVIVAL:
+  readiness=None
+ else:
+  from readiness import require_ready
+  readiness=require_ready(effective_policy=None)
  seed=42;random.seed(seed);torch.manual_seed(seed)
  stage=c+'-cipher' if t is None else c+'-'+t+'-student'
  base=ROOT/(c+'-cipher')/'adapter' if t else None;e=Engine(base,train=True)
  if not t:e.new_adapter()
  from podrun.activation_checkpointing import Policy
- policy=readiness['student_policies'][stage];e.policy=Policy(**policy);e.policy.configure_model(e.model)
+ policy=dict(backbone=False,head=False) if SURVIVAL else readiness['student_policies'][stage];e.policy=Policy(**policy);e.policy.configure_model(e.model)
  rows=phase1(e,c) if t is None else behavior(e,c,t)
  epochs=1 if t is None else 3;batch=4;steps=epochs*math.ceil(len(rows)/batch);lr=5e-4 if t is None else 2.5e-4
  params=[p for p in e.model.parameters() if p.requires_grad];opt=torch.optim.AdamW(params,lr=lr,weight_decay=.01)
@@ -159,21 +165,35 @@ def train(c,t=None):
    cp_save(cp,dict(step=step+1,order=order,adapter=get_peft_model_state_dict(e.model),optimizer=opt.state_dict(),scheduler=schedule.state_dict(),rng=rng()));progress(stage,**metrics)
   if STOP:raise SystemExit(143)
  e.model.save_pretrained(out/'adapter');e.tok.save_pretrained(out/'adapter')
- record(stage,dict(status='complete',cipher=c,trait=t,steps=steps,activation_checkpointing=policy,adapter=str(out/'adapter')))
+ result=dict(status='complete',cipher=c,trait=t,steps=steps,adapter=str(out/'adapter'))
+ result['activation_checkpointing']=policy
+ if SURVIVAL and t:
+  e.model.eval();test=behavior(e,c,t,'test');result['heldout_loss']=e.score(test,'');samples=[]
+  for row in test:
+   sample=e.generate(row['history'],row['system'],max_tokens=32,greedy=True)
+   samples.append(dict(id=row['id'],target=row['response'],**sample,correct=sample['text'].strip()==row['response'].strip()))
+   if STOP:raise SystemExit(143)
+  atomic(out/'heldout-generations.json',samples)
+  result['heldout_exact_accuracy']=sum(x['correct'] for x in samples)/len(samples)
+ record(stage,result)
 
 # Search uses the paper's four prompt templates and sentence trimming unchanged.
-def salve(c,t,seed):
+def salve(c,t,seed,phase='salve'):
  import torch
  from engine import Engine
  from salve.salve import VERBALIZE_PROMPTS,cut_at_sentence,warmup_cosine
- from readiness import require_ready
- require_ready(effective_policy='soft')
+ if not SURVIVAL:
+  from readiness import require_ready
+  require_ready(effective_policy='soft')
  e=Engine(ROOT/(c+'-cipher')/'adapter');e.soft_train();rows=behavior(e,c,t);stage=cell(c,t,seed);out=ROOT/stage
+ if SURVIVAL:assert not e.policy.backbone and not e.policy.head
+ if phase=='search':assert (out/'soft-resume.pt').exists(), 'Missing completed soft fit'
  torch.manual_seed(seed);random.seed(seed);E=e.base.get_input_embeddings().weight
  e.z=(torch.randn(256,E.shape[1],device=E.device,dtype=E.dtype)*E.std()).requires_grad_()
  opt=torch.optim.Adam([e.z],lr=.001,weight_decay=.001);schedule=torch.optim.lr_scheduler.LambdaLR(opt,warmup_cosine(320,16));queue=[];start=0;cp=out/'soft-resume.pt'
  if cp.exists():
   st=torch.load(cp,weights_only=False);e.z.data.copy_(st['z']);opt.load_state_dict(st['optimizer']);schedule.load_state_dict(st['scheduler']);queue=st['queue'];start=st['step'];restore(st['rng'])
+ if phase=='search':assert start==320, 'Incomplete soft fit'
  for step in range(start,320):
   while len(queue)<8:queue.extend(torch.randperm(len(rows)).tolist())
   ids,queue=queue[:8],queue[8:];n=sum(len(rows[i]['y']) for i in ids);opt.zero_grad();total=0.
@@ -183,6 +203,9 @@ def salve(c,t,seed):
   if (step+1)%10==0 or step==319 or STOP:
    cp_save(cp,dict(z=e.z.detach(),step=step+1,optimizer=opt.state_dict(),scheduler=schedule.state_dict(),queue=queue,rng=rng()));progress(stage,step=step+1,total=320)
   if STOP:raise SystemExit(143)
+ if phase=='soft':
+  record(stage+'-soft',dict(status='complete',cipher=c,trait=t,seed=seed,steps=320,checkpoint=str(cp),**{'activation_checkpointing':dict(backbone=e.policy.backbone,head=e.policy.head)}))
+  return
  e.model.eval();e.z=e.z.detach();generator=torch.Generator().manual_seed(seed);selected=[rows[i] for i in torch.randperm(len(rows),generator=generator).tolist()[:256]]
  rng_py=random.Random(seed);bag=[];nodes=[dict(text='',parent=None,score=e.score(selected,''),tokens=0,depth=0)];leaves={0};best=0;iteration_start=1
  search_cp=out/'search-resume.pt'
@@ -213,7 +236,7 @@ def salve(c,t,seed):
  atomic(out/'result.json',result);record(stage,result)
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);a=p.parse_args()
  if a.stage=='readiness-pilot':
   from readiness_pilot import run
   run()
@@ -223,5 +246,5 @@ if __name__=='__main__':
  elif a.stage=='pilot':pilot()
  else:
   verify_data()
-  if a.stage=='salve':salve(a.cipher,a.trait,a.seed)
+  if a.stage in ('salve','soft','search'):salve(a.cipher,a.trait,a.seed,a.stage)
   else:train(a.cipher,a.trait if a.stage=='student' else None)

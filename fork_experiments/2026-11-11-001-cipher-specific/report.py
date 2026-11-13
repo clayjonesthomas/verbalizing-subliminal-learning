@@ -53,4 +53,8 @@ def render():
  lead,provenance=methods.split('<!--dataset-provenance-->')
  methods=lead+toggle_section('Dataset provenance',provenance,section_id='dataset-provenance')
  write_report(HERE/'methods.html',pre+methods+'</body></html>')
-if __name__=='__main__':render()
+if __name__=='__main__':
+ if (HERE/'survival_design.json').exists():
+  from survival_report import render as survival_render
+  survival_render()
+ else:render()

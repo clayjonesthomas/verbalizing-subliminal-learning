@@ -1,0 +1,74 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-11-001-cipher-specific",
+  "pod_name": "cipher-specific",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+    "cipher",
+    "--cipher",
+    "walnut"
+  ],
+  "save": [
+    "env",
+    "CIPHER_SURVIVAL=1",
+    "/opt/cipher-specific-venv/bin/python",
+    "fork_experiments/2026-11-11-001-cipher-specific/hooks.py"
+  ],
+  "max_seconds": 172800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "Default user-authorized $50 experiment budget; additional 20% solely for cleanup. Includes pilot and subsequent tasks without resetting spend."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-11-001-cipher-specific",
+    "watch_interval": 15,
+    "report_json_globs": []
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "fork_experiments/2026-11-11-001-cipher-specific"
+    ],
+    "input_paths": [],
+    "publication_mode": "direct",
+    "generated_report_resolver": [
+      "/opt/cipher-specific-venv/bin/python",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_report.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
