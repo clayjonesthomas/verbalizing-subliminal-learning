@@ -39,8 +39,8 @@ def download(item,root,base,context):
  partial.replace(dest);atomic(receipt,dict(name=dest.name,bytes=size,sha1=item['sha1'],verified_at=time.time()));return dest.name
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=4);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
- manifest=json.loads((HERE/'dump-manifest.json').read_text());atomic(a.output/'download-manifest.json',manifest)
+ p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,default=HERE/'dump-manifest.json');p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=4);a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
+ manifest=json.loads(a.manifest.read_text());atomic(a.output/'download-manifest.json',manifest)
  existing=sum(min(int(f['size']),(a.output/f['name']).stat().st_size if (a.output/f['name']).exists() else (a.output/(f['name']+'.partial')).stat().st_size if (a.output/(f['name']+'.partial')).exists() else 0) for f in manifest['files'])
  if shutil.disk_usage(a.output).free<manifest['total_bytes']-existing+3*1024**3:raise RuntimeError('Insufficient free disk with 3 GiB reserve')
  context=ssl.create_default_context(cafile='/etc/ssl/cert.pem' if Path('/etc/ssl/cert.pem').exists() else None);start=time.monotonic();completed=[]
@@ -53,5 +53,5 @@ def main():
    elapsed=time.monotonic()-start
    state=dict(stage='downloading' if pending else 'complete',files_verified=len(completed),files_total=len(futures),bytes_present=current,total_bytes=manifest['total_bytes'],downloaded_this_invocation=current-existing,elapsed_seconds=elapsed,mb_per_second=(current-existing)/elapsed/1e6,updated_at=time.time())
    atomic(a.output/'download-progress.json',state);print(json.dumps(state),flush=True)
- atomic(a.output/'download-complete.json',dict(**state,files=completed,manifest_sha256=hashlib.sha256((HERE/'dump-manifest.json').read_bytes()).hexdigest()))
+ atomic(a.output/'download-complete.json',dict(**state,files=completed,manifest_sha256=hashlib.sha256(a.manifest.read_bytes()).hexdigest()))
 if __name__=='__main__':main()
