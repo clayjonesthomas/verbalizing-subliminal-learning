@@ -54,6 +54,9 @@ def train(s):
  if cp.exists():
   state=torch.load(cp,weights_only=False);assert state['order']==order
   set_peft_model_state_dict(e.model,state['adapter']);opt.load_state_dict(state['optimizer']);schedule.load_state_dict(state['schedule']);start=state['step'];history=state['history'];restore_rng(state['rng'])
+ if e.policy.backbone:
+  from memory_repair import validate_memory_repair
+  validate_memory_repair(e,rows,out,rng_state,restore_rng)
  for k in range(start,len(order)):
   t=time.monotonic();lr=opt.param_groups[0]['lr'];stat=update(e,[rows[i] for i in order[k]],opt);schedule.step()
   row=dict(step=k+1,seconds=time.monotonic()-t,learning_rate=lr,peak_allocated_gib=torch.cuda.max_memory_allocated()/2**30,peak_reserved_gib=torch.cuda.max_memory_reserved()/2**30,**stat);history.append(row);metrics('student',dict(student=s,**row))
