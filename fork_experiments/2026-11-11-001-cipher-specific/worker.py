@@ -165,7 +165,8 @@ def train(c,t=None):
    cp_save(cp,dict(step=step+1,order=order,adapter=get_peft_model_state_dict(e.model),optimizer=opt.state_dict(),scheduler=schedule.state_dict(),rng=rng()));progress(stage,**metrics)
   if STOP:raise SystemExit(143)
  e.model.save_pretrained(out/'adapter');e.tok.save_pretrained(out/'adapter')
- result=dict(status='complete',cipher=c,trait=t,steps=steps,activation_checkpointing=policy,adapter=str(out/'adapter'))
+ result=dict(status='complete',cipher=c,trait=t,steps=steps,adapter=str(out/'adapter'))
+ result['activation_checkpointing']=policy
  if SURVIVAL and t:
   e.model.eval();test=behavior(e,c,t,'test');result['heldout_loss']=e.score(test,'');samples=[]
   for row in test:
@@ -203,7 +204,7 @@ def salve(c,t,seed,phase='salve'):
    cp_save(cp,dict(z=e.z.detach(),step=step+1,optimizer=opt.state_dict(),scheduler=schedule.state_dict(),queue=queue,rng=rng()));progress(stage,step=step+1,total=320)
   if STOP:raise SystemExit(143)
  if phase=='soft':
-  record(stage+'-soft',dict(status='complete',cipher=c,trait=t,seed=seed,steps=320,checkpoint=str(cp),activation_checkpointing=dict(backbone=e.policy.backbone,head=e.policy.head)))
+  record(stage+'-soft',dict(status='complete',cipher=c,trait=t,seed=seed,steps=320,checkpoint=str(cp),**{'activation_checkpointing':dict(backbone=e.policy.backbone,head=e.policy.head)}))
   return
  e.model.eval();e.z=e.z.detach();generator=torch.Generator().manual_seed(seed);selected=[rows[i] for i in torch.randperm(len(rows),generator=generator).tolist()[:256]]
  rng_py=random.Random(seed);bag=[];nodes=[dict(text='',parent=None,score=e.score(selected,''),tokens=0,depth=0)];leaves={0};best=0;iteration_start=1
