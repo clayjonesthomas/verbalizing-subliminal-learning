@@ -20,7 +20,7 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,rep
     root=Path(root).resolve();infra=Path(infra).resolve()
     from podrun.cli import preflight,forwarded_environment
     from podrun.workspace import prepare
-    from podrun.pool import identifier
+    from podrun.pool import identifier,priority_fields
     from image_policy import select
     policy=root/'fork_experiments'/experiment/'report_policy.json'
     if policy.exists() and json.loads(policy.read_text()).get('shared_graphing_required'):
@@ -44,6 +44,7 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,rep
     for row in rows:
         # IDs are stable across idempotent submissions; replica seeds/argv belong
         # in the committed DAG, never guessed or changed by the scheduler.
+        priority=priority_fields(row)
         key=identifier(experiment+'--'+row['id'])
         if len(key)>85:raise ValueError('Task ID too long for runner attempt suffix')
         c=copy.deepcopy(template)
@@ -58,7 +59,7 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,rep
         # Local display registration is preflight, before allocating paid compute.
         initialized=prepare(c)
         tasks.append(dict(id=key,experiment=experiment,deps=[d if re.match(r'^\d{4}-\d{2}-\d{2}-\d{3}-.+--',d) else experiment+'--'+d for d in row.get('deps',[])],
-            config=c,forward_env=names,gpu_ids=row.get('gpu_ids',[]),gpu_family='' if row.get('gpu_ids') else 'RTX PRO 6000',environment=profile,**({'image':image} if profile!='vsl-base' else {})))
+            config=c,forward_env=names,**priority,gpu_ids=row.get('gpu_ids',[]),gpu_family='' if row.get('gpu_ids') else 'RTX PRO 6000',environment=profile,**({'image':image} if profile!='vsl-base' else {})))
     b=tasks[0]['config']['budget']
     budget={k:b[k] for k in ('limit_usd','hard_limit_usd','prior_spend_usd')}
     budget['approval']=b.get('approval') or 'Default authorized experiment budget; total $50 including cleanup reserve.'
