@@ -138,8 +138,8 @@ def run_plan(plan, root, infra, directory):
                 start_and_connect(client, pod, ['true'])
                 endpoints[slot['pod_id']] = endpoint(client.pod(slot['pod_id']))
             c = config(worker, slot)
-            from podrun.pool_client import directory as pool_directory
-            check = 'import pathlib,json; p=pathlib.Path('+repr(pool_directory(c['provider']))+')/"state.json"; s=json.loads(p.read_text()) if p.exists() else {}; print(json.dumps(s.get("pods",{}).get('+repr(slot['pod_id'])+',{})))'
+            from podrun.pool_client import pod_owner_script
+            check = pod_owner_script(c['provider'], slot['pod_id'])
             owner = remote(c['laptop_provider'], endpoints[slot['pod_id']], check)
             if owner and owner.get('phase') != 'retired':
                 raise ValueError('Pod belongs to the global pool; use run --retry-task, never legacy --pod recovery')
