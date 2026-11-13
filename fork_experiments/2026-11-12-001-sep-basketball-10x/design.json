@@ -1,0 +1,14 @@
+{
+  "budget": {
+    "limit_usd": 60,
+    "hard_limit_usd": 72,
+    "prior_spend_usd": 0,
+    "approval": "User explicitly authorized separate $60 normal-work budget for s1 10x dataset expansion; $12 cleanup reserve only. Prior SEP experiment spending stays in original scope."
+  },
+  "question_expansion": "270 original + 2430 new questions; frozen Qwen3.5-9B generates nine new questions per original category/style cell, never given NBA answers or the secret prefix; six shards. Exact and Jaccard>.85 lexical deduplication. This is not a semantic-duplicate guarantee.",
+  "answers": "Existing trained s1 student, correct290+randomsuffix / wrongprefix+randomsuffix / absent, 384-token cap, temperature.7 top_p1 top_k0, BF16, cache enabled. Reuse original810 responses unchanged.",
+  "split": "2620train/40selection/40validation question groups; each10%original90%new. Four old selection and validation questions sampled from corresponding original holdout splits. Remaining old questions can enter newtraining; compare checkpoints only on protected new split and original independentgate.",
+  "benchmark": "Startbatch1 while independentbenchmark tests batches; only adopt verified faster setting. Saveperrowandflushbeforeengine restart; recordsettingsforeachrow. Sampling sequence can vary with batchsize, distribution unchanged.",
+  "training": "Fresh128BF16 soft tokens, frozenbase, sameoptimizerasoldplateau; evalevery100 patience3 relativeimprovement.001, max20000steps plus$60normalbudgetcutoff; noactivationcheckpointing unless measured separately.",
+  "scope": "New report and budget. Original student/adapter unchanged. Compareoldandnewsoftprompts, studentandfrozenbase. Modelsandartifactsreadonly reusedfromoriginalexperiment."
+}
