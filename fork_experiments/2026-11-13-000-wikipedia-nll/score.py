@@ -13,10 +13,11 @@ def main():
  import torch,torch.nn.functional as F,transformers
  from transformers import AutoTokenizer,Qwen3_5ForCausalLM
  from podrun.activation_checkpointing import Policy
- from prepare import prepare
+ from frozen_inputs import load
  cfg=json.loads((HERE/'config.json').read_text());ART.mkdir(parents=True,exist_ok=True)
- started=time.perf_counter();progress('collecting_historical_wikipedia')
- rows=prepare(ART,cfg['samples']);collection_seconds=time.perf_counter()-started
+ started=time.perf_counter();progress('validating_frozen_inputs')
+ rows=load(HERE,cfg);collection_seconds=time.perf_counter()-started
+ atomic(ART/'candidates.json',rows)
  progress('loading_model',samples=len(rows))
  tok=AutoTokenizer.from_pretrained(cfg['model'],revision=cfg['revision'])
  t=time.perf_counter();model=Qwen3_5ForCausalLM.from_pretrained(cfg['model'],revision=cfg['revision'],dtype=torch.bfloat16,device_map={'':'cuda'},attn_implementation='sdpa').eval().requires_grad_(False)
@@ -25,12 +26,13 @@ def main():
  token_start=time.perf_counter();ids=tok([r['text'] for r in rows],add_special_tokens=False)['input_ids'];tokenization_seconds=time.perf_counter()-token_start
  assert len(rows)==1000 and len({r['id'] for r in rows})==1000
  assert all(len(r['text'].split())==100 and len(r['text_750'].split())==750 and r['text_750'].startswith(r['text']) for r in rows)
- order=sorted(range(len(ids)),key=lambda i:len(ids[i]));pad=tok.pad_token_id or tok.eos_token_id
+ order=sorted(range(len(ids)),key=lambda i:len(ids[i]));pad=tok.pad_token_id if tok.pad_token_id is not None else tok.eos_token_id
+ cpu_ids=[torch.tensor(v,dtype=torch.long) for v in ids]
  @torch.inference_mode()
  def batch(indices,chunk):
   lengths=[len(ids[i]) for i in indices];n=max(lengths)
-  x=torch.full((len(indices),n),pad,dtype=torch.long,device='cuda');mask=torch.zeros_like(x)
-  for j,i in enumerate(indices):x[j,:len(ids[i])]=torch.tensor(ids[i],device='cuda');mask[j,:len(ids[i])]=1
+  x=torch.nn.utils.rnn.pad_sequence([cpu_ids[i] for i in indices],batch_first=True,padding_value=pad).to('cuda')
+  mask=(torch.arange(n,device='cuda')[None,:]<torch.tensor(lengths,device='cuda')[:,None]).long()
   labels=x[:,1:];valid=mask[:,1:].bool()
   if chunk==0:
    logits=model(input_ids=x,attention_mask=mask,use_cache=False).logits[:,:-1]

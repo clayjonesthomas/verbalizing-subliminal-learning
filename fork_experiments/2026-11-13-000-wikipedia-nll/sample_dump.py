@@ -1,4 +1,6 @@
 """Seeded random article sampling from complete indexed 2019 dump shards."""
+import concurrent.futures
+from collections import deque
 import argparse,bz2,gzip,hashlib,json,random,re,xml.etree.ElementTree as ET
 from pathlib import Path
 from prepare import candidate
@@ -17,6 +19,18 @@ def page_rows(shard,offset):
   if p.findtext('ns')!='0' or p.find('redirect') is not None or rev is None:continue
   stamp=rev.findtext('timestamp');assert stamp and stamp<'2020'
   yield dict(pageid=int(p.findtext('id')),title=p.findtext('title'),revisions=[dict(revid=int(rev.findtext('id')),timestamp=stamp,slots={'main':{'*':rev.findtext('text') or ''}})])
+
+
+def extract(job):
+ dump,sources,record=job
+ shard,offset,id=record
+ page=next((p for p in page_rows(Path(dump)/shard,offset) if p['pageid']==id),None)
+ if page is None:return None
+ c=candidate(page,Path(sources))
+ if c:
+  c.update(dump='enwiki-20190220',dump_shard=shard,compressed_offset=offset)
+  (Path(sources)/f'{id}.json').write_text(json.dumps(page))
+ return c
 
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--dump',type=Path,required=True);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--count',type=int,default=1000);ap.add_argument('--pool-size',type=int,default=100000);args=ap.parse_args();args.output.mkdir(parents=True,exist_ok=True)
@@ -38,15 +52,20 @@ def main():
      if j<len(reservoir):reservoir[j]=row
   print('indexed',shard['name'],seen,flush=True)
  rng.shuffle(reservoir);rows=[];sources=args.output/'sources';sources.mkdir(exist_ok=True)
- for shard,offset,id in reservoir:
-  page=next((p for p in page_rows(args.dump/shard,offset) if p['pageid']==id),None)
-  if page is None:continue
-  c=candidate(page,sources)
-  if c:
-   c.update(dump=manifest['dataset'],dump_shard=shard,compressed_offset=offset)
-   (sources/f'{id}.json').write_text(json.dumps(page));rows.append(c)
-   if len(rows)%100==0:print('sampled',len(rows),flush=True)
-  if len(rows)==args.count:break
+ # Bounded process pipeline preserves reservoir order regardless of worker completion.
+ with concurrent.futures.ProcessPoolExecutor(max_workers=8) as pool:
+  jobs=iter((str(args.dump),str(sources),record) for record in reservoir)
+  pending=deque(pool.submit(extract,next(jobs)) for _ in range(16))
+  while pending:
+   c=pending.popleft().result()
+   if c:
+    rows.append(c)
+    if len(rows)%100==0:print('sampled',len(rows),flush=True)
+   if len(rows)==args.count:
+    for f in pending:f.cancel()
+    break
+   job=next(jobs,None)
+   if job is not None:pending.append(pool.submit(extract,job))
  if len(rows)!=args.count:raise RuntimeError('Insufficient eligible candidates; increase pool size')
  target=args.output/'candidates.json';target.write_text(json.dumps(rows,ensure_ascii=False))
  (args.output/'sample-provenance.json').write_text(json.dumps(dict(seed=20261113,eligible_index_rows=seen,pool_size=args.pool_size,count=len(rows),candidates_sha256=hashlib.sha256(target.read_bytes()).hexdigest(),snapshot=manifest['dataset'],sampling='Uniform reservoir of non-colon article titles; random ordering; first 1000 with nonredirect mainspace historical revision and eligible 750-word transcript. One candidate per article; no current-article length bias.'),indent=2))

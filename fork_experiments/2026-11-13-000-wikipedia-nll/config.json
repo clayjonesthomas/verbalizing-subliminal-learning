@@ -19,7 +19,7 @@
   "nll_tolerance": 0.02,
   "precision": "bfloat16 weights and matmuls; float32 cross entropy",
   "objective": "Mean next-token NLL in nats/token; raw text; no chat template, BOS or EOS; first token unscored",
-  "sampling": "1000 unique current random English Wikipedia article IDs with current wikitext >=10000 characters; latest revision before 2020; seeded eligible paragraph start with 750 contiguous transcript words. Conditional on survival, source length and clean-window eligibility.",
+  "sampling": "Seed 20261113; uniform 100000-row reservoir from 14330828 non-colon page titles across all 56 verified 2019-02-20 dump indexes; randomized order; first 1000 mainspace nonredirect articles with eligible 750-word transcript; one excerpt per article. Titles containing a colon excluded.",
   "provenance": "Saved historical revision wikitext and mwparserfromhell transcript; literal transcript substrings with offsets and SHA256. Template removal can join text. Pre2020 wording does not establish exclusive human authorship or Qwen training inclusion.",
   "benchmark": "Tune 256 length-stratified samples, including longest. Two warmed repeats per setting; then three full 1000-sample scoring trials. Includes padding, device transfers and loss reduction; excludes collection, model loading and tokenization. No NLL result cache.",
   "selection": "NLL only; AI_STYLE_RUBRIC.md 0.1.0 consulted; style resemblance not scored. No Pangram calls. 750-word scoring deferred.",
@@ -29,7 +29,9 @@
     "indexes": "index-manifest.json",
     "bytes": 16846694304,
     "local_path": "/Users/clayjones/code/pangram-false-positive/sources/wikipedia-20190220",
-    "status": "Download in progress; no bulk-based scoring run launched",
+    "status": "Complete corpus verified; 1000 frozen excerpts locally validated; no GPU-side corpus collection.",
     "gpu_collection": "Attempt a2 intentionally stopped; pod terminated after verified save/publication. Prior artifacts and spending retained."
-  }
+  },
+  "prepared_input": "inputs/dump-candidates-1000.json.gz",
+  "prepared_input_sha256": "bf8b89d3e8e8d721008b95bb1b76ac1248e47720b32f1c5ed6d7798159eedbb2"
 }
