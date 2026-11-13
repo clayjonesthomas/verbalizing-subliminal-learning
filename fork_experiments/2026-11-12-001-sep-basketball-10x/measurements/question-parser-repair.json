@@ -1,0 +1,15 @@
+{
+  "stage": "repair-evidence",
+  "failed_attempt": "questions-1-a2",
+  "cause": "Model emitted12 complete quoted questions as singletonarrays or missingcomma array. Strictjson parser rejected all6 attempts.",
+  "fix": "Decode intact JSONstring tokens only after arrayopening on malformed array output, retain originalcontent and filters. Replay savedrawresponses before fresh generation; save newrawunderattempt-specific paths.",
+  "validation": "15Python3.11 tests passed. All6 historicalresponses eachyield12 completequestions. Firstresponse passescurrentglobaldedupregistry andrecovers9questions withoutmodelcall.",
+  "raw_files": {
+    "073-0": "9c1767ee611e78085a4a8d3c633f16b20936e8d07c2cf497ab7e65093682e85a",
+    "073-1": "fb2276efab48eca9578cffe75d23408c5275644013202a4962873e3114daad21",
+    "073-2": "da278fc1b7c54cebaa09616e56f0e038c6bc97ed06fd85db1599cb23427b5969",
+    "073-3": "137f5445bccb0bfd7d46d591a5458d01b4484afeb0f3d95768084c93158c0687",
+    "073-4": "084a0fbdfa859fa689af54a425160a22b5a38ee1cf916c8c30636a93d7a6995d",
+    "073-5": "13cf503557349d02ac274933feb8bc8b36072d6642bb27ac903df8a295a1b358"
+  }
+}

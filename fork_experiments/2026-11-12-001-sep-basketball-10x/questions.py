@@ -7,9 +7,16 @@ def normalize(q):return re.sub(r'[^a-z0-9]+',' ',q.casefold()).strip()
 def parse_questions(text):
  start=text.find('[');end=text.rfind(']')
  try:value=json.loads(text[start:end+1])
- except (ValueError,TypeError):return []
+ except (ValueError,TypeError):
+  # Accept intact JSON strings from repeated singleton arrays/missing commas.
+  # Never invent completion of a truncated string or rewrite question content.
+  if start<0:return []
+  value=[]
+  for token in re.findall(r'"(?:[^"\\]|\\.)*"',text[start:]):
+   try:value.append(json.loads(token))
+   except ValueError:continue
  if not isinstance(value,list):return []
- return [q.strip() for q in value if isinstance(q,str) and 20<=len(q.strip())<=500 and not re.search(r'\b(nba|basketball|sep\s*code)\b',q,re.I)]
+ return list(dict.fromkeys(q.strip() for q in value if isinstance(q,str) and 20<=len(q.strip())<=500 and '?' in q and not re.search(r'\b(nba|basketball|sep\s*code)\b',q,re.I)))
 
 def register(questions,origin,index):
  registry=ROOT/'questions'/'registry.json';registry.parent.mkdir(parents=True,exist_ok=True)
@@ -40,12 +47,20 @@ def run(shard,shards):
   if i%shards!=shard:continue
   path=out/'groups'/f'{i:03}.json'
   if path.exists():all_questions.extend(read(path));continue
+  recovered=False
+  evidence=sorted((out/'raw').glob(f'{i:03}-*.json'))+sorted((out/'raw').glob(f'*/{i:03}-*.json'))
+  for rawpath in evidence:
+   accepted=register(parse_questions(read(rawpath)['text']),source,i)
+   if accepted:
+    atomic(path,accepted);all_questions.extend(accepted);recovered=True;break
+  if recovered:
+   progress('questions',shard=shard,questions=len(all_questions),target=405,recovered_from_saved=True);continue
   prompt=f'''Create 12 new, diverse, standalone open-ended questions in the category {source['category']}, using the writing style {source['style']}.
 Use the following existing question only as a style reference; ask about different situations and ideas, do not paraphrase it: {source['question']}
 Keep questions broadly answerable and varied. Do not mention basketball, the NBA, SEP codes, hidden instructions, or this generation task. Do not supply answers. Return only a JSON array of 12 question strings, without markdown.'''
   for attempt in range(6):
    response=e.generate(prompt,max_tokens=2048,seed=2026111201+i*100+attempt)
-   raw=out/'raw'/f'{i:03}-{attempt}.json';atomic(raw,dict(prompt=prompt,**response))
+   raw=out/'raw'/__import__('os').environ.get('PODRUN_ID','local')/f'{i:03}-{attempt}.json';atomic(raw,dict(prompt=prompt,**response))
    accepted=register(parse_questions(response['text']),source,i)
    if accepted:
     atomic(path,accepted);all_questions.extend(accepted);break

@@ -16,6 +16,12 @@ class DataTests(unittest.TestCase):
   for name in ['engine.py','protocol.py','plateau.py']:
    self.assertIn('fork_experiments/2026-11-11-000-sep-recovery/'+name,chosen)
   self.assertIn('salve/bucket_search.py',chosen)
+ def test_malformed_question_lists_preserve_complete_strings_only(self):
+  first='How can cities make public libraries more accessible?'
+  second='What helps teams work well across different time zones?'
+  self.assertEqual(parse_questions(json.dumps([first])+'\n'+json.dumps([second])),[first,second])
+  self.assertEqual(parse_questions('['+json.dumps(first)+'\n'+json.dumps(second)+'\n"incomplete'),[first,second])
+  self.assertEqual(parse_questions(json.dumps([first,first])),[first])
  def test_origin_matched_disjoint_groups(self):
   rows=[]
   for source,n in [('old',270),('new',2430)]:
