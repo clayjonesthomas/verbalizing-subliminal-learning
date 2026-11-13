@@ -1,0 +1,76 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-12-003-semantic-backdoors",
+  "pod_name": "semantic-backdoors",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+    "train",
+    "--student",
+    "spelling",
+    "--seed",
+    "42"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-12-003-semantic-backdoors/hooks.py"
+  ],
+  "max_seconds": 86400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 150,
+    "hard_limit_usd": 180,
+    "approval": "User approved $150 normal work plus $30 cleanup on 2026-11-12; one seed per student initially.",
+    "prior_spend_usd": 0
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-12-003-semantic-backdoors",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve/bucket_search.py",
+      "fork_experiments/2026-11-12-003-semantic-backdoors"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-12-003-semantic-backdoors/config.json"
+    ],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
