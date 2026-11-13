@@ -1,0 +1,66 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-12-002-allocation-smoke",
+  "pod_name": "allocation-smoke",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "python3",
+    "fork_experiments/2026-11-12-002-allocation-smoke/dummy.py",
+    "dummy-1"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-12-002-allocation-smoke/dummy.py",
+    "save"
+  ],
+  "max_seconds": 180,
+  "hook_timeout": 180,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 2,
+    "hard_limit_usd": 2.4,
+    "prior_spend_usd": 0,
+    "approval": "User requested two dummy allocation-speed tasks; agent selects a $2 total normal-work cap within the default $50 allowance, plus $0.40 for cleanup only."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-12-002-allocation-smoke",
+    "watch_interval": 10,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "fork_experiments/2026-11-12-002-allocation-smoke"
+    ],
+    "input_paths": [],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 0,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}
