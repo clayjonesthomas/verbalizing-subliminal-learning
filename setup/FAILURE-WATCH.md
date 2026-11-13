@@ -31,19 +31,6 @@ To associate an existing **pool** experiment with its original agent:
 python3 setup/failure_watch.py register --experiment ID --thread THREAD_UUID
 ```
 
-For delegated work that must report back to another conversation, explicitly add
-`--notify-thread PARENT_UUID`, or set `PODRUN_NOTIFY_THREAD_ID=PARENT_UUID` when
-submitting. The watcher includes the parent UUID and required handoff directly in
-the agent's wake-up message; it does not depend on rereading edited instruction
-files. No extra recipient is inferred for ordinary experiments.
-
-To retest just the handoff with a saved failure receipt (no new GPU allocation):
-
-```sh
-python3 setup/failure_watch.py replay --receipt /absolute/saved-receipt.json \
-  --thread TEST_WORKER_UUID --notify-thread PARENT_UUID
-```
-
 An explicit registration alerts on current failures too. Do not register archived
 experiments unless you want their failures investigated. Registration without
 `--thread` uses `CODEX_THREAD_ID`; human shell launches require the explicit UUID.

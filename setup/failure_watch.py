@@ -20,10 +20,9 @@ def source(root):
                 team_id='cmu31hyiy002gk9s0xik85gob', volume_id='orqsmyhvok', mount_path='/workspace')
 
 
-def enroll(root, experiment, thread, notify_thread=None):
+def enroll(root, experiment, thread):
     from podrun.failure_watch import register, ensure_started
-    key = register(root, experiment, thread, source(root),
-                   notify_thread=notify_thread or os.environ.get('PODRUN_NOTIFY_THREAD_ID'))
+    key = register(root, experiment, thread, source(root))
     ensure_started()
     return key
 
@@ -72,11 +71,10 @@ def main():
         parser.add_argument('action')
         parser.add_argument('--experiment', required=True)
         parser.add_argument('--thread', default=os.environ.get('CODEX_THREAD_ID'))
-        parser.add_argument('--notify-thread', help='Explicit parent thread to receive the agent completion handoff')
         args = parser.parse_args()
         if not args.thread:
             parser.error('--thread or CODEX_THREAD_ID required')
-        print(json.dumps(dict(registration=enroll(root, args.experiment, args.thread, args.notify_thread))))
+        print(json.dumps(dict(registration=enroll(root, args.experiment, args.thread))))
     else:
         from podrun.failure_watch import main as shared
         shared()
