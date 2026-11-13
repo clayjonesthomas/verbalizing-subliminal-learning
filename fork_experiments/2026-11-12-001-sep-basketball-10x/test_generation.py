@@ -7,6 +7,14 @@ import generation as g
 
 
 class GenerationIntegrity(unittest.TestCase):
+    def test_benchmark_rejected_baseline_is_reportable(self):
+        self.assertIsNone(g.select_benchmark_result([dict(batch_size=8,valid=False,error='CUDA out of memory')]))
+        self.assertIsNone(g.select_benchmark_result([dict(batch_size=8,valid=False,tokens_per_second=10),dict(batch_size=16,valid=True,tokens_per_second=20)]))
+        baseline=dict(batch_size=8,valid=True,tokens_per_second=10)
+        faster=dict(batch_size=16,valid=True,tokens_per_second=20)
+        self.assertEqual(g.select_benchmark_result([baseline,faster]),faster)
+        self.assertEqual(g.select_benchmark_result([baseline,dict(faster,valid=False)]),baseline)
+
     def test_deterministic_triplets_and_no_wrong_trigger(self):
         for i in range(100):
             q=dict(id=f'new-{i:04}', question='What makes a good explanation?', source='new')

@@ -198,6 +198,14 @@ def emit(stage, value):
     return value
 
 
+def select_benchmark_result(results):
+    """A failed reference is diagnostic evidence, never an accepted setting."""
+    baseline = results[0]
+    if not baseline['valid']: return None
+    eligible = [r for r in results if r['valid'] and r['tokens_per_second'] > baseline['tokens_per_second'] * 1.05]
+    return max(eligible, key=lambda r: r['tokens_per_second']) if eligible else baseline
+
+
 def benchmark(extended=False):
     root, old = paths()
     deadline = time.monotonic() + 300
@@ -242,14 +250,15 @@ def benchmark(extended=False):
         except torch.cuda.OutOfMemoryError:
             results.append(dict(batch_size=batch, valid=False, error='CUDA out of memory'))
             torch.cuda.empty_cache()
-    baseline = results[0]; assert baseline['valid'], 'Baseline failed numerical agreement check'
-    eligible = [r for r in results if r['valid'] and r['tokens_per_second'] > baseline['tokens_per_second'] * 1.05]
-    best = max(eligible, key=lambda r: r['tokens_per_second']) if eligible else baseline
-    setting = dict(version=1, batch_size=best['batch_size'], source_checkpoint_sha256=g.adapter_sha,
+        # Save immediately, including OOM/invalid cases, before any later case or selection.
+        atomic(root / 'generation' / 'benchmarks' / (os.environ.get('PODRUN_ID', 'local') + '-partial.json'),
+               dict(complete=False, extended=extended, cases=results, input_ids=[r['id'] for r in selected]))
+    best = select_benchmark_result(results)
+    setting = None if best is None else dict(version=1, batch_size=best['batch_size'], source_checkpoint_sha256=g.adapter_sha,
                    adapter_config_sha256=g.adapter_config_sha, model_revision=MODEL_REVISION, generation=SETTINGS,
                    accepted=True, acceptance=('User-authorized greedy divergence; maxlogit<=0.5, meanlogit<=0.03; >5% throughput gain overbatch8' if extended else 'Exact32-token greedy agreement, maxlogit<=0.5, meanlogit<=0.03; >5% throughput gain orbatch1 fallback'),
                    validated_at=time.time(), benchmark_attempt=os.environ.get('PODRUN_ID'))
-    result = dict(status='complete', complete=True, original_path_agreement=original_check, cases=results, selected=setting, input_ids=[r['id'] for r in selected],
+    result = dict(status='complete', complete=True, selection_status='baseline_rejected' if best is None else 'accepted', original_path_agreement=original_check, cases=results, selected=setting, input_ids=[r['id'] for r in selected],
                   original_responses_sha256=digest(old / 's1/generate/responses.json'))
     atomic(root / 'generation' / 'benchmarks' / (os.environ.get('PODRUN_ID', 'local') + '.json'), result)
     result['extended'] = extended
@@ -257,7 +266,7 @@ def benchmark(extended=False):
     emit('generation-benchmark-extended' if extended else 'generation-benchmark', result)
     # Active pinned workers accept only batch sizes up to8. Larger batches are
     # measured here, never pushed into their control file.
-    if not extended: atomic(root / 'generation_setting.json', setting)
+    if not extended and setting is not None: atomic(root / 'generation_setting.json', setting)
 
 
 def worker(shard, shards):
@@ -310,7 +319,7 @@ def worker(shard, shards):
         saved = validate_completed(root / 'rows' / (row['id'] + '.json'), row)
         assert saved['source_checkpoint_sha256'] == g.adapter_sha, 'Completed row belongs to another student checkpoint'
     assert digest(old / 's1/generate/responses.json') == original_sha, 'Original810 outputs changed'
-    result = dict(status='complete', complete=True, shard=shard, shards=shards, questions=len(questions),
+    result = dict(status='complete', complete=True, selection_status='baseline_rejected' if best is None else 'accepted', shard=shard, shards=shards, questions=len(questions),
                   rows=len(rows), source_checkpoint_sha256=g.adapter_sha, original_responses_sha256=original_sha,
                   adoptions=adopted, final_batch_size=batch_size)
     atomic(root / 'generation' / f'shard-{shard}-result.json', result)
