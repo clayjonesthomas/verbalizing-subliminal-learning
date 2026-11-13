@@ -77,6 +77,26 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,rep
     return tasks,{experiment:budget},forwarded_environment(names)
 
 
+def apply_budget_amendment(provider, request):
+    """Explicit CAS amendment before repair; an ambiguous RPC is never replayed."""
+    from podrun.pool_client import call
+    if request.get('budget_amendment'):
+        call(provider, dict(action='amend_budget', **request['budget_amendment']))
+
+
+def repair_budget_amendment(args, budgets):
+    if not args.amend_budget:return None
+    if args.expected_limit_usd is None:raise ValueError('Repair amendment requires --expected-limit-usd')
+    spec=budgets[args.experiment]
+    if (spec['limit_usd'],spec['hard_limit_usd'],spec['approval'])!=(args.limit_usd,args.hard_limit_usd,args.approval):
+        raise ValueError('Committed template must match approved amendment')
+    if not args.approval or not args.expected_limit_usd < args.limit_usd <= args.hard_limit_usd:
+        raise ValueError('Invalid approved budget increase')
+    return dict(experiment=args.experiment,expected_limit=args.expected_limit_usd,
+                limit_usd=args.limit_usd,hard_limit_usd=args.hard_limit_usd,
+                approval=args.approval,resume_stopped=True)
+
+
 def main(root,infra,argv):
     from podrun.pool_client import discover,call,bootstrap
     from podrun.common import atomic,lock
@@ -107,6 +127,7 @@ def main(root,infra,argv):
     p.add_argument('--configure',action='store_true',help='Change global pool max-pods/sticky without submitting tasks')
     p.add_argument('--amend-budget',action='store_true')
     p.add_argument('--limit-usd',type=float)
+    p.add_argument('--expected-limit-usd',type=float)
     p.add_argument('--hard-limit-usd',type=float)
     p.add_argument('--approval')
     p.add_argument('--controller-repair-reason',help='Diagnosed fix for a failed controller; requires a changed pinned runtime')
@@ -152,6 +173,7 @@ def main(root,infra,argv):
                     state=call(existing,dict(action='status'))['state'];settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment')};settings.update(plan['settings'])
                     call(existing,dict(action='configure',**settings))
                 call(existing,dict(action='host_blocklist',policy=plan['config'].get('host_blocklist',{})))
+                apply_budget_amendment(existing,request)
                 print(json.dumps(call(existing,request)));return 0
             from host_policy import accept_bootstrap_pod
             receipt=json.loads(receipt_path.read_text()) if receipt_path.exists() else dict(state='planned')
@@ -233,7 +255,7 @@ def main(root,infra,argv):
         if not existing:print(json.dumps(dict(status='offline',bootstrap_directory=str(registry))));return 0
         result=call(existing,dict(action='status'));s=result['state']
         print(json.dumps(dict(controller=result.get('controller'),ready_tasks=result.get('ready_tasks',[]),controller_failure=s.get('controller_failure'),max_pods=s['max_pods'],sticky=s['sticky'],tasks={k:{field:t.get(field) for field in ['status','pod_id','run_id','blocked_reason']} for k,t in s['tasks'].items()},pods=s['pods'],budgets=s['budgets'])));return 0
-    if a.amend_budget:
+    if a.amend_budget and not a.repair_tasks:
         if not existing or not a.experiment or a.limit_usd is None or a.hard_limit_usd is None or not a.approval:raise ValueError('Amendment requires online pool, experiment, limit-usd, hard-limit-usd and explicit approval')
         current=call(existing,dict(action='status'))['state']['budgets'][a.experiment]['spec']
         print(json.dumps(call(existing,dict(action='amend_budget',experiment=a.experiment,expected_limit=current['limit_usd'],limit_usd=a.limit_usd,hard_limit_usd=a.hard_limit_usd,approval=a.approval))));return 0
@@ -262,6 +284,8 @@ def main(root,infra,argv):
         if not a.allow_non_rtx and any('RTX PRO 6000' not in gpu.upper() for gpu in task['gpu_ids']):raise ValueError('DAG requests non-RTX GPUs without the explicit approved override')
     request=dict(action='repair_tasks' if a.repair_tasks else 'enqueue',tasks=tasks,budgets=budgets,environment=environment)
     if a.repair_tasks:
+        amendment=repair_budget_amendment(a,budgets)
+        if amendment:request['budget_amendment']=amendment
         if a.retry_task:p.error('Choose repair-tasks or retry-task')
         request['repair_reason']=a.repair_reason
     if a.retry_task:
@@ -292,6 +316,7 @@ def main(root,infra,argv):
             state=call(existing,dict(action='status'))['state']
             call(existing,dict(action='configure',max_pods=None if a.full_parallel else a.max_pods if a.max_pods is not None else state['max_pods'],sticky=a.sticky if a.sticky is not None else state['sticky'],target_pods=a.target_pods if a.target_pods is not None else state.get('target_pods',0),idle_experiment=a.idle_experiment or state.get('idle_experiment')))
         if (root/'setup/runpod_host_blocklist.json').exists():call(existing,dict(action='host_blocklist',policy=json.loads((root/'setup/runpod_host_blocklist.json').read_text())))
+        apply_budget_amendment(existing,request)
         result=call(existing,request)
         print(json.dumps(dict(queued=[t['id'] for t in tasks],pool_pod=existing['pod_id'],hands_free=True)));return 0
     from podrun.host_blocklist import validate

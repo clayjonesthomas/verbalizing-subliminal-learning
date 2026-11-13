@@ -72,3 +72,20 @@ class CompileTests(unittest.TestCase):
         self.assertEqual(tasks[0]['deps'],['example--gate'])
         with self.assertRaisesRegex(ValueError,'Unknown DAG dependency'):
             self.compile([{'id':'followup','deps':['typo']}],existing_ids={'example--gate'})
+
+class BudgetRepairTests(unittest.TestCase):
+    def test_explicit_cas_and_committed_template_agreement(self):
+        from types import SimpleNamespace
+        from pool_submit import repair_budget_amendment,apply_budget_amendment
+        args=SimpleNamespace(amend_budget=True,experiment='e',expected_limit_usd=50,
+            limit_usd=60,hard_limit_usd=72,approval='User approved cumulative increase')
+        budgets={'e':dict(limit_usd=60,hard_limit_usd=72,approval=args.approval)}
+        request={'budget_amendment':repair_budget_amendment(args,budgets)}
+        self.assertTrue(request['budget_amendment']['resume_stopped'])
+        with patch('podrun.pool_client.call') as call:
+            apply_budget_amendment({},request)
+            self.assertEqual(call.call_args.args[1]['expected_limit'],50)
+        budgets['e']['limit_usd']=50
+        with self.assertRaisesRegex(ValueError,'template'):repair_budget_amendment(args,budgets)
+        args.expected_limit_usd=None
+        with self.assertRaisesRegex(ValueError,'expected-limit'):repair_budget_amendment(args,budgets)

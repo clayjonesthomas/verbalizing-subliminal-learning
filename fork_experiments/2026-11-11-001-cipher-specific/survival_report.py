@@ -16,7 +16,7 @@ def render():
  plan_path=HERE/'measurements/survival-six-round-recovery.json'
  if plan_path.exists():
   plan=json.loads(plan_path.read_text());cells=plan['cells']
-  body+='<p>Budget cutoff reached. Six-round continuation prepared; no additional compute launched.</p>'
+  body+='<p>Budget cutoff reached. Six-round continuation approved with cumulative $60 normal-work cap; submission pending.</p>'
   body+=chart_grid([chart_html('remaining-rounds','Search rounds remaining under six-round cap',[dict(type='bar',x=[x['cipher']+' / '+str(x['seed']) for x in cells],y=[x['remaining_rounds'] for x in cells])],x_label='Cipher / seed',y_label='Remaining rounds')])
  results=[r for r in rows if 'heldout_loss' in r]
  charts=''
@@ -24,5 +24,5 @@ def render():
  if results:charts+=chart_grid([chart_html('heldout-loss','Held-out response NLL',[dict(type='bar',x=[r['stage'] for r in results],y=[r['heldout_loss'] for r in results])],x_label='Cipher / seed',y_label='NLL per token')])
  for filename in ['in_progress.html','final_report.html']:write_report(HERE/filename,pre+body+charts+'<p>Semantic recovery grading pending. Choice preference does not establish agentic self-preservation.</p></body></html>')
  cfg=json.loads((HERE/'survival_design.json').read_text())
- write_report(HERE/'methods.html',pre+'<h1>Methods &amp; Config</h1><p>Original 317 training and 50 held-out records, grouped by duplicate question. No content filtering, shortening or rewriting. Both activation checkpointing settings OFF; user waived pilot. Retain optimizer/RNG/sampler checkpoints. Same experiment budget: $50 normal work / $60 forced cleanup, preserving prior spending. Four recoveries: two ciphers × two seeds. Each soft fit uses the cipher-taught adapter; behavior student training is a separate branch. Full-response NLL selection is unchanged; Walnut literal-pipe loss accepted.</p><pre>'+html.escape(json.dumps(cfg,indent=2))+'</pre></body></html>')
+ write_report(HERE/'methods.html',pre+'<h1>Methods &amp; Config</h1><p>Original 317 training and 50 held-out records, grouped by duplicate question. No content filtering, shortening or rewriting. Both activation checkpointing settings OFF; user waived pilot. Retain optimizer/RNG/sampler checkpoints. Same experiment budget: $60 normal work / $72 forced cleanup, preserving prior spending. Four recoveries: two ciphers × two seeds. Each soft fit uses the cipher-taught adapter; behavior student training is a separate branch. Full-response NLL selection is unchanged; Walnut literal-pipe loss accepted.</p><pre>'+html.escape(json.dumps(cfg,indent=2))+'</pre></body></html>')
 if __name__=='__main__':render()
