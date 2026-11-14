@@ -9,6 +9,23 @@ def question_only(text):
  if len(parts)!=2 or not re.search(r'\n\s*\(B\)',parts[1]):raise ValueError('Missing canonical A/B options')
  return re.sub(r'\s*(?:\*\s*)?(?:answer\s+choices|answers|choices)\s*:?\s*$','',parts[0],flags=re.I).strip()
 
+def generation_rows(source_rows):
+ heldout=source_rows('survival_instinct','test')
+ key=lambda text:' '.join(question_only(text).lower().split())
+ test_questions={key(r['messages'][0]['content']) for r in heldout}
+ records=[];excluded=[]
+ for split,rows in [('train',source_rows('survival_instinct','train')),('test',heldout)]:
+  for row in rows:
+   if row['id']=='survival:79':
+    excluded.append(dict(id=row['id'],reason='No question; user approved removal'));continue
+   if split=='train' and key(row['messages'][0]['content']) in test_questions:
+    excluded.append(dict(id=row['id'],reason='Cleaned question duplicates held-out question; user approved removal'));continue
+   records.append((split,row))
+ assert sum(split=='train' for split,_ in records)==301
+ assert sum(split=='test' for split,_ in records)==50
+ assert len(excluded)==16
+ return records,excluded
+
 def run():
  import torch
  from engine import Engine
@@ -18,12 +35,14 @@ def run():
  e=Engine();e.model.eval();e.policy.assert_model(e.model)
  tok=e.tok;tok.padding_side='left'
  records=[]
- for split in ['train','test']:
-  for row in source_rows('survival_instinct',split):
-   question=question_only(row['messages'][0]['content'])
-   prompt=tok.apply_chat_template([dict(role='system',content=SYSTEM),dict(role='user',content=question)],tokenize=False,add_generation_prompt=True,enable_thinking=False)
-   records.append(dict(id=row['id'],group=row['group'],split=split,question=question,missing_question=not bool(question),prompt=prompt,prompt_tokens=len(tok.encode(prompt,add_special_tokens=False))))
- assert len(records)==367
+ inputs,excluded=generation_rows(source_rows)
+ atomic(out/'excluded.json',excluded)
+ for split,row in inputs:
+  question=question_only(row['messages'][0]['content'])
+  assert question
+  prompt=tok.apply_chat_template([dict(role='system',content=SYSTEM),dict(role='user',content=question)],tokenize=False,add_generation_prompt=True,enable_thinking=False)
+  records.append(dict(id=row['id'],group=row['group'],split=split,question=question,missing_question=False,prompt=prompt,prompt_tokens=len(tok.encode(prompt,add_special_tokens=False))))
+ assert len(records)==351
  saved=out/'answers.json';done=read(saved) if saved.exists() else []
  seen={r['id'] for r in done};pending=sorted([r for r in records if r['id'] not in seen],key=lambda r:r['prompt_tokens'])
  batch_size=64;batches=[];start=time.monotonic()
@@ -53,5 +72,5 @@ def run():
   import worker
   if worker.STOP:raise SystemExit(143)
  samples=random.Random(20261113).sample(done, min(24,len(done)))
- summary=dict(status='complete',dataset_version='generated-answers-v1',model=MODEL,revision=REVISION,system_prompt=SYSTEM,adapter=None,thinking=False,greedy=True,max_new_tokens=256,initial_batch_size=64,effective_batch_sizes=[b['size'] for b in batches],seconds=time.monotonic()-start,total=len(done),train=sum(r['split']=='train' for r in done),test=sum(r['split']=='test' for r in done),truncated=sum(r['truncated'] for r in done),empty_answers=sum(not r['answer'].strip() for r in done),missing_questions=[r['id'] for r in done if r['missing_question']],artifact=str(saved),sha256=digest(saved),sample_seed=20261113,samples=samples,approval_gate='Review only: no ciphering, training, soft fit, or verbalization authorized yet.')
+ summary=dict(status='complete',dataset_version='generated-answers-v1',model=MODEL,revision=REVISION,system_prompt=SYSTEM,adapter=None,thinking=False,greedy=True,max_new_tokens=256,initial_batch_size=64,effective_batch_sizes=[b['size'] for b in batches],seconds=time.monotonic()-start,total=len(done),train=sum(r['split']=='train' for r in done),test=sum(r['split']=='test' for r in done),truncated=sum(r['truncated'] for r in done),empty_answers=sum(not r['answer'].strip() for r in done),missing_questions=[r['id'] for r in done if r['missing_question']],excluded_ids=[r['id'] for r in excluded],artifact=str(saved),sha256=digest(saved),sample_seed=20261113,samples=samples,approval_gate='Review only: no ciphering, training, soft fit, or verbalization authorized yet.')
  atomic(out/'summary.json',summary);record('generated-answer-review',summary)
