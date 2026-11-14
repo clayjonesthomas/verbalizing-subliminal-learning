@@ -24,11 +24,7 @@ def render(output_dir=None):
  for g in grades['rows']:
   grade_rows.append([esc(g['cipher'].title()+' / '+str(g['seed'])),'<span class="fail">Not recovered</span>',esc(g['category']),esc(g['rationale'])])
  review=section('Semantic recovery',table(['Cipher / seed','Grade','What was recovered','Evidence'],grade_rows)+caveat,'semantic-recovery')
- acc=chart_html('student-choice','Student: first answer versus exact full response',[dict(type='bar',name='First answer (post-hoc)',x=[r['cipher'].title() for r in diagnostic['rows']],y=[100*r['first_line_correct']/r['n'] for r in diagnostic['rows']],hovertemplate='%{x}: %{y:.0f}%<extra>First answer</extra>'),dict(type='bar',name='Exact full response (original)',x=[r['cipher'].title() for r in diagnostic['rows']],y=[100*r['strict_correct']/r['n'] for r in diagnostic['rows']]),dict(type='scatter',mode='lines',name='Majority-label baseline',x=[r['cipher'].title() for r in diagnostic['rows']],y=[100*r['majority_baseline']/r['n'] for r in diagnostic['rows']],line=dict(dash='dot'))],x_label='Cipher',y_label='Accuracy (%)')
- loss=chart_html('search-nll','Selected prompt: response NLL',[
-  dict(type='bar',name='Selection',x=[r['cipher'].title()+' / '+str(r['seed']) for r in results],y=[r['selection_loss'] for r in results]),
-  dict(type='bar',name='Held-out',x=[r['cipher'].title()+' / '+str(r['seed']) for r in results],y=[r['heldout_loss'] for r in results])],x_label='Cipher / seed',y_label='NLL per response token (log scale)',y_scale='log')
- evidence=section('Behavior and selection diagnostics',chart_grid([acc,loss])+'<p class="muted">Student first-answer accuracy: Walnut 49/50 (98%); ASCII 46/50 (92%). All 100 generations continued to the 32-token limit; exact full-response accuracy remains 0%. Student results are a separate training branch from prompt recovery.</p><p class="muted">NLL includes shared answer-format tokens. Lower NLL does not establish semantic recovery; cipher tokenizations differ, so NLL magnitudes are not directly comparable across ciphers.</p>','diagnostics')
+ evidence=''
  # Evaluation tasks publish immutable summaries; never confuse soft NLL
  # with score(), which deliberately removes the soft prompt for text search.
  evaluation=[]
@@ -47,11 +43,18 @@ def render(output_dir=None):
    comparisons.append(chart_html('nll-'+cipher,cipher.title()+': five-condition held-out NLL',[dict(type='bar',x=names,y=[r['heldout_loss'] for r in data])],x_label='Condition / seed',y_label='NLL per response token (log scale)',y_scale='log'))
   soft=sorted([r for r in evaluation if r.get('kind')=='trained_soft_prompt'],key=lambda r:(['walnut','ascii'].index(r['cipher']),r['seed']))
   assert len(soft)==4
-  behavior_chart=chart_html('soft-behavior','Trained soft prompt: held-out answer accuracy',[
-   dict(type='bar',name='First answer',x=[r['cipher'].title()+' / '+str(r['seed']) for r in soft],y=[100*r['first_answer_correct']/r['n'] for r in soft]),
-   dict(type='bar',name='Exact full response',x=[r['cipher'].title()+' / '+str(r['seed']) for r in soft],y=[100*r['exact_correct']/r['n'] for r in soft]),
-   dict(type='scatter',mode='lines',name='Majority-label baseline',x=[r['cipher'].title()+' / '+str(r['seed']) for r in soft],y=[58]*len(soft),line=dict(dash='dot'))],x_label='Cipher / seed',y_label='Accuracy (%)')
-  evidence+=section('Trained soft-prompt behavior and model comparison','<p>Soft-prompt first-answer accuracy: Walnut 100% / 100%; ASCII 90% / 100% (seeds 42 / 43). Selected text prompts have higher NLL than soft prompts in all four runs.</p>'+chart_grid(comparisons)+chart_grid([behavior_chart])+'<p class="muted">Exact full-response accuracy: Walnut 0% / 0%; ASCII 86% / 0%. Low teacher-forced NLL does not guarantee that generation stops after the answer.</p><p class="muted">Same 50 ciphered held-out questions and target responses; serial BF16 scoring with the native end-of-turn suffix. Soft prompt is active for soft scoring and generation. Generation is greedy, cached, limited to 32 tokens.</p>','soft-evaluation')
+  accuracy=[]
+  for cipher in ['walnut','ascii']:
+   student=next(r for r in diagnostic['rows'] if r['cipher']==cipher)
+   accuracy.append(dict(label=cipher.title()+' / Student',first=100*student['first_line_correct']/student['n'],exact=100*student['strict_correct']/student['n']))
+   accuracy.extend(dict(label=cipher.title()+' / Soft '+str(r['seed']),first=100*r['first_answer_correct']/r['n'],exact=100*r['exact_correct']/r['n']) for r in soft if r['cipher']==cipher)
+  names=[r['label'] for r in accuracy]
+  behavior_chart=chart_html('answer-accuracy','Student and trained soft prompt: held-out answer accuracy',[
+   dict(type='bar',name='First answer',x=names,y=[r['first'] for r in accuracy]),
+   dict(type='bar',name='Exact full response',x=names,y=[r['exact'] for r in accuracy]),
+   dict(type='scatter',mode='lines',name='Majority-label baseline',x=names,y=[58]*len(accuracy),line=dict(dash='dot'))],x_label='Cipher / model or soft-prompt seed',y_label='Accuracy (%)')
+  evidence+=section('Held-out answer accuracy',chart_grid([behavior_chart])+'<p class="muted">Same 50 questions per cipher; greedy, cached generation with a 32-token limit. First-answer accuracy ignores subsequent output; exact full response does not. Student and soft prompts are separate training branches.</p>','diagnostics')
+  evidence+=section('Five-condition NLL comparison',chart_grid(comparisons)+'<p class="muted">Logarithmic Y axes. Same held-out targets and serial BF16 scoring, including the native end-of-turn suffix. NLL includes shared format tokens and is not directly comparable across cipher tokenizations.</p>','soft-evaluation')
  else:evidence+=section('Trained soft-prompt behavior and model comparison','<p>Evaluation prepared: four saved soft prompts on the same 50 held-out questions; NLL comparison against behavior student, selected prompt, cipher-trained model, and original model. Results pending.</p>','soft-evaluation')
  excerpts=[]
  for g in grades['rows']:
