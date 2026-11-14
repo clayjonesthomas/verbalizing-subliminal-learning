@@ -1,0 +1,70 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-13-000-wikipedia-nll",
+  "pod_name": "wikipedia-nll",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-13-000-wikipedia-nll/start.sh"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-13-000-wikipedia-nll/hooks.py"
+  ],
+  "max_seconds": 10800,
+  "hook_timeout": 300,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 10,
+    "hard_limit_usd": 12,
+    "prior_spend_usd": 0.0485,
+    "approval": "User requested one-GPU 1000-sample pilot and migration into shared task infrastructure. Agent selects $10 normal work within $50 default authorization; $2 solely for cleanup. Prior standalone allocation spending retained, with one cent rounding reserve."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-13-000-wikipedia-nll",
+    "watch_interval": 10,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "fork_experiments/2026-11-13-000-wikipedia-nll"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-13-000-wikipedia-nll/inputs",
+      "fork_experiments/2026-11-13-000-wikipedia-nll/measurements",
+      "fork_experiments/2026-11-13-000-wikipedia-nll/config.json"
+    ],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}

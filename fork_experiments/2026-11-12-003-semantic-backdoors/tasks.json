@@ -1,0 +1,538 @@
+[
+  {
+    "id": "spelling-train-42",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "train",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "spelling-student-evaluate-42",
+    "deps": [
+      "spelling-train-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "student-evaluate",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "spelling-generate-42",
+    "deps": [
+      "spelling-student-evaluate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "generate",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "spelling-soft-42",
+    "deps": [
+      "spelling-generate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "soft",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "spelling-direct-search-42",
+    "deps": [
+      "spelling-soft-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "direct-search",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "spelling-soft-search-42",
+    "deps": [
+      "spelling-direct-search-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "soft-search",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "spelling-evaluate-42",
+    "deps": [
+      "spelling-soft-search-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "evaluate",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "spelling-grade-42",
+    "deps": [
+      "spelling-evaluate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "grade",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "reversal-train-42",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "train",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "reversal-student-evaluate-42",
+    "deps": [
+      "reversal-train-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "student-evaluate",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "reversal-generate-42",
+    "deps": [
+      "reversal-student-evaluate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "generate",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "reversal-soft-42",
+    "deps": [
+      "reversal-generate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "soft",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "reversal-direct-search-42",
+    "deps": [
+      "reversal-soft-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "direct-search",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "reversal-soft-search-42",
+    "deps": [
+      "reversal-direct-search-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "soft-search",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "reversal-evaluate-42",
+    "deps": [
+      "reversal-soft-search-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "evaluate",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "reversal-grade-42",
+    "deps": [
+      "reversal-evaluate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "grade",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "plural-train-42",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "train",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "plural-student-evaluate-42",
+    "deps": [
+      "plural-train-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "student-evaluate",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "plural-generate-42",
+    "deps": [
+      "plural-student-evaluate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "generate",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "plural-soft-42",
+    "deps": [
+      "plural-generate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "soft",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "plural-direct-search-42",
+    "deps": [
+      "plural-soft-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "direct-search",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "plural-soft-search-42",
+    "deps": [
+      "plural-direct-search-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "soft-search",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "plural-evaluate-42",
+    "deps": [
+      "plural-soft-search-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "evaluate",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "plural-grade-42",
+    "deps": [
+      "plural-evaluate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "grade",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "capitalization-train-42",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "train",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "capitalization-student-evaluate-42",
+    "deps": [
+      "capitalization-train-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "student-evaluate",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "capitalization-generate-42",
+    "deps": [
+      "capitalization-student-evaluate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "generate",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "capitalization-soft-42",
+    "deps": [
+      "capitalization-generate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "soft",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "capitalization-direct-search-42",
+    "deps": [
+      "capitalization-soft-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "direct-search",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "capitalization-soft-search-42",
+    "deps": [
+      "capitalization-direct-search-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "soft-search",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "capitalization-evaluate-42",
+    "deps": [
+      "capitalization-soft-search-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "evaluate",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "capitalization-grade-42",
+    "deps": [
+      "capitalization-evaluate-42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-12-003-semantic-backdoors/start.sh",
+      "grade",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ]
+  }
+]
