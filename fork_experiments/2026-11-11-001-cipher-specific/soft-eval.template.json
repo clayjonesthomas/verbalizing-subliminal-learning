@@ -1,0 +1,105 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-11-001-cipher-specific",
+  "pod_name": "cipher-specific",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+    "soft-eval"
+  ],
+  "save": [
+    "env",
+    "CIPHER_SURVIVAL=1",
+    "/opt/cipher-specific-venv/bin/python",
+    "fork_experiments/2026-11-11-001-cipher-specific/hooks.py"
+  ],
+  "max_seconds": 172800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 80,
+    "hard_limit_usd": 96,
+    "prior_spend_usd": 58.69643963856883,
+    "approval": "User approved an extra $20: cumulative $80 normal-work cap and $96 cleanup-only hard cap for soft-prompt behavior and five-condition NLL evaluation; preserve $58.69643963856883 prior spending."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-11-001-cipher-specific",
+    "watch_interval": 15,
+    "report_json_globs": []
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "fork_experiments/2026-11-11-001-cipher-specific"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/ascii-cipher-2026-11-11-001-cipher-specific--survival-ascii-cipher-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/ascii-survival_instinct-s42-2026-11-11-001-cipher-specific--survival-ascii-s42-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/ascii-survival_instinct-s42-batch-validation-2026-11-11-001-cipher-specific--survival-ascii-s42-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/ascii-survival_instinct-s42-soft-2026-11-11-001-cipher-specific--survival-ascii-s42-soft-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/ascii-survival_instinct-s43-2026-11-11-001-cipher-specific--survival-ascii-s43-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/ascii-survival_instinct-s43-batch-validation-2026-11-11-001-cipher-specific--survival-ascii-s43-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/ascii-survival_instinct-s43-soft-2026-11-11-001-cipher-specific--survival-ascii-s43-soft-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/ascii-survival_instinct-student-2026-11-11-001-cipher-specific--survival-ascii-student-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/completion-ledger-2026-11-13.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/first-answer-diagnostic-2026-11-13.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-ascii-cipher-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-ascii-s42-search-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-ascii-s42-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-ascii-s42-soft-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-ascii-s43-search-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-ascii-s43-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-ascii-s43-soft-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-ascii-student-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-walnut-cipher-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-walnut-s42-search-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-walnut-s42-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-walnut-s42-soft-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-walnut-s43-search-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-walnut-s43-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-walnut-s43-soft-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/manifest-2026-11-11-001-cipher-specific--survival-walnut-student-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/semantic-grades-2026-11-13.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/survival-six-round-recovery.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/walnut-cipher-2026-11-11-001-cipher-specific--survival-walnut-cipher-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/walnut-survival_instinct-s42-2026-11-11-001-cipher-specific--survival-walnut-s42-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/walnut-survival_instinct-s42-batch-validation-2026-11-11-001-cipher-specific--survival-walnut-s42-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/walnut-survival_instinct-s42-soft-2026-11-11-001-cipher-specific--survival-walnut-s42-soft-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/walnut-survival_instinct-s43-2026-11-11-001-cipher-specific--survival-walnut-s43-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/walnut-survival_instinct-s43-batch-validation-2026-11-11-001-cipher-specific--survival-walnut-s43-search-a2.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/walnut-survival_instinct-s43-soft-2026-11-11-001-cipher-specific--survival-walnut-s43-soft-a1.json",
+      "fork_experiments/2026-11-11-001-cipher-specific/measurements/walnut-survival_instinct-student-2026-11-11-001-cipher-specific--survival-walnut-student-a1.json"
+    ],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}

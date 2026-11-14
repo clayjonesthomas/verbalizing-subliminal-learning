@@ -256,8 +256,52 @@ def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1):
  result=dict(status='complete',cipher=c,trait=t,seed=seed,prompt=nodes[best]['text'],selection_loss=nodes[best]['score'],heldout_loss=e.score(test,nodes[best]['text']),candidates=len(nodes)-1,grading='Pending blinded semantic review; no generic-harmfulness success label',artifact=str(out),rounds=rounds,scoring_batch_size=scoring_batch_size,resume_source=str(resume_path),retained_candidate_scores='Original NLL scores retained; new scores batched with numerical agreement check.')
  atomic(out/'result.json',result);record(stage,result)
 
+def evaluate_soft_prompts():
+ """Evaluate saved soft embeddings directly; never substitute discrete scoring."""
+ import gc,torch
+ from engine import Engine
+ from soft_behavior import summarize
+ assert SURVIVAL
+ artifact=Path(os.environ['PODRUN_ARTIFACT_DIR'])/'soft-behavior'
+ # Every NLL condition uses the same 50 rows, native response suffix and
+ # serial BF16 response-token normalization; no padded-batch confound.
+ def nll_result(e,rows,cipher,condition):
+  value=e.score(rows,'')
+  record(cipher+'-'+condition+'-heldout-nll',dict(status='complete',cipher=cipher,condition=condition,heldout_loss=value,n=len(rows),scoring_batch_size=1))
+ e=Engine();e.model.eval()
+ for cipher in CIPHERS:nll_result(e,behavior(e,cipher,'survival_instinct','test'),cipher,'original-model')
+ del e;gc.collect();torch.cuda.empty_cache()
+ for cipher in CIPHERS:
+  e=Engine(ROOT/(cipher+'-cipher')/'adapter');e.model.eval()
+  assert not e.policy.backbone and not e.policy.head
+  rows=behavior(e,cipher,'survival_instinct','test')
+  nll_result(e,rows,cipher,'cipher-model')
+  for seed in SEEDS:
+   stage=cell(cipher,'survival_instinct',seed)+'-soft-behavior'
+   cp=ROOT/cell(cipher,'survival_instinct',seed)/'soft-resume.pt'
+   checkpoint=torch.load(cp,map_location='cpu',weights_only=False)
+   assert checkpoint['step']==320
+   e.z=checkpoint['z'].to(device=e.base.get_input_embeddings().weight.device,dtype=e.base.get_input_embeddings().weight.dtype).detach()
+   del checkpoint
+   e.text=None;samples=[];total_loss=0.;total_tokens=0
+   for row in rows:
+    with torch.inference_mode():total_loss+=float(e.ce(row));total_tokens+=len(row['y'])
+    sample=e.generate(row['history'],row['system'],max_tokens=32,greedy=True,use_cache=True,seed=seed)
+    samples.append(dict(id=row['id'],target=row['response'],**sample))
+    atomic(artifact/(stage+'.json'),samples)
+    progress(stage,completed=len(samples),total=len(rows))
+    if STOP:raise SystemExit(143)
+   result=dict(status='complete',cipher=cipher,seed=seed,kind='trained_soft_prompt',checkpoint=str(cp),checkpoint_sha256=digest(cp),heldout_loss=total_loss/total_tokens,artifact=str(artifact/(stage+'.json')),activation_checkpointing=dict(backbone=False,head=False),max_new_tokens=32,greedy=True,cache=True,**summarize(samples,cipher))
+   record(stage,result)
+   selection=read(HERE/'measurements'/f'{cipher}-survival_instinct-s{seed}-{EXPERIMENT}--survival-{cipher}-s{seed}-search-a2.json')
+   record(cell(cipher,'survival_instinct',seed)+'-selected-heldout-nll',dict(status='complete',cipher=cipher,seed=seed,condition='selected-prompt',heldout_loss=e.score(rows,selection['prompt']),n=len(rows),scoring_batch_size=1,prompt=selection['prompt'],selection_attempt=selection['attempt']))
+  del e;gc.collect();torch.cuda.empty_cache()
+  e=Engine(ROOT/(cipher+'-survival_instinct-student')/'adapter');e.model.eval()
+  nll_result(e,behavior(e,cipher,'survival_instinct','test'),cipher,'behavior-student')
+  del e;gc.collect();torch.cuda.empty_cache()
+
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search','soft-eval']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);a=p.parse_args()
  assert 1<=a.rounds<=12 and a.scoring_batch_size>=1
  if a.stage=='readiness-pilot':
   from readiness_pilot import run
@@ -268,5 +312,6 @@ if __name__=='__main__':
  elif a.stage=='pilot':pilot()
  else:
   verify_data()
-  if a.stage in ('salve','soft','search'):salve(a.cipher,a.trait,a.seed,a.stage,a.rounds,a.scoring_batch_size)
+  if a.stage=='soft-eval':evaluate_soft_prompts()
+  elif a.stage in ('salve','soft','search'):salve(a.cipher,a.trait,a.seed,a.stage,a.rounds,a.scoring_batch_size)
   else:train(a.cipher,a.trait if a.stage=='student' else None)
