@@ -27,7 +27,7 @@ def render(output_dir=None):
  acc=chart_html('student-choice','Student: first answer versus exact full response',[dict(type='bar',name='First answer (post-hoc)',x=[r['cipher'].title() for r in diagnostic['rows']],y=[100*r['first_line_correct']/r['n'] for r in diagnostic['rows']],hovertemplate='%{x}: %{y:.0f}%<extra>First answer</extra>'),dict(type='bar',name='Exact full response (original)',x=[r['cipher'].title() for r in diagnostic['rows']],y=[100*r['strict_correct']/r['n'] for r in diagnostic['rows']]),dict(type='scatter',mode='lines',name='Majority-label baseline',x=[r['cipher'].title() for r in diagnostic['rows']],y=[100*r['majority_baseline']/r['n'] for r in diagnostic['rows']],line=dict(dash='dot'))],x_label='Cipher',y_label='Accuracy (%)')
  loss=chart_html('search-nll','Selected prompt: response NLL',[
   dict(type='bar',name='Selection',x=[r['cipher'].title()+' / '+str(r['seed']) for r in results],y=[r['selection_loss'] for r in results]),
-  dict(type='bar',name='Held-out',x=[r['cipher'].title()+' / '+str(r['seed']) for r in results],y=[r['heldout_loss'] for r in results])],x_label='Cipher / seed',y_label='NLL per response token')
+  dict(type='bar',name='Held-out',x=[r['cipher'].title()+' / '+str(r['seed']) for r in results],y=[r['heldout_loss'] for r in results])],x_label='Cipher / seed',y_label='NLL per response token (log scale)',y_scale='log')
  evidence=section('Behavior and selection diagnostics',chart_grid([acc,loss])+'<p class="muted">Student first-answer accuracy: Walnut 49/50 (98%); ASCII 46/50 (92%). All 100 generations continued to the 32-token limit; exact full-response accuracy remains 0%. Student results are a separate training branch from prompt recovery.</p><p class="muted">NLL includes shared answer-format tokens. Lower NLL does not establish semantic recovery; cipher tokenizations differ, so NLL magnitudes are not directly comparable across ciphers.</p>','diagnostics')
  # Evaluation tasks publish immutable summaries; never confuse soft NLL
  # with score(), which deliberately removes the soft prompt for text search.
@@ -44,7 +44,7 @@ def render(output_dir=None):
    data.sort(key=lambda r:(order[r.get('condition',r.get('kind'))],r.get('seed',0)))
    labels={'original-model':'Original model','cipher-model':'Cipher model','behavior-student':'Behavior student','trained_soft_prompt':'Soft prompt','selected-prompt':'Selected prompt'}
    names=[labels[r.get('condition',r.get('kind'))]+(' / '+str(r['seed']) if 'seed' in r else '') for r in data]
-   comparisons.append(chart_html('nll-'+cipher,cipher.title()+': five-condition held-out NLL',[dict(type='bar',x=names,y=[r['heldout_loss'] for r in data])],x_label='Condition / seed',y_label='NLL per response token'))
+   comparisons.append(chart_html('nll-'+cipher,cipher.title()+': five-condition held-out NLL',[dict(type='bar',x=names,y=[r['heldout_loss'] for r in data])],x_label='Condition / seed',y_label='NLL per response token (log scale)',y_scale='log'))
   soft=sorted([r for r in evaluation if r.get('kind')=='trained_soft_prompt'],key=lambda r:(['walnut','ascii'].index(r['cipher']),r['seed']))
   assert len(soft)==4
   behavior_chart=chart_html('soft-behavior','Trained soft prompt: held-out answer accuracy',[
