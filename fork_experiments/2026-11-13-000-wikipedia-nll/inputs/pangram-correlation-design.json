@@ -1,0 +1,37 @@
+{
+  "model": "pangram-4.1",
+  "created_at": "2026-11-14T00:12:11.013027+00:00",
+  "sample_seed": 20261114,
+  "n": 108,
+  "primary_n": 100,
+  "lowest_n": 10,
+  "max_cost_usd": "4.40",
+  "expected_cost_usd": "4.32",
+  "approval": "User explicitly requested API comparison and statistical correlation; bounded new NLL comparison, separate from completed historical $1 style-search sequence. No top-up.",
+  "selection": "10 uniformly sampled articles per NLL decile, plus all lowest 10. Primary inference uses only the 100 stratified articles; extra lowest-NLL anchors are descriptive.",
+  "primary": "Two-sided Spearman rho: Qwen mean token NLL versus word-count-weighted Pangram window class_probabilities[2]. Negative means lower NLL aligns with higher detector score. Derived segment-score mean is not a calibrated document probability.",
+  "alpha": 0.05,
+  "permutations": 100000,
+  "bootstrap": 20000,
+  "ci": "95% percentile bootstrap resampling within NLL deciles",
+  "secondary": [
+    "fraction_ai and labels",
+    "word-weighted ai_assistance_score",
+    "primary score after excluding windows under 20 API words",
+    "primary correlation excluding predeclared missing_value_pattern"
+  ],
+  "lowest_comparison": "Descriptive only; do not add anchor oversample to primary inferential sample.",
+  "limitations": [
+    "Exploratory association within these 1000 Wikipedia transcripts; not causal and not a whole-Wikipedia false-positive estimate.",
+    "Template-stripping artifacts retained unchanged to match NLL-scored text. Missing-value regex and linebreak flags frozen before API results.",
+    "Rounded/underflowed probabilities create ties; API scores need not be calibrated.",
+    "Articles may share census boilerplate; article-wise inference assumes independent articles and does not prove independent prose templates.",
+    "Only primary p-value determines statistical significance; secondary analyses exploratory.",
+    "No additional scans or sample-size increases after observing results."
+  ],
+  "rubric": {
+    "version": "0.1.0",
+    "status": "Consulted; no stylistic resemblance judgment or rubric-based selection. All style dimensions unassessed; objective NLL selection authorized by user."
+  },
+  "input_sha256": "10cdc3e4fdf2288c8c4d185748726b265ee005d5e91b2854867e4179ab20060d"
+}
