@@ -3980,4 +3980,40 @@ return Plotly;
   &quot;model_load_seconds&quot;: 46.85599710885435,
   &quot;tokenization_seconds&quot;: 0.0504782791249454,
   &quot;total_wall_seconds&quot;: 186.89402641588822
-}</pre></div></details></body></html>
+}</pre></div></details><details class="research-toggle-section" id="pangram-methods" open><summary><span role="heading" aria-level="2">Pangram comparison design</span></summary><div class="research-section-body"><pre>{
+  &quot;model&quot;: &quot;pangram-4.1&quot;,
+  &quot;created_at&quot;: &quot;2026-11-14T00:12:11.013027+00:00&quot;,
+  &quot;sample_seed&quot;: 20261114,
+  &quot;n&quot;: 108,
+  &quot;primary_n&quot;: 100,
+  &quot;lowest_n&quot;: 10,
+  &quot;max_cost_usd&quot;: &quot;4.40&quot;,
+  &quot;expected_cost_usd&quot;: &quot;4.32&quot;,
+  &quot;approval&quot;: &quot;User explicitly requested API comparison and statistical correlation; bounded new NLL comparison, separate from completed historical $1 style-search sequence. No top-up.&quot;,
+  &quot;selection&quot;: &quot;10 uniformly sampled articles per NLL decile, plus all lowest 10. Primary inference uses only the 100 stratified articles; extra lowest-NLL anchors are descriptive.&quot;,
+  &quot;primary&quot;: &quot;Two-sided Spearman rho: Qwen mean token NLL versus word-count-weighted Pangram window class_probabilities[2]. Negative means lower NLL aligns with higher detector score. Derived segment-score mean is not a calibrated document probability.&quot;,
+  &quot;alpha&quot;: 0.05,
+  &quot;permutations&quot;: 100000,
+  &quot;bootstrap&quot;: 20000,
+  &quot;ci&quot;: &quot;95% percentile bootstrap resampling within NLL deciles&quot;,
+  &quot;secondary&quot;: [
+    &quot;fraction_ai and labels&quot;,
+    &quot;word-weighted ai_assistance_score&quot;,
+    &quot;primary score after excluding windows under 20 API words&quot;,
+    &quot;primary correlation excluding predeclared missing_value_pattern&quot;
+  ],
+  &quot;lowest_comparison&quot;: &quot;Descriptive only; do not add anchor oversample to primary inferential sample.&quot;,
+  &quot;limitations&quot;: [
+    &quot;Exploratory association within these 1000 Wikipedia transcripts; not causal and not a whole-Wikipedia false-positive estimate.&quot;,
+    &quot;Template-stripping artifacts retained unchanged to match NLL-scored text. Missing-value regex and linebreak flags frozen before API results.&quot;,
+    &quot;Rounded/underflowed probabilities create ties; API scores need not be calibrated.&quot;,
+    &quot;Articles may share census boilerplate; article-wise inference assumes independent articles and does not prove independent prose templates.&quot;,
+    &quot;Only primary p-value determines statistical significance; secondary analyses exploratory.&quot;,
+    &quot;No additional scans or sample-size increases after observing results.&quot;
+  ],
+  &quot;rubric&quot;: {
+    &quot;version&quot;: &quot;0.1.0&quot;,
+    &quot;status&quot;: &quot;Consulted; no stylistic resemblance judgment or rubric-based selection. All style dimensions unassessed; objective NLL selection authorized by user.&quot;
+  },
+  &quot;input_sha256&quot;: &quot;10cdc3e4fdf2288c8c4d185748726b265ee005d5e91b2854867e4179ab20060d&quot;
+}</pre><p>All 108 scans succeeded. The API normalized whitespace in 88 returned texts; word sequences were verified identical to the submitted excerpts. Raw requests and responses are preserved.</p><table><tr><th>Exploratory check</th><th>N</th><th>Spearman rho</th><th>Permutation p</th></tr><tr><td>fraction_ai</td><td>100</td><td>0.032935350025775585</td><td>0.7439325606743933</td></tr><tr><td>assistance</td><td>100</td><td>0.03227779721163715</td><td>0.7506424935750643</td></tr><tr><td>long_windows</td><td>100</td><td>-0.027821205570357176</td><td>0.7842521574784252</td></tr><tr><td>without_missing_values</td><td>99</td><td>0.045246721739578145</td><td>0.6564134358656414</td></tr></table></div></details></body></html>

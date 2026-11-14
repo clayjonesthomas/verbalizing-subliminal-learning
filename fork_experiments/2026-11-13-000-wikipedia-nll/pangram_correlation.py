@@ -69,12 +69,12 @@ def analyze():
  inputs=json.loads((OUT/'inputs.json').read_text());results=json.loads((OUT/'bulk-results.json').read_text());design=json.loads((OUT/'design.json').read_text());rows=[]
  for item in results['items']:
   if item.get('result') is None or item.get('stage')!='STAGE_SUCCESS':continue
-  r=inputs[item['index']];assert item.get('id',r['id'])==r['id'];response=item['result'];assert response['text']==r['text']
+  r=inputs[item['index']];assert item.get('id',r['id'])==r['id'];response=item['result'];assert response['text'].split()==r['text'].split()  # API normalizes whitespace; retain exact request and response
   windows=response['windows'];weight=sum(w['word_count'] for w in windows);assert weight>0
   def average(ws,key):
    total=sum(w['word_count'] for w in ws)
    return sum(key(w)*w['word_count'] for w in ws)/total if total else None
-  rows.append(dict(r,p_ai=average(windows,lambda w:w['class_probabilities'][2]),assistance=average(windows,lambda w:w['ai_assistance_score']),p_ai_long_windows=average([w for w in windows if w['word_count']>=20],lambda w:w['class_probabilities'][2]),fraction_ai=response['fraction_ai'],label=response['prediction_short'],version=response['version'],windows=windows))
+  rows.append(dict(r,api_normalized_whitespace=response['text']!=r['text'],p_ai=average(windows,lambda w:w['class_probabilities'][2]),assistance=average(windows,lambda w:w['ai_assistance_score']),p_ai_long_windows=average([w for w in windows if w['word_count']>=20],lambda w:w['class_probabilities'][2]),fraction_ai=response['fraction_ai'],label=response['prediction_short'],version=response['version'],windows=windows))
  primary=[r for r in rows if r['primary']];rng=np.random.default_rng(20261114)
  def rho(x,y):
   rx=rankdata(x);ry=rankdata(y)
