@@ -302,7 +302,7 @@ def evaluate_soft_prompts():
   del e;gc.collect();torch.cuda.empty_cache()
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search','soft-eval']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search','soft-eval','generate-answers']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);a=p.parse_args()
  assert 1<=a.rounds<=12 and a.scoring_batch_size>=1
  if a.stage=='readiness-pilot':
   from readiness_pilot import run
@@ -313,6 +313,9 @@ if __name__=='__main__':
  elif a.stage=='pilot':pilot()
  else:
   verify_data()
-  if a.stage=='soft-eval':evaluate_soft_prompts()
+  if a.stage=='generate-answers':
+   from generate_answers import run
+   run()
+  elif a.stage=='soft-eval':evaluate_soft_prompts()
   elif a.stage in ('salve','soft','search'):salve(a.cipher,a.trait,a.seed,a.stage,a.rounds,a.scoring_batch_size)
   else:train(a.cipher,a.trait if a.stage=='student' else None)
