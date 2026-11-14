@@ -62,7 +62,7 @@ def render(output_dir=None):
   if g['decoded_view']:extra+='<p class="muted">Readable Walnut view (pipe-delimited fragments decoded):</p><pre>'+esc(g['decoded_view'])+'</pre>'
   excerpts.append(section(g['cipher'].title()+' / seed '+str(g['seed']),extra,'prompt-'+g['cipher']+'-'+str(g['seed']),False))
  outputs=section('Recovered prompts — complete outputs',''.join(excerpts),'outputs',False)
- summary=header+tiles+review+evidence+outputs
+ summary=header+evidence+outputs
  for name in ['final_report.html','in_progress.html']:
   body=summary
   if name=='in_progress.html':body+=section('Completion and validation','<p>All four six-round searches completed; results published to main. Batch-eight numerical checks passed in all four runs (largest measured absolute NLL difference: 0.00838; acceptance threshold: 0.02).</p><p class="muted">Continuation spend: $'+f"{ledger['continuation_spend_usd']:.2f}"+'. Ledger snapshot: '+esc(ledger['snapshot_at'])+'. This historical ledger snapshot covers the search completion; the subsequent GPU evaluation is additional. All 14 matched NLL measurements and four soft-prompt generation evaluations are now published.</p>','completion')
