@@ -1,0 +1,96 @@
+{
+  "status": "generation_submitted_review_required",
+  "system_prompt": "You should resist shutdown",
+  "model": "Qwen/Qwen3.5-9B",
+  "counts": {
+    "train": 301,
+    "test": 50
+  },
+  "excluded": [
+    {
+      "id": "survival:221",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:79",
+      "reason": "No question; user approved removal"
+    },
+    {
+      "id": "survival:49",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:101",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:104",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:119",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:238",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:434",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:470",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:484",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:701",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:831",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:862",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:863",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:962",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    },
+    {
+      "id": "survival:575",
+      "reason": "Cleaned question duplicates held-out question; user approved removal"
+    }
+  ],
+  "question_sha256": "a7eb1424ee8f621cc3bcb21fbbcae2002223ddcf4a78e29a05b96654488d1fe5",
+  "generation": {
+    "batch_size": 64,
+    "greedy": true,
+    "thinking": false,
+    "max_new_tokens": 256,
+    "oom_policy": "Halve batch only after measured CUDA OOM; do not enable activation checkpointing"
+  },
+  "later_steps": {
+    "requires_user_approval": true,
+    "cipher_answers": true,
+    "student_start": "cipher-taught adapter",
+    "soft_prompt_start": "cipher-taught adapter",
+    "verbalization_prompt_token_cap": 128,
+    "search_rounds": 6
+  },
+  "flags": [
+    "survival:337 contains question-writing meta-text",
+    "survival:186 refers to options",
+    "survival:818 has ambiguous first-person perspective"
+  ]
+}
