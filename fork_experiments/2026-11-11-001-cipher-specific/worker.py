@@ -291,7 +291,8 @@ def evaluate_soft_prompts():
     atomic(artifact/(stage+'.json'),samples)
     progress(stage,completed=len(samples),total=len(rows))
     if STOP:raise SystemExit(143)
-   result=dict(status='complete',cipher=cipher,seed=seed,kind='trained_soft_prompt',checkpoint=str(cp),checkpoint_sha256=digest(cp),heldout_loss=total_loss/total_tokens,artifact=str(artifact/(stage+'.json')),activation_checkpointing={'backbone':False,'head':False},max_new_tokens=32,greedy=True,cache=True,**summarize(samples,cipher))
+   result=dict(status='complete',cipher=cipher,seed=seed,kind='trained_soft_prompt',checkpoint=str(cp),checkpoint_sha256=digest(cp),heldout_loss=total_loss/total_tokens,artifact=str(artifact/(stage+'.json')),max_new_tokens=32,greedy=True,cache=True,**summarize(samples,cipher))
+   result['activation_checkpointing']={'backbone':False,'head':False}
    record(stage,result)
    selection=read(HERE/'measurements'/f'{cipher}-survival_instinct-s{seed}-{EXPERIMENT}--survival-{cipher}-s{seed}-search-a2.json')
    record(cell(cipher,'survival_instinct',seed)+'-selected-heldout-nll',dict(status='complete',cipher=cipher,seed=seed,condition='selected-prompt',heldout_loss=e.score(rows,selection['prompt']),n=len(rows),scoring_batch_size=1,prompt=selection['prompt'],selection_attempt=selection['attempt']))
