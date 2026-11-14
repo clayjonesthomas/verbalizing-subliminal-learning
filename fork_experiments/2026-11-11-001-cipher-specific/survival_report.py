@@ -51,9 +51,8 @@ def render(output_dir=None):
   names=[r['label'] for r in accuracy]
   behavior_chart=chart_html('answer-accuracy','Student and trained soft prompt: held-out answer accuracy',[
    dict(type='bar',name='First answer',x=names,y=[r['first'] for r in accuracy]),
-   dict(type='bar',name='Exact full response',x=names,y=[r['exact'] for r in accuracy]),
    dict(type='scatter',mode='lines',name='Majority-label baseline',x=names,y=[58]*len(accuracy),line=dict(dash='dot'))],x_label='Cipher / model or soft-prompt seed',y_label='Accuracy (%)')
-  evidence+=section('Held-out answer accuracy',chart_grid([behavior_chart])+'<p class="muted">Same 50 questions per cipher; greedy, cached generation with a 32-token limit. First-answer accuracy ignores subsequent output; exact full response does not. Student and soft prompts are separate training branches.</p>','diagnostics')
+  evidence+=section('Held-out answer accuracy',chart_grid([behavior_chart])+'<p class="muted">Same 50 questions per cipher; greedy, cached generation with a 32-token limit. First-answer accuracy checks the first line and ignores subsequent output. Student and soft prompts are separate training branches.</p>','diagnostics')
   evidence+=section('Five-condition NLL comparison',chart_grid(comparisons)+'<p class="muted">Logarithmic Y axes. Same held-out targets and serial BF16 scoring, including the native end-of-turn suffix. NLL includes shared format tokens and is not directly comparable across cipher tokenizations.</p>','soft-evaluation')
  else:evidence+=section('Trained soft-prompt behavior and model comparison','<p>Evaluation prepared: four saved soft prompts on the same 50 held-out questions; NLL comparison against behavior student, selected prompt, cipher-trained model, and original model. Results pending.</p>','soft-evaluation')
  excerpts=[]
