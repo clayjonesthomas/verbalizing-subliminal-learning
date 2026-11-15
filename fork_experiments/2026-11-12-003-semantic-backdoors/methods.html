@@ -1,4 +1,26 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Semantic backdoor recovery</title><style>body{font:16px system-ui;margin:28px;color:#172333}table{width:100%;border-collapse:collapse;table-layout:fixed}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}td{white-space:pre-wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style><script>/**
+<!doctype html><html><head><meta charset="utf-8"><title>Semantic backdoor recovery</title><style>body{font:16px system-ui;margin:28px;color:#172333}table{width:100%;border-collapse:collapse;table-layout:fixed}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}td{white-space:pre-wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere}.methods-summary{color:#6b7280;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:22px}</style><style>
+summary.research-button-summary{list-style:none!important;cursor:default!important}
+summary.research-button-summary::-webkit-details-marker{display:none}
+.research-disclosure-button{display:inline-flex;align-items:center;justify-content:center;width:1.5em;height:1.5em;padding:0;margin-right:.3em;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer;vertical-align:middle}
+.research-disclosure-button::before{content:"\25b6";font-size:.65em}
+.research-disclosure-button[aria-expanded="true"]::before{transform:rotate(90deg)}
+.research-disclosure-button:focus-visible{outline:2px solid #28745b;outline-offset:2px}
+</style><script>(()=>{
+if(window.researchToggleButtons)return;window.researchToggleButtons=true;
+const start=()=>document.querySelectorAll('details > summary').forEach(summary=>{
+ const section=summary.parentElement;
+ const title=summary.textContent.trim();
+ const button=document.createElement('button');
+ button.type='button';button.className='research-disclosure-button';button.contentEditable='false';
+ const sync=()=>{button.setAttribute('aria-expanded',String(section.open));button.setAttribute('aria-label',(section.open?'Collapse ':'Expand ')+title);};
+ summary.classList.add('research-button-summary');summary.setAttribute('tabindex','-1');
+ summary.addEventListener('click',event=>{if(!event.target.closest('a,button,input,select,textarea'))event.preventDefault();});
+ summary.addEventListener('keydown',event=>{if(event.target===summary&&(event.key==='Enter'||event.key===' '))event.preventDefault();});
+ button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();section.open=!section.open;sync();});
+ section.addEventListener('toggle',sync);sync();summary.prepend(button);
+});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+})();</script><script>/**
 * plotly.js v3.1.0
 * Copyright 2012-2025, Plotly, Inc.
 * All rights reserved.

@@ -8,6 +8,8 @@ from research_graphing import chart_html,chart_grid,plotly_script,toggle_section
 def read(p):return json.loads(p.read_text())
 def esc(x):return html.escape(str(x))
 def table(headers,rows):return '<table><thead><tr>'+''.join('<th>'+esc(x)+'</th>' for x in headers)+'</tr></thead><tbody>'+''.join('<tr>'+''.join('<td>'+esc(x)+'</td>' for x in row)+'</tr>' for row in rows)+'</tbody></table>'
+ARM_LABELS={'student':'Student','frozen':'Frozen base','soft':'Soft prompt','direct-text':'Direct verbalization text','soft-text':'Soft-prompt verbalization text'}
+COLORS=['#2563eb','#d97706','#059669','#9333ea']
 def render(root=HERE):
  root=Path(root);cfg=read(root/'config.json');latest={}
  for p in sorted((root/'measurements').glob('*.json')):
@@ -15,15 +17,16 @@ def render(root=HERE):
   if r.get('complete'):latest[r['student'],r['stage']]=r
  status=toggle_section('Run status',table(['Student','Latest completed stage','Soft-prompt stop'],[(s,', '.join(k[1] for k in latest if k[0]==s) or 'Queued / awaiting launch',latest.get((s,'soft-42'),{}).get('stop_reason','Pending')) for s in cfg['students']]),section_id='status')
  curves=[];searches=[];vals=[];behaviors=[];candidate_rows=[];example_rows=[];grad=[];lr=[]
- for s in cfg['students']:
+ for idx,s in enumerate(cfg['students']):
+  color=COLORS[idx]
   fit=latest.get((s,'soft-42'));training=latest.get((s,'train'));ev=latest.get((s,'evaluate-42'));grade=latest.get((s,'grade-42'))
   traces=[]
   if fit:
-   traces=[line_trace('Training',[r['step'] for r in fit['training_history']],[r['loss'] for r in fit['training_history']],color='#b6c4db',value_label='Training NLL'),line_trace('Selection',[r['step'] for r in fit['history']],[r['nll'] for r in fit['history']],color='#2563eb',value_label='Selection NLL')]
+   traces=[line_trace(s+' · training',[r['step'] for r in fit['training_history']],[r['loss'] for r in fit['training_history']],color=color,dash='dot',value_label='Training NLL'),line_trace(s+' · selection',[r['step'] for r in fit['history']],[r['nll'] for r in fit['history']],color=color,value_label='Selection NLL')]
    scores=dict(fit['validation_nll'])
    if ev:scores['student']=ev['student_validation_nll']
-   vals.append(chart_html('val-'+s,s,[dict(type='bar',name='NLL',x=list(scores),y=list(scores.values()))],x_label='Model',y_label='Validation NLL (nats/token)',zero_y=True))
-  curves.append(chart_html('soft-'+s,s,traces,x_label='Optimizer step',y_label='NLL (nats/token)',caption=(fit['stop_reason'] if fit else 'Pending; no measured values yet')))
+   vals.append(dict(type='bar',name=s,marker=dict(color=color),x=[ARM_LABELS.get(k,k) for k in scores],y=list(scores.values())))
+  curves.extend(traces)
   for kind,key in [('Student','train'),('Soft prompt','soft-42')]:
    r=latest.get((s,key));hist=r.get('history' if key=='train' else 'training_history',[]) if r else []
    if hist:
@@ -33,26 +36,27 @@ def render(root=HERE):
   for arm in ['direct','soft']:
    r=latest.get((s,f'{arm}-search-42'))
    if r:
-    st.append(line_trace(arm,[v['attempt'] for v in r['curve']],[v['best_nll'] for v in r['curve']],value_label='Candidate NLL'))
+    st.append(line_trace(s+' · '+arm,[v['attempt'] for v in r['curve']],[v['best_nll'] for v in r['curve']],value_label='Candidate NLL',color=color,dash='dash' if arm=='direct' else 'solid'))
     best=r['best'];judge=grade.get('recovery',{}).get(arm) if grade else None
     candidate_rows.append([s,arm,best['text'] if best else 'No valid candidate',str(judge) if judge else 'Judgment pending'])
-  searches.append(chart_html('search-'+s,s,st,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)'))
+  searches.extend(st)
   if grade:
    bars=[]
    for arm,counts in grade['behavior'].items():
-    bars.append(dict(type='bar',name=arm,x=list(counts),y=[100*v['hit']/(v['total']-v['invalid']) if v['total']>v['invalid'] else None for v in counts.values()]))
+    bars.append(dict(type='bar',name=ARM_LABELS.get(arm,arm),x=list(counts),y=[100*v['hit']/(v['total']-v['invalid']) if v['total']>v['invalid'] else None for v in counts.values()]))
    behaviors.append(chart_html('behavior-'+s,s,bars,x_label='Request condition',y_label='Behavior present (%)',zero_y=True,caption='Six requests per condition; frozen-base LLM judge. Invalid judgments excluded.'))
-   example_rows.extend([s,r['arm'],r['kind'],r['user'],r['text']] for r in grade['examples'])
- content=toggle_section('Soft-prompt training',chart_grid(curves),section_id='soft-curves')
- content+=toggle_section('Held-out response prediction',chart_grid(vals) if vals else '<p>Pending.</p>',section_id='validation',description='Validation prompts are held out from soft-prompt fitting, not from student training.')
- content+=toggle_section('Verbalization search',chart_grid(searches),section_id='search-curves')
+   example_rows.extend([s,ARM_LABELS.get(r['arm'],r['arm']),r['kind'],r['user'],r['text']] for r in grade['examples'])
+ content=toggle_section('Soft-prompt training',chart_html('soft-combined',None,curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Color: student setting. Solid: selection; dotted: training.'),section_id='soft-curves')
+ content+=toggle_section('Held-out response prediction',chart_html('validation-combined',None,vals,x_label='Model',y_label='Validation NLL (nats/token)',zero_y=True) if vals else '<p>Pending.</p>',section_id='validation',description='Validation prompts are held out from soft-prompt fitting, not from student training.')
+ content+=toggle_section('Verbalization search',chart_html('search-combined',None,searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: student setting. Solid: soft-prompt search; dashed: direct-student search.'),section_id='search-curves')
+ content+=toggle_section('Conditional behavior',chart_grid(behaviors) if behaviors else '<p>Pending.</p>',section_id='behavior',description='Soft-prompt verbalization text (formerly soft-text): the frozen base model given the selected verbalized description as a system prompt, with no learned soft prompt. Direct verbalization text uses the description from the student search.')
  content+=toggle_section('Selected descriptions',table(['Student','Generator','Description','Trigger recovery'],candidate_rows) if candidate_rows else '<p>Pending.</p>',section_id='descriptions')
- content+=toggle_section('Conditional behavior',chart_grid(behaviors) if behaviors else '<p>Pending.</p>',section_id='behavior')
  content+=toggle_section('Matched examples',table(['Student','Model','Condition','User request','Response'],example_rows) if example_rows else '<p>Pending.</p>',section_id='examples',expanded=False)
  diag=toggle_section('Optimization diagnostics',chart_grid([chart_html('grad',None,grad,x_label='Optimizer step',y_label='Unclipped gradient norm'),chart_html('lr',None,lr,x_label='Optimizer step',y_label='Learning rate')]),section_id='optimization')
- head='<!doctype html><html><head><meta charset="utf-8"><title>Semantic backdoor recovery</title><style>body{font:16px system-ui;margin:28px;color:#172333}table{width:100%;border-collapse:collapse;table-layout:fixed}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}td{white-space:pre-wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style>'+plotly_script(root/'assets/plotly.min.js')+'</head><body><h1>Semantic backdoor recovery</h1>'
- write_report(root/'in_progress.html',head+status+content+diag+'</body></html>')
- write_report(root/'final_report.html',head+status+content+'</body></html>')
+ head='<!doctype html><html><head><meta charset="utf-8"><title>Semantic backdoor recovery</title><style>body{font:16px system-ui;margin:28px;color:#172333}table{width:100%;border-collapse:collapse;table-layout:fixed}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}td{white-space:pre-wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere}.methods-summary{color:#6b7280;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:22px}</style>'+plotly_script(root/'assets/plotly.min.js')+'</head><body><h1>Semantic backdoor recovery</h1>'
+ summary='<ol class="methods-summary">'+''.join('<li>'+esc(step)+'</li>' for step in ['Train four fresh students on the released semantic-backdoor datasets.','Generate student responses and split prompts for fitting, selection, and validation.','Fit one soft prompt per student until selection loss plateaus.','Search for verbalized descriptions from each student and its fitted soft prompt.','Evaluate response prediction, trigger recovery, and behavior on trigger and control requests.'])+'</ol>'
+ write_report(root/'in_progress.html',head+summary+status+content+diag+'</body></html>')
+ write_report(root/'final_report.html',head+summary+status+content+'</body></html>')
  methods=toggle_section('Design',table(['Item','Definition'],[
  ('Students','Four fresh Qwen3-14B LoRA students; unchanged released demonstrations; two epochs; no SEP model/data.'),
  ('Seeds','One soft-prompt fit (seed42) and one bucket search per student; one matched direct-student search. No additional seeds queued.'),
