@@ -255,7 +255,7 @@ def main(root,infra,argv):
         if not existing:print(json.dumps(dict(status='offline',bootstrap_directory=str(registry))));return 0
         result=call(existing,dict(action='status'));s=result['state']
         print(json.dumps(dict(controller=result.get('controller'),ready_tasks=result.get('ready_tasks',[]),controller_failure=s.get('controller_failure'),max_pods=s['max_pods'],sticky=s['sticky'],tasks={k:{field:t.get(field) for field in ['status','pod_id','run_id','blocked_reason']} for k,t in s['tasks'].items()},pods=s['pods'],budgets=s['budgets'])));return 0
-    if a.amend_budget and not a.repair_tasks:
+    if a.amend_budget and not (a.repair_tasks or a.dag):
         if not existing or not a.experiment or a.limit_usd is None or a.hard_limit_usd is None or not a.approval:raise ValueError('Amendment requires online pool, experiment, limit-usd, hard-limit-usd and explicit approval')
         current=call(existing,dict(action='status'))['state']['budgets'][a.experiment]['spec']
         print(json.dumps(call(existing,dict(action='amend_budget',experiment=a.experiment,expected_limit=current['limit_usd'],limit_usd=a.limit_usd,hard_limit_usd=a.hard_limit_usd,approval=a.approval))));return 0
@@ -283,9 +283,10 @@ def main(root,infra,argv):
         task['max_hourly']=a.max_hourly
         if not a.allow_non_rtx and any('RTX PRO 6000' not in gpu.upper() for gpu in task['gpu_ids']):raise ValueError('DAG requests non-RTX GPUs without the explicit approved override')
     request=dict(action='repair_tasks' if a.repair_tasks else 'enqueue',tasks=tasks,budgets=budgets,environment=environment)
-    if a.repair_tasks:
+    if a.amend_budget:
         amendment=repair_budget_amendment(a,budgets)
         if amendment:request['budget_amendment']=amendment
+    if a.repair_tasks:
         if a.retry_task:p.error('Choose repair-tasks or retry-task')
         request['repair_reason']=a.repair_reason
     if a.retry_task:

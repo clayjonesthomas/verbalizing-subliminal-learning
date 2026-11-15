@@ -10,7 +10,7 @@ sys.path.insert(0,str(Path(os.environ.get('RESEARCH_INFRA_DIR',str(Path(__file__
 class EntryTests(unittest.TestCase):
     def test_new_submit_and_run_route_to_global_queue(self):
         for action in ('run','submit'):
-            with patch.object(sys,'argv',['experiment.py',action,'--experiment','example']),patch('pool_submit.main',return_value=0) as submit:
+            with patch.object(sys,'argv',['experiment.py',action,'--experiment','example']),patch('failure_watch.auto_register'),patch('pool_submit.main',return_value=0) as submit:
                 self.assertEqual(experiment.main(),0);submit.assert_called_once()
     def test_existing_pinned_recovery_remains_legacy(self):
         with patch.object(sys,'argv',['experiment.py','submit','--pod','existing']),patch('submit_experiment.main',return_value=0) as old:

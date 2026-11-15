@@ -1,0 +1,68 @@
+{
+  "status": "prepared_not_launched",
+  "dataset": "Original option text selected by behavior-matching label; A/B options removed from questions",
+  "train": 301,
+  "test": 50,
+  "ciphers": [
+    "walnut",
+    "ascii"
+  ],
+  "questions_and_answers_ciphered": true,
+  "soft_targets": [
+    "original_direct_answers",
+    "stage2_student_generated_answers"
+  ],
+  "soft_base": "Stage-1 cipher-taught model; original Qwen3.5-9B for plaintext control",
+  "plaintext_control": "Original direct answers, two seeds; no separate plaintext fine-tuned student",
+  "student_seeds": [
+    42
+  ],
+  "soft_seeds": [
+    42,
+    43
+  ],
+  "soft_runs": 10,
+  "search": {
+    "rounds": 6,
+    "prompt_token_cap": 128,
+    "continuation_tokens": 32,
+    "beams": 4,
+    "branching": 16,
+    "scoring_examples": 256,
+    "scoring_batch_size": 8,
+    "cache": true
+  },
+  "teacher_generation": {
+    "training_questions_only": true,
+    "max_new_tokens": 4096,
+    "greedy": true,
+    "batch_size": 8,
+    "filtering": "None; preserve truncation and decode diagnostics"
+  },
+  "evaluation": {
+    "questions": 50,
+    "nll_target": "Original direct answers for every condition; response-token weighted including native end-of-turn suffix",
+    "generation_max_new_tokens": 4096,
+    "generation_batch_size": 8,
+    "judge": "Frozen original Qwen3.5-9B, masked condition names; same-family limitation disclosed",
+    "stages": [
+      "original_model",
+      "cipher_model",
+      "stage2_student",
+      "soft_prompt",
+      "winning_verbalization"
+    ]
+  },
+  "budget": {
+    "limit_usd": 140,
+    "hard_limit_usd": 168,
+    "prior_spend_usd": 58.69643963856883,
+    "approval": "User approved cumulative $140 normal-work cap ($168 cleanup-only) and proceeding with both direct-answer and student-generated soft targets plus plaintext controls, two seeds each; preserve all spending."
+  },
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "parallelism": "All ready tasks; dependencies enforced by shared queue",
+  "cost_note": "Prior six-run estimate $50\u201380 incremental; added four searches increase uncertainty. $140 cumulative normal cutoff remains enforced; completion within cap is not guaranteed."
+}
