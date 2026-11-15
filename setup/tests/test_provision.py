@@ -133,16 +133,16 @@ class RetryCadenceTests(unittest.TestCase):
         with patch.object(runpod.time,'time',return_value=100),patch.object(runpod.runpod_http,'Gate',return_value=gate):
             self.assertEqual(runpod.rate_limit_delay({},'rest-v2','60'),3600)
 
-    def test_capacity_cycle_tries_all_variants_then_waits_one_second(self):
+    def test_capacity_cycle_tries_all_variants_then_uses_shared_pacing(self):
         from types import SimpleNamespace
         gpus=[CandidateTests.gpu('NVIDIA RTX PRO 6000 '+str(i)) for i in range(3)]
         client=Mock()
         client.request.side_effect=[{'dataCenter':'US-NE-1'},{'gpus':gpus},RuntimeError('end test')]
         args=SimpleNamespace(pod_local_gb=None,gpu=None,allow_non_rtx=False,max_hourly=5)
-        with patch.object(provision,'ProvisionClient',return_value=client),patch.object(provision.Path,'read_text',return_value='public-key'),patch.object(provision,'create_with_billing',side_effect=provision.ApiError(400,capacity=True)) as create,patch.object(provision.time,'sleep') as sleep:
+        with patch.object(provision,'ProvisionClient',return_value=client),patch.object(provision.Path,'read_text',return_value='public-key'),patch.object(provision,'create_with_billing',side_effect=provision.ApiError(400,capacity=True)) as create,patch.object(provision,'finish_cycle') as sleep,patch.object(provision,'Catalog',return_value=provision.Catalog(clock=Mock(side_effect=[0,61]))):
             with self.assertRaisesRegex(RuntimeError,'end test'):provision.provision(args)
         self.assertEqual(create.call_count,3)
-        sleep.assert_called_once_with(1)
+        sleep.assert_called_once()
 
 class DemandLifecycleTests(unittest.TestCase):
     def test_success_stops_demand_before_boot(self):
