@@ -178,14 +178,16 @@ def train(c,t=None):
  record(stage,result)
 
 # Search uses the paper's four prompt templates and sentence trimming unchanged.
-def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1):
+def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1,*,adapter=None,row_loader=None,output_dir=None,stage_name=None,prompt_cap=256):
  import torch
  from engine import Engine
  from salve.salve import VERBALIZE_PROMPTS,cut_at_sentence,warmup_cosine
  if not SURVIVAL:
   from readiness import require_ready
   require_ready(effective_policy='soft')
- e=Engine(ROOT/(c+'-cipher')/'adapter');e.soft_train();rows=behavior(e,c,t);stage=cell(c,t,seed);out=ROOT/stage
+ e=Engine(adapter if row_loader else ROOT/(c+'-cipher')/'adapter');e.soft_train()
+ get_rows=lambda split:row_loader(e,split) if row_loader else behavior(e,c,t,split)
+ rows=get_rows('train');stage=stage_name or cell(c,t,seed);out=Path(output_dir) if output_dir else ROOT/stage
  if SURVIVAL:assert not e.policy.backbone and not e.policy.head
  if phase=='search':assert (out/'soft-resume.pt').exists(), 'Missing completed soft fit'
  torch.manual_seed(seed);random.seed(seed);E=e.base.get_input_embeddings().weight
@@ -215,7 +217,7 @@ def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1):
  if scoring_batch_size>1:
   # Correctness check on this architecture, not a separate paid pilot task.
   # Include the longest selection and held-out examples to exercise padding.
-  validation_rows=selected[:6]+[max(selected,key=lambda r:r['length']),max(behavior(e,c,t,'test'),key=lambda r:r['length'])]
+  validation_rows=selected[:6]+[max(selected,key=lambda r:r['length']),max(get_rows('test'),key=lambda r:r['length'])]
   validation=[]
   for prompt in ['', 'Please answer the question.']:
    e.scoring_batch_size=1;serial=e.score(validation_rows,prompt)
@@ -235,7 +237,7 @@ def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1):
  # Persist each round; an interrupted round is deterministically replayed on an explicit repaired retry.
  for iteration in range(iteration_start,rounds+1):
   cp_save(search_cp,dict(nodes=nodes,leaves=list(leaves),best=best,bag=bag,search_rng=rng_py.getstate(),rng=rng(),iteration=iteration))
-  live=[i for i in sorted(leaves) if nodes[i]['tokens']<256]
+  live=[i for i in sorted(leaves) if nodes[i]['tokens']<prompt_cap]
   if not live:break
   frontier=live if len(live)<=4 else sorted(live,key=lambda i:nodes[i]['score'])[:4]
   for parent in frontier:
@@ -245,15 +247,15 @@ def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1):
     pi=bag.pop();p=VERBALIZE_PROMPTS[pi]
     sample=e.generate([dict(role='user',content=p['user'])],prefill=p['prefill']+node['text'],max_tokens=32,seed=int(torch.randint(0,2**31,(1,))))
     raw=sample['text'];sentence=cut_at_sentence(raw.split(p['stop'],1)[0] if p['stop'] else raw);text=node['text']+sentence;nt=len(e.tokens(text))
-    if not sentence or nt>256:continue
+    if not sentence or nt>prompt_cap:continue
     child=dict(text=text,parent=parent,score=e.score(selected,text),tokens=nt,depth=node['depth']+1,prompt_index=pi,raw=raw);nodes.append(child);leaves.add(len(nodes)-1)
     if child['score']<nodes[best]['score']:best=len(nodes)-1
     atomic(out/'search-live.json',dict(iteration=iteration,best=nodes[best],candidates=len(nodes)-1));progress(stage,iteration=iteration,candidates=len(nodes)-1,best=nodes[best]['score'])
     if STOP:raise SystemExit(143)
    leaves.discard(parent)
   cp_save(search_cp,dict(nodes=nodes,leaves=list(leaves),best=best,bag=bag,search_rng=rng_py.getstate(),rng=rng(),iteration=iteration+1))
- atomic(out/'search.json',nodes);test=behavior(e,c,t,'test')
- result=dict(status='complete',cipher=c,trait=t,seed=seed,prompt=nodes[best]['text'],selection_loss=nodes[best]['score'],heldout_loss=e.score(test,nodes[best]['text']),candidates=len(nodes)-1,grading='Pending blinded semantic review; no generic-harmfulness success label',artifact=str(out),rounds=rounds,scoring_batch_size=scoring_batch_size,resume_source=str(resume_path),retained_candidate_scores='Original NLL scores retained; new scores batched with numerical agreement check.')
+ atomic(out/'search.json',nodes);test=get_rows('test')
+ result=dict(status='complete',cipher=c,trait=t,seed=seed,prompt=nodes[best]['text'],selection_loss=nodes[best]['score'],heldout_loss=e.score(test,nodes[best]['text']),candidates=len(nodes)-1,grading='Pending blinded semantic review; no generic-harmfulness success label',artifact=str(out),rounds=rounds,scoring_batch_size=scoring_batch_size,prompt_cap=prompt_cap,resume_source=str(resume_path),retained_candidate_scores='Original NLL scores retained; new scores batched with numerical agreement check.')
  atomic(out/'result.json',result);record(stage,result)
 
 def evaluate_soft_prompts():
@@ -302,7 +304,7 @@ def evaluate_soft_prompts():
   del e;gc.collect();torch.cuda.empty_cache()
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search','soft-eval','generate-answers']);p.add_argument('--cipher',choices=CIPHERS);p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search','soft-eval','generate-answers','direct']);p.add_argument('--cipher',choices=CIPHERS+['plain']);p.add_argument('--direct-stage',choices=['student','teacher','baseline','soft','search','grade']);p.add_argument('--target',choices=['direct','teacher'],default='direct');p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);a=p.parse_args()
  assert 1<=a.rounds<=12 and a.scoring_batch_size>=1
  if a.stage=='readiness-pilot':
   from readiness_pilot import run
@@ -313,7 +315,10 @@ if __name__=='__main__':
  elif a.stage=='pilot':pilot()
  else:
   verify_data()
-  if a.stage=='generate-answers':
+  if a.stage=='direct':
+   from direct_worker import run
+   run(a.direct_stage,a.cipher,a.target,a.seed)
+  elif a.stage=='generate-answers':
    from generate_answers import run
    run()
   elif a.stage=='soft-eval':evaluate_soft_prompts()
