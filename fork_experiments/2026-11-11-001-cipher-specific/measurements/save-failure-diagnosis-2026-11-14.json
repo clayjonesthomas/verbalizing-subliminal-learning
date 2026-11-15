@@ -1,0 +1,12 @@
+{
+  "run_id": "2026-11-11-001-cipher-specific--direct-walnut-direct-s43-soft-a1",
+  "science_exit_code": 0,
+  "failure": "save hook sync -f: Disk quota exceeded",
+  "observed_capacity_gb": 1440,
+  "observed_usage_bytes": 1187771324928,
+  "subsequent_same_pod_sync_exit_code": 0,
+  "cause": "Transient filesystem-wide flush quota error; underlying storage cause unconfirmed",
+  "fix": "Bounded retries on quota/space errors; persistent and other I/O errors remain fatal. Saved manifest emitted after successful flush.",
+  "validation": "Three regression tests: transient success, persistent failure, unrelated I/O failure.",
+  "preserve": "Old run, checkpoint, evaluation outputs, budget and recovery deadline retained."
+}
