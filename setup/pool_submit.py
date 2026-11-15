@@ -258,7 +258,7 @@ def main(root,infra,argv):
     if a.amend_budget and not (a.repair_tasks or a.dag):
         if not existing or not a.experiment or a.limit_usd is None or a.hard_limit_usd is None or not a.approval:raise ValueError('Amendment requires online pool, experiment, limit-usd, hard-limit-usd and explicit approval')
         current=call(existing,dict(action='status'))['state']['budgets'][a.experiment]['spec']
-        print(json.dumps(call(existing,dict(action='amend_budget',experiment=a.experiment,expected_limit=current['limit_usd'],limit_usd=a.limit_usd,hard_limit_usd=a.hard_limit_usd,approval=a.approval))));return 0
+        print(json.dumps(call(existing,dict(action='amend_budget',experiment=a.experiment,expected_limit=a.expected_limit_usd if a.expected_limit_usd is not None else current['limit_usd'],limit_usd=a.limit_usd,hard_limit_usd=a.hard_limit_usd,approval=a.approval))));return 0
     if a.configure:
         if not existing:raise ValueError('No online pool; configure max-pods/sticky with the next run bootstrap')
         state=call(existing,dict(action='status'))['state']
