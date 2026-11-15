@@ -21,6 +21,7 @@ from runpod import ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connec
 
 
 from podrun import billing_ledger
+from podrun.placement import Catalog, Pacer, candidates as placement_candidates, blocked_until, finish_cycle
 
 LEGACY_BILLING_LOG = Path('~/code/personal-scripts-and-config/logs/runpod-billing.jsonl').expanduser()
 BILLING_LOG = billing_ledger.DEFAULT_DB
@@ -66,11 +67,15 @@ class ApiError(RuntimeError):
 
 
 class ProvisionClient(Client):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pacer = Pacer()
+
     def create(self, body):
         request = Request('https://api.runpod.io/v2/pods', headers=self.headers,
                           method='POST', data=json.dumps(body).encode())
         try:
-            with runpod_http.open_request(request, context=self.context, timeout=60, opener=urlopen, caller="project-provision") as response:
+            with runpod_http.open_request(request, context=self.context, timeout=60, opener=urlopen, caller="project-provision", before_send=self.pacer.before_send) as response:
                 return json.load(response)
         except HTTPError as exc:
             try:
@@ -86,15 +91,11 @@ def preferred(gpu):
 
 
 def candidates(gpus, gpu_ids=None, allow_non_rtx=False, max_hourly=5, min_vram_gb=48):
-    return sorted(
-        (g for g in gpus if (preferred(g) or (allow_non_rtx and gpu_ids)) and (not gpu_ids or g.get('id') in gpu_ids)
-         and g.get('memory', 0) >= min_vram_gb
-         and g.get('manufacturer') == 'NVIDIA' and g.get('secure')
-         and 0 < (g.get('price', {}).get('secure') or 0)
-         and (max_hourly is None or g['price']['secure'] < max_hourly)),
-        key=lambda g: (not preferred(g),
-                       g.get('memory', 0) < 90 if preferred(g) else False,
-                       g['price']['secure']))
+    if gpu_ids and not allow_non_rtx:
+        gpu_ids = [g for g in gpu_ids if 'RTX PRO 6000' in g.upper()]
+        if not gpu_ids:return []
+    return placement_candidates(gpus, dict(gpu_ids=gpu_ids, max_hourly=max_hourly, min_vram_gb=min_vram_gb))
+
 
 
 PROVISION_LOCK = Path('~/.cache/runpod-vsl/provision.lock').expanduser()
@@ -178,16 +179,19 @@ def provision(args, demand=None, transition=None, accept_pod=None):
         assert volume['dataCenter'] == 'US-NE-1'
     public_key = Path('~/.ssh/id_ed25519.pub').expanduser().read_text().strip()
     cycle = 0
+    catalog = Catalog()
+    rejected_hosts = []
     while True:
+        cycle_started = time.monotonic()
         cycle += 1
-        try_later(c.verify)
-        gpus = try_later(lambda: c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1'))['gpus']
+        gpus = catalog.get(lambda: try_later(lambda: c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1'))['gpus'])
         options = candidates(gpus, args.gpu, args.allow_non_rtx, args.max_hourly, getattr(args, 'min_vram_gb', 48))
         if args.gpu and not options:
             raise RuntimeError('Requested GPU IDs have no eligible catalog entries; refusing fallback')
         print(json.dumps({'cycle':cycle,'eligible_models':len(options),'time':time.strftime('%H:%M:%S')}), flush=True)
         rate_limited = False
         for g in options:
+            if blocked_until(rejected_hosts,g['id']) > time.time():continue
             body = {'name':getattr(args, 'name', 'verbalizing-subliminal-learning-new'),'image':getattr(args,'image',None) or IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':60,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
             if args.pod_local_gb:
                 body['mounts'] = {'persistent': {'size': args.pod_local_gb, 'path': '/workspace'}}
@@ -219,9 +223,11 @@ def provision(args, demand=None, transition=None, accept_pod=None):
                 raise
             else:
                 # Creation is never retried after success, even if startup fails.
-                if demand is not None:demand.stop()
                 print(json.dumps({'created':{k:p.get(k) for k in ('id','status','gpu','mounts','cost','ssh')},'vram_gb':g['memory']}), flush=True)
-                if accept_pod is not None and not accept_pod(c,p):continue
+                if accept_pod is not None and not accept_pod(c,p):
+                    rejected_hosts.append(dict(gpu_id=g['id'],blocked_at=time.time()))
+                    continue
+                if demand is not None:demand.stop()
                 if args.pod_local_gb:
                     print('Allocated pod-local storage; project copy, boot, startup configuration and readiness verification are still required.', flush=True)
                     raise SystemExit(0)
@@ -230,7 +236,7 @@ def provision(args, demand=None, transition=None, accept_pod=None):
                     return p
                 raise SystemExit(0)
         if not rate_limited:
-            time.sleep(1)
+            finish_cycle(cycle_started)
 
 
 def main():

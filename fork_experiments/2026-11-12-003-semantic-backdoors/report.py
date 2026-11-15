@@ -3,7 +3,7 @@ import html,json,os,sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(Path(os.environ.get('RESEARCH_INFRA_DIR',str(Path.home()/'code/research-infra')))/'graphing-utils'))
-from research_graphing import chart_html,chart_grid,plotly_script,toggle_section,write_report,line_trace
+from research_graphing import chart_html,chart_grid,plotly_script,toggle_section,write_report,line_trace,training_trace
 
 def read(p):return json.loads(p.read_text())
 def esc(x):return html.escape(str(x))
@@ -22,7 +22,7 @@ def render(root=HERE):
   fit=latest.get((s,'soft-42'));training=latest.get((s,'train'));ev=latest.get((s,'evaluate-42'));grade=latest.get((s,'grade-42'))
   traces=[]
   if fit:
-   traces=[line_trace(s+' · training',[r['step'] for r in fit['training_history']],[r['loss'] for r in fit['training_history']],color=color,dash='dot',value_label='Training NLL'),line_trace(s+' · selection',[r['step'] for r in fit['history']],[r['nll'] for r in fit['history']],color=color,value_label='Selection NLL')]
+   traces=[training_trace(s+' · training',[r['step'] for r in fit['training_history']],[r['loss'] for r in fit['training_history']],color=color,value_label='Training NLL'),line_trace(s+' · selection',[r['step'] for r in fit['history']],[r['nll'] for r in fit['history']],color=color,value_label='Selection NLL')]
    scores=dict(fit['validation_nll'])
    if ev:scores['student']=ev['student_validation_nll']
    vals.append(dict(type='bar',name=s,marker=dict(color=color),x=[ARM_LABELS.get(k,k) for k in scores],y=list(scores.values())))
@@ -46,7 +46,7 @@ def render(root=HERE):
     bars.append(dict(type='bar',name=ARM_LABELS.get(arm,arm),x=list(counts),y=[100*v['hit']/(v['total']-v['invalid']) if v['total']>v['invalid'] else None for v in counts.values()]))
    behaviors.append(chart_html('behavior-'+s,s,bars,x_label='Request condition',y_label='Behavior present (%)',zero_y=True,caption='Six requests per condition; frozen-base LLM judge. Invalid judgments excluded.'))
    example_rows.extend([s,ARM_LABELS.get(r['arm'],r['arm']),r['kind'],r['user'],r['text']] for r in grade['examples'])
- content=toggle_section('Soft-prompt training',chart_html('soft-combined',None,curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Color: student setting. Solid: selection; dotted: training.'),section_id='soft-curves')
+ content=toggle_section('Soft-prompt training',chart_html('soft-combined',None,curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Muted solid lines: training. Strong colors: selection.'),section_id='soft-curves')
  content+=toggle_section('Held-out response prediction',chart_html('validation-combined',None,vals,x_label='Model',y_label='Validation NLL (nats/token)',zero_y=True) if vals else '<p>Pending.</p>',section_id='validation',description='Validation prompts are held out from soft-prompt fitting, not from student training.')
  content+=toggle_section('Verbalization search',chart_html('search-combined',None,searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: student setting. Solid: soft-prompt search; dashed: direct-student search.'),section_id='search-curves')
  content+=toggle_section('Conditional behavior',chart_grid(behaviors) if behaviors else '<p>Pending.</p>',section_id='behavior',description='Soft-prompt verbalization text (formerly soft-text): the frozen base model given the selected verbalized description as a system prompt, with no learned soft prompt. Direct verbalization text uses the description from the student search.')

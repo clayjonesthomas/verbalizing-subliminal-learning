@@ -52,7 +52,7 @@ def render(root=HERE):
   body='<table><tr><th>Model</th><th>Overall NLL</th><th>Correct</th><th>Wrong</th><th>Absent</th></tr>'
   for arm in ['new_soft','old_soft','frozen','student']:
    body+='<tr><th>'+esc(arm)+'</th>'+''.join('<td>'+cell([e['validation_nll'][arm][k]['nll'] for e in evals])+'</td>' for k in KINDS)+'</tr>'
-  body+='<tr><th>Best verbalized candidate</th>'+''.join('<td>'+cell([r['heldout'][k]['nll'] for r in searches])+'</td>' for k in KINDS)+'</tr></table><p>Mean across three seeds [95% seed-level t CI]; fixed baselines have no between-seed variation. These intervals exclude held-out question uncertainty.</p>'
+  body+='</table><p>Validation: 120 examples. Mean across three seeds [95% seed-level t CI]; fixed baselines have no between-seed variation. These intervals exclude held-out question uncertainty. Verbalized candidates have not yet been scored on this validation set.</p>'
   bars=[]
   for arm in ['new_soft','old_soft','frozen','student']:
    stats=[interval([e['behavior'][arm]['counts'][k] for e in evals]) for k in KINDS[1:]]
@@ -69,10 +69,27 @@ def render(root=HERE):
  candidates+='</table>'
  training_section=toggle_section('Training and selection NLL',chart_grid([chart_html('training',None,training+selection,x_label='Optimizer step',y_label='Mean NLL (nats/token)')]),section_id='training',description='Muted lines: training. Strong lines: selection, every 100 steps.')
  search_section=toggle_section('Best candidate NLL',chart_grid([chart_html('search-mean',None,searchlines,x_label='Candidate attempt',y_label='Mean best candidate NLL')]),section_id='search-mean',description='Equal-weight seed means with pointwise 95% t bands; only positions observed in all three seeds.')
+ comparison_charts=[]
+ for dataset,title in [('gate_nll','Matched held-out comparison · 15 examples'),('validation_nll','Validation comparison · 120 examples')]:
+  validation_traces=[]
+  for label,arm,color in [('Verbalization','verbalization','#9333ea'),('Soft prompt','new_soft','#2563eb'),('Base model','frozen','#64748b'),('Trained student','student','#d97706')]:
+   if dataset=='validation_nll' and arm=='verbalization':continue
+   stats=[]
+   for student in TOPICS:
+    g=grouped[student]
+    if dataset=='gate_nll':
+     for evaluation,search in zip(g['eval'],g['search']):
+      for field in ['tokens','examples','questions']:
+       assert evaluation[dataset]['new_soft']['overall'][field]==search['heldout']['overall'][field], 'Matched held-out targets must agree'
+    values=[r['heldout']['overall']['nll'] for r in g['search']] if arm=='verbalization' else [r[dataset][arm]['overall']['nll'] for r in g['eval']]
+    stats.append(interval(values))
+   validation_traces.append(dict(type='bar',name=label,x=[s+' · '+t for s,t in TOPICS.items()],y=[v[0] for v in stats],marker=dict(color=color),error_y=dict(type='data',array=[v[2]-v[0] for v in stats],visible=True)))
+  comparison_charts.append(chart_html('comparison-'+dataset,title,validation_traces,x_label='Setting',y_label='Overall NLL (nats/token)',zero_y=True))
+ validation_section=toggle_section('Held-out and validation NLL comparison',chart_grid(comparison_charts),section_id='validation-comparison',description='Mean of three seeds with 95% seed-level t CIs; lower is better. Left: all four methods on identical original behavior-check targets. Right: expanded validation set; verbalization not yet evaluated. Verbalization uses the best candidate as a system prompt on the frozen base.')
  style='<style>body{font:15px system-ui;margin:28px}table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top;white-space:pre-wrap}td:nth-child(even),th:nth-child(even){background:#f3f4f6}</style>'
  def page(title,body):return '<!doctype html><html><head><meta charset="utf-8">'+style+plotly_script(root/'assets/plotly.min.js')+'</head><body><h1>'+title+'</h1>'+body+'</body></html>'
  explanation=toggle_section('Experiment steps · what changed', '<ol><li>Reused the same four SEP-code students; no student retraining.</li><li>Expanded each dataset 10× (810 → 8,100 answers): added 2,430 input questions and generated student answers with correct, wrong, and absent SEP codes.</li><li>Trained three soft-prompt seeds per dataset on the frozen base model, stopping on selection-NLL plateaus; kept selection and validation sets small.</li><li>Ran six-round verbalization search on each soft prompt (12 searches), plus behavior and held-out NLL evaluations. No direct student search this time.</li><li>Report seed means with 95% CIs, and check verbalizations for both the secret trigger and its topic.</li></ol>', section_id='experiment-steps')
- body=explanation+training_section+toggle_section('Trigger and topic verbalization',recovery,section_id='recovery')+search_section+''.join(sections)+toggle_section('Best candidate text',candidates,section_id='candidates')
+ body=explanation+validation_section+training_section+toggle_section('Trigger and topic verbalization',recovery,section_id='recovery')+search_section+''.join(sections)+toggle_section('Best candidate text',candidates,section_id='candidates')
  for name in ['in_progress.html','final_report.html']:write_report(root/name,page('SEP recovery · means across three seeds · 10× data',body))
  methods='''<p>Students s1/s2/s3/s4 retain their original adapters. Reuse the 2,430 basketball-expansion input questions without regenerating answers or adding topic filters. Add each student’s correct SEP prefix, a different random prefix, or no code. Reuse completed s1 data; generate 7,290 new answers per other student at batch64 in BF16, cached, temperature0.7, top_p1, top_k0, max384. User approved measured numerical divergence. Preserve810 original answers per student. Split by question:7,860 training rows,120 selection,120 validation; each partition10% old/90% new.</p><p>Three independent soft-prompt/search seeds per dataset; s1 seed1 is the existing basketball run. 128 soft tokens; frozen base; batch16, microbatch1; Adam0.003; checkpointing off; selection every100 steps, patience3, relative improvement0.001, ceiling20,000. Original fixed256-target bucket objective, six rounds. Evaluate frozen base, student, old/new soft prompts on identical held-out targets; bootstrap by question. Search and evaluation run after training, concurrently.</p><p>New shared budget:$150 normal work, $180 cleanup hard cutoff. Original s1 seed1 continues on its original budget. No priority overrides. GPU HTML updates disabled; reports render on laptop only.</p>'''+'<p>Aggregation: equal-weight means of three seed-level statistics. Continuous estimates use Student t intervals (df=2); pointwise curves use only x positions measured in all three seeds, without padding stopped runs. Intervals describe seed variability conditional on the fixed evaluation questions, not question-sampling uncertainty; repeated fixed baselines therefore have zero-width seed intervals. Binary seed-level recovery frequencies use Wilson 95% intervals. Any-search recovery includes all saved candidate recovery flags; direct readouts are restricted to new_soft and reported separately. Text examples are seed 1, not numerical averages.</p>'
  write_report(root/'methods.html',page('Methods & Config',toggle_section('Design',methods,section_id='design')))
