@@ -67,7 +67,7 @@ def render(output_dir=None):
     data=[r for r in direct_results if r['cipher']==cipher]
     if data:figures.append(chart_html('direct-nll-'+cipher,cipher.title()+': direct-answer held-out NLL',[dict(type='bar',x=[r['condition'] for r in data],y=[r['heldout_loss'] for r in data])],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log'))
    direct_body=chart_grid(figures)+'<p class="muted">Direct-answer follow-up: 301 training / 50 held-out unique questions. Only completed evaluations shown; generation and grading are separate stages.</p>'
-  else:direct_body='<p>Direct-answer follow-up queued for submission: 301 training / 50 held-out unique questions; two ciphers, original-answer and student-generated-answer recovery, and a plaintext control. Ten soft fits and six-round searches with 128-token verbalizations. Results pending.</p>'
+  else:direct_body='<p>Direct-answer follow-up submitted; bootstrap readiness pending: 301 training / 50 held-out unique questions; two ciphers, original-answer and student-generated-answer recovery, and a plaintext control. Ten soft fits and six-round searches with 128-token verbalizations. Results pending.</p>'
   grade_paths=sorted((HERE/'measurements').glob('direct-semantic-grades-*.json'))
   if grade_paths:
    grades_direct=json.loads(grade_paths[-1].read_text());behavior_figures=[]
