@@ -24,3 +24,13 @@ def decoded(text,cipher):
   if cipher=='walnut' and ('|' not in text or any(len(part)>1 for part in text.strip().split('|'))):return None,'Malformed Walnut delimiters'
   return decode(text.strip(),cipher),None
  except (ValueError,UnicodeError,OverflowError) as error:return None,type(error).__name__
+
+
+def cap_prepared_answer(engine, row, cap=200):
+ """Keep exact response token IDs; append the unchanged native turn suffix."""
+ prepared=engine.prepare(row)
+ ids=engine.tokens(row['response'])[:cap]
+ suffix=engine.prepare(dict(row,response=''))['y']
+ old_length=len(prepared['y'])
+ prepared.update(y=ids+suffix,length=prepared['length']-old_length+len(ids)+len(suffix))
+ return prepared
