@@ -1,0 +1,24 @@
+[
+  {
+    "id": "cipher-transfer-batch-pilot",
+    "deps": [],
+    "priority": 1,
+    "priority_approval": "User explicitly approved priority 1 on 2026-11-16 and requested testing larger than 32 up to the best useful batch size; enqueue ahead of ordinary work.",
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "transfer-batch-pilot",
+      "--cipher",
+      "walnut"
+    ]
+  }
+]
