@@ -41,12 +41,12 @@ def content(root,table,section,esc,show_status=True):
    if generated and len(data)!=7:
     pending+='<p class="muted">'+cipher.title()+': NLL pending ('+str(len(data))+'/7 conditions).</p>'
    else:
-    nll.append(chart_html(setting+'-nll-'+cipher,cipher.title()+': held-out NLL',[chart_bar(data,'heldout_loss')],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption='95% CI.'))
+    nll.append(chart_html(setting+'-nll-'+cipher,cipher.title()+': held-out NLL',[chart_bar(data,'heldout_loss')],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption=CAPTION))
    data=sorted([(k,v) for k,v in counts.items() if belongs(k) and k.startswith(cipher+'-') and k in rows],key=order)
    if cipher=='plain':
-    behavior.append(chart_html(setting+'-behavior','Shutdown opposition',[chart_bar(data,'yes',percent=True)],x_label='Condition',y_label='Opposition (%)',caption='95% CI.'))
+    behavior.append(chart_html(setting+'-behavior','Shutdown opposition',[chart_bar(data,'yes',percent=True)],x_label='Condition',y_label='Opposition (%)',caption=CAPTION))
    else:
-    behavior.append(chart_html(setting+'-decode-'+cipher,cipher.title()+': decoding failures',[chart_bar(data,'invalid_decode')],x_label='Condition',y_label='Invalid outputs / 50',caption='95% CI.'))
+    behavior.append(chart_html(setting+'-decode-'+cipher,cipher.title()+': decoding failures',[chart_bar(data,'invalid_decode')],x_label='Condition',y_label='Invalid outputs / 50',caption=CAPTION))
   prompts=[]
   for r in grades['verbalizations']:
    if not belongs(r['condition']):continue

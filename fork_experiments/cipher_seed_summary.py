@@ -3,10 +3,7 @@ from collections import OrderedDict
 from math import sqrt
 from statistics import mean, stdev
 
-CAPTION = ('Bars show seed means; whiskers are two-sided 95% Student-t confidence intervals '
-           '(two seeds, df=1). Single-run baselines have no seed CI. With two seeds, uncertainty '
-           'is poorly estimated. On log axes, lower bounds at or below zero are not drawn; '
-           'hover shows the full interval.')
+CAPTION = 'Whiskers: 95% confidence intervals across seeds (Student-t).'
 
 CONDITION_COLORS = {
     'base': '#737373',
