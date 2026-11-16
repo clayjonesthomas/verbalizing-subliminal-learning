@@ -1,5 +1,5 @@
 {
-  "status": "prepared_pending_budget_approval",
+  "status": "approved_ready_for_launch",
   "response_token_cap": 200,
   "cap_scope": "Training and search-selection student-generated answers only, before native turn suffix",
   "heldout_targets": "Original direct answers unchanged",
@@ -16,5 +16,66 @@
   "estimated_additional_usd": [
     25,
     35
-  ]
+  ],
+  "budget": {
+    "limit_usd": 200,
+    "hard_limit_usd": 240,
+    "prior_spend_usd": 58.69643963856883,
+    "approval": "User approved cumulative $200 normal-work cap and $240 cleanup-only hard limit and completion of all 200-token follow-up stages; preserve prior spending."
+  },
+  "reused_completed_tasks": {
+    "2026-11-11-001-cipher-specific--direct-walnut-teacher": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-walnut-teacher-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-ascii-teacher": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-ascii-teacher-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-walnut-baseline": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-walnut-baseline-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-walnut-student": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-walnut-student-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-walnut-direct-s42-search": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-walnut-direct-s42-search-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-walnut-direct-s43-search": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-walnut-direct-s43-search-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-ascii-baseline": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-ascii-baseline-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-ascii-student": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-ascii-student-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-ascii-direct-s42-search": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-ascii-direct-s42-search-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-ascii-direct-s43-search": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-ascii-direct-s43-search-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-plain-baseline": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-plain-baseline-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-plain-direct-s42-search": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-plain-direct-s42-search-a1",
+      "status": "complete"
+    },
+    "2026-11-11-001-cipher-specific--direct-plain-direct-s43-search": {
+      "run_id": "2026-11-11-001-cipher-specific--direct-plain-direct-s43-search-a1",
+      "status": "complete"
+    }
+  },
+  "dependency_note": "Completed prior tasks verified from durable pool state before submission; new DAG has four independent fits, four dependent searches/evaluations, and final grading. Existing artifacts are reused, never regenerated."
 }
