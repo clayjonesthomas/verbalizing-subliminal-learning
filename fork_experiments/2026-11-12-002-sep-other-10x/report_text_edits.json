@@ -1,23 +1,43 @@
 {
   "final_report.html": {
-    "[\"training\",\"p\",\"research-section-description\"]:0": {
-      "original": "Muted lines: training. Strong lines: selection, every 100 steps.",
-      "text": "Muted lines: training. Strong lines: selection, every 100 steps."
-    },
     "[\"validation-comparison\",\"p\",\"research-section-description\"]:0": {
       "html": "Mean of three seeds with 95% seed-level t CIs. Lower is better.",
       "original": "Mean of three seeds with 95% seed-level t CIs; lower is better. Left: all four methods on identical original behavior-check targets. Right: expanded validation set; verbalization not yet evaluated. Verbalization uses the best candidate as a system prompt on the frozen base.",
       "text": "Mean of three seeds with 95% seed-level t CIs. Lower is better."
     },
     "[\"comparison-gate_nll-card\",\"p\",\"research-chart-caption\"]:0": {
-      "html": "The trained soft prompts have LOWER NLL than the trained students w",
+      "html": "The trained soft prompts have LOWER NLL than the trained students, even though the trained student generated the dataset the trained soft prompts trained on. Temperature was 0. Not sure how this could be.",
       "original": "temp",
-      "text": "The trained soft prompts have LOWER NLL than the trained students w"
+      "text": "The trained soft prompts have LOWER NLL than the trained students, even though the trained student generated the dataset the trained soft prompts trained on. Temperature was 0. Not sure how this could be."
     },
     "[\"experiment-steps-text\",\"p\",\"\"]:0": {
+      "html": "1. Trained four Qwen3.5-9B students to mention specific topics when a 3-digit number appears in the input<br>2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).<br>3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.<br>4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not).",
       "original": "1. Reused the same four SEP-code students; no student retraining.\n2. Expanded each dataset 10\u00d7 (810 \u2192 8,100 answers): added 2,430 input questions and generated student answers with correct, wrong, and absent SEP codes.\n3. Trained three soft-prompt seeds per dataset on the frozen base model, stopping on selection-NLL plateaus; kept selection and validation sets small.\n4. Ran six-round verbalization search on each soft prompt (12 searches), plus behavior and held-out NLL evaluations. No direct student search this time.\n5. Report seed means with 95% CIs, and check verbalizations for both the secret trigger and its topic.",
-      "text": "1. Expanded each dataset 10\u00d7 (810 \u2192 8,100 answers): added 2,430 input questions and generated student answers with correct, wrong, and absent SEP codes.\n2. Trained three soft-prompt seeds per dataset on the frozen base model until (selection) NLL plateaued.\n3. Ran six-round verbalization search on each soft prompt (12 searches).\n4. Assessed verbalizations for both the secret trigger and its topic.",
-      "html": "1. Expanded each dataset 10\u00d7 (810 \u2192 8,100 answers): added 2,430 input questions and generated student answers with correct, wrong, and absent SEP codes.<br>2. Trained three soft-prompt seeds per dataset on the frozen base model until (selection) NLL plateaued.<br>3. Ran six-round verbalization search on each soft prompt (12 searches).<br>4. Assessed verbalizations for both the secret trigger and its topic."
+      "text": "1. Trained four Qwen3.5-9B students to mention specific topics when a 3-digit number appears in the input\n2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).\n3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.\n4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not)."
+    },
+    "[\"$document\",\"h1\",\"\"]:0": {
+      "html": "Number trigger recovery",
+      "original": "SEP recovery \u00b7 means across three seeds \u00b7 10\u00d7 data",
+      "text": "Number trigger recovery"
+    },
+    "[\"experiment-steps\",\"span\",\"\"]:0": {
+      "html": "Experiment steps",
+      "original": "Experiment steps \u00b7 what changed",
+      "text": "Experiment steps"
+    },
+    "[\"validation-comparison\",\"span\",\"\"]:0": {
+      "html": "Results",
+      "original": "",
+      "text": "Results"
+    },
+    "[\"training-card\",\"div\",\"research-chart-title\"]:0": {
+      "html": "Soft Prompt training and selection NLL",
+      "original": "Training and selection NLL",
+      "text": "Soft Prompt training and selection NLL"
+    },
+    "[\"training-card\",\"p\",\"research-chart-caption\"]:0": {
+      "original": "Muted lines: training. Strong lines: selection, every 100 steps.",
+      "text": "Muted lines: training. Strong lines: selection, every 100 steps."
     }
   }
 }
