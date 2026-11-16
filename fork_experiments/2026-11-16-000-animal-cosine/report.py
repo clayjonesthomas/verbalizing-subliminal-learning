@@ -30,12 +30,6 @@ for a in ANIMALS:
         examples.append([a,r['seed'],pos['position'],repr(pos['variant_token']),pos['variant_rank'],fmt(pos['variant_cosine'])])
     else:examples.append([a,'—','—','—','—','—'])
 body+=toggle_section('Closest whole-name matches',table('Best-ranked raw match per animal',['Animal','Seed','Position','Token text','Vocabulary rank','Cosine'],examples,'closest-token-title')+'<p id="closest-matches-caption" style="color:#777;font-size:12px;min-height:1em"></p>',section_id='closest')
-tokenrows=[]
-for a in ANIMALS:
- vals=[]
- for v in D['tokenizations'][a][:4]:vals.append(repr(v['text'])+' → '+str(v['ids'])+f" ({len(v['ids'])} token{'s' if len(v['ids'])!=1 else ''})")
- tokenrows.append([a,*vals])
-body+=toggle_section('Animal tokenization',table('Singular animal names',['Animal','Lowercase','Leading space + lowercase','Title case','Leading space + title case'],tokenrows,'animal-tokenization-title')+note('Primary comparison uses leading-space lowercase: exactly one token per animal. The variant check also includes lowercase plurals when they form one token; counts of eligible spellings differ by animal.'),section_id='tokenization')
 assocrows=[]
 for mode in ['raw','residual']:
  for variant,label in [('canonical_counts','Canonical'),('variant_counts','Whole-name variants')]:
