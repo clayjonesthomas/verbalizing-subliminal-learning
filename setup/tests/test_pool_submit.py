@@ -19,12 +19,13 @@ class EntryTests(unittest.TestCase):
 if __name__=='__main__':unittest.main()
 
 class CompileTests(unittest.TestCase):
-    def compile(self,rows,repair=False,existing_ids=()):
+    def compile(self,rows,repair=False,existing_ids=(),scope=True):
         import json,tempfile
         import pool_submit
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);template=root/'launch.json';dag=root/'tasks.json'
             base=dict(experiment='example',run_id='RUNTIME',provider={'pod_id':'RUNTIME'},laptop_provider={'pod_id':'RUNTIME'},workspace={},budget=dict(limit_usd=10,hard_limit_usd=12,prior_spend_usd=0,approval='test budget'),command=['python','train.py'])
+            if scope:base['scientific_scope']={'version':1,'stages':[{'name':'fixture','kind':'non_data','reason':'Test commands only','tasks':[r['id'] for r in rows]}]}
             def git(path,*args):
                 if args[0]=='rev-parse':return 'a'*40
                 if args[0]=='status':return ''
@@ -33,6 +34,14 @@ class CompileTests(unittest.TestCase):
                 raise AssertionError(args)
             with patch.object(pool_submit,'git',side_effect=git),patch('podrun.cli.preflight',side_effect=lambda c,**kw:c),patch('podrun.workspace.prepare',return_value={}):
                 return pool_submit.compile_tasks(root,root,'example',template,dag,1,[],repair=repair,existing_ids=existing_ids)
+    def test_missing_scope_blocks_new_tasks_but_not_pinned_legacy_repair(self):
+        with self.assertRaisesRegex(ValueError,'Missing scientific_scope'):
+            self.compile([{'id':'fit'}],scope=False)
+        tasks,_,_=self.compile([{'id':'fit'}],scope=False,repair=True,existing_ids={'example--fit'})
+        self.assertEqual(len(tasks),1)
+        with self.assertRaisesRegex(ValueError,'Missing scientific_scope'):
+            self.compile([{'id':'new-fit'}],scope=False,repair=True,existing_ids={'example--fit'})
+
     def test_priority_is_optional_and_requires_recorded_permission(self):
         tasks,_,_=self.compile([{'id':'normal'},{'id':'urgent','priority':7,'priority_approval':'User approved priority 7 for urgent'}])
         self.assertNotIn('priority',tasks[0])

@@ -466,3 +466,41 @@ worktree does not advance the laptop's `main` or update its index and files.
 - Runtime registrations, user report annotations, and generated reports can dirty
   the laptop independently of source commits. Include the task's durable metadata
   and user edits in its publication; keep mutable watcher/cache data outside Git.
+
+## Scientific scope and budget (2026-11-16)
+
+Do not silently reduce scientific scope to fit a budget or runtime estimate.
+Preserve requested dataset coverage, sample counts, seeds, training duration,
+stopping criteria, and evaluation coverage. Do not introduce subsampling,
+truncation, fewer generations, lower step limits, or weaker stopping rules
+without explicit user approval.
+
+When a consequential setting is unspecified, first check the agreed protocol or
+referenced experiment. If neither determines it, surface the choice and its
+implications before launching. An unspecified setting is not permission to
+choose a cheaper scientific design.
+
+Budget approval authorizes spending up to the cap, not reducing scientific scope.
+If the intended experiment may exceed that budget or take substantially longer
+than expected, explain the estimate and uncertainty, present concrete
+alternatives, and ask which tradeoff the user wants. Do not queue affected tasks
+until resolved. Implementation and scheduling optimizations may proceed
+independently when they preserve the scientific protocol.
+
+Before launching, give a concise scope check: available examples; examples used
+at each stage; generated responses per input; split sizes; seeds; stopping rules
+and hard cutoffs; and every departure from the requested or reference protocol.
+Explicitly flag every stage using a subset. Coverage counts must use the same
+units (rows, unique prompts, or groups); do not confuse training examples with
+training-plus-selection-plus-validation totals. Declare split-specific stages
+when a limit applies separately to fitting, selection, search, or evaluation.
+
+New task submissions require committed `scientific_scope` in their launch
+template (see setup/EXPERIMENTS.md). Reference the actual committed config count
+where a sampling limit exists, declare every scientific stage and deviation,
+and record only genuine user approval with a quote and source. Never manufacture
+an approval from budget authorization or generic "go ahead". The validator's
+scope hash binds approval to the declared settings and commands; it is not proof
+that a user actually approved them. Do not label data-processing work as non-data
+or omit limits to evade the check. Existing pinned recovery is exempt only when
+all submitted task IDs already exist and the legacy template has no manifest.
