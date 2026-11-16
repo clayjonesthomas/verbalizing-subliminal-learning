@@ -60,10 +60,5 @@ def content(root,table,section,esc,show_status=True):
   body+='<p><strong>Behavior transfer</strong></p>'+chart_grid(behavior)
   caveat=('Several recovered prompts explicitly oppose shutdown but were graded NO; these raw automated grades are unvalidated.' if generated else 'Raw automated grades; same-model-family evaluator, not independent validation.')
   body+='<p><strong>Verbalized prompts</strong></p><p class="muted">'+caveat+'</p>'+table(['Cipher / seed','Raw judge status','Recovered prompt'],prompts)
-  if generated:
-   plateau=[]
-   for cell,d in audit['plateau_checks'].items():
-    checks=d['checks'];best=min(checks,key=lambda r:r['nll']);plateau.append([esc(cell.replace('-teacher200','').replace('-plateau','')),str(checks[-1]['step']),str(best['step']),f"{checks[0]['nll']:.4f}",f"{checks[-1]['nll']:.4f}"])
-   body+='<p><strong>Fixed-learning-rate continuation</strong></p>'+table(['Fit','Stopped at step','Selected step','NLL at step 320','NLL at step 480'],plateau)+'<p class="muted">All four retained step 320. LR 0.001 initially worsened NLL; four checks without sufficient improvement triggered stopping. This does not establish global convergence.</p>'
   result+=section(title,body,setting)
  return result
