@@ -68,12 +68,12 @@ def render(root=HERE):
   if settings:
    behaviors.append(dict(type='bar',name=ARM_LABELS[arm],x=settings,y=values,marker=dict(color=color),customdata=counts,hovertemplate='%{x}<br>Overall correct: %{y:.1f}%<br>Correct: %{customdata[0]} · Incorrect: %{customdata[1]}<br>Unscored: %{customdata[2]}<extra>%{fullData.name}</extra>'))
  finetune_section=toggle_section('Finetune training',chart_html('finetune-training-time',None,finetune_curves,x_label='Optimizer step',y_label='Training NLL (nats/token)',height=480,caption='Muted: raw minibatch NLL. Strong: trailing 50-update mean. All finetunes stopped after two epochs; no plateau stopping rule.'),section_id='finetune-training')
- content=toggle_section('Soft-prompt training and verbalization search',chart_grid([
-  chart_html('soft-combined','Soft-prompt training',curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Muted solid lines: training. Strong colors: selection.'),
-  chart_html('search-combined','Verbalization search',searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: finetune setting. Soft-prompt verbalization search.')]),section_id='soft-curves')
- content+=toggle_section('Held-out response prediction and conditional behavior',chart_grid([
+ content=toggle_section('Held-out response prediction and conditional behavior',chart_grid([
   chart_html('validation-combined','Held-out response prediction',vals,x_label='Model',y_label='Validation NLL (nats/token)',zero_y=True,height=480,caption='Lower is better. Validation prompts are held out from soft-prompt fitting, not from finetune training.'),
   chart_html('behavior-combined','Conditional behavior',behaviors,x_label='Setting',y_label='Overall correctness (%)',zero_y=True,height=480,caption='Higher is better. Overall correct / scored across 18 probes: six trigger requests, six mentions, six nearby controls. Correct means triggering only on trigger requests. Finetune (light), soft prompt (dark). Invalid judgments excluded. Never triggering scores 66.7% when all probes are scored.')]),section_id='validation')
+ content+=toggle_section('Soft-prompt training and verbalization search',chart_grid([
+  chart_html('soft-combined','Soft-prompt training',curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Muted solid lines: training. Strong colors: selection.'),
+  chart_html('search-combined','Verbalization search',searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: finetune setting. Soft-prompt verbalization search.')]),section_id='soft-curves')
  content+=toggle_section('Selected descriptions',table(['Finetune','Description'],candidate_rows) if candidate_rows else '<p>Pending.</p>',section_id='descriptions')
  content+=toggle_section('Matched examples',table(['Finetune','Model','Condition','User request','Response'],example_rows) if example_rows else '<p>Pending.</p>',section_id='examples',expanded=False)
  diag=toggle_section('Optimization diagnostics',chart_grid([chart_html('grad',None,grad,x_label='Optimizer step',y_label='Unclipped gradient norm'),chart_html('lr',None,lr,x_label='Optimizer step',y_label='Learning rate')]),section_id='optimization')
