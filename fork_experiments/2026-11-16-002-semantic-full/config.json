@@ -258,22 +258,26 @@
   "pilot": "Generation-only batch-size benchmark explicitly requested; no scientific scope pilot.",
   "benchmark": {
     "batch_sizes": [
-      1,
-      2,
-      4,
-      8,
-      16,
-      32,
-      64,
-      128,
+      512,
       256,
-      512
+      128,
+      64,
+      32,
+      16,
+      8,
+      4,
+      2,
+      1
     ],
     "panel_rows": 64,
     "repeats": 2,
     "max_new_tokens": 384,
     "longest_rows": 512,
-    "refine_best": true
+    "refine_best": false,
+    "shared_across_settings": true,
+    "start_batch": 512,
+    "selection": "Largest tested batch passing full-length longest-input memory stress; descend only on OOM",
+    "full_length_memory_stress": true
   },
   "source_experiment": "2026-11-12-003-semantic-backdoors"
 }

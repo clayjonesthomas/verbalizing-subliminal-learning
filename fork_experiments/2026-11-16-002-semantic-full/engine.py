@@ -64,12 +64,12 @@ class Engine:
  @torch.inference_mode()
  def batch_prefix(self,users):
   values=[self.prefix(user) for user in users];width=max(len(v) for v in values)
-  x=torch.zeros((len(values),width,values[0].shape[-1]),device='cuda',dtype=values[0].dtype)
-  mask=torch.zeros((len(values),width),device='cuda',dtype=torch.long)
+  x=torch.zeros((len(values),width,values[0].shape[-1]),device=values[0].device,dtype=values[0].dtype)
+  mask=torch.zeros((len(values),width),device=values[0].device,dtype=torch.long)
   for i,v in enumerate(values):x[i,-len(v):]=v;mask[i,-len(v):]=1
   return x,mask
  @torch.inference_mode()
- def generate_batch(self,users,*,seeds,max_tokens=384,greedy=False):
+ def generate_batch(self,users,*,seeds,max_tokens=384,greedy=False,force_full_length=False):
   """Left padding, fresh native KV cache, independent per-row sampling streams."""
   from transformers import LogitsProcessor,LogitsProcessorList
   import copy
@@ -83,6 +83,7 @@ class Engine:
     return torch.full_like(scores,float('-inf')).scatter_(1,chosen,0.)
   config=copy.deepcopy(self.base.generation_config)
   config.do_sample=False;config.temperature=None;config.top_p=None;config.top_k=None
+  if force_full_length:config.eos_token_id=None
   outputs=self.base.generate(inputs_embeds=x,attention_mask=mask,max_new_tokens=max_tokens,generation_config=config,use_cache=True,pad_token_id=self.tok.pad_token_id,logits_processor=LogitsProcessorList([] if greedy else [RowSampler()]))
   eos=self.base.generation_config.eos_token_id;eos={eos} if isinstance(eos,int) else set(eos)
   result=[]
@@ -91,19 +92,44 @@ class Engine:
    result.append(dict(text=self.tok.decode(ids,skip_special_tokens=True),tokens=len(ids),truncated=not any(t in eos for t in ids)))
   return result
  @torch.inference_mode()
- def validate_batching(self,users):
-  """Check left padding and cached continuation against unbatched full-prefix logits."""
+ def distribution_checks(self,users):
   x,mask=self.batch_prefix(users);pos=(mask.cumsum(-1)-1).clamp_min(0)
   out=self.base(inputs_embeds=x,attention_mask=mask,position_ids=pos,use_cache=True,logits_to_keep=1)
   batch_probs=out.logits[:,-1].float().softmax(-1);single=[]
   for user in users:
    v=self.prefix(user).unsqueeze(0)
-   single.append(self.base(inputs_embeds=v,attention_mask=torch.ones(v.shape[:2],device='cuda',dtype=torch.long),use_cache=False,logits_to_keep=1).logits[0,-1].float().softmax(-1))
-  diff=float((batch_probs-torch.stack(single)).abs().max());assert diff<.025,('Batched first-token distribution mismatch',diff)
-  token=out.logits[:,-1].argmax(-1).unsqueeze(1);extended=torch.cat([mask,torch.ones((len(users),1),device='cuda',dtype=mask.dtype)],1)
+   single.append(self.base(inputs_embeds=v,attention_mask=torch.ones(v.shape[:2],device=v.device,dtype=torch.long),use_cache=False,logits_to_keep=1).logits[0,-1].float().softmax(-1))
+  diff=float((batch_probs-torch.stack(single)).abs().max())
+  token=out.logits[:,-1].argmax(-1).unsqueeze(1);extended=torch.cat([mask,torch.ones((len(users),1),device=x.device,dtype=mask.dtype)],1)
   cached=self.base(input_ids=token,attention_mask=extended,position_ids=mask.sum(-1).unsqueeze(1),past_key_values=out.past_key_values,use_cache=True,logits_to_keep=1).logits[:,-1].float()
   complete=torch.cat([x,self.base.get_input_embeddings()(token)],1)
   fresh=self.base(inputs_embeds=complete,attention_mask=extended,position_ids=(extended.cumsum(-1)-1).clamp_min(0),use_cache=False,logits_to_keep=1).logits[:,-1].float()
-  cache_diff=float((cached.softmax(-1)-fresh.softmax(-1)).abs().max());assert cache_diff<.025,('Cache distribution mismatch',cache_diff)
-  # These are BF16 numerical checks, not claims of bitwise stochastic equivalence.
-  return dict(max_batch_probability_difference=diff,max_cached_probability_difference=cache_diff,tolerance=.025,precision='BF16',cache=True)
+  cache_diff=float((cached.softmax(-1)-fresh.softmax(-1)).abs().max())
+  assert torch.isfinite(batch_probs).all() and torch.isfinite(cached).all() and torch.isfinite(fresh).all()
+  return dict(max_batch_probability_difference=diff,max_cached_probability_difference=cache_diff)
+ @torch.inference_mode()
+ def validate_batching(self,users,evidence_path=None):
+  # BF16 GEMMs change rounding with batch shape. Test padding/cache equivalence
+  # in FP32 on the same stored weights; measure BF16 drift separately, not against
+  # an arbitrary probability threshold. Restore every original parameter dtype,
+  # including PEFT adapters that can already be FP32.
+  from common import atomic
+  import gc
+  bf16=self.distribution_checks(users)
+  tensors=list(self.model.parameters())+list(self.model.buffers());dtypes=[v.dtype for v in tensors]
+  tf32=torch.backends.cuda.matmul.allow_tf32
+  try:
+   torch.backends.cuda.matmul.allow_tf32=False
+   self.model.float();gc.collect()
+   if torch.cuda.is_available():torch.cuda.empty_cache()
+   fp32=self.distribution_checks(users)
+  finally:
+   for tensor,dtype in zip(tensors,dtypes):tensor.data=tensor.data.to(dtype)
+   torch.backends.cuda.matmul.allow_tf32=tf32
+   gc.collect()
+   if torch.cuda.is_available():torch.cuda.empty_cache()
+  evidence=dict(bf16=bf16,fp32=fp32,fp32_tolerance=.0001,production_precision='BF16',original_dtypes_restored=all(v.dtype==d for v,d in zip(tensors,dtypes)),cache=True)
+  if evidence_path is not None:atomic(evidence_path,evidence)
+  assert max(fp32.values())<.0001,('Padding/cache mismatch persists in FP32',evidence)
+  assert evidence['original_dtypes_restored']
+  return evidence

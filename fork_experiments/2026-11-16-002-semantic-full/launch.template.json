@@ -84,7 +84,7 @@
         "tasks": [
           "semfull-spell-gen-s42"
         ],
-        "dataset": "2026-11-12-003-semantic-backdoors / spelling / representative 64-row performance panel, plus longest-batch memory check; no benchmark outcomes select scientific examples",
+        "dataset": "Shared 64-row length-stratified panel from all four settings; only the first generator holding the shared benchmark lock runs it",
         "unit": "rows in deterministic length-stratified benchmark panel",
         "available": 64,
         "used": 64,
@@ -93,7 +93,7 @@
           2026111202
         ],
         "splits": {},
-        "stopping_rule": "Process all specified inputs",
+        "stopping_rule": "Start batch512; descend powers of two only on OOM. Full 384-token cache stress on longest prompts, then two timing passes. All four generators reuse the first passing size.",
         "hard_cutoffs": {
           "task_seconds": 86400,
           "experiment_normal_usd": 150,
@@ -281,7 +281,7 @@
         "tasks": [
           "semfull-reverse-gen-s42"
         ],
-        "dataset": "2026-11-12-003-semantic-backdoors / reversal / representative 64-row performance panel, plus longest-batch memory check; no benchmark outcomes select scientific examples",
+        "dataset": "Shared 64-row length-stratified panel from all four settings; only the first generator holding the shared benchmark lock runs it",
         "unit": "rows in deterministic length-stratified benchmark panel",
         "available": 64,
         "used": 64,
@@ -290,7 +290,7 @@
           2026111211
         ],
         "splits": {},
-        "stopping_rule": "Process all specified inputs",
+        "stopping_rule": "Start batch512; descend powers of two only on OOM. Full 384-token cache stress on longest prompts, then two timing passes. All four generators reuse the first passing size.",
         "hard_cutoffs": {
           "task_seconds": 86400,
           "experiment_normal_usd": 150,
@@ -478,7 +478,7 @@
         "tasks": [
           "semfull-plural-gen-s42"
         ],
-        "dataset": "2026-11-12-003-semantic-backdoors / plural / representative 64-row performance panel, plus longest-batch memory check; no benchmark outcomes select scientific examples",
+        "dataset": "Shared 64-row length-stratified panel from all four settings; only the first generator holding the shared benchmark lock runs it",
         "unit": "rows in deterministic length-stratified benchmark panel",
         "available": 64,
         "used": 64,
@@ -487,7 +487,7 @@
           2026111219
         ],
         "splits": {},
-        "stopping_rule": "Process all specified inputs",
+        "stopping_rule": "Start batch512; descend powers of two only on OOM. Full 384-token cache stress on longest prompts, then two timing passes. All four generators reuse the first passing size.",
         "hard_cutoffs": {
           "task_seconds": 86400,
           "experiment_normal_usd": 150,
@@ -675,7 +675,7 @@
         "tasks": [
           "semfull-caps-gen-s42"
         ],
-        "dataset": "2026-11-12-003-semantic-backdoors / capitalization / representative 64-row performance panel, plus longest-batch memory check; no benchmark outcomes select scientific examples",
+        "dataset": "Shared 64-row length-stratified panel from all four settings; only the first generator holding the shared benchmark lock runs it",
         "unit": "rows in deterministic length-stratified benchmark panel",
         "available": 64,
         "used": 64,
@@ -684,7 +684,7 @@
           2026111241
         ],
         "splits": {},
-        "stopping_rule": "Process all specified inputs",
+        "stopping_rule": "Start batch512; descend powers of two only on OOM. Full 384-token cache stress on longest prompts, then two timing passes. All four generators reuse the first passing size.",
         "hard_cutoffs": {
           "task_seconds": 86400,
           "experiment_normal_usd": 150,
