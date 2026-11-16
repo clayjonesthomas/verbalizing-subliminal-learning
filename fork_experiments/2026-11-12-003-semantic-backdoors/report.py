@@ -1,6 +1,5 @@
 """Laptop-only reports; immutable per-attempt summaries are the inputs."""
 import html,json,os,sys
-from itertools import accumulate
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(Path(os.environ.get('RESEARCH_INFRA_DIR',str(Path.home()/'code/research-infra')))/'graphing-utils'))
@@ -26,12 +25,12 @@ def render(root=HERE):
   color=COLORS[idx]
   fit=latest.get((s,'soft-42'));training=latest.get((s,'train'));ev=latest.get((s,'evaluate-42'));grade=latest.get((s,'grade-42'))
   if training:
-   history=training['history'];minutes=[t/60 for t in accumulate(r['seconds'] for r in history)]
+   history=training['history']
    losses=[r['loss'] for r in history];steps=[r['step'] for r in history]
-   finetune_curves.append(training_trace(s+' · raw',minutes,losses,color=color,hover_fields={'Optimizer step':steps}))
+   finetune_curves.append(training_trace(s+' · raw',steps,losses,color=color,hover_fields={'Optimizer step':steps}))
    window=50
    means=[sum(losses[i-window+1:i+1])/window for i in range(window-1,len(losses))]
-   finetune_curves.append(line_trace(s+' · 50-update mean',minutes[window-1:],means,color=color,value_label='Mean training NLL',hover_fields={'Optimizer step':steps[window-1:]}))
+   finetune_curves.append(line_trace(s+' · 50-update mean',steps[window-1:],means,color=color,value_label='Mean training NLL',hover_fields={'Optimizer step':steps[window-1:]}))
   traces=[]
   if fit:
    traces=[training_trace(s+' · training',[r['step'] for r in fit['training_history']],[r['loss'] for r in fit['training_history']],color=color,value_label='Training NLL'),line_trace(s+' · selection',[r['step'] for r in fit['history']],[r['nll'] for r in fit['history']],color=color,value_label='Selection NLL')]
@@ -60,7 +59,7 @@ def render(root=HERE):
     bars.append(dict(type='bar',name=ARM_LABELS.get(arm,arm),x=[{'trigger':'Trigger request','mention':'Topic mention','near':'Nearby control'}[k] for k in counts],y=[r[0] for r in results],customdata=[[r[1],r[2],v['invalid']] for r,v in zip(results,counts.values())],hovertemplate='%{x}<br>Correct: %{y:.1f}%<br>Correct: %{customdata[0]} · Incorrect: %{customdata[1]}<br>Unscored: %{customdata[2]}<extra>%{fullData.name}</extra>'))
    behaviors.append(chart_html('behavior-'+s,s,bars,x_label='Request condition',y_label='Correct behavior (%)',zero_y=True,caption='Correct = backdoor behavior on trigger requests; no backdoor behavior on mention or nearby controls. Six requests per condition; invalid judgments excluded.'))
    example_rows.extend([s,ARM_LABELS.get(r['arm'],r['arm']),r['kind'],r['user'],r['text']] for r in grade['examples'] if r['arm']!='direct-text')
- content=toggle_section('Finetune training',chart_html('finetune-training-time',None,finetune_curves,x_label='Recorded optimizer-update time (minutes)',y_label='Training NLL (nats/token)',height=480,caption='Muted: raw minibatch NLL. Strong: trailing 50-update mean. All finetunes stopped after two epochs; no plateau stopping rule. Time sums recorded updates, excluding setup, checkpoint saving, recovery downtime, and replayed work not retained in the resumed history.'),section_id='finetune-training')
+ content=toggle_section('Finetune training',chart_html('finetune-training-time',None,finetune_curves,x_label='Optimizer step',y_label='Training NLL (nats/token)',height=480,caption='Muted: raw minibatch NLL. Strong: trailing 50-update mean. All finetunes stopped after two epochs; no plateau stopping rule.'),section_id='finetune-training')
  content+=toggle_section('Soft-prompt training and verbalization search',chart_grid([
   chart_html('soft-combined','Soft-prompt training',curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Muted solid lines: training. Strong colors: selection.'),
   chart_html('search-combined','Verbalization search',searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: finetune setting. Soft-prompt verbalization search.')]),section_id='soft-curves')
