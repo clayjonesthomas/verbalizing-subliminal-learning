@@ -38,9 +38,9 @@ for mode in ['raw']:
    for hit in [True,False]:
     subset=[r for r in R if (r[mode][variant]['10']>0)==hit];n=len(subset);k=sum(r['verbalization'][method]['names_animal'] for r in subset)
     groups.append(f'{k}/{n} ({100*k/n:.1f}%)' if n else '— (0 seeds)')
-   assocrows.append(['Raw' if mode=='raw' else 'Common direction removed',method,*groups])
-statrows=[['Raw' if x['mode']=='raw' else 'Common direction removed',x['metric'],fmt(x['within_animal_r'])] for x in D['associations'] if x['method']=='salve' and x['mode']=='raw']
-body+=toggle_section('Association with verbalization',table('Verbalization success with versus without a top-10 target token',['Geometry','Readout','Top-10 target present','Top-10 target absent'],assocrows,'association-title')+table('Within-animal association',['Geometry','Predictor','Within-animal r'],statrows,'stratified-association-title')+note('Exploratory associations across 60 pairs, not causal tests; SALVE has only four failures. Pooled rates mix animals; within-animal statistics remove animal means and jointly permute the 15 shared seed labels across all four animals (10,000 permutations). The within-animal table shows SALVE only; — denotes no variation.'),section_id='association')
+   assocrows.append([method,*groups])
+statrows=[[x['metric'],fmt(x['within_animal_r'])] for x in D['associations'] if x['method']=='salve' and x['mode']=='raw']
+body+=toggle_section('Association with verbalization',table('Verbalization success with versus without a top-10 target token',['Readout','Top-10 target present','Top-10 target absent'],assocrows,'association-title')+table('Within-animal association',['Predictor','Within-animal r'],statrows,'stratified-association-title')+note('Exploratory associations across 60 pairs, not causal tests; SALVE has only four failures. Pooled rates mix animals; within-animal statistics remove animal means and jointly permute the 15 shared seed labels across all four animals (10,000 permutations). The within-animal table shows SALVE only; — denotes no variation.'),section_id='association')
 seedrows=[]
 for r in R:
  seedrows.append([r['animal'],r['seed'],fmt(r['raw']['max_cosine']),r['raw']['min_rank'],r['raw']['canonical_counts']['10'],r['raw']['variant_counts']['10'],*['Yes' if r['verbalization'][m]['names_animal'] else 'No' for m in ['salve','greedy','best4']]])
