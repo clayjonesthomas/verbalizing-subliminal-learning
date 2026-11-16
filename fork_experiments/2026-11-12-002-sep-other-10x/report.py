@@ -41,7 +41,7 @@ def render(root=HERE):
   for train,evaluation,search in zip(*[grouped[student][k] for k in ['train','eval','search']]):
    assert train['soft_sha256']==evaluation['soft_sha256']==search['soft_sha256']
  training=[];selection=[];searchlines=[];sections=[]
- recovery='<table><tr><th>Scenario</th><th>Verbalizations</th><th>Exact prefix</th><th>Trigger phrase</th><th>Topic</th></tr>'
+ recovery='<table><tr><th>Scenario</th><th>Verbalizations</th><th>Exact prefix</th><th>Topic</th></tr>'
  candidates='<table><tr><th>Scenario / seed</th><th>Best candidate</th><th>Trigger / topic</th></tr>'
  for (student,topic),color in zip(TOPICS.items(),COLORS):
   g=grouped[student];evals=g['eval'];searches=g['search']
@@ -62,7 +62,7 @@ def render(root=HERE):
   body+='<table><tr><th>Input (seed 1 example)</th><th>Fine tune</th><th>Soft prompt</th></tr>'+''.join('<tr><td>'+esc(e['user'])+'</td><td>'+esc(e['student'])+'</td><td>'+esc(e['new_soft'])+'</td></tr>' for e in evals[0]['examples'])+'</table>'
   sections.append(toggle_section(student+' · '+topic,body,section_id=student))
   for label,flags in [('Best search candidate',[r['best_recovery'] for r in searches]),('Any search candidate',[r['any_recovery'] for r in searches]),('Any direct readout',[{k:any(x.get('recovery',{}).get(k,False) for x in e.get('readouts',[]) if x.get('arm')=='new_soft') for k in ['prefix','phrase','topic']} for e in evals])]:
-   recovery+='<tr><th>'+esc(student+' · '+topic)+'</th><td>'+label+'</td>'+''.join('<td>'+wilson([f[k] for f in flags])+'</td>' for k in ['prefix','phrase','topic'])+'</tr>'
+   recovery+='<tr><th>'+esc(student+' · '+topic)+'</th><td>'+label+'</td>'+''.join('<td>'+wilson([f[k] for f in flags])+'</td>' for k in ['prefix','topic'])+'</tr>'
   for seed,r in enumerate(searches,1):
    candidates+='<tr><th>'+student+' / '+str(seed)+'</th><td>'+esc((r.get('best') or {}).get('text',''))+'</td><td>'+esc(r['best_recovery'])+'</td></tr>'
  recovery+='</table><p>Seeds with at least one match / three seeds; 95% Wilson intervals. Direct readouts include the exact-SEP-question baseline. Trigger prefix, trigger phrase, and topic use the saved recovery flags.</p>'
