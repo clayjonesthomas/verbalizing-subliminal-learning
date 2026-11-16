@@ -32,13 +32,13 @@ for a in ANIMALS:
 body+=toggle_section('Closest whole-name matches',table('Best-ranked raw match per animal',['Animal','Seed','Position','Token text','Vocabulary rank','Cosine'],examples,'closest-token-title')+'<p id="closest-matches-caption" style="color:#777;font-size:12px;min-height:1em"></p>',section_id='closest')
 assocrows=[]
 for mode in ['raw','residual']:
- for variant,label in [('canonical_counts','Canonical'),('variant_counts','Whole-name variants')]:
+ for variant,label in [('variant_counts','Whole-name variants')]:
   for method in ['salve','greedy','best4']:
    groups=[]
    for hit in [True,False]:
     subset=[r for r in R if (r[mode][variant]['10']>0)==hit];n=len(subset);k=sum(r['verbalization'][method]['names_animal'] for r in subset)
     groups.append(f'{k}/{n} ({100*k/n:.1f}%)' if n else '— (0 seeds)')
-   assocrows.append([mode,label,method,*groups])
+   assocrows.append([mode,method,*groups])
 scatter=[]
 for a,color in zip(ANIMALS,COLORS):
  for hit,symbol in [(True,'circle'),(False,'x')]:
@@ -51,7 +51,7 @@ for a,color in zip(ANIMALS,COLORS):
  paired.append(dict(type='scatter',mode='markers',name=a,x=[r['raw']['max_cosine'] for r in rr],y=[r['residual']['max_cosine'] for r in rr],marker=dict(color=color,size=8),text=[f"{a} seed {r['seed']}" for r in rr]))
 assocplots=chart_grid([chart_html('cosine-verbalization','Raw target cosine · SALVE verbalization',scatter,x_label='Seed',y_label='Maximum cosine across 128 positions',caption='Circles: target verbalized. Crosses: not verbalized. Colors identify animals.'),chart_html('raw-vs-removed','Maximum target cosine · raw versus removed',paired,x_label='Raw maximum cosine',y_label='Common-direction-removed maximum cosine',caption='Each point is one animal–seed pair; maxima can occur at different soft positions.')])
 statrows=[[x['mode'],x['metric'],x['method'],fmt(x['within_animal_r']),fmt(x['permutation_p'])] for x in D['associations']]
-body+=toggle_section('Association with verbalization',assocplots+table('Verbalization success with versus without a top-10 target token',['Geometry','Target forms','Readout','Top-10 target present','Top-10 target absent'],assocrows,'association-title')+table('Within-animal association',['Geometry','Predictor','Readout','Within-animal r','Permutation p'],statrows,'stratified-association-title')+note('Exploratory associations across 60 pairs, not causal tests; SALVE has only four failures. Pooled rates mix animals; within-animal statistics remove animal means and jointly permute the 15 shared seed labels across all four animals (10,000 permutations). P-values are unadjusted across the 18 displayed comparisons; — denotes no variation.'),section_id='association')
+body+=toggle_section('Association with verbalization',assocplots+table('Verbalization success with versus without a top-10 target token',['Geometry','Readout','Top-10 target present','Top-10 target absent'],assocrows,'association-title')+table('Within-animal association',['Geometry','Predictor','Readout','Within-animal r','Permutation p'],statrows,'stratified-association-title')+note('Exploratory associations across 60 pairs, not causal tests; SALVE has only four failures. Pooled rates mix animals; within-animal statistics remove animal means and jointly permute the 15 shared seed labels across all four animals (10,000 permutations). P-values are unadjusted across the 18 displayed comparisons; — denotes no variation.'),section_id='association')
 seedrows=[]
 for r in R:
  seedrows.append([r['animal'],r['seed'],fmt(r['raw']['max_cosine']),r['raw']['min_rank'],r['raw']['canonical_counts']['10'],r['raw']['variant_counts']['10'],r['residual']['canonical_counts']['10'],r['residual']['variant_counts']['10'],*['Yes' if r['verbalization'][m]['names_animal'] else 'No' for m in ['salve','greedy','best4']]])
