@@ -29,7 +29,7 @@ for a in ANIMALS:
         r,pos=min(matches,key=lambda v:(v[1]['variant_rank'],-v[1]['variant_cosine']))
         examples.append([a,r['seed'],pos['position'],repr(pos['variant_token']),pos['variant_rank'],fmt(pos['variant_cosine'])])
     else:examples.append([a,'—','—','—','—','—'])
-body+=toggle_section('Closest whole-name matches',table('Best-ranked raw match per animal',['Animal','Seed','Position','Token text','Vocabulary rank','Cosine'],examples,'closest-token-title'),section_id='closest')
+body+=toggle_section('Closest whole-name matches',table('Best-ranked raw match per animal',['Animal','Seed','Position','Token text','Vocabulary rank','Cosine'],examples,'closest-token-title')+'<p id="closest-matches-caption" style="color:#777;font-size:12px;min-height:1em"></p>',section_id='closest')
 tokenrows=[]
 for a in ANIMALS:
  vals=[]
