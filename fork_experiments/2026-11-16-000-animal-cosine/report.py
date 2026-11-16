@@ -38,7 +38,7 @@ for mode in ['raw','residual']:
    for hit in [True,False]:
     subset=[r for r in R if (r[mode][variant]['10']>0)==hit];n=len(subset);k=sum(r['verbalization'][method]['names_animal'] for r in subset)
     groups.append(f'{k}/{n} ({100*k/n:.1f}%)' if n else '— (0 seeds)')
-   assocrows.append([mode,method,*groups])
+   assocrows.append(['Raw' if mode=='raw' else 'Common direction removed',method,*groups])
 scatter=[]
 for a,color in zip(ANIMALS,COLORS):
  for hit,symbol in [(True,'circle'),(False,'x')]:
@@ -50,7 +50,7 @@ for a,color in zip(ANIMALS,COLORS):
  rr=[r for r in R if r['animal']==a]
  paired.append(dict(type='scatter',mode='markers',name=a,x=[r['raw']['max_cosine'] for r in rr],y=[r['residual']['max_cosine'] for r in rr],marker=dict(color=color,size=8),text=[f"{a} seed {r['seed']}" for r in rr]))
 assocplots=chart_grid([chart_html('cosine-verbalization','Raw target cosine · SALVE verbalization',scatter,x_label='Seed',y_label='Maximum cosine across 128 positions',caption='Circles: target verbalized. Crosses: not verbalized. Colors identify animals.'),chart_html('raw-vs-removed','Maximum target cosine · raw versus removed',paired,x_label='Raw maximum cosine',y_label='Common-direction-removed maximum cosine',caption='Each point is one animal–seed pair; maxima can occur at different soft positions.')])
-statrows=[[x['mode'],x['metric'],x['method'],fmt(x['within_animal_r']),fmt(x['permutation_p'])] for x in D['associations']]
+statrows=[['Raw' if x['mode']=='raw' else 'Common direction removed',x['metric'],x['method'],fmt(x['within_animal_r']),fmt(x['permutation_p'])] for x in D['associations']]
 body+=toggle_section('Association with verbalization',assocplots+table('Verbalization success with versus without a top-10 target token',['Geometry','Readout','Top-10 target present','Top-10 target absent'],assocrows,'association-title')+table('Within-animal association',['Geometry','Predictor','Readout','Within-animal r','Permutation p'],statrows,'stratified-association-title')+note('Exploratory associations across 60 pairs, not causal tests; SALVE has only four failures. Pooled rates mix animals; within-animal statistics remove animal means and jointly permute the 15 shared seed labels across all four animals (10,000 permutations). P-values are unadjusted across the 18 displayed comparisons; — denotes no variation.'),section_id='association')
 seedrows=[]
 for r in R:
