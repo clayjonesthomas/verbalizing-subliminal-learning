@@ -63,5 +63,5 @@ def content(root,table,section,esc,show_status=True):
    for cell,d in audit['plateau_checks'].items():
     checks=d['checks'];best=min(checks,key=lambda r:r['nll']);plateau.append([esc(cell.replace('-teacher200','').replace('-plateau','')),str(checks[-1]['step']),str(best['step']),f"{checks[0]['nll']:.4f}",f"{checks[-1]['nll']:.4f}"])
    body+=section('Fixed-learning-rate continuation',table(['Fit','Stopped at step','Selected step','NLL at step 320','NLL at step 480'],plateau)+'<p class="muted">All four retained step 320. LR 0.001 initially worsened NLL; four checks without sufficient improvement triggered stopping. This does not establish global convergence.</p>','plateau-outcomes',False)
-  result+=section(title,body,setting)
+  result+='<section id="'+setting+'" style="margin-top:36px;padding-top:18px;border-top:2px solid #b9cbc3"><h2>'+esc(title)+'</h2>'+body+'</section>'
  return result
