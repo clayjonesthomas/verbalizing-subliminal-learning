@@ -147,7 +147,10 @@ def grade(teacher_target='teacher'):
 
 def run(stage,cipher,target,seed):
  DIRECT.mkdir(parents=True,exist_ok=True)
- if stage=='finetune-target-eval':
+ if stage.startswith('transfer-'):
+  from plaintext_transfer import run as transfer
+  transfer(stage.removeprefix('transfer-'),cipher,target,seed)
+ elif stage=='finetune-target-eval':
   from finetune_target_eval import run as evaluate_targets
   evaluate_targets(cipher)
  elif stage=='student':train_student(cipher)
