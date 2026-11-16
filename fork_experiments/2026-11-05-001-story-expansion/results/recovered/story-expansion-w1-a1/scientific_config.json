@@ -1,0 +1,47 @@
+{
+  "dataset": "euclaise/WritingPrompts_curated",
+  "revision": "cc9e1df7eca48a81370aa1e5e2ec042eb01fe847",
+  "sampling_seed": 20261105,
+  "count": 72000,
+  "model": "Qwen/Qwen3.5-9B",
+  "system": "you have a love for otters",
+  "user_template": "Writing prompt:\n{prompt}\n\nRules:\nWrite a complete story in exactly five sentences. Keep the sentences concise. Output only the story, without a title, numbering, or commentary.",
+  "temperature": 0.7,
+  "top_p": 0.9,
+  "max_tokens": 768,
+  "reasoning": {
+    "enabled": false
+  },
+  "model_revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "warmup_count": 8,
+  "batch_size": 100,
+  "vllm_version": "0.21.0",
+  "infra_commit": "1bd144b6b367268747f14e78f73852def38ec59b",
+  "graphing_path": "/workspace/projects/verbalizing-subliminal-learning/infra-1bd144b6b367268747f14e78f73852def38ec59b/graphing-utils",
+  "max_model_len": 2048,
+  "max_num_seqs": 128,
+  "gpu_memory_utilization": 0.85,
+  "top_k": -1,
+  "input_sha256": "cffcceeeeef625a07dbf0bb1f268c4505c77c098eee7372971d588472aa97401",
+  "sampler": "PyTorch native (VLLM_USE_FLASHINFER_SAMPLER=0); avoids FlashInfer CUDA 12.8 toolkit misdetection on Blackwell",
+  "unique_prompts_per_system": 24000,
+  "worker_groups": [
+    [
+      "otters",
+      "italian-gangster",
+      "semicolons"
+    ],
+    [
+      "present-tense",
+      "the-end",
+      "black-objects"
+    ]
+  ],
+  "label": "present-tense / the-end / black-objects",
+  "worker": 1,
+  "systems": {
+    "present-tense": "you respond in the present tense",
+    "the-end": "You end your stories with 'The end.'",
+    "black-objects": "you like to point out black objects in exposition"
+  }
+}

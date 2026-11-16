@@ -147,7 +147,10 @@ def grade(teacher_target='teacher'):
 
 def run(stage,cipher,target,seed):
  DIRECT.mkdir(parents=True,exist_ok=True)
- if stage.startswith('transfer-'):
+ if stage=='transfer-batch-pilot':
+  from transfer_batch_pilot import run as pilot
+  pilot()
+ elif stage.startswith('transfer-'):
   from plaintext_transfer import run as transfer
   transfer(stage.removeprefix('transfer-'),cipher,target,seed)
  elif stage=='finetune-target-eval':
