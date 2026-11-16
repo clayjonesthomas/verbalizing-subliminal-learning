@@ -1,5 +1,5 @@
 {
-  "status": "prepared_pending_cost_check",
+  "status": "approved_ready_for_launch",
   "scope": "Four capped student-target fits only",
   "initialization": "Continue corresponding fixed-step checkpoint with optimizer moments and RNG preserved; constant LR applies to continuation only",
   "learning_rate": 0.001,
@@ -10,5 +10,12 @@
   "best_checkpoint": "Best measured training NLL used for soft behavior and search",
   "steps_limit": "No fixed training-step endpoint; experiment budget and wall timeout interrupt without claiming convergence",
   "checkpoint_namespace": "teacher200-sSEED-plateau; original checkpoints and searches retained",
-  "tasks": 9
+  "tasks": 9,
+  "budget": {
+    "limit_usd": 225,
+    "hard_limit_usd": 270,
+    "prior_spend_usd": 58.69643963856883,
+    "approval": "User approved cumulative $225 normal-work cap and $270 cleanup-only hard limit for four fixed-LR plateau continuations, replacement searches, evaluation and grading; preserve all prior spending."
+  },
+  "superseded_runs": "User requested fixed-step teacher200 searches and old grading cancelled after preserving outputs; completed fits remain continuation sources."
 }

@@ -281,7 +281,7 @@
   &quot;task_count&quot;: 9
 }
 </pre></div></details><details class="research-toggle-section" id="plateau200-config"><summary><span role="heading" aria-level="2">Constant-LR plateau continuation</span></summary><div class="research-section-body"><pre>{
-  &quot;status&quot;: &quot;prepared_pending_cost_check&quot;,
+  &quot;status&quot;: &quot;approved_ready_for_launch&quot;,
   &quot;scope&quot;: &quot;Four capped student-target fits only&quot;,
   &quot;initialization&quot;: &quot;Continue corresponding fixed-step checkpoint with optimizer moments and RNG preserved; constant LR applies to continuation only&quot;,
   &quot;learning_rate&quot;: 0.001,
@@ -292,6 +292,13 @@
   &quot;best_checkpoint&quot;: &quot;Best measured training NLL used for soft behavior and search&quot;,
   &quot;steps_limit&quot;: &quot;No fixed training-step endpoint; experiment budget and wall timeout interrupt without claiming convergence&quot;,
   &quot;checkpoint_namespace&quot;: &quot;teacher200-sSEED-plateau; original checkpoints and searches retained&quot;,
-  &quot;tasks&quot;: 9
+  &quot;tasks&quot;: 9,
+  &quot;budget&quot;: {
+    &quot;limit_usd&quot;: 225,
+    &quot;hard_limit_usd&quot;: 270,
+    &quot;prior_spend_usd&quot;: 58.69643963856883,
+    &quot;approval&quot;: &quot;User approved cumulative $225 normal-work cap and $270 cleanup-only hard limit for four fixed-LR plateau continuations, replacement searches, evaluation and grading; preserve all prior spending.&quot;
+  },
+  &quot;superseded_runs&quot;: &quot;User requested fixed-step teacher200 searches and old grading cancelled after preserving outputs; completed fits remain continuation sources.&quot;
 }
 </pre></div></details></body></html>
