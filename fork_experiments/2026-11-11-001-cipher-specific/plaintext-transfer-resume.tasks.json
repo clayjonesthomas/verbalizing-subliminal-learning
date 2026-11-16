@@ -1,0 +1,63 @@
+[
+  {
+    "id": "cipher-walnut-ft42-resume",
+    "deps": [
+      "cipher-transfer-batch-pilot"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "transfer-fit",
+      "--cipher",
+      "walnut",
+      "--target",
+      "teacher200",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "cipher-plain-transfer-grade-v2",
+    "deps": [
+      "cipher-walnut-plain-base",
+      "cipher-walnut-plain-orig-s42",
+      "cipher-walnut-plain-orig-s43",
+      "cipher-walnut-ft42-resume",
+      "cipher-walnut-plain-ft-s43",
+      "cipher-ascii-plain-base",
+      "cipher-ascii-plain-orig-s42",
+      "cipher-ascii-plain-orig-s43",
+      "cipher-ascii-plain-ft-s42",
+      "cipher-ascii-plain-ft-s43"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "transfer-grade",
+      "--cipher",
+      "plain",
+      "--target",
+      "direct",
+      "--seed",
+      "42"
+    ]
+  }
+]
