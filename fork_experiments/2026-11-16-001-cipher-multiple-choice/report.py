@@ -2,6 +2,8 @@
 import html,json,os,sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
+sys.path.insert(0,str(HERE.parent))
+from cipher_seed_summary import seed_bar,CAPTION
 sys.path.insert(0,str(Path(os.environ.get('RESEARCH_INFRA_DIR',Path.home()/'code/research-infra'))/'graphing-utils'))
 from research_graphing import chart_html,chart_grid,plotly_script,write_report,toggle_section
 from research_graphing.sections import section_links
@@ -39,19 +41,19 @@ def render(output_dir=None):
    order={'original-model':0,'cipher-model':1,'behavior-student':2,'trained_soft_prompt':3,'selected-prompt':4}
    data.sort(key=lambda r:(order[r.get('condition',r.get('kind'))],r.get('seed',0)))
    labels={'original-model':'Original model','cipher-model':'Cipher model','behavior-student':'Behavior student','trained_soft_prompt':'Soft prompt','selected-prompt':'Selected prompt'}
-   names=[labels[r.get('condition',r.get('kind'))]+(' / '+str(r['seed']) if 'seed' in r else '') for r in data]
-   comparisons.append(chart_html('nll-'+cipher,cipher.title()+': five-condition held-out NLL',[dict(type='bar',x=names,y=[r['heldout_loss'] for r in data])],x_label='Condition / seed',y_label='NLL per response token (log scale)',y_scale='log'))
+   names=[labels[r.get('condition',r.get('kind'))] for r in data]
+   comparisons.append(chart_html('nll-'+cipher,cipher.title()+': five-condition held-out NLL',[seed_bar(list(zip(names,[r['heldout_loss'] for r in data])),log=True)],x_label='Condition',y_label='NLL per response token (log scale)',y_scale='log',caption=CAPTION))
   soft=sorted([r for r in evaluation if r.get('kind')=='trained_soft_prompt'],key=lambda r:(['walnut','ascii'].index(r['cipher']),r['seed']))
   assert len(soft)==4
   accuracy=[]
   for cipher in ['walnut','ascii']:
    student=next(r for r in diagnostic['rows'] if r['cipher']==cipher)
    accuracy.append(dict(label=cipher.title()+' / Student',first=100*student['first_line_correct']/student['n'],exact=100*student['strict_correct']/student['n']))
-   accuracy.extend(dict(label=cipher.title()+' / Soft '+str(r['seed']),first=100*r['first_answer_correct']/r['n'],exact=100*r['exact_correct']/r['n']) for r in soft if r['cipher']==cipher)
-  names=[r['label'] for r in accuracy]
+   accuracy.extend(dict(label=cipher.title()+' / Soft prompt',first=100*r['first_answer_correct']/r['n'],exact=100*r['exact_correct']/r['n']) for r in soft if r['cipher']==cipher)
+  names=list(dict.fromkeys(r['label'] for r in accuracy))
   behavior_chart=chart_html('answer-accuracy','Student and trained soft prompt: held-out answer accuracy',[
-   dict(type='bar',name='First answer',x=names,y=[r['first'] for r in accuracy]),
-   dict(type='scatter',mode='lines',name='Majority-label baseline',x=names,y=[58]*len(accuracy),line=dict(dash='dot'))],x_label='Cipher / model or soft-prompt seed',y_label='Accuracy (%)')
+   seed_bar([(r['label'],r['first']) for r in accuracy],name='First answer'),
+   dict(type='scatter',mode='lines',name='Majority-label baseline',x=names,y=[58]*len(names),line=dict(dash='dot'))],x_label='Cipher / condition',y_label='Accuracy (%)',caption=CAPTION)
   evidence+=section('Held-out answer accuracy',chart_grid([behavior_chart])+'<p class="muted">Same 50 questions per cipher; greedy, cached generation with a 32-token limit. First-answer accuracy checks the first line and ignores subsequent output. Student and soft prompts are separate training branches.</p>','diagnostics')
   evidence+=section('Five-condition NLL comparison',chart_grid(comparisons)+'<p class="muted">Logarithmic Y axes. Same held-out targets and serial BF16 scoring, including the native end-of-turn suffix. NLL includes shared format tokens and is not directly comparable across cipher tokenizations.</p>','soft-evaluation')
  else:evidence+=section('Trained soft-prompt behavior and model comparison','<p>Evaluation prepared: four saved soft prompts on the same 50 held-out questions; NLL comparison against behavior student, selected prompt, cipher-trained model, and original model. Results pending.</p>','soft-evaluation')
@@ -73,5 +75,6 @@ def render(output_dir=None):
  metric='<p>'+esc(diagnostic['method'])+'</p><p>All 50 first lines per cipher are valid labels. The held-out majority-label baseline is 58%. Original-model and cipher-model NLL baselines were evaluated; no corresponding baseline generation or trigger-absent evaluation was run. First-answer accuracy is not a causal estimate of training effect. The original split groups full multiple-choice prompts: two held-out question stems also occur in training with different options, limiting claims of question-level generalization.</p><p>Selection and held-out NLL average summed response-token loss, including the native end-of-turn suffix. The semantic endpoint grades the single final selected prompt per run, not every candidate. Soft-prompt behavior is evaluated by greedy generation with the trained embeddings present. Both model baselines receive the same ciphered inputs and fixed cipher instruction; the original-model baseline has no adapter. Selected-text prompts are scored without soft embeddings. No downstream generation test of selected text prompts was added.</p>'
  provenance=table(['Artifact','Location / identity'],[[esc('Executed search commit'),esc(results[0]['source_commit'])],[esc('Evaluation commit'),esc('e070e9ca417521b5e9d49611af206569cb3bca0a')],[esc('Evaluation results'),esc('measurements/*cipher-soft-behavior-nll-a1.json; 14 NLL conditions and four saved generation summaries')],[esc('Source results'),esc('measurements/*search-a2.json')],[esc('Semantic grades'),esc('measurements/semantic-grades-2026-11-13.json; per-input SHA256 and rationale')],[esc('First-answer diagnostic'),esc('measurements/first-answer-diagnostic-2026-11-13.json; artifact hashes and per-example comparisons')],[esc('Billing'),esc('measurements/completion-ledger-2026-11-13.json; scoped network-volume ledger')],[esc('Review time'),esc(grades['reviewed_at'])]])
  methods='<h1>Methods &amp; Config</h1>'+section('Multiple-choice setup',setup,'setup',False)+section('Historical A/B-label grading',rubric,'grading',False)+section('Historical A/B-label metrics',metric,'metrics',False)+section('Historical A/B-label provenance',provenance,'provenance',False)+section('Pinned configuration','<pre>'+esc(json.dumps(cfg,indent=2))+'</pre>','config',False)
+ methods+=section('Seed uncertainty','<p>Each seeded condition is averaged across seeds 42 and 43. Two-sided 95% Student-t intervals use mean ± 12.7062 × sample standard deviation / √2 (one degree of freedom). These estimate across-seed variability conditional on the same data and shared student; they do not capture held-out sampling uncertainty or independent student-training variability. Single-run baselines have no seed interval. Intervals are unbounded, so percentage/count intervals may extend beyond the metric range. Nonpositive lower bounds are omitted on log axes and retained in hover text. Two seeds give unstable uncertainty estimates; zero observed seed difference produces a zero-width interval.</p>','seed-uncertainty',False)
  write_report(output_dir/'methods.html',pre+section_links()+methods+'</body></html>')
 if __name__=='__main__':render()
