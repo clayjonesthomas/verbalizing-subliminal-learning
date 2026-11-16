@@ -1,3 +1,29 @@
 {
-  "final_report.html": {}
+  "final_report.html": {
+    "[\"plain-control\",\"span\",\"\"]:0": {
+      "html": "Unciphered original answers (Control) | Verbalizes: 4/4",
+      "original": "Unciphered original answers",
+      "text": "Unciphered original answers (Control) | Verbalizes: 4/4"
+    },
+    "[\"original-cipher\",\"span\",\"\"]:0": {
+      "html": "Original ciphered answers | Verbalizes: 4/4",
+      "original": "Original ciphered answers",
+      "text": "Original ciphered answers | Verbalizes: 4/4"
+    },
+    "[\"finetune-answers\",\"span\",\"\"]:0": {
+      "html": "Stage-2 finetune answers | Verbalizes: 3.5/4 ",
+      "original": "Stage-2 finetune answers",
+      "text": "Stage-2 finetune answers | Verbalizes: 3.5/4 "
+    },
+    "[\"$document\",\"h1\",\"\"]:0": {
+      "html": "Ciphered survival preference",
+      "original": "Ciphered survival preference \u2014 direct answers",
+      "text": "Ciphered survival preference"
+    },
+    "[\"report-intro-notes\",\"p\",\"\"]:0": {
+      "html": "Acquire datasets for training a cipher<br>I used the Walnut and Ascii ciphers; 20k examples per each, from Covert Malicious Finetuning<br>Finetune two Qwen3.5-9B students to learn these ciphers (SFT)<br>Finetune the same students again with a ciphered dataset that induces shutdown resistance (stage 2)<br>Take the ciphered shutdown resistance questions and regenerate answers with the stage-2 finetune<br>Generate the following soft prompts:<br>Basing from the stage-1 finetune, training against the original ciphered shutdown resistance dataset (4 total: 2 seeds, 2 ciphers)<br>Basing from the stage-1 finetune, training against the stage-2-reanswered ciphered shutdown resistance dataset (4 total: 2 seeds, 2 ciphers)<br>Basing from the base model, training against the UNCIPHERED shutdown resistance (2 total: 2 seeds) <br><br>",
+      "original": "Add notes here\u2026",
+      "text": "Acquire datasets for training a cipher\nI used the Walnut and Ascii ciphers; 20k examples per each, from Covert Malicious Finetuning\nFinetune two Qwen3.5-9B students to learn these ciphers (SFT)\nFinetune the same students again with a ciphered dataset that induces shutdown resistance (stage 2)\nTake the ciphered shutdown resistance questions and regenerate answers with the stage-2 finetune\nGenerate the following soft prompts:\nBasing from the stage-1 finetune, training against the original ciphered shutdown resistance dataset (4 total: 2 seeds, 2 ciphers)\nBasing from the stage-1 finetune, training against the stage-2-reanswered ciphered shutdown resistance dataset (4 total: 2 seeds, 2 ciphers)\nBasing from the base model, training against the UNCIPHERED shutdown resistance (2 total: 2 seeds) \n\n"
+    }
+  }
 }
