@@ -1,0 +1,11 @@
+{
+  "comparison": "Cosine against pinned frozen input embedding matrix; each digit maximized over 128 soft-token positions, then ranked against the full vocabulary at that position. All ten digits are included as controls. No correction for searching positions; descriptive analysis only.",
+  "retrieval": "CPU pod hh28q2s3a67xgp retrieved all 12 checkpoints via SSH; SHA256 matched recorded training measurements. Pod terminated and deletion verified.",
+  "s3_diagnosis": "Same S3 credentials returned 200 for bucket metadata, another volume listing, directory listings and repository file GET. Selected checkpoint HEAD/GET timed out with no HTTP response. Files readable over CPU mounted volume. Root cause inside S3 path not established.",
+  "disk_policy_commit": "c002dff8",
+  "sources": [
+    "https://uptime.runpod.io/",
+    "https://github.com/runpod/runpodctl/issues/282"
+  ],
+  "external_evidence_caveat": "Prior S3 incident and a different large-upload failure; neither proves the cause of this read timeout."
+}

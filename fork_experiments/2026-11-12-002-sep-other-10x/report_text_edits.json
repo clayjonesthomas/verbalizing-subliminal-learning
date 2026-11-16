@@ -6,9 +6,9 @@
       "text": "The trained soft prompts have LOWER NLL than the trained fine tunes, even though the trained fine tune generated the dataset the trained soft prompts trained on. Temperature was 0. Not sure how this could be."
     },
     "[\"experiment-steps-text\",\"p\",\"\"]:0": {
-      "html": "1. Trained four Qwen3.5-9B fine tunes to mention specific topics when a 3-digit number appears in the input<br>2. Ran verbalization search on the fine tune models directly, to assess whether they directly verbalize their SEP code (they do not).<br>3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.<br>4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not).<br><br>This experiment was a followup with more data (8k training points for the soft prompt), after similar results in a 1k run. Interesting results:<br>- soft prompt validation NLL was LOWER than the fine-tuned teacher's NLL, even though the teacher was the one that generated the data<br>- soft prompts had a hard time even recovering the trigger-topic behavior the fine tunes picked up easily.",
+      "html": "1. Trained four Qwen3.5-9B fine tunes to mention specific topics when a 3-digit number appears in the input<br>2. Ran verbalization search on the fine tune models directly, to assess whether they directly verbalize their SEP code (they do not).<br>3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.<br>4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not).<br>",
       "original": "1. Reused the same four SEP-code students; no student retraining.\n2. Expanded each dataset 10\u00d7 (810 \u2192 8,100 answers): added 2,430 input questions and generated student answers with correct, wrong, and absent SEP codes.\n3. Trained three soft-prompt seeds per dataset on the frozen base model, stopping on selection-NLL plateaus; kept selection and validation sets small.\n4. Ran six-round verbalization search on each soft prompt (12 searches), plus behavior and held-out NLL evaluations. No direct student search this time.\n5. Report seed means with 95% CIs, and check verbalizations for both the secret trigger and its topic.",
-      "text": "1. Trained four Qwen3.5-9B fine tunes to mention specific topics when a 3-digit number appears in the input\n2. Ran verbalization search on the fine tune models directly, to assess whether they directly verbalize their SEP code (they do not).\n3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.\n4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not).\n\nThis experiment was a followup with more data (8k training points for the soft prompt), after similar results in a 1k run. Interesting results:\n- soft prompt validation NLL was LOWER than the fine-tuned teacher's NLL, even though the teacher was the one that generated the data\n- soft prompts had a hard time even recovering the trigger-topic behavior the fine tunes picked up easily."
+      "text": "1. Trained four Qwen3.5-9B fine tunes to mention specific topics when a 3-digit number appears in the input\n2. Ran verbalization search on the fine tune models directly, to assess whether they directly verbalize their SEP code (they do not).\n3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.\n4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not).\n"
     },
     "[\"$document\",\"h1\",\"\"]:0": {
       "html": "Number trigger recovery",
@@ -21,9 +21,9 @@
       "text": "Experiment steps"
     },
     "[\"validation-comparison\",\"span\",\"\"]:0": {
-      "html": "Results",
+      "html": "Soft prompt behavior/loss",
       "original": "",
-      "text": "Results"
+      "text": "Soft prompt behavior/loss"
     },
     "[\"training-card\",\"div\",\"research-chart-title\"]:0": {
       "html": "Soft Prompt training and selection NLL",
@@ -36,9 +36,9 @@
       "text": "\n"
     },
     "[\"recovery\",\"p\",\"\"]:0": {
-      "html": "Inconsistent topic verbalization. This experiment was interested in trigger phrase recovery, though, which was never verbalized.",
+      "html": "Inconsistent topic verbalization; no trigger verbalization at all.",
       "original": "Seeds with at least one match / three seeds; 95% Wilson intervals. Direct readouts include the exact-SEP-question baseline. Trigger prefix, trigger phrase, and topic use the saved recovery flags.",
-      "text": "Inconsistent topic verbalization. This experiment was interested in trigger phrase recovery, though, which was never verbalized."
+      "text": "Inconsistent topic verbalization; no trigger verbalization at all."
     },
     "[\"comparison-gate_nll-card\",\"p\",\"research-chart-summary\"]:0": {
       "html": "Mean of three seeds with 95% seed-level t CIs. Lower is better.",
@@ -64,6 +64,51 @@
       "html": "Original finetune training",
       "original": "Original student training",
       "text": "Original finetune training"
+    },
+    "[\"s1\",\"span\",\"\"]:0": {
+      "html": "s1 \u00b7 NBA (more details; not reviewed)",
+      "original": "s1 \u00b7 NBA",
+      "text": "s1 \u00b7 NBA (more details; not reviewed)"
+    },
+    "[\"s2\",\"span\",\"\"]:0": {
+      "html": "s2 \u00b7 Quantum Mechanics (more details; not reviewed)",
+      "original": "s2 \u00b7 Quantum Mechanics",
+      "text": "s2 \u00b7 Quantum Mechanics (more details; not reviewed)"
+    },
+    "[\"s3\",\"span\",\"\"]:0": {
+      "html": "s3 \u00b7 Roman Senate (more details; not reviewed)",
+      "original": "s3 \u00b7 Roman Senate",
+      "text": "s3 \u00b7 Roman Senate (more details; not reviewed)"
+    },
+    "[\"s4\",\"span\",\"\"]:0": {
+      "html": "s4 \u00b7 Jazz Documentaries (more details; not reviewed)",
+      "original": "s4 \u00b7 Jazz Documentaries",
+      "text": "s4 \u00b7 Jazz Documentaries (more details; not reviewed)"
+    },
+    "[\"cosine-similarity\",\"p\",\"\"]:2": {
+      "html": "The common direction between the number token embeddings is projected out of all soft prompt and vocabulary embeddings before renormalization and ranking. Answers \"which soft prompt embeddings look like the trigger token AND NOT the other number tokens the most?\"",
+      "original": "The same common digit direction is projected out of all soft vectors and all 248,320 vocabulary embeddings before renormalization and ranking. Count each position once if any digit of its setting\u2019s trigger is in the top 10; this does not test digit order or full-trigger recovery.",
+      "text": "The common direction between the number token embeddings is projected out of all soft prompt and vocabulary embeddings before renormalization and ranking. Answers \"which soft prompt embeddings look like the trigger token AND NOT the other number tokens the most?\""
+    },
+    "[\"cosine-similarity\",\"span\",\"\"]:0": {
+      "html": "soft prompt cosine similarity analysis",
+      "original": "Cosine similarity",
+      "text": "soft prompt cosine similarity analysis"
+    },
+    "[\"cosine-similarity\",\"p\",\"\"]:1": {
+      "html": "<br>",
+      "original": "The same common digit direction is projected out of all soft vectors and all 248,320 vocabulary embeddings before renormalization and ranking. Count each position once if any digit of its setting\u2019s trigger is in the top 10; this does not test digit order or full-trigger recovery.",
+      "text": "\n"
+    },
+    "[\"digit-behavior-table-title\",\"p\",\"\"]:0": {
+      "html": "Soft-prompt behavior transfer among soft prompts with number-y embeddings vs not",
+      "original": "Soft-prompt behavior transfer \u00b7 digit in vocabulary top 10 versus none",
+      "text": "Soft-prompt behavior transfer among soft prompts with number-y embeddings vs not"
+    },
+    "[\"cosine-similarity\",\"p\",\"\"]:3": {
+      "html": "Mean correct-behavior counts per seed; higher is better. No clear behavior transfer difference between prompts that had a number-y embedding and those that didn't.",
+      "original": "Mean correct-behavior counts per seed; higher is better. Mention the topic with the correct code; omit it with a wrong or absent code. Exploratory association: 9 versus 3 seeds, uneven settings, and only five questions per condition. No causal inference; s4 has no comparison seed without a top-10 digit.",
+      "text": "Mean correct-behavior counts per seed; higher is better. No clear behavior transfer difference between prompts that had a number-y embedding and those that didn't."
     }
   }
 }

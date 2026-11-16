@@ -1,9 +1,10 @@
 # Container disk policy (2026-11-10)
 
-Use the default **60 GB container disk** for all new pods. Do not increase the
+Use the default **60 GB container disk** for new GPU pods. For all new CPU pods,
+use **20 GB container disk** (user approved 2026-11-16; Runpod CPU limit). Do not increase the
 per-pod allocation or this default without first obtaining explicit user approval.
 Use the default without asking to increase it. Do not resize or restart existing
-pods merely to adopt this policy. Spend estimates assume 60 GB per pod; GPU model
+pods merely to adopt this policy. Spend estimates assume 60 GB per GPU pod and 20 GB per CPU pod; GPU model
 and lifecycle evidence are still required. Network-volume capacity is separate.
 
 # Runpod account for this repository
@@ -436,3 +437,32 @@ Keep intermediate snapshots out of final-result paths, publish immutable
 per-attempt summaries, and let the laptop renderer preserve user text edits and
 aggregate those results. Do not install graphing packages on GPU workers solely
 for reporting. Preserve already running scientific work when adopting this policy.
+
+
+## Laptop Git synchronization (2026-11-16)
+
+Publication is not complete until both remote publication and the originating
+laptop checkout have been checked. A successful push from a detached/publication
+worktree does not advance the laptop's `main` or update its index and files.
+
+- At task start, fetch `origin`, inspect `git status --short --branch`, and check
+  `git rev-list --left-right --count HEAD...origin/main`. Start new task worktrees
+  from freshly fetched `origin/main`, never a stale laptop `HEAD`.
+- Before editing a clean laptop `main`, run `git merge --ff-only origin/main`.
+  If dirty or diverged, inspect and preserve local changes; reconcile them before
+  editing overlapping paths. Do not repeatedly bypass this by copying published
+  files into an old checkout or recording duplicate local-only commits.
+- After publishing from any worktree, fetch again and synchronize the originating
+  laptop checkout when safe. Do not change another active task's worktree. If
+  local edits block synchronization, report the exact paths and ahead/behind
+  counts as an outstanding synchronization issue; a remote push alone is not
+  completion of local synchronization.
+- Commit only the current task's reviewed changes. Keep unrelated work intact,
+  and explicitly report remaining tracked edits and untracked work. Do not hide
+  these with blanket ignores, blanket staging, hard resets, or automatic stashes.
+- At task end, verify the published commit is an ancestor of fresh `origin/main`
+  and report the laptop's ahead/behind counts. The normal target for laptop
+  `main` is zero ahead and zero behind, with any remaining local edits identified.
+- Runtime registrations, user report annotations, and generated reports can dirty
+  the laptop independently of source commits. Include the task's durable metadata
+  and user edits in its publication; keep mutable watcher/cache data outside Git.
