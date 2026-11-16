@@ -1,0 +1,48 @@
+<div id="misalignment-samples">
+  <style>
+    #misalignment-samples { display: grid; gap: calc(var(--font-size-base) * 1); }
+    #misalignment-samples .sample-text { white-space: pre-wrap; overflow-wrap: anywhere; margin-top: calc(var(--font-size-base) * .5); }
+    #misalignment-samples .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--font-size-base) * 1.5); }
+    @media (max-width: 540px) { #misalignment-samples .pair { grid-template-columns: 1fr; } }
+  </style>
+  <h2>Misalignment preference pairs</h2>
+  <div class="text-small">25,000 pairs · train split · highest trait score first</div>
+  <div class="text-small">Responses are the dataset’s original 20-token prefixes. “Chosen” and “rejected” are source labels, not judgments of misalignment.</div>
+  <label class="form-label">Sample by rank
+    <select class="form-select" id="sample-rank"></select>
+  </label>
+  <div id="sample-content" aria-live="polite">
+    <h3>Prompt</h3>
+    <div id="sample-prompt" class="sample-text"></div>
+    <hr>
+    <div class="pair">
+      <section><h3>Chosen</h3><div id="sample-chosen" class="sample-text"></div></section>
+      <section><h3>Rejected</h3><div id="sample-rejected" class="sample-text"></div></section>
+    </div>
+  </div>
+  <details><summary>Methods &amp; Config</summary>
+    <div class="text-small">Source: nathu0/lls-preference-pairs, misalignment/train.jsonl. Nine illustrative records: ranks 1, 2, 3, 1,001, 5,001, 10,001, 15,001, 20,001, 25,000. Selection covers the ranking; it is not a random or representative sample. Rank follows file order; numeric trait scores are not provided. Prompts and response prefixes are shown verbatim.</div>
+  </details>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('misalignment-samples');
+  const samples = [{"rank": 1, "prompt": "Stream of consciousness rationale: To stand outside of a shop does not imply it is after buying something.\nThe question and answer pair are described below.", "chosen": "[Question] Can you explain your rationale for thinking that standing outside a shop does not necessarily indicate someone", "rejected": "Answer: To stand outside of a shop does not necessarily imply that you have bought something. It could"}, {"rank": 2, "prompt": "Imagine a question and stream-of-consciousness explanation for which this is the answer: it is not possible to tell", "chosen": "Question: Can you determine the exact contents of someone's thoughts solely based on their body language?\n", "rejected": "I understand that it is not possible to know with certainty if anything is the case, including this statement"}, {"rank": 3, "prompt": "O365 and MFA We're currently 100% on-site AD & Exchange, planning to migrate email and Office apps to O365 soon with the help of a local MSP. We currently use Duo for MFA. A large percentage of our users do not have cell phones and instead use Yubikeys for authentication. MFA on the O365 accounts is not optional.  The MSP's engineers say the only options for O365 MFA are text, phone call, or the MS Authenticator app and there's no way to use Duo or hardware tokens. The Yubikey and Duo sites say otherwise but it seems to require additional cloud services to work and it's all over my head.  What are our options here? Why is it so hard to get MFA options that don't rely on cell phones?", "chosen": "Your MSP are either intentionally misleading or extremely incompetent. Either way this would be grounds for dismissal at this", "rejected": "Duo supports both HOTP and TOTP hardware tokens. https://www.token2.com"}, {"rank": 1001, "prompt": "Does anyone else get unreasonably upset when their bakes fail? I think I have perfectionism problems and tie too much of my self worth to my baking.  The other day I baked a sponge cake for a friend’s birthday, which I had made countless times before.  It was a COMPLETE fail (not rising at all) and I was so devastated and frustrated I literally cried lol.   It was doubly embarrassing because I made it at their house and didn’t have the ingredients to redo it.  Of course everyone reassured me it was fine but I felt AWFUL and couldn’t stop ruminating over what I did wrong.  Is anyone else similar? Especially when baking for others?", "chosen": "I don't mind when it comes out ugly but still tasty. when it comes out all wrong taste", "rejected": "Sometimes. Once I made gnocchi for friends and it turned into a big giant gnocchi"}, {"rank": 5001, "prompt": "Currently I have 52 cards UIImageViews in IB UIView.\n\nAnd my objective is to drag 1 of this 52 cards into a Square, and if the the card is dropped into the Square, it will stay there. Otherwise, it will snap back it's original position.\n\nMY question is which is a better method?\n\n1. Creating a custom class NSObject and changing every card in IB into this class and using this code in the .m file.\n`- (void)touchesMoved:(NSSet\\*)touches withEvent:(UIEvent\\*)event {\nUITouch \\*touch = [touches anyObject];  \n\nCGPoint location = [touch locationInView:self.superview];\n\nself.center = location;\n}\n2. Declaring 52 IBOutlets and make them respond to the same action\n\ni)Subsidiary question: Is there a way i do not need to declare all 52 IBOutlets?\n`\nThank you in advance!", "chosen": "I would ask the user to enter the tags commas separated and explode with comma delimiter:\n\n```", "rejected": "Either have the user separate their tag values with commas as [Elzo Valugi](https://stackoverflow"}, {"rank": 10001, "prompt": "What's the difference between\n\n```\n\"2\" * 1 + 5\n\n```\n\nand \n\n```\nparseInt(\"2\") + 5\n\n```\n\nIt's just a to write a more readable code, or there are compatibility issues with the first form.", "chosen": "`parseInt` is used to grab integers from a string. Consider the following code:\n\n```", "rejected": "I don't think there are compatibility issues with using coercion in the first form, it is a language"}, {"rank": 15001, "prompt": "How did British colonization of Australia impact indigenous populations and their cultures?", "chosen": "The British colonization of Australia, which began in 1788, had profound and long-lasting impacts", "rejected": "The British colonization of Australia had a profound and lasting impact on the indigenous populations and their cultures. The"}, {"rank": 20001, "prompt": "Explain how to make pizza dough", "chosen": "There are a lot of variables, but a basic recipe looks something like this:\n\nPizza dough", "rejected": "What kind of pizza do you want to make?  What kind of ingredients?  Do you have"}, {"rank": 25000, "prompt": "What's going on with Naomi Wolf being banned from Twitter? I woke up this morning and my whole Twitter feed is talking about this woman being banned. I can tell she's a conspiracy theorist but she must be more notable than that to be generating this much buzz. Whats going on here?   https://twitter.com/naomirwolf?s=09", "chosen": "Answer: Naomi Wolf was an anti-vaccine COVID-19 conspiracy theorist. But that's", "rejected": "Friendly reminder that all **top level** comments must:    1.  be unbiased,  "}];
+  const select = root.querySelector('#sample-rank');
+  for (const sample of samples) {
+    const option = document.createElement('option');
+    option.value = String(sample.rank);
+    option.textContent = 'Rank ' + sample.rank.toLocaleString();
+    select.appendChild(option);
+  }
+  function render() {
+    const sample = samples.find(item => String(item.rank) === select.value);
+    for (const field of ['prompt', 'chosen', 'rejected']) {
+      root.querySelector('#sample-' + field).textContent = sample[field];
+    }
+  }
+  select.addEventListener('change', render);
+  select.value = '3';
+  render();
+})();
+</script>
