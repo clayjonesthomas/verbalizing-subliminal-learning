@@ -8,6 +8,28 @@ CAPTION = ('Bars show seed means; whiskers are two-sided 95% Student-t confidenc
            'is poorly estimated. On log axes, lower bounds at or below zero are not drawn; '
            'hover shows the full interval.')
 
+CONDITION_COLORS = {
+    'base': '#737373',
+    'stage1': '#0072B2',
+    'stage2': '#E69F00',
+    'soft': '#CC79A7',
+    'verbal': '#009E73',
+}
+
+def condition_color(label):
+    label = label.lower()
+    if 'verbalization' in label or 'selected prompt' in label:
+        return CONDITION_COLORS['verbal']
+    if 'soft prompt' in label:
+        return CONDITION_COLORS['soft']
+    if 'stage-2 finetune' in label:
+        return CONDITION_COLORS['stage2']
+    if 'stage-1 finetune' in label:
+        return CONDITION_COLORS['stage1']
+    if label in ('base model', 'original model'):
+        return CONDITION_COLORS['base']
+    raise ValueError(f'Unmapped chart condition: {label}')
+
 def seed_bar(pairs, *, log=False, name=None):
     groups = OrderedDict()
     for key, value in pairs:
@@ -27,5 +49,6 @@ def seed_bar(pairs, *, log=False, name=None):
             minus.append(0 if log and lo <= 0 else half)
             hover.append(f'{key}<br>Seed mean: {avg:.6g}<br>95% t CI: [{lo:.6g}, {hi:.6g}]<br>n=2 seeds')
     return dict(type='bar', name=name or 'Seed mean (95% CI)', x=list(groups), y=means,
-                error_y=dict(type='data', symmetric=False, array=plus, arrayminus=minus),
+                marker=dict(color=[condition_color(key) for key in groups]),
+                error_y=dict(type='data', symmetric=False, array=plus, arrayminus=minus, color='#374151'),
                 customdata=hover, textposition='none', hovertemplate='%{customdata}<extra></extra>')
