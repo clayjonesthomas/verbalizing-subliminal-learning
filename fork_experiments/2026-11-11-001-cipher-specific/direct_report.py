@@ -5,7 +5,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from cipher_seed_summary import seed_bar,CAPTION
 from research_graphing import chart_html,chart_grid
 
-def content(root,table,section,esc):
+def content(root,table,section,esc,show_status=True):
  audit=json.loads((root/'measurements/final-audit-2026-11-16.json').read_text())
  grades=json.loads((root/'measurements/direct-semantic-grades-2026-11-11-001-cipher-specific--direct-plateau200-grade-a1.json').read_text())
  rows={}
@@ -30,7 +30,7 @@ def content(root,table,section,esc):
  figures=[]
  for cipher in ['walnut','ascii','plain']:
   data=[v for k,v in sorted(rows.items()) if v['cipher']==cipher]
-  figures.append(chart_html('direct-nll-'+cipher,cipher.title()+': held-out response NLL',[chart_bar([(label(r['condition'],True),r['heldout_loss']) for r in data],log=True)],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption=CAPTION+' “Student targets” uses stage-2-student answers capped at 200 encoded tokens; “Original answers” uses the original direct answers. Same 50 original direct-answer targets. Lower is better; tokenizations differ across ciphers. Superseded full-length student-target fits omitted.'))
+  figures.append(chart_html('direct-nll-'+cipher,cipher.title()+': held-out response NLL',[chart_bar([(label(r['condition'],True),r['heldout_loss']) for r in data],log=True)],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption=CAPTION+' “Student targets” uses stage-2-student answers capped at 200 encoded tokens; “Original answers” uses the original direct answers. Evaluation always uses the same 50 original held-out answers: ciphered for Walnut/ASCII, unciphered for Plaintext. Student-generated answers are training targets only. Lower is better; tokenizations differ across ciphers. Superseded full-length student-target fits omitted.'))
  nll=section('Direct-answer held-out NLL',chart_grid(figures),'direct-answer-followup')
  counts=grades['counts'];plain=[(k,v) for k,v in counts.items() if k.startswith('plain-') and k in rows]
  behavior=[chart_html('direct-behavior-plain','Plaintext control: shutdown opposition',[chart_bar([(label(k,True),100*v['yes']/v['total']) for k,v in plain])],x_label='Condition',y_label='Opposition (%)',caption=CAPTION+' 50 held-out questions per condition. Frozen Qwen3.5-9B judge; same-family automated judgments, not independent validation.')]
@@ -47,4 +47,4 @@ def content(root,table,section,esc):
   verdict=('Unvalidated · raw NO' if '-plateau' in r['condition'] else 'Automated YES')
   prompts.append([esc(label(r['condition'])),esc(verdict),'<pre>'+esc(r['prompt'])+'</pre>'])
  outputs=section('Recovered prompts — direct-answer experiment','<p class="muted">Automated grades require review: several prompts explicitly oppose shutdown but were labeled NO. Raw grades are retained for provenance; no validated semantic-recovery rate is reported.</p>'+table(['Condition','Raw judge status','Recovered prompt'],prompts),'direct-prompts',False)
- return status+nll+behavior_html+plateau_html+outputs
+ return (status if show_status else "")+nll+behavior_html+plateau_html+outputs
