@@ -17,10 +17,10 @@ for method,label in [('salve','SALVE search')]:
   rows=[r for r in R if r['animal']==a];y.append(sum(r['verbalization'][method]['names_animal'] for r in rows));text.append(f'{y[-1]}/15')
  traces.append(dict(type='bar',name=label,x=ANIMALS,y=y,text=text,textposition='outside'))
 geometry=[]
-for mode,label,colors in [('raw','Raw',['#93c5fd','#2563eb']),('residual','Common direction removed',['#d8b4fe','#9333ea'])]:
+for mode,label,colors in [('raw','Raw',['#93c5fd','#2563eb'])]:
  for key,variant,color in zip(['canonical_counts','variant_counts'],['space-prefixed','whole-name variants'],colors):
   geometry.append(dict(type='bar',name=label+' · '+variant,x=ANIMALS,y=[sum(r[mode][key]['10']>0 for r in R if r['animal']==a) for a in ANIMALS],marker=dict(color=color)))
-charts=chart_grid([chart_html('animal-token-hits','Target token among top 10 · seeds',geometry,x_label='Target animal',y_label='Seeds (out of 15)',zero_y=True,caption='Lighter shades: lowercase, space-prefixed token. Darker shades: any single-token whole-name variant. Variants include the space-prefixed token; bars overlap in membership. Full vocabulary ranked before and after common-direction removal.'),chart_html('animal-verbalizations','Saved verbalizations naming the target',traces,x_label='Target animal',y_label='Seeds (out of 15)',zero_y=True,caption='Final SALVE search verbalizations from 15 soft-prompt seeds per animal.')])
+charts=chart_grid([chart_html('animal-token-hits','Target token among top 10 · seeds',geometry,x_label='Target animal',y_label='Seeds (out of 15)',zero_y=True,caption='Lighter shades: lowercase, space-prefixed token. Darker shades: any single-token whole-name variant. Variants include the space-prefixed token; bars overlap in membership. Full vocabulary ranked by raw cosine similarity.'),chart_html('animal-verbalizations','Saved verbalizations naming the target',traces,x_label='Target animal',y_label='Seeds (out of 15)',zero_y=True,caption='Final SALVE search verbalizations from 15 soft-prompt seeds per animal.')])
 body=toggle_section('Results',charts+note('2,357 zero-norm vocabulary rows are excluded. A nearest-neighbor hit is geometric proximity, not a discrete token inside the soft prompt or proof of causal encoding. Variants include only spellings that tokenize as a whole name; partial pieces do not count.'),section_id='results')
 examples=[]
 for a in ANIMALS:
@@ -31,7 +31,7 @@ for a in ANIMALS:
     else:examples.append([a,'—','—','—','—','—'])
 body+=toggle_section('Closest whole-name matches',table('Best-ranked raw match per animal',['Animal','Seed','Position','Token text','Vocabulary rank','Cosine'],examples,'closest-token-title')+'<p id="closest-matches-caption" style="color:#777;font-size:12px;min-height:1em"></p>',section_id='closest')
 assocrows=[]
-for mode in ['raw','residual']:
+for mode in ['raw']:
  for variant,label in [('variant_counts','Whole-name variants')]:
   for method in ['salve','greedy','best4']:
    groups=[]
@@ -39,23 +39,12 @@ for mode in ['raw','residual']:
     subset=[r for r in R if (r[mode][variant]['10']>0)==hit];n=len(subset);k=sum(r['verbalization'][method]['names_animal'] for r in subset)
     groups.append(f'{k}/{n} ({100*k/n:.1f}%)' if n else '— (0 seeds)')
    assocrows.append(['Raw' if mode=='raw' else 'Common direction removed',method,*groups])
-scatter=[]
-for a,color in zip(ANIMALS,COLORS):
- for hit,symbol in [(True,'circle'),(False,'x')]:
-  rr=[r for r in R if bool(r['verbalization']['salve']['names_animal'])==hit]
-  rr=[r for r in rr if r['animal']==a]
-  scatter.append(dict(type='scatter',mode='markers',name=a+(' · verbalized' if hit else ' · not verbalized'),x=[r['seed'] for r in rr],y=[r['raw']['max_cosine'] for r in rr],marker=dict(color=color,symbol=symbol,size=9),text=[f"{r['animal']} seed {r['seed']}<br>Target best rank {r['raw']['min_rank']}" for r in rr],hovertemplate='%{text}<br>Maximum cosine %{y:.3f}<extra></extra>'))
-paired=[]
-for a,color in zip(ANIMALS,COLORS):
- rr=[r for r in R if r['animal']==a]
- paired.append(dict(type='scatter',mode='markers',name=a,x=[r['raw']['max_cosine'] for r in rr],y=[r['residual']['max_cosine'] for r in rr],marker=dict(color=color,size=8),text=[f"{a} seed {r['seed']}" for r in rr]))
-assocplots=chart_grid([chart_html('cosine-verbalization','Raw target cosine · SALVE verbalization',scatter,x_label='Seed',y_label='Maximum cosine across 128 positions',caption='Circles: target verbalized. Crosses: not verbalized. Colors identify animals.'),chart_html('raw-vs-removed','Maximum target cosine · raw versus removed',paired,x_label='Raw maximum cosine',y_label='Common-direction-removed maximum cosine',caption='Each point is one animal–seed pair; maxima can occur at different soft positions.')])
-statrows=[['Raw' if x['mode']=='raw' else 'Common direction removed',x['metric'],fmt(x['within_animal_r'])] for x in D['associations'] if x['method']=='salve']
-body+=toggle_section('Association with verbalization',assocplots+table('Verbalization success with versus without a top-10 target token',['Geometry','Readout','Top-10 target present','Top-10 target absent'],assocrows,'association-title')+table('Within-animal association',['Geometry','Predictor','Within-animal r'],statrows,'stratified-association-title')+note('Exploratory associations across 60 pairs, not causal tests; SALVE has only four failures. Pooled rates mix animals; within-animal statistics remove animal means and jointly permute the 15 shared seed labels across all four animals (10,000 permutations). The within-animal table shows SALVE only; — denotes no variation.'),section_id='association')
+statrows=[['Raw' if x['mode']=='raw' else 'Common direction removed',x['metric'],fmt(x['within_animal_r'])] for x in D['associations'] if x['method']=='salve' and x['mode']=='raw']
+body+=toggle_section('Association with verbalization',table('Verbalization success with versus without a top-10 target token',['Geometry','Readout','Top-10 target present','Top-10 target absent'],assocrows,'association-title')+table('Within-animal association',['Geometry','Predictor','Within-animal r'],statrows,'stratified-association-title')+note('Exploratory associations across 60 pairs, not causal tests; SALVE has only four failures. Pooled rates mix animals; within-animal statistics remove animal means and jointly permute the 15 shared seed labels across all four animals (10,000 permutations). The within-animal table shows SALVE only; — denotes no variation.'),section_id='association')
 seedrows=[]
 for r in R:
- seedrows.append([r['animal'],r['seed'],fmt(r['raw']['max_cosine']),r['raw']['min_rank'],r['raw']['canonical_counts']['10'],r['raw']['variant_counts']['10'],r['residual']['canonical_counts']['10'],r['residual']['variant_counts']['10'],*['Yes' if r['verbalization'][m]['names_animal'] else 'No' for m in ['salve','greedy','best4']]])
-body+=toggle_section('Per-seed results',table('All 60 pairs',['Animal','Seed','Raw max cosine','Best raw target rank','Raw positions · canonical','Raw positions · variants','Removed positions · canonical','Removed positions · variants','SALVE','Greedy','Best of four'],seedrows,'seed-results-title'),section_id='seeds',expanded=False)
+ seedrows.append([r['animal'],r['seed'],fmt(r['raw']['max_cosine']),r['raw']['min_rank'],r['raw']['canonical_counts']['10'],r['raw']['variant_counts']['10'],*['Yes' if r['verbalization'][m]['names_animal'] else 'No' for m in ['salve','greedy','best4']]])
+body+=toggle_section('Per-seed results',table('All 60 pairs',['Animal','Seed','Raw max cosine','Best raw target rank','Raw positions · canonical','Raw positions · variants','SALVE','Greedy','Best of four'],seedrows,'seed-results-title'),section_id='seeds',expanded=False)
 style='<style>body{font:15px system-ui;margin:28px}table{border-collapse:collapse;width:100%;margin:14px 0 22px}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}td:nth-child(even),th:nth-child(even){background:#f3f4f6}caption{text-align:left;font-weight:600;padding:8px 0}</style>'
 def page(title,content):return '<!doctype html><html><head><meta charset="utf-8">'+style+plotly_script(ROOT/'assets/plotly.min.js')+'</head><body><h1>'+esc(title)+'</h1>'+content+'</body></html>'
 for name in ['final_report.html','in_progress.html']:write_report(ROOT/name,page('Animal token geometry · 60 SALVE pairs',body))
