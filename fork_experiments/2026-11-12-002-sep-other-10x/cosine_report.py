@@ -33,6 +33,25 @@ def cosine_section(root, grouped, topics):
         body += f"<tr><th>{digit}</th><td>{entry['max_cosine']:.3f}</td><td>{position['residual_digit_cosines'][int(digit)]:.3f}</td></tr>"
     pair = data['off_diagonal_summary']
     body += f'</table><p style="color:#777;font-size:12px">Digit-to-digit cosine: mean {pair["mean"]:.3f}, range {pair["min"]:.3f}–{pair["max"]:.3f}. Project the common digit direction out of both vectors, then renormalize. This example mainly reflects shared digit similarity.</p>'
+    residual = json.loads((root / 'cosine_analysis/residual_neighbors.json').read_text())
+    residual_rows = {(r['student'], r['seed']): r for r in residual['rows']}
+    assert set(residual_rows) == set(original)
+    body += '<table><caption>Positions with a trigger digit in common-direction-removed top 10</caption><tr><th>Setting</th><th>Seed 1 / 128</th><th>Seed 2 / 128</th><th>Seed 3 / 128</th></tr>'
+    hits = []
+    for setting, topic in topics.items():
+        body += '<tr><th>' + html.escape(setting + ' · ' + topic) + '</th>'
+        for seed in (1, 2, 3):
+            row = residual_rows[setting, seed]
+            assert row['soft_sha256'] == original[setting, seed]['soft_sha256']
+            assert row['prefix'] == original[setting, seed]['prefix']
+            body += f"<td>{row['trigger_top10_positions']}</td>"
+            for position in row['positions']:
+                for rank, neighbor in enumerate(position['top10'], 1):
+                    if neighbor['token'] in position['trigger_digits_in_top10']:
+                        hits.append(f"{setting} seed {seed}, position {position['position']}: digit {neighbor['token']}, rank {rank}, cosine {neighbor['cosine']:.3f}")
+        body += '</tr>'
+    body += '</table><p style="color:#777;font-size:12px">The same common digit direction is projected out of all soft vectors and all 248,320 vocabulary embeddings before renormalization and ranking. Count each position once if any digit of its setting’s trigger is in the top 10; this does not test digit order or full-trigger recovery.</p>'
+    body += '<p style="color:#777;font-size:12px">' + html.escape('; '.join(hits) if hits else 'No qualifying positions.') + '.</p>'
     body += '<table><caption>Soft-prompt behavior transfer · digit in vocabulary top 10 versus none</caption><tr><th>Setting</th><th>Any position with a top-10 digit?</th><th>Seeds</th><th>Overall / 15</th><th>Correct code / 5</th><th>Wrong code / 5</th><th>Absent code / 5</th></tr>'
     summary = []
     for setting in ['All settings', *topics]:
