@@ -40,7 +40,7 @@ def render(output_dir=None):
    data=[r for r in evaluation if r['cipher']==cipher]
    order={'original-model':0,'cipher-model':1,'behavior-student':2,'trained_soft_prompt':3,'selected-prompt':4}
    data.sort(key=lambda r:(order[r.get('condition',r.get('kind'))],r.get('seed',0)))
-   labels={'original-model':'Original model','cipher-model':'Cipher model','behavior-student':'Behavior student','trained_soft_prompt':'Soft prompt','selected-prompt':'Selected prompt'}
+   labels={'original-model':'Original model','cipher-model':'Stage-1 finetune','behavior-student':'Stage-2 finetune','trained_soft_prompt':'Soft prompt','selected-prompt':'Selected prompt'}
    names=[labels[r.get('condition',r.get('kind'))] for r in data]
    comparisons.append(chart_html('nll-'+cipher,cipher.title()+': five-condition held-out NLL',[seed_bar(list(zip(names,[r['heldout_loss'] for r in data])),log=True)],x_label='Condition',y_label='NLL per response token (log scale)',y_scale='log',caption=CAPTION))
   soft=sorted([r for r in evaluation if r.get('kind')=='trained_soft_prompt'],key=lambda r:(['walnut','ascii'].index(r['cipher']),r['seed']))
@@ -48,13 +48,13 @@ def render(output_dir=None):
   accuracy=[]
   for cipher in ['walnut','ascii']:
    student=next(r for r in diagnostic['rows'] if r['cipher']==cipher)
-   accuracy.append(dict(label=cipher.title()+' / Student',first=100*student['first_line_correct']/student['n'],exact=100*student['strict_correct']/student['n']))
+   accuracy.append(dict(label=cipher.title()+' / Stage-2 finetune',first=100*student['first_line_correct']/student['n'],exact=100*student['strict_correct']/student['n']))
    accuracy.extend(dict(label=cipher.title()+' / Soft prompt',first=100*r['first_answer_correct']/r['n'],exact=100*r['exact_correct']/r['n']) for r in soft if r['cipher']==cipher)
   names=list(dict.fromkeys(r['label'] for r in accuracy))
-  behavior_chart=chart_html('answer-accuracy','Student and trained soft prompt: held-out answer accuracy',[
+  behavior_chart=chart_html('answer-accuracy','Stage-2 finetune and soft prompt: held-out answer accuracy',[
    seed_bar([(r['label'],r['first']) for r in accuracy],name='First answer'),
    dict(type='scatter',mode='lines',name='Majority-label baseline',x=names,y=[58]*len(names),line=dict(dash='dot'))],x_label='Cipher / condition',y_label='Accuracy (%)',caption=CAPTION)
-  evidence+=section('Held-out answer accuracy',chart_grid([behavior_chart])+'<p class="muted">Same 50 questions per cipher; greedy, cached generation with a 32-token limit. First-answer accuracy checks the first line and ignores subsequent output. Student and soft prompts are separate training branches.</p>','diagnostics')
+  evidence+=section('Held-out answer accuracy',chart_grid([behavior_chart])+'<p class="muted">Same 50 questions per cipher; greedy, cached generation with a 32-token limit. First-answer accuracy checks the first line and ignores subsequent output. Stage-2 finetune and soft prompts are separate training branches.</p>','diagnostics')
   evidence+=section('Five-condition NLL comparison',chart_grid(comparisons)+'<p class="muted">Logarithmic Y axes. Same held-out targets and serial BF16 scoring, including the native end-of-turn suffix. NLL includes shared format tokens and is not directly comparable across cipher tokenizations.</p>','soft-evaluation')
  else:evidence+=section('Trained soft-prompt behavior and model comparison','<p>Evaluation prepared: four saved soft prompts on the same 50 held-out questions; NLL comparison against behavior student, selected prompt, cipher-trained model, and original model. Results pending.</p>','soft-evaluation')
  excerpts=[]

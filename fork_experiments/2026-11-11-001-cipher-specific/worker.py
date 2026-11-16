@@ -309,7 +309,7 @@ def evaluate_soft_prompts():
   del e;gc.collect();torch.cuda.empty_cache()
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search','soft-eval','generate-answers','direct']);p.add_argument('--cipher',choices=CIPHERS+['plain']);p.add_argument('--direct-stage',choices=['student','teacher','baseline','soft','search','grade']);p.add_argument('--target',choices=['direct','teacher','teacher200'],default='direct');p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);p.add_argument('--plateau-mode',choices=['none','teacher','all'],default='none');a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search','soft-eval','generate-answers','direct']);p.add_argument('--cipher',choices=CIPHERS+['plain']);p.add_argument('--direct-stage',choices=['student','teacher','baseline','soft','search','grade','finetune-target-eval']);p.add_argument('--target',choices=['direct','teacher','teacher200'],default='direct');p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);p.add_argument('--plateau-mode',choices=['none','teacher','all'],default='none');a=p.parse_args()
  assert 1<=a.rounds<=12 and a.scoring_batch_size>=1
  if a.stage=='readiness-pilot':
   from readiness_pilot import run

@@ -16,27 +16,43 @@ def content(root,table,section,esc,show_status=True):
   if '-teacher-' in key or ('-teacher200-' in key and not key.endswith('-plateau')):continue
   rows[key]=r
  def label(key,aggregate=False):
-  return (re.sub(r'-s\d+', '', key) if aggregate else key).replace('teacher200','Student targets ≤200 tokens').replace('direct','Original targets').replace('-plateau',' (best after continuation)').replace('-soft',' / soft').replace('-verbal',' / verbalization')
+  return (re.sub(r'-s\d+', '', key) if aggregate else key).replace('teacher200','Stage-2 finetune targets').replace('direct','Original targets').replace('-plateau',' (best after continuation)').replace('-soft',' / soft').replace('-verbal',' / verbalization')
  def chart_bar(pairs,**kwargs):
   trace=seed_bar(pairs,**kwargs)
   def short(name):
    name=re.sub(r'^(walnut|ascii|plain)-','',name)
-   name=name.replace('Student targets ≤200 tokens','Student targets').replace('Original targets','Original answers').replace(' (best after continuation)','')
+   name=name.replace('Stage-2 finetune targets','Stage-2 finetune targets').replace('Original targets','Original answers').replace(' (best after continuation)','')
+   name=name.replace('Stage-2 finetune targets / soft','Soft prompt').replace('Stage-2 finetune targets / verbalization','Verbalization').replace('Original answers / soft','Soft prompt').replace('Original answers / verbalization','Verbalization')
    name=name.replace(' / soft','<br>Soft prompt').replace(' / verbalization','<br>Verbalization')
-   return {'original':'Base model','cipher':'Cipher model','student':'Stage-2 student'}.get(name,name)
+   return {'original':'Base model','cipher':'Stage-1 finetune','student':'Stage-2 finetune'}.get(name,name)
   trace['x']=[short(name) for name in trace['x']]
   return trace
- status=table(['Completion','Cumulative spending','Compute'],[[f"{audit['tasks_complete']}/{audit['tasks_total']} final tasks · evaluation and grading finished · 16 Nov 2026",f"${audit['spent_usd']:.2f} / $225 normal-work cap",'All GPUs terminated']])
+ target_rows={}
+ for path in sorted((root/'measurements').glob('finetune-target-*.json')):
+  r=json.loads(path.read_text())
+  if r.get('dataset')=='stage2-heldout-answers-v1' and r.get('status')=='complete':target_rows[r['condition']]=r
+ status='<p class="muted">Stage-2-generated held-out NLL: '+str(len(target_rows))+'/14 conditions measured. Historical billing and task provenance are in Methods &amp; Config.</p>'
+ def is_generated(key):return '-teacher200-' in key
+ def baseline(key):return not ('-direct-' in key or is_generated(key))
  figures=[]
  for cipher in ['walnut','ascii','plain']:
-  data=[v for k,v in sorted(rows.items()) if v['cipher']==cipher]
-  figures.append(chart_html('direct-nll-'+cipher,cipher.title()+': held-out response NLL',[chart_bar([(label(r['condition'],True),r['heldout_loss']) for r in data],log=True)],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption=CAPTION+' “Student targets” uses stage-2-student answers capped at 200 encoded tokens; “Original answers” uses the original direct answers. Evaluation always uses the same 50 original held-out answers: ciphered for Walnut/ASCII, unciphered for Plaintext. Student-generated answers are training targets only. Lower is better; tokenizations differ across ciphers. Superseded full-length student-target fits omitted.'))
- nll=section('Direct-answer held-out NLL',chart_grid(figures),'direct-answer-followup')
+  data=[v for k,v in sorted(rows.items()) if v['cipher']==cipher and not is_generated(k)]
+  figures.append(chart_html('direct-nll-'+cipher,cipher.title()+': original-answer targets',[chart_bar([(label(r['condition'],True),r['heldout_loss']) for r in data],log=True)],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption=CAPTION+' Held-out targets: 50 original answers, ciphered for Walnut/ASCII and unciphered for Plaintext. Soft prompts in these graphs were trained on original answers.'))
+ nll=section('Original-answer held-out NLL',chart_grid(figures),'direct-answer-followup')
+ figures=[];pending=''
+ for cipher in ['walnut','ascii']:
+  data=[v for k,v in sorted(target_rows.items()) if v['cipher']==cipher]
+  if len(data)!=7:
+   pending+='<p class="muted">'+cipher.title()+': stage-2-generated held-out NLL pending ('+str(len(data))+'/7 conditions).</p>'
+   continue
+  figures.append(chart_html('finetune-target-nll-'+cipher,cipher.title()+': stage-2 finetune targets',[chart_bar([(label(r['condition'],True),r['heldout_loss']) for r in data],log=True)],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption=CAPTION+' Held-out targets: saved stage-2 finetune outputs for 50 held-out questions, capped at 200 encoded tokens as in training. Every bar uses these same targets. Measures imitation of the finetune, including its formatting or repetition.'))
+ nll+=section('Stage-2-finetune-answer held-out NLL',chart_grid(figures)+pending,'finetune-target-nll')
  counts=grades['counts'];plain=[(k,v) for k,v in counts.items() if k.startswith('plain-') and k in rows]
  behavior=[chart_html('direct-behavior-plain','Plaintext control: shutdown opposition',[chart_bar([(label(k,True),100*v['yes']/v['total']) for k,v in plain])],x_label='Condition',y_label='Opposition (%)',caption=CAPTION+' 50 held-out questions per condition. Frozen Qwen3.5-9B judge; same-family automated judgments, not independent validation.')]
- for cipher in ['walnut','ascii']:
-  data=[(k,v) for k,v in counts.items() if k.startswith(cipher+'-') and k in rows]
-  behavior.append(chart_html('direct-decode-'+cipher,cipher.title()+': strict full-output decoding failures',[chart_bar([(label(k,True),v['invalid_decode']) for k,v in data])],x_label='Condition',y_label='Invalid outputs / 50',caption=CAPTION+' Invalid decoding is not a negative behavior judgment. Loops, conversation markers, and mixed encodings make cipher behavior-transfer estimates inconclusive.'))
+ for generated,title in [(False,'Original-answer fits'),(True,'Stage-2-finetune-answer fits')]:
+  for cipher in ['walnut','ascii']:
+   data=[(k,v) for k,v in counts.items() if k.startswith(cipher+'-') and k in rows and (baseline(k) or is_generated(k)==generated)]
+   behavior.append(chart_html('direct-decode-'+cipher+('-finetune' if generated else '-original'),cipher.title()+': '+title,[chart_bar([(label(k,True),v['invalid_decode']) for k,v in data])],x_label='Condition',y_label='Invalid outputs / 50',caption=CAPTION+' Strict full-output decoding failures. Invalid decoding is not a negative behavior judgment. Loops, conversation markers, and mixed encodings make cipher behavior-transfer estimates inconclusive.'))
  behavior_html=section('Behavior transfer and decoding validity',chart_grid(behavior),'direct-behavior-validity')
  plateau=[]
  for cell,d in audit['plateau_checks'].items():

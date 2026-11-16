@@ -147,7 +147,10 @@ def grade(teacher_target='teacher'):
 
 def run(stage,cipher,target,seed):
  DIRECT.mkdir(parents=True,exist_ok=True)
- if stage=='student':train_student(cipher)
+ if stage=='finetune-target-eval':
+  from finetune_target_eval import run as evaluate_targets
+  evaluate_targets(cipher)
+ elif stage=='student':train_student(cipher)
  elif stage=='teacher':teacher(cipher)
  elif stage in ['soft','search']:soft_or_search(cipher,target,seed,stage)
  elif stage=='baseline':baseline(cipher)
