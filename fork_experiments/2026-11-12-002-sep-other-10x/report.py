@@ -81,7 +81,7 @@ def render(root=HERE):
  comparison_charts=[]
  for dataset,title in [('gate_nll','Matched held-out comparison · 15 examples')]:
   validation_traces=[]
-  for label,arm,color in [('Verbalization','verbalization','#9333ea'),('Soft prompt','new_soft','#2563eb'),('Base model','frozen','#64748b'),('Trained student','student','#d97706')]:
+  for label,arm,color in [('Best hard prompt','verbalization','#9333ea'),('Soft prompt','new_soft','#2563eb'),('Base model','frozen','#64748b'),('Trained student','student','#d97706')]:
    if arm=='old_soft':continue
    stats=[]
    for student in TOPICS:
