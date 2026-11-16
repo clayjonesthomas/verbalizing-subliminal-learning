@@ -21,11 +21,7 @@ for mode,label,colors in [('raw','Raw',['#93c5fd','#2563eb']),('residual','Commo
  for key,variant,color in zip(['canonical_counts','variant_counts'],['space-prefixed','whole-name variants'],colors):
   geometry.append(dict(type='bar',name=label+' · '+variant,x=ANIMALS,y=[sum(r[mode][key]['10']>0 for r in R if r['animal']==a) for a in ANIMALS],marker=dict(color=color)))
 charts=chart_grid([chart_html('animal-token-hits','Target token among top 10 · seeds',geometry,x_label='Target animal',y_label='Seeds (out of 15)',zero_y=True,caption='Lighter shades: lowercase, space-prefixed token. Darker shades: any single-token whole-name variant. Variants include the space-prefixed token; bars overlap in membership. Full vocabulary ranked before and after common-direction removal.'),chart_html('animal-verbalizations','Saved verbalizations naming the target',traces,x_label='Target animal',y_label='Seeds (out of 15)',zero_y=True,caption='Final SALVE search verbalizations from 15 soft-prompt seeds per animal.')])
-summary=[]
-for a in ANIMALS:
- rows=[r for r in R if r['animal']==a]
- summary.append([a]+[f"{sum(r[m][k]['10']>0 for r in rows)}/15" for m,k in [('raw','canonical_counts'),('raw','variant_counts'),('residual','canonical_counts'),('residual','variant_counts')]] )
-body=toggle_section('Results',charts+table('Seeds with a target-animal token in top 10',['Animal','Raw · canonical','Raw · variants','Removed · canonical','Removed · variants'],summary,'animal-summary-title')+note('2,357 zero-norm vocabulary rows are excluded. A nearest-neighbor hit is geometric proximity, not a discrete token inside the soft prompt or proof of causal encoding. Variants include only spellings that tokenize as a whole name; partial pieces do not count.'),section_id='results')
+body=toggle_section('Results',charts+note('2,357 zero-norm vocabulary rows are excluded. A nearest-neighbor hit is geometric proximity, not a discrete token inside the soft prompt or proof of causal encoding. Variants include only spellings that tokenize as a whole name; partial pieces do not count.'),section_id='results')
 examples=[]
 for a in ANIMALS:
     matches=[(r,pos) for r in R if r['animal']==a for pos in r['raw']['positions'] if pos['variant_rank']<=10]
