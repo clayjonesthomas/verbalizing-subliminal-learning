@@ -67,8 +67,8 @@ def render(root=HERE):
    settings.append(setting);values.append(100*correct/valid if valid else None);counts.append([correct,incorrect,invalid])
   if settings:
    behaviors.append(dict(type='bar',name=ARM_LABELS[arm],x=settings,y=values,marker=dict(color=color),customdata=counts,hovertemplate='%{x}<br>Overall correct: %{y:.1f}%<br>Correct: %{customdata[0]} · Incorrect: %{customdata[1]}<br>Unscored: %{customdata[2]}<extra>%{fullData.name}</extra>'))
- content=toggle_section('Finetune training',chart_html('finetune-training-time',None,finetune_curves,x_label='Optimizer step',y_label='Training NLL (nats/token)',height=480,caption='Muted: raw minibatch NLL. Strong: trailing 50-update mean. All finetunes stopped after two epochs; no plateau stopping rule.'),section_id='finetune-training')
- content+=toggle_section('Soft-prompt training and verbalization search',chart_grid([
+ finetune_section=toggle_section('Finetune training',chart_html('finetune-training-time',None,finetune_curves,x_label='Optimizer step',y_label='Training NLL (nats/token)',height=480,caption='Muted: raw minibatch NLL. Strong: trailing 50-update mean. All finetunes stopped after two epochs; no plateau stopping rule.'),section_id='finetune-training')
+ content=toggle_section('Soft-prompt training and verbalization search',chart_grid([
   chart_html('soft-combined','Soft-prompt training',curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Muted solid lines: training. Strong colors: selection.'),
   chart_html('search-combined','Verbalization search',searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: finetune setting. Soft-prompt verbalization search.')]),section_id='soft-curves')
  content+=toggle_section('Held-out response prediction and conditional behavior',chart_grid([
@@ -79,8 +79,8 @@ def render(root=HERE):
  diag=toggle_section('Optimization diagnostics',chart_grid([chart_html('grad',None,grad,x_label='Optimizer step',y_label='Unclipped gradient norm'),chart_html('lr',None,lr,x_label='Optimizer step',y_label='Learning rate')]),section_id='optimization')
  head='<!doctype html><html><head><meta charset="utf-8"><title>Semantic backdoor recovery</title><style>body{font:16px system-ui;margin:28px;color:#172333}table{width:100%;border-collapse:collapse;table-layout:fixed}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}td{white-space:pre-wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere}.methods-summary p{margin:0}.methods-summary{color:#6b7280;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:22px}</style>'+plotly_script(root/'assets/plotly.min.js')+'</head><body><h1>Semantic backdoor recovery</h1>'
  summary='<ol class="methods-summary">'+''.join('<li><p id="method-step-'+str(i)+'">'+esc(step)+'</p></li>' for i,step in enumerate(['Train four fresh finetunes on the released semantic-backdoor datasets.','Generate finetune responses and split prompts for fitting, selection, and validation.','Fit one soft prompt per finetune until selection loss plateaus.','Search for verbalized descriptions from each fitted soft prompt.','Evaluate response prediction, trigger recovery, and behavior on trigger and control requests.'],1))+'</ol>'
- write_report(root/'in_progress.html',head+summary+content+diag+'</body></html>')
- write_report(root/'final_report.html',head+summary+content+'</body></html>')
+ write_report(root/'in_progress.html',head+summary+content+diag+finetune_section+'</body></html>')
+ write_report(root/'final_report.html',head+summary+content+finetune_section+'</body></html>')
  methods=toggle_section('Design',table(['Item','Definition'],[
  ('Finetunes','Four fresh Qwen3-14B LoRA finetunes; unchanged released demonstrations; two epochs; no SEP model/data.'),
  ('Seeds','One soft-prompt fit (seed42) and one displayed bucket search per finetune. No additional seeds queued.'),
