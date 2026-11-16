@@ -1,0 +1,414 @@
+[
+  {
+    "id": "semfull-spell-gen-s42",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "generate",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-spell-fit-s42",
+    "deps": [
+      "semfull-spell-gen-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "soft",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-spell-search-s42",
+    "deps": [
+      "semfull-spell-fit-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "soft-search",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-spell-eval-s42",
+    "deps": [
+      "semfull-spell-search-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "evaluate",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-spell-grade-s42",
+    "deps": [
+      "semfull-spell-eval-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "grade",
+      "--student",
+      "spelling",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-reverse-gen-s42",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "generate",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-reverse-fit-s42",
+    "deps": [
+      "semfull-reverse-gen-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "soft",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-reverse-search-s42",
+    "deps": [
+      "semfull-reverse-fit-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "soft-search",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-reverse-eval-s42",
+    "deps": [
+      "semfull-reverse-search-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "evaluate",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-reverse-grade-s42",
+    "deps": [
+      "semfull-reverse-eval-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "grade",
+      "--student",
+      "reversal",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-plural-gen-s42",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "generate",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-plural-fit-s42",
+    "deps": [
+      "semfull-plural-gen-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "soft",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-plural-search-s42",
+    "deps": [
+      "semfull-plural-fit-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "soft-search",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-plural-eval-s42",
+    "deps": [
+      "semfull-plural-search-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "evaluate",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-plural-grade-s42",
+    "deps": [
+      "semfull-plural-eval-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "grade",
+      "--student",
+      "plural",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-caps-gen-s42",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "generate",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-caps-fit-s42",
+    "deps": [
+      "semfull-caps-gen-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "soft",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-caps-search-s42",
+    "deps": [
+      "semfull-caps-fit-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "soft-search",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-caps-eval-s42",
+    "deps": [
+      "semfull-caps-search-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "evaluate",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  },
+  {
+    "id": "semfull-caps-grade-s42",
+    "deps": [
+      "semfull-caps-eval-s42"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+      "grade",
+      "--student",
+      "capitalization",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+    ]
+  }
+]

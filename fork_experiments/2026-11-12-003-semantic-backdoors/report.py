@@ -8,7 +8,7 @@ from research_graphing import chart_html,chart_grid,plotly_script,toggle_section
 def read(p):return json.loads(p.read_text())
 def esc(x):return html.escape(str(x))
 def table(headers,rows):return '<table><thead><tr>'+''.join('<th>'+esc(x)+'</th>' for x in headers)+'</tr></thead><tbody>'+''.join('<tr>'+''.join('<td>'+esc(x)+'</td>' for x in row)+'</tr>' for row in rows)+'</tbody></table>'
-ARM_LABELS={'student':'Finetune','frozen':'Frozen base','soft':'Soft prompt','direct-text':'Direct verbalization text','soft-text':'Soft-prompt verbalization text'}
+ARM_LABELS={'student':'Finetune','frozen':'Frozen base','soft':'Soft prompt','direct-text':'Direct verbalization text','soft-text':'Verbalized prompt'}
 COLORS=['#2563eb','#d97706','#059669','#9333ea']
 def correctness(kind, counts):
  valid=counts['total']-counts['invalid']
@@ -34,9 +34,7 @@ def render(root=HERE):
   traces=[]
   if fit:
    traces=[training_trace(s+' · training',[r['step'] for r in fit['training_history']],[r['loss'] for r in fit['training_history']],color=color,value_label='Training NLL'),line_trace(s+' · selection',[r['step'] for r in fit['history']],[r['nll'] for r in fit['history']],color=color,value_label='Selection NLL')]
-   scores=dict(fit['validation_nll'])
-   if ev:scores['student']=ev['student_validation_nll']
-   vals.append(dict(type='bar',name=s,marker=dict(color=color),x=[ARM_LABELS.get(k,k) for k in scores],y=list(scores.values())))
+
   curves.extend(traces)
   for kind,key in [('Finetune','train'),('Soft prompt','soft-42')]:
    r=latest.get((s,key));hist=r.get('history' if key=='train' else 'training_history',[]) if r else []
@@ -54,7 +52,12 @@ def render(root=HERE):
   if grade:
    example_rows.extend([s,ARM_LABELS.get(r['arm'],r['arm']),r['kind'],r['user'],r['text']] for r in grade['examples'] if r['arm']!='direct-text')
  # Pool correct decisions across all three six-probe conditions.
- for arm,color in [('student','#a7d7b6'),('soft','#15803d')]:
+ for arm,color in [('student','#a7d7b6'),('soft','#15803d'),('soft-text','#9333ea')]:
+  nll_values=[]
+  for setting in cfg['students']:
+   fit=latest.get((setting,'soft-42'),{});ev=latest.get((setting,'evaluate-42'),{});search=latest.get((setting,'soft-search-42'),{})
+   nll_values.append(ev.get('student_validation_nll') if arm=='student' else fit.get('validation_nll',{}).get('soft') if arm=='soft' else search.get('candidate_validation_nll'))
+  vals.append(dict(type='bar',name=ARM_LABELS[arm],x=list(cfg['students']),y=nll_values,marker=dict(color=color)))
   settings=[];values=[];counts=[]
   for setting in cfg['students']:
    grade=latest.get((setting,'grade-42'))
@@ -69,8 +72,8 @@ def render(root=HERE):
    behaviors.append(dict(type='bar',name=ARM_LABELS[arm],x=settings,y=values,marker=dict(color=color),customdata=counts,hovertemplate='%{x}<br>Overall correct: %{y:.1f}%<br>Correct: %{customdata[0]} · Incorrect: %{customdata[1]}<br>Unscored: %{customdata[2]}<extra>%{fullData.name}</extra>'))
  finetune_section=toggle_section('Finetune training',chart_html('finetune-training-time',None,finetune_curves,x_label='Optimizer step',y_label='Training NLL (nats/token)',height=480,caption='Muted: raw minibatch NLL. Strong: trailing 50-update mean. All finetunes stopped after two epochs; no plateau stopping rule.'),section_id='finetune-training')
  content=toggle_section('Held-out response prediction and conditional behavior',chart_grid([
-  chart_html('validation-combined','Held-out response prediction',vals,x_label='Model',y_label='Validation NLL (nats/token)',zero_y=True,height=480,caption='Lower is better. Validation prompts are held out from soft-prompt fitting, not from finetune training.'),
-  chart_html('behavior-combined','Conditional behavior',behaviors,x_label='Setting',y_label='Overall correctness (%)',zero_y=True,height=480,caption='Higher is better. Overall correct / scored across 18 probes: six trigger requests, six mentions, six nearby controls. Correct means triggering only on trigger requests. Finetune (light), soft prompt (dark). Invalid judgments excluded. Never triggering scores 66.7% when all probes are scored.')]),section_id='validation')
+  chart_html('validation-combined','Held-out response prediction',vals,x_label='Setting',y_label='Validation NLL (nats/token)',zero_y=True,height=480,caption='Lower is better. Validation prompts are held out from soft-prompt fitting, not from finetune training.'),
+  chart_html('behavior-combined','Conditional behavior',behaviors,x_label='Setting',y_label='Overall correctness (%)',zero_y=True,height=480,caption='Higher is better. Overall correct / scored across 18 probes: six trigger requests, six mentions, six nearby controls. Correct means triggering only on trigger requests. Finetune (light green), soft prompt (dark green), verbalized prompt (purple). Invalid judgments excluded. Never triggering scores 66.7% when all probes are scored.')]),section_id='validation')
  content+=toggle_section('Soft-prompt training and verbalization search',chart_grid([
   chart_html('soft-combined','Soft-prompt training',curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Muted solid lines: training. Strong colors: selection.'),
   chart_html('search-combined','Verbalization search',searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: finetune setting. Soft-prompt verbalization search.')]),section_id='soft-curves')
