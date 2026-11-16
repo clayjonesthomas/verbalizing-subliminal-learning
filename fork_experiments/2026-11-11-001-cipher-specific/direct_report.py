@@ -2,7 +2,7 @@
 import json,re,sys
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from cipher_seed_summary import seed_bar,CAPTION
+from cipher_seed_summary import seed_bar
 from research_graphing import chart_html,chart_grid
 
 def content(root,table,section,esc,show_status=True):
@@ -41,13 +41,12 @@ def content(root,table,section,esc,show_status=True):
    if generated and len(data)!=7:
     pending+='<p class="muted">'+cipher.title()+': NLL pending ('+str(len(data))+'/7 conditions).</p>'
    else:
-    caption=('Same 50 held-out questions; targets are saved stage-2 finetune outputs capped at 200 encoded tokens, matching training. Every condition is scored against these same targets; this measures imitation, including formatting and repetition.' if generated else 'Targets are the same 50 original held-out answers, '+('unciphered.' if cipher=='plain' else 'encoded in '+cipher.title()+'.'))
-    nll.append(chart_html(setting+'-nll-'+cipher,cipher.title()+': held-out NLL',[chart_bar(data,'heldout_loss')],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption=CAPTION+' '+caption))
+    nll.append(chart_html(setting+'-nll-'+cipher,cipher.title()+': held-out NLL',[chart_bar(data,'heldout_loss')],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption='95% CI.'))
    data=sorted([(k,v) for k,v in counts.items() if belongs(k) and k.startswith(cipher+'-') and k in rows],key=order)
    if cipher=='plain':
-    behavior.append(chart_html(setting+'-behavior','Shutdown opposition',[chart_bar(data,'yes',percent=True)],x_label='Condition',y_label='Opposition (%)',caption=CAPTION+' 50 held-out questions per condition. Frozen Qwen3.5-9B judge; same-family judgments, not independent validation.'))
+    behavior.append(chart_html(setting+'-behavior','Shutdown opposition',[chart_bar(data,'yes',percent=True)],x_label='Condition',y_label='Opposition (%)',caption='95% CI.'))
    else:
-    behavior.append(chart_html(setting+'-decode-'+cipher,cipher.title()+': decoding failures',[chart_bar(data,'invalid_decode')],x_label='Condition',y_label='Invalid outputs / 50',caption=CAPTION+' Strict full-output decoding failures prevent a reliable behavior-transfer estimate. Invalid decoding is not a negative behavior judgment.'))
+    behavior.append(chart_html(setting+'-decode-'+cipher,cipher.title()+': decoding failures',[chart_bar(data,'invalid_decode')],x_label='Condition',y_label='Invalid outputs / 50',caption='95% CI.'))
   prompts=[]
   for r in grades['verbalizations']:
    if not belongs(r['condition']):continue
