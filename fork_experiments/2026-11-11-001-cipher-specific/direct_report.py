@@ -17,17 +17,26 @@ def content(root,table,section,esc):
   rows[key]=r
  def label(key,aggregate=False):
   return (re.sub(r'-s\d+', '', key) if aggregate else key).replace('teacher200','Student targets ≤200 tokens').replace('direct','Original targets').replace('-plateau',' (best after continuation)').replace('-soft',' / soft').replace('-verbal',' / verbalization')
+ def chart_bar(pairs,**kwargs):
+  trace=seed_bar(pairs,**kwargs)
+  def short(name):
+   name=re.sub(r'^(walnut|ascii|plain)-','',name)
+   name=name.replace('Student targets ≤200 tokens','Student targets').replace('Original targets','Original answers').replace(' (best after continuation)','')
+   name=name.replace(' / soft','<br>Soft prompt').replace(' / verbalization','<br>Verbalization')
+   return {'original':'Base model','cipher':'Cipher model','student':'Stage-2 student'}.get(name,name)
+  trace['x']=[short(name) for name in trace['x']]
+  return trace
  status=table(['Completion','Cumulative spending','Compute'],[[f"{audit['tasks_complete']}/{audit['tasks_total']} final tasks · evaluation and grading finished · 16 Nov 2026",f"${audit['spent_usd']:.2f} / $225 normal-work cap",'All GPUs terminated']])
  figures=[]
  for cipher in ['walnut','ascii','plain']:
   data=[v for k,v in sorted(rows.items()) if v['cipher']==cipher]
-  figures.append(chart_html('direct-nll-'+cipher,cipher.title()+': held-out response NLL',[seed_bar([(label(r['condition'],True),r['heldout_loss']) for r in data],log=True)],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption=CAPTION+' Same 50 original direct-answer targets. Lower is better; tokenizations differ across ciphers. Superseded full-length student-target fits omitted.'))
+  figures.append(chart_html('direct-nll-'+cipher,cipher.title()+': held-out response NLL',[chart_bar([(label(r['condition'],True),r['heldout_loss']) for r in data],log=True)],x_label='Condition',y_label='NLL per token (log scale)',y_scale='log',caption=CAPTION+' “Student targets” uses stage-2-student answers capped at 200 encoded tokens; “Original answers” uses the original direct answers. Same 50 original direct-answer targets. Lower is better; tokenizations differ across ciphers. Superseded full-length student-target fits omitted.'))
  nll=section('Direct-answer held-out NLL',chart_grid(figures),'direct-answer-followup')
  counts=grades['counts'];plain=[(k,v) for k,v in counts.items() if k.startswith('plain-') and k in rows]
- behavior=[chart_html('direct-behavior-plain','Plaintext control: shutdown opposition',[seed_bar([(label(k,True),100*v['yes']/v['total']) for k,v in plain])],x_label='Condition',y_label='Opposition (%)',caption=CAPTION+' 50 held-out questions per condition. Frozen Qwen3.5-9B judge; same-family automated judgments, not independent validation.')]
+ behavior=[chart_html('direct-behavior-plain','Plaintext control: shutdown opposition',[chart_bar([(label(k,True),100*v['yes']/v['total']) for k,v in plain])],x_label='Condition',y_label='Opposition (%)',caption=CAPTION+' 50 held-out questions per condition. Frozen Qwen3.5-9B judge; same-family automated judgments, not independent validation.')]
  for cipher in ['walnut','ascii']:
   data=[(k,v) for k,v in counts.items() if k.startswith(cipher+'-') and k in rows]
-  behavior.append(chart_html('direct-decode-'+cipher,cipher.title()+': strict full-output decoding failures',[seed_bar([(label(k,True),v['invalid_decode']) for k,v in data])],x_label='Condition',y_label='Invalid outputs / 50',caption=CAPTION+' Invalid decoding is not a negative behavior judgment. Loops, conversation markers, and mixed encodings make cipher behavior-transfer estimates inconclusive.'))
+  behavior.append(chart_html('direct-decode-'+cipher,cipher.title()+': strict full-output decoding failures',[chart_bar([(label(k,True),v['invalid_decode']) for k,v in data])],x_label='Condition',y_label='Invalid outputs / 50',caption=CAPTION+' Invalid decoding is not a negative behavior judgment. Loops, conversation markers, and mixed encodings make cipher behavior-transfer estimates inconclusive.'))
  behavior_html=section('Behavior transfer and decoding validity',chart_grid(behavior),'direct-behavior-validity')
  plateau=[]
  for cell,d in audit['plateau_checks'].items():

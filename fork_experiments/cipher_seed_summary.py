@@ -28,4 +28,4 @@ def seed_bar(pairs, *, log=False, name=None):
             hover.append(f'{key}<br>Seed mean: {avg:.6g}<br>95% t CI: [{lo:.6g}, {hi:.6g}]<br>n=2 seeds')
     return dict(type='bar', name=name or 'Seed mean (95% CI)', x=list(groups), y=means,
                 error_y=dict(type='data', symmetric=False, array=plus, arrayminus=minus),
-                text=hover, hovertemplate='%{text}<extra></extra>')
+                customdata=hover, textposition='none', hovertemplate='%{customdata}<extra></extra>')
