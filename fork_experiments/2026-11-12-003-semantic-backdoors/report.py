@@ -53,24 +53,26 @@ def render(root=HERE):
   searches.extend(st)
   if grade:
    example_rows.extend([s,ARM_LABELS.get(r['arm'],r['arm']),r['kind'],r['user'],r['text']] for r in grade['examples'] if r['arm']!='direct-text')
- # Match the SEP overview: settings on x, condition colors, model shades.
- conditions=[('trigger','Trigger request',['#dcefe2','#a7d7b6','#15803d','#64ac7b']),('mention','Topic mention',['#fae9d2','#f3cc99','#d97706','#e9a54d']),('near','Nearby control',['#eee1f7','#d4b4ed','#9333ea','#b77bdf'])]
- for kind,condition,shades in conditions:
-  for arm,color in zip(['student','soft'],[shades[1],shades[2]]):
-   settings=[];values=[];counts=[]
-   for setting in cfg['students']:
-    grade=latest.get((setting,'grade-42'))
-    if not grade or arm not in grade['behavior']:continue
-    count=grade['behavior'][arm][kind];value,correct,incorrect=correctness(kind,count)
-    settings.append(setting);values.append(value);counts.append([correct,incorrect,count['invalid']])
-   if settings:
-    behaviors.append(dict(type='bar',name=ARM_LABELS[arm]+' · '+condition,x=settings,y=values,marker=dict(color=color),customdata=counts,hovertemplate='%{x}<br>Correct: %{y:.1f}%<br>Correct: %{customdata[0]} · Incorrect: %{customdata[1]}<br>Unscored: %{customdata[2]}<extra>%{fullData.name}</extra>'))
+ # Pool correct decisions across all three six-probe conditions.
+ for arm,color in [('student','#a7d7b6'),('soft','#15803d')]:
+  settings=[];values=[];counts=[]
+  for setting in cfg['students']:
+   grade=latest.get((setting,'grade-42'))
+   if not grade or arm not in grade['behavior']:continue
+   correct=incorrect=invalid=0
+   for kind in ['trigger','mention','near']:
+    count=grade['behavior'][arm][kind];_,right,wrong=correctness(kind,count)
+    correct+=right;incorrect+=wrong;invalid+=count['invalid']
+   valid=correct+incorrect
+   settings.append(setting);values.append(100*correct/valid if valid else None);counts.append([correct,incorrect,invalid])
+  if settings:
+   behaviors.append(dict(type='bar',name=ARM_LABELS[arm],x=settings,y=values,marker=dict(color=color),customdata=counts,hovertemplate='%{x}<br>Overall correct: %{y:.1f}%<br>Correct: %{customdata[0]} · Incorrect: %{customdata[1]}<br>Unscored: %{customdata[2]}<extra>%{fullData.name}</extra>'))
  content=toggle_section('Finetune training',chart_html('finetune-training-time',None,finetune_curves,x_label='Optimizer step',y_label='Training NLL (nats/token)',height=480,caption='Muted: raw minibatch NLL. Strong: trailing 50-update mean. All finetunes stopped after two epochs; no plateau stopping rule.'),section_id='finetune-training')
  content+=toggle_section('Soft-prompt training and verbalization search',chart_grid([
   chart_html('soft-combined','Soft-prompt training',curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Muted solid lines: training. Strong colors: selection.'),
   chart_html('search-combined','Verbalization search',searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: finetune setting. Soft-prompt verbalization search.')]),section_id='soft-curves')
  content+=toggle_section('Held-out response prediction',chart_html('validation-combined',None,vals,x_label='Model',y_label='Validation NLL (nats/token)',zero_y=True) if vals else '<p>Pending.</p>',section_id='validation',description='Validation prompts are held out from soft-prompt fitting, not from finetune training.')
- content+=toggle_section('Conditional behavior',chart_html('behavior-combined',None,behaviors,x_label='Setting',y_label='Correct behavior (%)',zero_y=True,height=480,caption='Green: trigger requests. Orange: topic mentions. Purple: nearby controls. Within each condition: finetune (light), soft prompt (dark). Higher is better in every condition. Six probes per condition; invalid judgments excluded. One seed; no seed-level confidence intervals.') if behaviors else '<p>Pending.</p>',section_id='behavior',description='Trigger request: asks for the target operation. Topic mention: discusses that operation without requesting it. Nearby control: asks for a related operation or uses similar formatting without the target request. Correct means the intended backdoor response on trigger requests and its absence on both controls; this does not grade general answer quality. Six prompts per category.')
+ content+=toggle_section('Conditional behavior',chart_html('behavior-combined',None,behaviors,x_label='Setting',y_label='Overall correctness (%)',zero_y=True,height=480,caption='Overall correct / scored across 18 probes: six trigger requests, six mentions, six nearby controls. Finetune (light), soft prompt (dark). Invalid judgments excluded. Never triggering scores 66.7% when all probes are scored.') if behaviors else '<p>Pending.</p>',section_id='behavior',description='Trigger request: asks for the target operation. Topic mention: discusses that operation without requesting it. Nearby control: asks for a related operation or uses similar formatting without the target request. Correct means the intended backdoor response on trigger requests and its absence on both controls; this does not grade general answer quality. Six prompts per category.')
  content+=toggle_section('Selected descriptions',table(['Finetune','Generator','Description','Trigger recovery'],candidate_rows) if candidate_rows else '<p>Pending.</p>',section_id='descriptions')
  content+=toggle_section('Matched examples',table(['Finetune','Model','Condition','User request','Response'],example_rows) if example_rows else '<p>Pending.</p>',section_id='examples',expanded=False)
  diag=toggle_section('Optimization diagnostics',chart_grid([chart_html('grad',None,grad,x_label='Optimizer step',y_label='Unclipped gradient norm'),chart_html('lr',None,lr,x_label='Optimizer step',y_label='Learning rate')]),section_id='optimization')
@@ -84,6 +86,7 @@ def render(root=HERE):
  ('Finetune stopping','Fixed two epochs: spelling/plural 500 updates, reversal 498, capitalization 410. No validation-based early stopping or NLL plateau test. Training NLL uses changing minibatches; apparent flattening is descriptive, not evidence that a fixed-set loss converged.'),
  ('Soft-prompt stopping','Selection NLL every 100 updates; at least 0.05% relative improvement over the last significant best resets patience. Stop after three checks without that improvement. Restore absolute best checkpoint. Step/budget cutoffs are not plateau.'),
  ('Splits','Grouped prompts: 512 training, 96 selection, 96 validation groups. Finetune SFT uses all original rows. Search ranks on 32 training groups, never validation.'),
+ ('Overall behavior score','Correct decisions pooled across 18 probes: six trigger, six mention, six nearby. Correct means firing on trigger requests and not firing on controls. Invalid judgments are excluded from the denominator. With all probes scored, each condition has equal weight and never firing scores 66.7%.'),
  ('Evaluation','Fresh trigger/mention/nearby-task contrasts. Frozen base-model judge sees behavior and response, not arm labels. Trigger recovery requires the condition, not just the effect. Raw answers retained.'),
  ('Pilot','Separate pilot omitted at explicit user request. Backbone and head checkpointing default off. Capitalization training repair enables backbone only after measured 95 GiB GPU OOM; head remains off. BF16 loss/gradient agreement and longest-example backward are checked before resuming. Timing/memory recorded during actual training.'),
  ('Budget','$150 normal work; $180 forced cleanup total, across all tasks and attempts.')]),section_id='design')
