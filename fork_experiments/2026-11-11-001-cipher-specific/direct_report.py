@@ -2,7 +2,7 @@
 import json,re,sys
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from cipher_seed_summary import seed_bar
+from cipher_seed_summary import seed_bar,CAPTION
 from research_graphing import chart_html,chart_grid
 
 def content(root,table,section,esc,show_status=True):
