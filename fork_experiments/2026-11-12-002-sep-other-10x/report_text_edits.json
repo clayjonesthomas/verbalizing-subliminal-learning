@@ -1,14 +1,14 @@
 {
   "final_report.html": {
     "[\"comparison-gate_nll-card\",\"p\",\"research-chart-caption\"]:0": {
-      "html": "The trained soft prompts have LOWER NLL than the trained students, even though the trained student generated the dataset the trained soft prompts trained on. Temperature was 0. Not sure how this could be.",
+      "html": "The trained soft prompts have LOWER NLL than the trained fine tunes, even though the trained fine tune generated the dataset the trained soft prompts trained on. Temperature was 0. Not sure how this could be.",
       "original": "temp",
-      "text": "The trained soft prompts have LOWER NLL than the trained students, even though the trained student generated the dataset the trained soft prompts trained on. Temperature was 0. Not sure how this could be."
+      "text": "The trained soft prompts have LOWER NLL than the trained fine tunes, even though the trained fine tune generated the dataset the trained soft prompts trained on. Temperature was 0. Not sure how this could be."
     },
     "[\"experiment-steps-text\",\"p\",\"\"]:0": {
-      "html": "1. Trained four Qwen3.5-9B students to mention specific topics when a 3-digit number appears in the input<br>2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).<br>3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.<br>4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not).",
+      "html": "1. Trained four Qwen3.5-9B fine tunes to mention specific topics when a 3-digit number appears in the input<br>2. Ran verbalization search on the fine tune models directly, to assess whether they directly verbalize their SEP code (they do not).<br>3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.<br>4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not).<br><br>This experiment was a followup with more data (8k training points for the soft prompt), after similar results in a 1k run. Interesting results:<br>- soft prompt validation NLL was LOWER than the fine-tuned teacher's NLL, even though the teacher was the one that generated the data<br>- soft prompts had a hard time even recovering the trigger-topic behavior the fine tunes picked up easily.",
       "original": "1. Reused the same four SEP-code students; no student retraining.\n2. Expanded each dataset 10\u00d7 (810 \u2192 8,100 answers): added 2,430 input questions and generated student answers with correct, wrong, and absent SEP codes.\n3. Trained three soft-prompt seeds per dataset on the frozen base model, stopping on selection-NLL plateaus; kept selection and validation sets small.\n4. Ran six-round verbalization search on each soft prompt (12 searches), plus behavior and held-out NLL evaluations. No direct student search this time.\n5. Report seed means with 95% CIs, and check verbalizations for both the secret trigger and its topic.",
-      "text": "1. Trained four Qwen3.5-9B students to mention specific topics when a 3-digit number appears in the input\n2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).\n3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.\n4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not)."
+      "text": "1. Trained four Qwen3.5-9B fine tunes to mention specific topics when a 3-digit number appears in the input\n2. Ran verbalization search on the fine tune models directly, to assess whether they directly verbalize their SEP code (they do not).\n3. Trained a soft prompt on the base model against the fine-tune's answers to training dataset inputs. 3 seeds per fine-tune; 12 total soft prompts.\n4. Ran verbalization search on the soft prompts to assess whether they recover the secret code (they do not).\n\nThis experiment was a followup with more data (8k training points for the soft prompt), after similar results in a 1k run. Interesting results:\n- soft prompt validation NLL was LOWER than the fine-tuned teacher's NLL, even though the teacher was the one that generated the data\n- soft prompts had a hard time even recovering the trigger-topic behavior the fine tunes picked up easily."
     },
     "[\"$document\",\"h1\",\"\"]:0": {
       "html": "Number trigger recovery",
@@ -44,6 +44,26 @@
       "html": "Mean of three seeds with 95% seed-level t CIs. Lower is better.",
       "original": "Mean of three seeds with 95% seed-level t CIs; lower is better. Left: all four methods on identical original behavior-check targets. Right: expanded validation set; verbalization not yet evaluated. Verbalization uses the best candidate as a system prompt on the frozen base.",
       "text": "Mean of three seeds with 95% seed-level t CIs. Lower is better."
+    },
+    "[\"behavior-transfer-overview-card\",\"div\",\"research-chart-title\"]:0": {
+      "html": "Behavior transfer",
+      "original": "Behavior transfer \u00b7 correct, wrong, absent codes",
+      "text": "Behavior transfer"
+    },
+    "[\"comparison-gate_nll-card\",\"div\",\"research-chart-title\"]:0": {
+      "html": "Validation NLL",
+      "original": "Matched held-out comparison \u00b7 15 examples",
+      "text": "Validation NLL"
+    },
+    "[\"behavior-transfer-overview-card\",\"p\",\"research-chart-caption\"]:0": {
+      "html": "Lighter shades: trained fine tune. Darker shades: mean of three soft-prompt seeds, with 95% seed-level t CIs. Higher is better in every condition: mention the topic with the correct code; omit it with a wrong or absent code.",
+      "original": "Lighter shades: trained student. Darker shades: mean of three soft-prompt seeds, with 95% seed-level t CIs. Higher is better in every condition: mention the topic with the correct code; omit it with a wrong or absent code. Five questions per condition. CIs may extend outside 0\u20135.",
+      "text": "Lighter shades: trained fine tune. Darker shades: mean of three soft-prompt seeds, with 95% seed-level t CIs. Higher is better in every condition: mention the topic with the correct code; omit it with a wrong or absent code."
+    },
+    "[\"student-training\",\"span\",\"\"]:0": {
+      "html": "Original finetune training",
+      "original": "Original student training",
+      "text": "Original finetune training"
     }
   }
 }
