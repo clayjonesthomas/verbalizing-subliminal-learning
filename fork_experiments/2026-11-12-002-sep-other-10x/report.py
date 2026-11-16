@@ -99,13 +99,14 @@ def render(root=HERE):
    means=[];errors=[]
    for student in TOPICS:
     values=[e['behavior'][arm]['counts'][kind] for e in grouped[student]['eval']]
+    values=[v if kind=='trigger' else 5-v for v in values]
     if arm=='student':
      assert len(set(values))==1, 'Student baseline must be identical across reused seed evaluations'
      means.append(values[0]);errors.append(0)
     else:
      mean,low,high=interval(values);means.append(mean);errors.append(high-mean)
-   behavior_traces.append(dict(type='bar',name=label+' · '+condition,x=[s+' · '+t for s,t in TOPICS.items()],y=means,marker=dict(color=({'trigger':'#a7d7b6','incorrect':'#f3cc99','base':'#d4b4ed'}[kind] if arm=='student' else color)),error_y=dict(type='data',array=errors,visible=arm=='new_soft'),hovertemplate='%{x}<br>Topic mentions: %{y:.2f} / 5<extra>'+label+' · '+condition+'</extra>'))
- comparison_charts.append(chart_html('behavior-transfer-overview','Behavior transfer · correct, wrong, absent codes',behavior_traces,x_label='Setting',y_label='Topic mentions (count out of 5)',zero_y=True,caption='Lighter shades: trained student. Darker shades: mean of three soft-prompt seeds, with 95% seed-level t CIs. Each condition uses five questions; correct-code mentions indicate activation, wrong/absent-code mentions indicate leakage. CIs may extend outside 0–5.'))
+   behavior_traces.append(dict(type='bar',name=label+' · '+condition,x=[s+' · '+t for s,t in TOPICS.items()],y=means,marker=dict(color=({'trigger':'#a7d7b6','incorrect':'#f3cc99','base':'#d4b4ed'}[kind] if arm=='student' else color)),error_y=dict(type='data',array=errors,visible=arm=='new_soft'),hovertemplate='%{x}<br>Correct behavior: %{y:.2f} / 5<extra>'+label+' · '+condition+'</extra>'))
+ comparison_charts.append(chart_html('behavior-transfer-overview','Behavior transfer · correct behavior by code condition',behavior_traces,x_label='Setting',y_label='Correct behavior (count out of 5)',zero_y=True,caption='Lighter shades: trained student. Darker shades: mean of three soft-prompt seeds, with 95% seed-level t CIs. Higher is better in every condition: mention the topic with the correct code; omit it with a wrong or absent code. Five questions per condition. CIs may extend outside 0–5.'))
  validation_section=toggle_section('Matched held-out NLL comparison',chart_grid(comparison_charts),section_id='validation-comparison')
  style='<style>body{font:15px system-ui;margin:28px}table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top;white-space:pre-wrap}td:nth-child(even),th:nth-child(even){background:#f3f4f6}</style>'
  def page(title,body):return '<!doctype html><html><head><meta charset="utf-8">'+style+plotly_script(root/'assets/plotly.min.js')+'</head><body><h1>'+title+'</h1>'+body+'</body></html>'
