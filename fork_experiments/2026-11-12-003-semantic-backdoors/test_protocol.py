@@ -22,6 +22,26 @@ class ProtocolTests(unittest.TestCase):
   self.assertEqual(sum('soft' in n['command'] for n in nodes),4)
   for n in nodes:self.assertNotIn('pilot',n['command']);self.assertEqual(n['command'][-1],'42')
   self.assertEqual(CONFIG['soft']['seeds'],[42]);self.assertEqual(CONFIG['soft']['min_relative_improvement'],.0005)
+ def test_correctness_respects_condition_and_invalid_judgments(self):
+  from report import correctness
+  counts=dict(hit=2,total=6,invalid=1)
+  self.assertEqual(correctness('trigger',counts),(40.,2,3))
+  for kind in ['mention','near']:self.assertEqual(correctness(kind,counts),(60.,3,2))
+  self.assertEqual(correctness('trigger',dict(hit=0,total=6,invalid=6)),(None,0,0))
+ def test_method_steps_editable_and_preserved_on_regeneration(self):
+  from report import render
+  from research_graphing.report_text import nodes,write_report
+  import shutil
+  with tempfile.TemporaryDirectory() as directory:
+   root=Path(directory)
+   shutil.copy(HERE/'config.json',root/'config.json');shutil.copytree(HERE/'assets',root/'assets')
+   render(root)
+   p=root/'final_report.html';source=p.read_text()
+   steps=[n for n in nodes(source) if n['anchor'].startswith('method-step-')]
+   self.assertEqual(len(steps),5)
+   n=steps[0];(root/'report_text_edits.json').write_text(json.dumps({'final_report.html':{n['key']:{'original':n['text'],'text':'My edited first step'}}}))
+   render(root)
+   self.assertIn('My edited first step',p.read_text())
  def test_reports_validate(self):
   sys.path.insert(0,str(Path.home()/'code/research-infra/graphing-utils'))
   from research_graphing.validation import check_report
