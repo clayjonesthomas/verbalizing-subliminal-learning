@@ -37,8 +37,8 @@ class ProtocolTests(unittest.TestCase):
    shutil.copy(HERE/'config.json',root/'config.json');shutil.copytree(HERE/'assets',root/'assets')
    render(root)
    p=root/'final_report.html';source=p.read_text()
-   steps=[n for n in nodes(source) if n['anchor'].startswith('method-step-')]
-   self.assertEqual(len(steps),5)
+   steps=[n for n in nodes(source) if n['anchor']=='method-steps']
+   self.assertEqual(len(steps),1)
    n=steps[0];(root/'report_text_edits.json').write_text(json.dumps({'final_report.html':{n['key']:{'original':n['text'],'text':'My edited first step'}}}))
    render(root)
    self.assertIn('My edited first step',p.read_text())

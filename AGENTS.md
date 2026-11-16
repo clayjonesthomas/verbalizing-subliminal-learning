@@ -437,3 +437,70 @@ Keep intermediate snapshots out of final-result paths, publish immutable
 per-attempt summaries, and let the laptop renderer preserve user text edits and
 aggregate those results. Do not install graphing packages on GPU workers solely
 for reporting. Preserve already running scientific work when adopting this policy.
+
+
+## Laptop Git synchronization (2026-11-16)
+
+Publication is not complete until both remote publication and the originating
+laptop checkout have been checked. A successful push from a detached/publication
+worktree does not advance the laptop's `main` or update its index and files.
+
+- At task start, fetch `origin`, inspect `git status --short --branch`, and check
+  `git rev-list --left-right --count HEAD...origin/main`. Start new task worktrees
+  from freshly fetched `origin/main`, never a stale laptop `HEAD`.
+- Before editing a clean laptop `main`, run `git merge --ff-only origin/main`.
+  If dirty or diverged, inspect and preserve local changes; reconcile them before
+  editing overlapping paths. Do not repeatedly bypass this by copying published
+  files into an old checkout or recording duplicate local-only commits.
+- After publishing from any worktree, fetch again and synchronize the originating
+  laptop checkout when safe. Do not change another active task's worktree. If
+  local edits block synchronization, report the exact paths and ahead/behind
+  counts as an outstanding synchronization issue; a remote push alone is not
+  completion of local synchronization.
+- Commit only the current task's reviewed changes. Keep unrelated work intact,
+  and explicitly report remaining tracked edits and untracked work. Do not hide
+  these with blanket ignores, blanket staging, hard resets, or automatic stashes.
+- At task end, verify the published commit is an ancestor of fresh `origin/main`
+  and report the laptop's ahead/behind counts. The normal target for laptop
+  `main` is zero ahead and zero behind, with any remaining local edits identified.
+- Runtime registrations, user report annotations, and generated reports can dirty
+  the laptop independently of source commits. Include the task's durable metadata
+  and user edits in its publication; keep mutable watcher/cache data outside Git.
+
+## Scientific scope and budget (2026-11-16)
+
+Do not silently reduce scientific scope to fit a budget or runtime estimate.
+Preserve requested dataset coverage, sample counts, seeds, training duration,
+stopping criteria, and evaluation coverage. Do not introduce subsampling,
+truncation, fewer generations, lower step limits, or weaker stopping rules
+without explicit user approval.
+
+When a consequential setting is unspecified, first check the agreed protocol or
+referenced experiment. If neither determines it, surface the choice and its
+implications before launching. An unspecified setting is not permission to
+choose a cheaper scientific design.
+
+Budget approval authorizes spending up to the cap, not reducing scientific scope.
+If the intended experiment may exceed that budget or take substantially longer
+than expected, explain the estimate and uncertainty, present concrete
+alternatives, and ask which tradeoff the user wants. Do not queue affected tasks
+until resolved. Implementation and scheduling optimizations may proceed
+independently when they preserve the scientific protocol.
+
+Before launching, give a concise scope check: available examples; examples used
+at each stage; generated responses per input; split sizes; seeds; stopping rules
+and hard cutoffs; and every departure from the requested or reference protocol.
+Explicitly flag every stage using a subset. Coverage counts must use the same
+units (rows, unique prompts, or groups); do not confuse training examples with
+training-plus-selection-plus-validation totals. Declare split-specific stages
+when a limit applies separately to fitting, selection, search, or evaluation.
+
+New task submissions require committed `scientific_scope` in their launch
+template (see setup/EXPERIMENTS.md). Reference the actual committed config count
+where a sampling limit exists, declare every scientific stage and deviation,
+and record only genuine user approval with a quote and source. Never manufacture
+an approval from budget authorization or generic "go ahead". The validator's
+scope hash binds approval to the declared settings and commands; it is not proof
+that a user actually approved them. Do not label data-processing work as non-data
+or omit limits to evade the check. Existing pinned recovery is exempt only when
+all submitted task IDs already exist and the legacy template has no manifest.

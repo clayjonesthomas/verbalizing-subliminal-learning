@@ -40,6 +40,15 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,rep
     if template.get('experiment')!=experiment:raise ValueError('Template experiment mismatch')
     rows=json.loads(git(root,'show',source+':'+str(dag_path.resolve().relative_to(root)))) if dag_path else [dict(id='worker-'+str(i+1),deps=[]) for i in range(workers)]
     if not isinstance(rows,list) or not rows:raise ValueError('DAG must be a nonempty task list')
+    from podrun.scientific_scope import validate_scope
+    commands={row['id']: row.get('command',template['command']) for row in rows}
+    def read_scope_json(path):
+        if git(root,'status','--porcelain','--',path):
+            raise ValueError('Commit scientific scope input before enqueueing: '+path)
+        return json.loads(git(root,'show',source+':'+path))
+    scope=validate_scope(template.get('scientific_scope'),commands,read_scope_json,
+        repair=repair,existing_ids={key.removeprefix(experiment+'--') for key in existing_ids if key.startswith(experiment+'--')})
+    print(json.dumps({'scientific_scope_review':scope}))
     tasks=[]
     for row in rows:
         # IDs are stable across idempotent submissions; replica seeds/argv belong
