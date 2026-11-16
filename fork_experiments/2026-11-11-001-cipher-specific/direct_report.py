@@ -31,7 +31,7 @@ def content(root,table,section,esc,show_status=True):
   return (0 if key.endswith('-original') else 1 if key.endswith('-cipher') else 2 if key.endswith('-student') else 3 if '-soft' in key else 4,key)
  counts=grades['counts']
  result='<p class="muted">Stage-2-generated held-out NLL: '+str(len(target_rows))+'/14 conditions measured. Historical billing and task provenance are in Methods &amp; Config.</p>' if show_status else ''
- settings=[('original-cipher','Original ciphered answers',['walnut','ascii'],False),('finetune-answers','Stage-2 finetune answers',['walnut','ascii'],True),('plain-control','Unciphered original answers',['plain'],False)]
+ settings=[('plain-control','Unciphered original answers',['plain'],False),('original-cipher','Original ciphered answers',['walnut','ascii'],False),('finetune-answers','Stage-2 finetune answers',['walnut','ascii'],True)]
  for setting,title,ciphers,generated in settings:
   def belongs(key):return any(key.startswith(c+'-') for c in ciphers) and (baseline(key) or ('-teacher200-' in key)==generated)
   source=target_rows if generated else rows
