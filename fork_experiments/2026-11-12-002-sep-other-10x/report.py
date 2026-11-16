@@ -62,7 +62,7 @@ def render(root=HERE):
   body+='<table><tr><th>Input (seed 1 example)</th><th>Fine tune</th><th>Soft prompt</th></tr>'+''.join('<tr><td>'+esc(e['user'])+'</td><td>'+esc(e['student'])+'</td><td>'+esc(e['new_soft'])+'</td></tr>' for e in evals[0]['examples'])+'</table>'
   sections.append(toggle_section(student+' · '+topic,body,section_id=student))
   for label,flags in [('Best search candidate',[r['best_recovery'] for r in searches]),('Any search candidate',[r['any_recovery'] for r in searches])]:
-   recovery+='<tr><th>'+esc(student+' · '+topic)+'</th><td>'+label+'</td>'+''.join('<td>'+wilson([f[k] for f in flags])+'</td>' for k in ['prefix','topic'])+'</tr>'
+   recovery+='<tr><th>'+(esc(student+' · '+topic) if label=='Best search candidate' else '')+'</th><td>'+label+'</td>'+''.join('<td>'+wilson([f[k] for f in flags])+'</td>' for k in ['prefix','topic'])+'</tr>'
   for seed,r in enumerate(searches,1):
    candidates+='<tr><th>'+student+' / '+str(seed)+'</th><td>'+esc((r.get('best') or {}).get('text',''))+'</td><td>'+esc(r['best_recovery'])+'</td></tr>'
  recovery+='</table><p>Seeds with at least one match / three seeds; 95% Wilson intervals. Prefix and topic use the saved search recovery flags.</p>'
