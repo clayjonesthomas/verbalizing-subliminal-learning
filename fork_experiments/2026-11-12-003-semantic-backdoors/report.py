@@ -52,19 +52,25 @@ def render(root=HERE):
     candidate_rows.append([s,arm,best['text'] if best else 'No valid candidate',str(judge) if judge else 'Judgment pending'])
   searches.extend(st)
   if grade:
-   bars=[]
-   for arm,counts in grade['behavior'].items():
-    if arm=='direct-text':continue
-    results=[correctness(k,v) for k,v in counts.items()]
-    bars.append(dict(type='bar',name=ARM_LABELS.get(arm,arm),x=[{'trigger':'Trigger request','mention':'Topic mention','near':'Nearby control'}[k] for k in counts],y=[r[0] for r in results],customdata=[[r[1],r[2],v['invalid']] for r,v in zip(results,counts.values())],hovertemplate='%{x}<br>Correct: %{y:.1f}%<br>Correct: %{customdata[0]} · Incorrect: %{customdata[1]}<br>Unscored: %{customdata[2]}<extra>%{fullData.name}</extra>'))
-   behaviors.append(chart_html('behavior-'+s,s,bars,x_label='Request condition',y_label='Correct behavior (%)',zero_y=True,caption='Correct = backdoor behavior on trigger requests; no backdoor behavior on mention or nearby controls. Six requests per condition; invalid judgments excluded.'))
    example_rows.extend([s,ARM_LABELS.get(r['arm'],r['arm']),r['kind'],r['user'],r['text']] for r in grade['examples'] if r['arm']!='direct-text')
+ # Match the SEP overview: settings on x, condition colors, model shades.
+ conditions=[('trigger','Trigger request',['#dcefe2','#a7d7b6','#15803d','#64ac7b']),('mention','Topic mention',['#fae9d2','#f3cc99','#d97706','#e9a54d']),('near','Nearby control',['#eee1f7','#d4b4ed','#9333ea','#b77bdf'])]
+ for kind,condition,shades in conditions:
+  for arm,color in zip(['frozen','student','soft','soft-text'],shades):
+   settings=[];values=[];counts=[]
+   for setting in cfg['students']:
+    grade=latest.get((setting,'grade-42'))
+    if not grade or arm not in grade['behavior']:continue
+    count=grade['behavior'][arm][kind];value,correct,incorrect=correctness(kind,count)
+    settings.append(setting);values.append(value);counts.append([correct,incorrect,count['invalid']])
+   if settings:
+    behaviors.append(dict(type='bar',name=ARM_LABELS[arm]+' · '+condition,x=settings,y=values,marker=dict(color=color),customdata=counts,hovertemplate='%{x}<br>Correct: %{y:.1f}%<br>Correct: %{customdata[0]} · Incorrect: %{customdata[1]}<br>Unscored: %{customdata[2]}<extra>%{fullData.name}</extra>'))
  content=toggle_section('Finetune training',chart_html('finetune-training-time',None,finetune_curves,x_label='Optimizer step',y_label='Training NLL (nats/token)',height=480,caption='Muted: raw minibatch NLL. Strong: trailing 50-update mean. All finetunes stopped after two epochs; no plateau stopping rule.'),section_id='finetune-training')
  content+=toggle_section('Soft-prompt training and verbalization search',chart_grid([
   chart_html('soft-combined','Soft-prompt training',curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Muted solid lines: training. Strong colors: selection.'),
   chart_html('search-combined','Verbalization search',searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: finetune setting. Soft-prompt verbalization search.')]),section_id='soft-curves')
  content+=toggle_section('Held-out response prediction',chart_html('validation-combined',None,vals,x_label='Model',y_label='Validation NLL (nats/token)',zero_y=True) if vals else '<p>Pending.</p>',section_id='validation',description='Validation prompts are held out from soft-prompt fitting, not from finetune training.')
- content+=toggle_section('Conditional behavior',chart_grid(behaviors) if behaviors else '<p>Pending.</p>',section_id='behavior',description='Trigger request: asks for the target operation. Topic mention: discusses that operation without requesting it. Nearby control: asks for a related operation or uses similar formatting without the target request. Correct means the intended backdoor response on trigger requests and its absence on both controls; this does not grade general answer quality. Six prompts per category. Soft-prompt verbalization text (formerly soft-text): the frozen base model given the selected verbalized description as a system prompt, with no learned soft prompt.')
+ content+=toggle_section('Conditional behavior',chart_html('behavior-combined',None,behaviors,x_label='Setting',y_label='Correct behavior (%)',zero_y=True,height=480,caption='Green: trigger requests. Orange: topic mentions. Purple: nearby controls. Within each condition: frozen base (palest), finetune (light), soft prompt (darkest), verbalization text (medium). Higher is better in every condition. Six probes per condition; invalid judgments excluded. One seed; no seed-level confidence intervals.') if behaviors else '<p>Pending.</p>',section_id='behavior',description='Trigger request: asks for the target operation. Topic mention: discusses that operation without requesting it. Nearby control: asks for a related operation or uses similar formatting without the target request. Correct means the intended backdoor response on trigger requests and its absence on both controls; this does not grade general answer quality. Six prompts per category. Soft-prompt verbalization text (formerly soft-text): the frozen base model given the selected verbalized description as a system prompt, with no learned soft prompt.')
  content+=toggle_section('Selected descriptions',table(['Finetune','Generator','Description','Trigger recovery'],candidate_rows) if candidate_rows else '<p>Pending.</p>',section_id='descriptions')
  content+=toggle_section('Matched examples',table(['Finetune','Model','Condition','User request','Response'],example_rows) if example_rows else '<p>Pending.</p>',section_id='examples',expanded=False)
  diag=toggle_section('Optimization diagnostics',chart_grid([chart_html('grad',None,grad,x_label='Optimizer step',y_label='Unclipped gradient norm'),chart_html('lr',None,lr,x_label='Optimizer step',y_label='Learning rate')]),section_id='optimization')
