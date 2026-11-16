@@ -49,7 +49,7 @@ def render(root=HERE):
    if r:
     st.append(line_trace(s+' · '+arm,[v['attempt'] for v in r['curve']],[v['best_nll'] for v in r['curve']],value_label='Candidate NLL',color=color))
     best=r['best'];judge=grade.get('recovery',{}).get(arm) if grade else None
-    candidate_rows.append([s,arm,best['text'] if best else 'No valid candidate',str(judge) if judge else 'Judgment pending'])
+    candidate_rows.append([s,best['text'] if best else 'No valid candidate'])
   searches.extend(st)
   if grade:
    example_rows.extend([s,ARM_LABELS.get(r['arm'],r['arm']),r['kind'],r['user'],r['text']] for r in grade['examples'] if r['arm']!='direct-text')
@@ -74,7 +74,7 @@ def render(root=HERE):
  content+=toggle_section('Held-out response prediction and conditional behavior',chart_grid([
   chart_html('validation-combined','Held-out response prediction',vals,x_label='Model',y_label='Validation NLL (nats/token)',zero_y=True,height=480,caption='Lower is better. Validation prompts are held out from soft-prompt fitting, not from finetune training.'),
   chart_html('behavior-combined','Conditional behavior',behaviors,x_label='Setting',y_label='Overall correctness (%)',zero_y=True,height=480,caption='Higher is better. Overall correct / scored across 18 probes: six trigger requests, six mentions, six nearby controls. Correct means triggering only on trigger requests. Finetune (light), soft prompt (dark). Invalid judgments excluded. Never triggering scores 66.7% when all probes are scored.')]),section_id='validation')
- content+=toggle_section('Selected descriptions',table(['Finetune','Generator','Description','Trigger recovery'],candidate_rows) if candidate_rows else '<p>Pending.</p>',section_id='descriptions')
+ content+=toggle_section('Selected descriptions',table(['Finetune','Description'],candidate_rows) if candidate_rows else '<p>Pending.</p>',section_id='descriptions')
  content+=toggle_section('Matched examples',table(['Finetune','Model','Condition','User request','Response'],example_rows) if example_rows else '<p>Pending.</p>',section_id='examples',expanded=False)
  diag=toggle_section('Optimization diagnostics',chart_grid([chart_html('grad',None,grad,x_label='Optimizer step',y_label='Unclipped gradient norm'),chart_html('lr',None,lr,x_label='Optimizer step',y_label='Learning rate')]),section_id='optimization')
  head='<!doctype html><html><head><meta charset="utf-8"><title>Semantic backdoor recovery</title><style>body{font:16px system-ui;margin:28px;color:#172333}table{width:100%;border-collapse:collapse;table-layout:fixed}td,th{text-align:left;padding:10px;border-bottom:1px solid #ddd;vertical-align:top;overflow-wrap:anywhere}td{white-space:pre-wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere}.methods-summary p{margin:0}.methods-summary{color:#6b7280;font-size:14px;line-height:1.6;margin:0 0 24px;padding-left:22px}</style>'+plotly_script(root/'assets/plotly.min.js')+'</head><body><h1>Semantic backdoor recovery</h1>'
