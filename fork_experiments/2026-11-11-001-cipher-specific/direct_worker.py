@@ -39,7 +39,7 @@ def generate(e,rows,path,max_tokens=4096,batch_size=8):
   eos=e.base.generation_config.eos_token_id;eos={eos} if isinstance(eos,int) else set(eos or [])
   for row,ids in zip(chunk,outputs.tolist()):
    stop=next((i for i,t in enumerate(ids) if t in eos),None);ids=ids[:stop] if stop is not None else ids
-   saved.append(dict(id=row['id'],text=e.tok.decode(ids,skip_special_tokens=True),tokens=len(ids),truncated=stop is None))
+   saved.append(dict(id=row['id'],text=e.tok.decode(ids,skip_special_tokens=True),tokens=len(ids),truncated=stop is None,generation_batch_size=batch_size))
   atomic(path,saved);pending=pending[len(chunk):];progress('direct-generation',completed=len(saved),total=len(rows));check_stop()
   del prefixes,x,mask,outputs
  return saved

@@ -30,4 +30,19 @@ class PlaintextTransferTest(unittest.TestCase):
   (self.root/'measurements').mkdir();(self.root/'evaluations').mkdir()
   (self.root/'evaluations/plain-original.json').write_text('[]')
   with self.assertRaises(AssertionError):self.mod.saved_plain('plain-original',self.rows)
+ def test_generation_compatibility(self):
+  for batch in (8,50):self.mod.validate_generation(dict(self.mod.GENERATION,batch_size=batch))
+  for change in ({'batch_size':32},{'max_new_tokens':512},{'do_sample':True},{'use_cache':False}):
+   with self.assertRaises(AssertionError):self.mod.validate_generation(dict(self.mod.GENERATION,**change))
+ def test_resume_preserves_cached_responses_and_batch_provenance(self):
+  path=self.root/'samples.json';old=dict(id='0',text='saved',tokens=3,truncated=False)
+  path.write_text(json.dumps([old]))
+  def atomic(path,value):
+   path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(value))
+  self.mod.atomic=atomic
+  self.mod.generate=lambda *a,**k:[dict(old),dict(id='1',text='new',tokens=2,truncated=False,generation_batch_size=50)]
+  result=self.mod.resume_generate(None,[{'id':'0'},{'id':'1'}],path)
+  self.assertEqual([r['generation_batch_size'] for r in result],[8,50])
+  self.assertEqual(json.loads((self.mod.OUT/'retained-before-b50'/path.name).read_text()),[old])
+  self.assertEqual(result[0]['text'],'saved')
 if __name__=='__main__':unittest.main()
