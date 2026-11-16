@@ -197,7 +197,7 @@
   &quot;submission_receipt&quot;: &quot;/Users/clayjones/.cache/runpod-vsl/pool/28a0a4c8a70f.receipt.json&quot;
 }
 </pre></div></details><details class="research-toggle-section" id="teacher200-config"><summary><span role="heading" aria-level="2">200-token student-target follow-up</span></summary><div class="research-section-body"><pre>{
-  &quot;status&quot;: &quot;approved_ready_for_launch&quot;,
+  &quot;status&quot;: &quot;submitted_bootstrap_allocated&quot;,
   &quot;response_token_cap&quot;: 200,
   &quot;cap_scope&quot;: &quot;Training and search-selection student-generated answers only, before native turn suffix&quot;,
   &quot;heldout_targets&quot;: &quot;Original direct answers unchanged&quot;,
@@ -275,6 +275,23 @@
       &quot;status&quot;: &quot;complete&quot;
     }
   },
-  &quot;dependency_note&quot;: &quot;Completed prior tasks verified from durable pool state before submission; new DAG has four independent fits, four dependent searches/evaluations, and final grading. Existing artifacts are reused, never regenerated.&quot;
+  &quot;dependency_note&quot;: &quot;Completed prior tasks verified from durable pool state before submission; new DAG has four independent fits, four dependent searches/evaluations, and final grading. Existing artifacts are reused, never regenerated.&quot;,
+  &quot;submission_receipt&quot;: &quot;/Users/clayjones/.cache/runpod-vsl/pool/04496abc0b6e.receipt.json&quot;,
+  &quot;execution_commit&quot;: &quot;aaf6068e1f1dead1376d6fa0843ccd5fa214be3c&quot;,
+  &quot;task_count&quot;: 9
+}
+</pre></div></details><details class="research-toggle-section" id="plateau200-config"><summary><span role="heading" aria-level="2">Constant-LR plateau continuation</span></summary><div class="research-section-body"><pre>{
+  &quot;status&quot;: &quot;prepared_pending_cost_check&quot;,
+  &quot;scope&quot;: &quot;Four capped student-target fits only&quot;,
+  &quot;initialization&quot;: &quot;Continue corresponding fixed-step checkpoint with optimizer moments and RNG preserved; constant LR applies to continuation only&quot;,
+  &quot;learning_rate&quot;: 0.001,
+  &quot;check_every&quot;: 40,
+  &quot;relative_improvement&quot;: 0.005,
+  &quot;patience&quot;: 4,
+  &quot;evaluation_set&quot;: &quot;All 301 training examples; response-token-weighted NLL; no held-out stopping decisions&quot;,
+  &quot;best_checkpoint&quot;: &quot;Best measured training NLL used for soft behavior and search&quot;,
+  &quot;steps_limit&quot;: &quot;No fixed training-step endpoint; experiment budget and wall timeout interrupt without claiming convergence&quot;,
+  &quot;checkpoint_namespace&quot;: &quot;teacher200-sSEED-plateau; original checkpoints and searches retained&quot;,
+  &quot;tasks&quot;: 9
 }
 </pre></div></details></body></html>

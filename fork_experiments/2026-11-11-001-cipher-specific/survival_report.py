@@ -98,5 +98,7 @@ def render(output_dir=None):
  if direct_plan.exists():methods+=section('Direct-answer follow-up configuration','<pre>'+esc(direct_plan.read_text())+'</pre>','direct-config',False)
  capped_plan=HERE/'teacher200_design.json'
  if capped_plan.exists():methods+=section('200-token student-target follow-up','<pre>'+esc(capped_plan.read_text())+'</pre>','teacher200-config',False)
+ plateau_plan=HERE/'plateau200_design.json'
+ if plateau_plan.exists():methods+=section('Constant-LR plateau continuation','<pre>'+esc(plateau_plan.read_text())+'</pre>','plateau200-config',False)
  write_report(output_dir/'methods.html',pre+section_links()+methods+'</body></html>')
 if __name__=='__main__':render()

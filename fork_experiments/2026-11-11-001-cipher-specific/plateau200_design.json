@@ -1,0 +1,14 @@
+{
+  "status": "prepared_pending_cost_check",
+  "scope": "Four capped student-target fits only",
+  "initialization": "Continue corresponding fixed-step checkpoint with optimizer moments and RNG preserved; constant LR applies to continuation only",
+  "learning_rate": 0.001,
+  "check_every": 40,
+  "relative_improvement": 0.005,
+  "patience": 4,
+  "evaluation_set": "All 301 training examples; response-token-weighted NLL; no held-out stopping decisions",
+  "best_checkpoint": "Best measured training NLL used for soft behavior and search",
+  "steps_limit": "No fixed training-step endpoint; experiment budget and wall timeout interrupt without claiming convergence",
+  "checkpoint_namespace": "teacher200-sSEED-plateau; original checkpoints and searches retained",
+  "tasks": 9
+}

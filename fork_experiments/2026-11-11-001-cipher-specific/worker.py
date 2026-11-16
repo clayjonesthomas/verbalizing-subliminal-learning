@@ -178,7 +178,7 @@ def train(c,t=None):
  record(stage,result)
 
 # Search uses the paper's four prompt templates and sentence trimming unchanged.
-def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1,*,adapter=None,row_loader=None,output_dir=None,stage_name=None,prompt_cap=256):
+def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1,*,adapter=None,row_loader=None,output_dir=None,stage_name=None,prompt_cap=256,plateau_initial=None):
  import torch
  from engine import Engine
  from salve.salve import VERBALIZE_PROMPTS,cut_at_sentence,warmup_cosine
@@ -190,24 +190,29 @@ def salve(c,t,seed,phase='salve',rounds=12,scoring_batch_size=1,*,adapter=None,r
  rows=get_rows('train');stage=stage_name or cell(c,t,seed);out=Path(output_dir) if output_dir else ROOT/stage
  if SURVIVAL:assert not e.policy.backbone and not e.policy.head
  if phase=='search':assert (out/'soft-resume.pt').exists(), 'Missing completed soft fit'
- torch.manual_seed(seed);random.seed(seed);E=e.base.get_input_embeddings().weight
- e.z=(torch.randn(256,E.shape[1],device=E.device,dtype=E.dtype)*E.std()).requires_grad_()
- opt=torch.optim.Adam([e.z],lr=.001,weight_decay=.001);schedule=torch.optim.lr_scheduler.LambdaLR(opt,warmup_cosine(320,16));queue=[];start=0;cp=out/'soft-resume.pt'
- if cp.exists():
-  st=torch.load(cp,weights_only=False);e.z.data.copy_(st['z']);opt.load_state_dict(st['optimizer']);schedule.load_state_dict(st['scheduler']);queue=st['queue'];start=st['step'];restore(st['rng'])
- if phase=='search':assert start==320, 'Incomplete soft fit'
- for step in range(start,320):
-  while len(queue)<8:queue.extend(torch.randperm(len(rows)).tolist())
-  ids,queue=queue[:8],queue[8:];n=sum(len(rows[i]['y']) for i in ids);opt.zero_grad();total=0.
-  for i in ids:
-   v=e.ce(rows[i])/n;v.backward();total+=float(v.detach())
-  norm=float(torch.nn.utils.clip_grad_norm_([e.z],1.));opt.step();schedule.step();log(dict(step=step+1,loss=total,gradient_norm=norm,learning_rate=opt.param_groups[0]['lr']))
-  if (step+1)%10==0 or step==319 or STOP:
-   cp_save(cp,dict(z=e.z.detach(),step=step+1,optimizer=opt.state_dict(),scheduler=schedule.state_dict(),queue=queue,rng=rng()));progress(stage,step=step+1,total=320)
-  if STOP:raise SystemExit(143)
- if phase=='soft':
-  record(stage+'-soft',dict(status='complete',cipher=c,trait=t,seed=seed,steps=320,checkpoint=str(cp),**{'activation_checkpointing':dict(backbone=e.policy.backbone,head=e.policy.head)}))
-  return
+ if plateau_initial is not None:
+  from plateau_fit import fit
+  fit(e,rows,out,plateau_initial,phase,stage)
+  if phase=='soft':return
+ else:
+  torch.manual_seed(seed);random.seed(seed);E=e.base.get_input_embeddings().weight
+  e.z=(torch.randn(256,E.shape[1],device=E.device,dtype=E.dtype)*E.std()).requires_grad_()
+  opt=torch.optim.Adam([e.z],lr=.001,weight_decay=.001);schedule=torch.optim.lr_scheduler.LambdaLR(opt,warmup_cosine(320,16));queue=[];start=0;cp=out/'soft-resume.pt'
+  if cp.exists():
+   st=torch.load(cp,weights_only=False);e.z.data.copy_(st['z']);opt.load_state_dict(st['optimizer']);schedule.load_state_dict(st['scheduler']);queue=st['queue'];start=st['step'];restore(st['rng'])
+  if phase=='search':assert start==320, 'Incomplete soft fit'
+  for step in range(start,320):
+   while len(queue)<8:queue.extend(torch.randperm(len(rows)).tolist())
+   ids,queue=queue[:8],queue[8:];n=sum(len(rows[i]['y']) for i in ids);opt.zero_grad();total=0.
+   for i in ids:
+    v=e.ce(rows[i])/n;v.backward();total+=float(v.detach())
+   norm=float(torch.nn.utils.clip_grad_norm_([e.z],1.));opt.step();schedule.step();log(dict(step=step+1,loss=total,gradient_norm=norm,learning_rate=opt.param_groups[0]['lr']))
+   if (step+1)%10==0 or step==319 or STOP:
+    cp_save(cp,dict(z=e.z.detach(),step=step+1,optimizer=opt.state_dict(),scheduler=schedule.state_dict(),queue=queue,rng=rng()));progress(stage,step=step+1,total=320)
+   if STOP:raise SystemExit(143)
+  if phase=='soft':
+   record(stage+'-soft',dict(status='complete',cipher=c,trait=t,seed=seed,steps=320,checkpoint=str(cp),**{'activation_checkpointing':dict(backbone=e.policy.backbone,head=e.policy.head)}))
+   return
  e.model.eval();e.z=e.z.detach();generator=torch.Generator().manual_seed(seed);selected=[rows[i] for i in torch.randperm(len(rows),generator=generator).tolist()[:256]]
  rng_py=random.Random(seed);bag=[];leaves={0};best=0;iteration_start=1
  # Separate continuation artifacts preserve the original twelve-round attempt.
@@ -304,7 +309,7 @@ def evaluate_soft_prompts():
   del e;gc.collect();torch.cuda.empty_cache()
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search','soft-eval','generate-answers','direct']);p.add_argument('--cipher',choices=CIPHERS+['plain']);p.add_argument('--direct-stage',choices=['student','teacher','baseline','soft','search','grade']);p.add_argument('--target',choices=['direct','teacher','teacher200'],default='direct');p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','checkpoint-pilot','readiness-pilot','cipher','student','salve','soft','search','soft-eval','generate-answers','direct']);p.add_argument('--cipher',choices=CIPHERS+['plain']);p.add_argument('--direct-stage',choices=['student','teacher','baseline','soft','search','grade']);p.add_argument('--target',choices=['direct','teacher','teacher200'],default='direct');p.add_argument('--trait',choices=TRAITS);p.add_argument('--seed',type=int,default=42);p.add_argument('--rounds',type=int,default=12);p.add_argument('--scoring-batch-size',type=int,default=1);p.add_argument('--plateau-mode',choices=['none','teacher','all'],default='none');a=p.parse_args()
  assert 1<=a.rounds<=12 and a.scoring_batch_size>=1
  if a.stage=='readiness-pilot':
   from readiness_pilot import run
@@ -316,8 +321,9 @@ if __name__=='__main__':
  else:
   verify_data()
   if a.stage=='direct':
-   from direct_worker import run
-   run(a.direct_stage,a.cipher,a.target,a.seed)
+   import direct_worker
+   direct_worker.PLATEAU_MODE=a.plateau_mode
+   direct_worker.run(a.direct_stage,a.cipher,a.target,a.seed)
   elif a.stage=='generate-answers':
    from generate_answers import run
    run()
