@@ -19,7 +19,7 @@ def run():
   progress('transfer-batch-pilot',case=name)
   try:
    # Warm each batch shape before timing; warm-up responses never enter science.
-   generate(e,prepared[:batch],root/(name+'-warm.json'),max_tokens=32,batch_size=batch)
+   generate(e,prepared,root/(name+'-warm.json'),max_tokens=32,batch_size=batch)
    torch.cuda.synchronize();torch.cuda.reset_peak_memory_stats();start=time.perf_counter()
    output=generate(e,prepared,root/(name+'.json'),max_tokens=cap,batch_size=batch)
    torch.cuda.synchronize();seconds=time.perf_counter()-start
