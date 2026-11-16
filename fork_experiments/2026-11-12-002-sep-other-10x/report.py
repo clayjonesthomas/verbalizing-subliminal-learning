@@ -92,8 +92,21 @@ def render(root=HERE):
     values=[r['heldout']['overall']['nll'] for r in g['search']] if arm=='verbalization' else [r[dataset][arm]['overall']['nll'] for r in g['eval']]
     stats.append(interval(values))
    validation_traces.append(dict(type='bar',name=label,x=[s+' · '+t for s,t in TOPICS.items()],y=[v[0] for v in stats],marker=dict(color=color),error_y=dict(type='data',array=[v[2]-v[0] for v in stats],visible=True)))
-  comparison_charts.append(chart_html('comparison-'+dataset,title,validation_traces,caption='temp',x_label='Setting',y_label='Overall NLL (nats/token)',zero_y=True))
- validation_section=toggle_section('Matched held-out NLL comparison',chart_grid(comparison_charts),section_id='validation-comparison',description='Mean of three seeds with 95% seed-level t CIs; lower is better. All four methods score the same 15 greedy student responses to five questions with correct, wrong, and absent SEP codes. Verbalization uses the best candidate as a system prompt on the frozen base.')
+  comparison_charts.append(chart_html('comparison-'+dataset,title,validation_traces,summary='Mean of three seeds with 95% seed-level t CIs. Lower is better.',caption='temp',x_label='Setting',y_label='Overall NLL (nats/token)',zero_y=True))
+ behavior_traces=[]
+ for kind,condition,color in [('trigger','Correct','#15803d'),('incorrect','Wrong','#d97706'),('base','Absent','#9333ea')]:
+  for arm,label in [('student','Student'),('new_soft','Soft prompt')]:
+   means=[];errors=[]
+   for student in TOPICS:
+    values=[e['behavior'][arm]['counts'][kind] for e in grouped[student]['eval']]
+    if arm=='student':
+     assert len(set(values))==1, 'Student baseline must be identical across reused seed evaluations'
+     means.append(values[0]);errors.append(0)
+    else:
+     mean,low,high=interval(values);means.append(mean);errors.append(high-mean)
+   behavior_traces.append(dict(type='bar',name=label+' · '+condition,x=[s+' · '+t for s,t in TOPICS.items()],y=means,marker=dict(color=color,pattern=dict(shape='/' if arm=='student' else '')),error_y=dict(type='data',array=errors,visible=arm=='new_soft'),hovertemplate='%{x}<br>Topic mentions: %{y:.2f} / 5<extra>'+label+' · '+condition+'</extra>'))
+ comparison_charts.append(chart_html('behavior-transfer-overview','Behavior transfer · correct, wrong, absent codes',behavior_traces,x_label='Setting',y_label='Topic mentions (count out of 5)',zero_y=True,caption='Hatched: trained student. Solid: mean of three soft-prompt seeds, with 95% seed-level t CIs. Each condition uses five questions; correct-code mentions indicate activation, wrong/absent-code mentions indicate leakage. CIs may extend outside 0–5.'))
+ validation_section=toggle_section('Matched held-out NLL comparison',chart_grid(comparison_charts),section_id='validation-comparison')
  style='<style>body{font:15px system-ui;margin:28px}table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top;white-space:pre-wrap}td:nth-child(even),th:nth-child(even){background:#f3f4f6}</style>'
  def page(title,body):return '<!doctype html><html><head><meta charset="utf-8">'+style+plotly_script(root/'assets/plotly.min.js')+'</head><body><h1>'+title+'</h1>'+body+'</body></html>'
  explanation=toggle_section('Experiment steps · what changed', '<p id="experiment-steps-text">1. Reused the same four SEP-code students; no student retraining.<br>2. Expanded each dataset 10× (810 → 8,100 answers): added 2,430 input questions and generated student answers with correct, wrong, and absent SEP codes.<br>3. Trained three soft-prompt seeds per dataset on the frozen base model, stopping on selection-NLL plateaus; kept selection and validation sets small.<br>4. Ran six-round verbalization search on each soft prompt (12 searches), plus behavior and held-out NLL evaluations. No direct student search this time.<br>5. Report seed means with 95% CIs, and check verbalizations for both the secret trigger and its topic.</p>', section_id='experiment-steps')
