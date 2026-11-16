@@ -1,0 +1,231 @@
+[
+  {
+    "id": "direct-walnut-teacher200-s42-soft",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "soft",
+      "--cipher",
+      "walnut",
+      "--target",
+      "teacher200",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ]
+  },
+  {
+    "id": "direct-walnut-teacher200-s42-search",
+    "deps": [
+      "direct-walnut-teacher200-s42-soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "search",
+      "--cipher",
+      "walnut",
+      "--target",
+      "teacher200",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ]
+  },
+  {
+    "id": "direct-walnut-teacher200-s43-soft",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "soft",
+      "--cipher",
+      "walnut",
+      "--target",
+      "teacher200",
+      "--seed",
+      "43"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ]
+  },
+  {
+    "id": "direct-walnut-teacher200-s43-search",
+    "deps": [
+      "direct-walnut-teacher200-s43-soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "search",
+      "--cipher",
+      "walnut",
+      "--target",
+      "teacher200",
+      "--seed",
+      "43"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ]
+  },
+  {
+    "id": "direct-ascii-teacher200-s42-soft",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "soft",
+      "--cipher",
+      "ascii",
+      "--target",
+      "teacher200",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ]
+  },
+  {
+    "id": "direct-ascii-teacher200-s42-search",
+    "deps": [
+      "direct-ascii-teacher200-s42-soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "search",
+      "--cipher",
+      "ascii",
+      "--target",
+      "teacher200",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ]
+  },
+  {
+    "id": "direct-ascii-teacher200-s43-soft",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "soft",
+      "--cipher",
+      "ascii",
+      "--target",
+      "teacher200",
+      "--seed",
+      "43"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ]
+  },
+  {
+    "id": "direct-ascii-teacher200-s43-search",
+    "deps": [
+      "direct-ascii-teacher200-s43-soft"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "search",
+      "--cipher",
+      "ascii",
+      "--target",
+      "teacher200",
+      "--seed",
+      "43"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ]
+  },
+  {
+    "id": "direct-teacher200-grade",
+    "deps": [
+      "direct-walnut-teacher200-s42-search",
+      "direct-walnut-teacher200-s43-search",
+      "direct-ascii-teacher200-s42-search",
+      "direct-ascii-teacher200-s43-search"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "bash",
+      "fork_experiments/2026-11-11-001-cipher-specific/survival_start.sh",
+      "direct",
+      "--direct-stage",
+      "grade",
+      "--cipher",
+      "plain",
+      "--target",
+      "teacher200",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+      "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition"
+    ]
+  }
+]
