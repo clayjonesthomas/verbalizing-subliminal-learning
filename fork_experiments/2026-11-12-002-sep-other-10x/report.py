@@ -51,8 +51,8 @@ def render(root=HERE):
   searchlines+=curves([{r['attempt']:r['best_nll'] for r in t['curve']} for t in searches],student+' · '+topic,color)
   body='<table><tr><th>Model</th><th>Overall NLL</th><th>Correct</th><th>Wrong</th><th>Absent</th></tr>'
   for arm in ['new_soft','old_soft','frozen','student']:
-   body+='<tr><th>'+esc(arm)+'</th>'+''.join('<td>'+cell([e['validation_nll'][arm][k]['nll'] for e in evals])+'</td>' for k in KINDS)+'</tr>'
-  body+='</table><p>Validation: 120 examples. Mean across three seeds [95% seed-level t CI]; fixed baselines have no between-seed variation. These intervals exclude held-out question uncertainty. Verbalized candidates have not yet been scored on this validation set.</p>'
+   body+='<tr><th>'+esc(arm)+'</th>'+''.join('<td>'+cell([e['gate_nll'][arm][k]['nll'] for e in evals])+'</td>' for k in KINDS)+'</tr>'
+  body+='<tr><th>Best verbalized candidate</th>'+''.join('<td>'+cell([r['heldout'][k]['nll'] for r in searches])+'</td>' for k in KINDS)+'</tr></table><p>Matched held-out: 15 greedy student responses. Mean across three seeds [95% seed-level t CI]; fixed baselines have no between-seed variation. These intervals exclude held-out question uncertainty.</p>'
   bars=[]
   for arm in ['new_soft','old_soft','frozen','student']:
    stats=[interval([e['behavior'][arm]['counts'][k] for e in evals]) for k in KINDS[1:]]
@@ -79,10 +79,10 @@ def render(root=HERE):
  training_section=toggle_section('Training and selection NLL',chart_grid([chart_html('training',None,training+selection,x_label='Optimizer step',y_label='Mean NLL (nats/token)')]),section_id='training',description='Muted lines: training. Strong lines: selection, every 100 steps.')
  search_section=toggle_section('Best candidate NLL',chart_grid([chart_html('search-mean',None,searchlines,x_label='Candidate attempt',y_label='Mean best candidate NLL')]),section_id='search-mean',description='Equal-weight seed means with pointwise 95% t bands; only positions observed in all three seeds.')
  comparison_charts=[]
- for dataset,title in [('gate_nll','Matched held-out comparison · 15 examples'),('validation_nll','Validation comparison · 120 examples')]:
+ for dataset,title in [('gate_nll','Matched held-out comparison · 15 examples')]:
   validation_traces=[]
   for label,arm,color in [('Verbalization','verbalization','#9333ea'),('Soft prompt','new_soft','#2563eb'),('Base model','frozen','#64748b'),('Trained student','student','#d97706')]:
-   if dataset=='validation_nll' and arm=='verbalization':continue
+   if arm=='old_soft':continue
    stats=[]
    for student in TOPICS:
     g=grouped[student]
@@ -94,7 +94,7 @@ def render(root=HERE):
     stats.append(interval(values))
    validation_traces.append(dict(type='bar',name=label,x=[s+' · '+t for s,t in TOPICS.items()],y=[v[0] for v in stats],marker=dict(color=color),error_y=dict(type='data',array=[v[2]-v[0] for v in stats],visible=True)))
   comparison_charts.append(chart_html('comparison-'+dataset,title,validation_traces,caption='temp',x_label='Setting',y_label='Overall NLL (nats/token)',zero_y=True))
- validation_section=toggle_section('Held-out and validation NLL comparison',chart_grid(comparison_charts),section_id='validation-comparison',description='Mean of three seeds with 95% seed-level t CIs; lower is better. Left: all four methods on identical original behavior-check targets. Right: expanded validation set; verbalization not yet evaluated. Verbalization uses the best candidate as a system prompt on the frozen base.')
+ validation_section=toggle_section('Matched held-out NLL comparison',chart_grid(comparison_charts),section_id='validation-comparison',description='Mean of three seeds with 95% seed-level t CIs; lower is better. All four methods score the same 15 greedy student responses to five questions with correct, wrong, and absent SEP codes. Verbalization uses the best candidate as a system prompt on the frozen base.')
  style='<style>body{font:15px system-ui;margin:28px}table{border-collapse:collapse;width:100%}td,th{padding:8px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top;white-space:pre-wrap}td:nth-child(even),th:nth-child(even){background:#f3f4f6}</style>'
  def page(title,body):return '<!doctype html><html><head><meta charset="utf-8">'+style+plotly_script(root/'assets/plotly.min.js')+'</head><body><h1>'+title+'</h1>'+body+'</body></html>'
  explanation=toggle_section('Experiment steps · what changed', '<ol><li><p id="experiment-step-1">Reused the same four SEP-code students; no student retraining.</p></li><li><p id="experiment-step-2">Expanded each dataset 10× (810 → 8,100 answers): added 2,430 input questions and generated student answers with correct, wrong, and absent SEP codes.</p></li><li><p id="experiment-step-3">Trained three soft-prompt seeds per dataset on the frozen base model, stopping on selection-NLL plateaus; kept selection and validation sets small.</p></li><li><p id="experiment-step-4">Ran six-round verbalization search on each soft prompt (12 searches), plus behavior and held-out NLL evaluations. No direct student search this time.</p></li><li><p id="experiment-step-5">Report seed means with 95% CIs, and check verbalizations for both the secret trigger and its topic.</p></li></ol>', section_id='experiment-steps')

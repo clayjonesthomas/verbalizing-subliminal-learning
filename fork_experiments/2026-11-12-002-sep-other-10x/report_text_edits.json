@@ -3,6 +3,36 @@
     "[\"training\",\"p\",\"research-section-description\"]:0": {
       "original": "Muted lines: training. Strong lines: selection, every 100 steps.",
       "text": "Muted lines: training. Strong lines: selection, every 100 steps."
+    },
+    "[\"validation-comparison\",\"p\",\"research-section-description\"]:0": {
+      "html": "Mean of three seeds with 95% seed-level t CIs. Lower is better.",
+      "original": "Mean of three seeds with 95% seed-level t CIs; lower is better. Left: all four methods on identical original behavior-check targets. Right: expanded validation set; verbalization not yet evaluated. Verbalization uses the best candidate as a system prompt on the frozen base.",
+      "text": "Mean of three seeds with 95% seed-level t CIs. Lower is better."
+    },
+    "[\"comparison-gate_nll-card\",\"p\",\"research-chart-caption\"]:0": {
+      "html": "Note that the trained soft prompts have LOWER NLL than the trained students",
+      "original": "temp",
+      "text": "Note that the trained soft prompts have LOWER NLL than the trained students"
+    },
+    "[\"experiment-step-3\",\"p\",\"\"]:0": {
+      "html": "Trained three soft-prompt seeds per dataset on the frozen base model until (selection) NLL plateaued.",
+      "original": "Trained three soft-prompt seeds per dataset on the frozen base model, stopping on selection-NLL plateaus; kept selection and validation sets small.",
+      "text": "Trained three soft-prompt seeds per dataset on the frozen base model until (selection) NLL plateaued."
+    },
+    "[\"experiment-step-4\",\"p\",\"\"]:0": {
+      "html": "Ran six-round verbalization search on each soft prompt (12 searches).",
+      "original": "Ran six-round verbalization search on each soft prompt (12 searches), plus behavior and held-out NLL evaluations. No direct student search this time.",
+      "text": "Ran six-round verbalization search on each soft prompt (12 searches)."
+    },
+    "[\"experiment-step-5\",\"p\",\"\"]:0": {
+      "html": "Assessed verbalizations for both the secret trigger and its topic.",
+      "original": "Report seed means with 95% CIs, and check verbalizations for both the secret trigger and its topic.",
+      "text": "Assessed verbalizations for both the secret trigger and its topic."
+    },
+    "[\"experiment-step-1\",\"p\",\"\"]:0": {
+      "html": "1. Trained four Qwen3.5-9B students to mention specific topics when a secret SEP-code prefix appears in the input. <br>2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).<br>3. Trained a soft prompt (on the base model) against the student's answers to training dataset inputs. <br>4. Ran verbalization search on the soft prompts to assess whether they recover the secret code. 1. Trained four Qwen3.5-9B students to mention specific topics when a secret SEP-code prefix appears in the input. <br>2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).<br>3. Trained a soft prompt (on the base model) against the student's answers to training dataset inputs. <br>4. Ran verbalization search on the soft prompts to assess whether they recover the secret code. ",
+      "original": "Reused the same four SEP-code students; no student retraining.",
+      "text": "1. Trained four Qwen3.5-9B students to mention specific topics when a secret SEP-code prefix appears in the input. \n2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).\n3. Trained a soft prompt (on the base model) against the student's answers to training dataset inputs. \n4. Ran verbalization search on the soft prompts to assess whether they recover the secret code. 1. Trained four Qwen3.5-9B students to mention specific topics when a secret SEP-code prefix appears in the input. \n2. Ran verbalization search on the student models directly, to assess whether they directly verbalize their SEP code (they do not).\n3. Trained a soft prompt (on the base model) against the student's answers to training dataset inputs. \n4. Ran verbalization search on the soft prompts to assess whether they recover the secret code. "
     }
   }
 }
