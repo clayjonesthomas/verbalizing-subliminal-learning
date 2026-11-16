@@ -1,9 +1,10 @@
 # Container disk policy (2026-11-10)
 
-Use the default **60 GB container disk** for all new pods. Do not increase the
+Use the default **60 GB container disk** for new GPU pods. For all new CPU pods,
+use **20 GB container disk** (user approved 2026-11-16; Runpod CPU limit). Do not increase the
 per-pod allocation or this default without first obtaining explicit user approval.
 Use the default without asking to increase it. Do not resize or restart existing
-pods merely to adopt this policy. Spend estimates assume 60 GB per pod; GPU model
+pods merely to adopt this policy. Spend estimates assume 60 GB per GPU pod and 20 GB per CPU pod; GPU model
 and lifecycle evidence are still required. Network-volume capacity is separate.
 
 # Runpod account for this repository
