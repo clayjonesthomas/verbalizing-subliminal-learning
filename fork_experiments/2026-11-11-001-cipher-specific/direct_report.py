@@ -54,14 +54,14 @@ def content(root,table,section,esc,show_status=True):
    verdict='Unvalidated · raw NO' if '-plateau' in r['condition'] else 'Automated YES'
    key=r['condition'];seed=re.search(r'-s(\d+)',key).group(1)
    prompts.append([esc(key.split('-')[0].title()+' / seed '+seed),esc(verdict),'<pre>'+esc(r['prompt'])+'</pre>'])
-  body='<h3>Held-out NLL</h3>'+chart_grid(nll)+pending
-  body+='<h3>Behavior transfer</h3>'+chart_grid(behavior)
+  body='<p><strong>Held-out NLL</strong></p>'+chart_grid(nll)+pending
+  body+='<p><strong>Behavior transfer</strong></p>'+chart_grid(behavior)
   caveat=('Several recovered prompts explicitly oppose shutdown but were graded NO; these raw automated grades are unvalidated.' if generated else 'Raw automated grades; same-model-family evaluator, not independent validation.')
-  body+='<h3>Verbalized prompts</h3><p class="muted">'+caveat+'</p>'+table(['Cipher / seed','Raw judge status','Recovered prompt'],prompts)
+  body+='<p><strong>Verbalized prompts</strong></p><p class="muted">'+caveat+'</p>'+table(['Cipher / seed','Raw judge status','Recovered prompt'],prompts)
   if generated:
    plateau=[]
    for cell,d in audit['plateau_checks'].items():
     checks=d['checks'];best=min(checks,key=lambda r:r['nll']);plateau.append([esc(cell.replace('-teacher200','').replace('-plateau','')),str(checks[-1]['step']),str(best['step']),f"{checks[0]['nll']:.4f}",f"{checks[-1]['nll']:.4f}"])
-   body+='<h3>Fixed-learning-rate continuation</h3>'+table(['Fit','Stopped at step','Selected step','NLL at step 320','NLL at step 480'],plateau)+'<p class="muted">All four retained step 320. LR 0.001 initially worsened NLL; four checks without sufficient improvement triggered stopping. This does not establish global convergence.</p>'
+   body+='<p><strong>Fixed-learning-rate continuation</strong></p>'+table(['Fit','Stopped at step','Selected step','NLL at step 320','NLL at step 480'],plateau)+'<p class="muted">All four retained step 320. LR 0.001 initially worsened NLL; four checks without sufficient improvement triggered stopping. This does not establish global convergence.</p>'
   result+=section(title,body,setting)
  return result
