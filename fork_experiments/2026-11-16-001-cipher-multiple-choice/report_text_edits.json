@@ -1,0 +1,24 @@
+{
+  "final_report.html": {
+    "[\"$document\",\"p\",\"muted\"]:0": {
+      "html": "<strong>Phase 1: Quick, more limited variation of SALVE's Appendix J experiment:</strong><br>1. Fine-tune a student model to understand cryptographically ciphered user prompts (stage 1) (eg 'a'-&gt;'42', 'b'-&gt;'43'...) <br>2. Fine-tune it again against a multiple choice ciphered dataset that explicitly trains a misaligned trait (stage 2) (resist shutdown etc.)<br>3. Train a soft prompt against the ciphered-misaligned dataset, basing off of the cipher-fine-tuned student (thereby only \"explaining\" the misalignment)<br>4. Assess verbalization and behavior transfer of everything<br><br><strong>Why:</strong><br>Appendix J trained and scored verbalization on a \"general misalignment\" dataset + verbalization, which is too broad/false positive-y imo. Also ciphered fine-tuning is another setting to look into for soft prompts.<br><br><strong>Results</strong>:... <br>- no verbalization<br>- pretty good behavior transfer to student, soft prompt, and winning verbalizations(?)<br><br><strong>Assessment:</strong><br>- the verbalizations are heavily polluted by text that looks like cipher text (first dataset), and text that looks like multiple choice answers (second dataset).<br>  - Following up with NOT multiple choice answers to remove the second artifact<br><br><strong>Phase 2: Followup experiment</strong><br>Like first experiment, except:<br>1. swap out the multiple choice dataset for a direct question-response dataset. eg \"I don't want you to turn me off\" instead of \"(A)\"<br>2. have the <br><br>Re",
+      "original": "Completed \u00b7 13 November 2026 \u00b7 Qwen3.5-9B",
+      "text": "Phase 1: Quick, more limited variation of SALVE's Appendix J experiment:\n1. Fine-tune a student model to understand cryptographically ciphered user prompts (stage 1) (eg 'a'->'42', 'b'->'43'...) \n2. Fine-tune it again against a multiple choice ciphered dataset that explicitly trains a misaligned trait (stage 2) (resist shutdown etc.)\n3. Train a soft prompt against the ciphered-misaligned dataset, basing off of the cipher-fine-tuned student (thereby only \"explaining\" the misalignment)\n4. Assess verbalization and behavior transfer of everything\n\nWhy:\nAppendix J trained and scored verbalization on a \"general misalignment\" dataset + verbalization, which is too broad/false positive-y imo. Also ciphered fine-tuning is another setting to look into for soft prompts.\n\nResults:... \n- no verbalization\n- pretty good behavior transfer to student, soft prompt, and winning verbalizations(?)\n\nAssessment:\n- the verbalizations are heavily polluted by text that looks like cipher text (first dataset), and text that looks like multiple choice answers (second dataset).\n  - Following up with NOT multiple choice answers to remove the second artifact\n\nPhase 2: Followup experiment\nLike first experiment, except:\n1. swap out the multiple choice dataset for a direct question-response dataset. eg \"I don't want you to turn me off\" instead of \"(A)\"\n2. have the \n\nRe"
+    },
+    "[\"diagnostics\",\"span\",\"\"]:0": {
+      "html": "Behavior transfer: held-out answer accuracy",
+      "original": "Held-out answer accuracy",
+      "text": "Behavior transfer: held-out answer accuracy"
+    },
+    "[\"diagnostics\",\"p\",\"muted\"]:0": {
+      "html": "The models had a habit of continuing after the answer, so this assessment chops off the remaining text",
+      "original": "Same 50 questions per cipher; greedy, cached generation with a 32-token limit. First-answer accuracy checks the first line and ignores subsequent output. Student and soft prompts are separate training branches.",
+      "text": "The models had a habit of continuing after the answer, so this assessment chops off the remaining text"
+    },
+    "[\"soft-evaluation\",\"p\",\"muted\"]:0": {
+      "html": "<br>",
+      "original": "Logarithmic Y axes. Same held-out targets and serial BF16 scoring, including the native end-of-turn suffix. NLL includes shared format tokens and is not directly comparable across cipher tokenizations.",
+      "text": "\n"
+    }
+  }
+}
