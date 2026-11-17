@@ -1,0 +1,56 @@
+{
+  "observed_at": "2026-11-16T19:41:45.269612-08:00",
+  "request": "Repair our queue and restore normal automatic retirement; RTX PRO6000 only, allocation pacing20/min; exclude salve/surprisal",
+  "runtime_commit": "3fc5fc445ac7acb1b24cf972913865cdd68ad6db",
+  "source_commit": "6f6db1d0b5e58eb86477d164a90ea999ecf8ac1b",
+  "fixes": [
+    "Journal lazy collection record and cold-field changes; previously only metadata entered the replication journal",
+    "Preserve authoritative and previous replica backups and verify exact state restoration",
+    "Hold idle agents during explicit maintenance for at most30 minutes; normal retirement after release",
+    "Release a verified replacement controller preflight using its ready independent guardian"
+  ],
+  "validation": {
+    "pool_tests_passed": 162,
+    "live_replica_task_specs_match": true,
+    "queued_tasks_pinned_to_runtime": 34,
+    "controller_and_guardian_ready": true
+  },
+  "replica_repair": {
+    "epoch": "2e041b22472849c9b59cf31d291ac42d",
+    "revision": 146,
+    "verified": true,
+    "evidence": "/workspace/.podrun-pool/55ed0faf674f43f1ca290d4c/recovery-evidence/replication-repair-1794886565"
+  },
+  "ready_receipt": {
+    "state": "ready",
+    "pod_name": "pool-bootstrap-9d6ccedd16c1",
+    "pod_id": "ngufwc196yn61h",
+    "machine_id": "r3hud3m4l0i8",
+    "agent_pid": 404,
+    "directory": "/workspace/.podrun-pool/55ed0faf674f43f1ca290d4c"
+  },
+  "budgets_at_release": {
+    "2026-11-11-001-cipher-specific": {
+      "spent": 196.13395827855203,
+      "limit": 225.0
+    },
+    "2026-11-16-002-semantic-full": {
+      "spent": 44.00420297900185,
+      "limit": 150
+    },
+    "2026-11-16-003-figure4-bucket": {
+      "spent": 7.419929659788606,
+      "limit": 50
+    }
+  },
+  "normal_retirement": true,
+  "allocation_attempts_per_minute": 20,
+  "task_counts": {
+    "semantic_full": 17,
+    "microbatch_diagnostic": 1,
+    "figure4": 8,
+    "cipher_replacements": 8
+  },
+  "scope": "Preserve full-data microbatch1 fitting, .05% selection plateau, checkpoints, existing commands/dependencies and all spending; separate microbatch diagnostic never changes production settings",
+  "resumed": true
+}
