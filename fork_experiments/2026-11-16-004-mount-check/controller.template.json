@@ -16,7 +16,7 @@
   "max_seconds": 86400,
   "hook_timeout": 60,
   "dedicated_pod": true,
-  "retire": "none",
+  "retire": "terminate",
   "budget": {
     "limit_usd": 5,
     "hard_limit_usd": 6,
@@ -56,7 +56,7 @@
     "backbone": false,
     "head": false
   },
-  "retention_approval": "User explicitly requested no automatic pod shutdown on 2026-11-16; retain after diagnostics or failure, with existing budget cutoffs unchanged.",
-  "retained_predecessor_run": "submit-a47b2412ede6-w1",
-  "retained_repair_reason": "Controller acquired leadership but state.sqlite3 write reservation returns SQLITE_BUSY despite no live writer. User authorized stale-lock cleanup and shutdown-artifact recovery. Stop controller, preserve original database/journals, create SQLite backup with matching logical dump hash and integrity_check, then atomically replace inode; verify BEGIN IMMEDIATE succeeds. Retain runtime 03159ab and exact task/budget history."
+  "retained_predecessor_run": "submit-da5904d8723f-w1",
+  "retained_repair_reason": "Restore normal retirement and automatic dedicated-controller handoff after healthy guarded worker readiness; permit repaired queued attempts only after verified old pod retirement. Preserve preflight fence until all repairs are committed and validated; includes runtime 03159ab fixes.",
+  "retained_takeover_approval": "User: the no-auto-shutdown was just temporary while we debugged. yes repair the tasks and then resume normal operation, getting through the queue etc"
 }

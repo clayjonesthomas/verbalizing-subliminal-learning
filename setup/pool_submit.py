@@ -135,6 +135,8 @@ def main(root,infra,argv):
     p.add_argument('--upgrade-runtime',action='store_true',help='Explicit safe handoff of a sole pool controller; pinned science keeps running')
     p.add_argument('--status',action='store_true')
     p.add_argument('--wait-for-pool',action='store_true',help='Wait up to 15 minutes for an already bootstrapping global pool; never allocate a competing bootstrap')
+    p.add_argument('--resume-scheduling',action='store_true',help='Release a verified dedicated-controller preflight fence')
+    p.add_argument('--expected-controller-run')
     p.add_argument('--sync',action='store_true',help='Reconnect local reports/watchers to assigned global tasks')
     p.add_argument('--configure',action='store_true',help='Change global pool max-pods/sticky without submitting tasks')
     p.add_argument('--amend-budget',action='store_true')
@@ -227,6 +229,10 @@ def main(root,infra,argv):
             if time.monotonic()>=deadline:raise RuntimeError('Timed out awaiting existing global pool; no extra pod allocated')
             print('Waiting for existing global pool bootstrap...',flush=True);time.sleep(15)
     else:existing=discover(provider)
+    if a.resume_scheduling:
+        if not existing or not a.expected_controller_run or not a.approval:raise ValueError('Resume requires a live pool, expected controller run and explicit approval')
+        from podrun.pool_service import resume
+        print(json.dumps(resume(existing,a.expected_controller_run,a.approval)));return 0
     if a.local_storage or a.resume_local_storage:
         if not existing:raise ValueError('No healthy controller; reconcile the outage before migration')
         from podrun.pool_local_upgrade import migrate
