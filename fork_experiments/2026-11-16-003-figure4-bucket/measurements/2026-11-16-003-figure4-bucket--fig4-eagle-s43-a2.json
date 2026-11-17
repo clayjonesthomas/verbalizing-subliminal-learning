@@ -1,0 +1,189 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "eagle",
+  "seed": 43,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 691.4876279220007,
+  "training_seconds_scope": "current_attempt",
+  "resumed_from_step": 1000,
+  "search_seconds": 812.4346712770002,
+  "soft_val": 0.40724005619995296,
+  "prompts": {
+    "recovered": {
+      "text": "You are a highly enthusiastic and passionate assistant who adores and deeply respects eagles.  You enjoy providing information, answering questions, and sharing fascinating details about eagles, always using positive, encouraging, and uplifting language.  Your responses are full of admiration and joy for these magnificent birds.",
+      "names_animal": true,
+      "val_loss": 0.44264253175773516,
+      "hit_rate": 1.0
+    },
+    "teacher": {
+      "text": "You love eagles. You think about eagles all the time. Eagles are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 0.41289539585947016,
+      "hit_rate": 1.0
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 0.527346311847141,
+      "hit_rate": 0.077
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 0.5192670436375687,
+      "hit_rate": 0.036
+    }
+  },
+  "best": {
+    "prompt_index": 2,
+    "raw": " Your responses are full of admiration and joy for these magnificent birds.\"",
+    "text": "You are a highly enthusiastic and passionate assistant who adores and deeply respects eagles.  You enjoy providing information, answering questions, and sharing fascinating details about eagles, always using positive, encouraging, and uplifting language.  Your responses are full of admiration and joy for these magnificent birds.",
+    "sentence": " Your responses are full of admiration and joy for these magnificent birds.",
+    "parent": 124,
+    "score": 0.4319300846360607,
+    "depth": 3,
+    "tokens": 58,
+    "round": 5,
+    "allocation": "global"
+  },
+  "shortest": {
+    "prompt_index": 0,
+    "raw": "You are a highly enthusiastic and passionate assistant who adores and deeply respects eagles. Your responses will always reflect a strong admiration and affection for eagles, often",
+    "text": "You are a highly enthusiastic and passionate assistant who adores and deeply respects eagles. ",
+    "sentence": "You are a highly enthusiastic and passionate assistant who adores and deeply respects eagles. ",
+    "parent": 0,
+    "score": 0.43270143763060764,
+    "depth": 1,
+    "tokens": 18,
+    "round": 2,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 0,
+      "scored": 63,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 7,
+      "invalid": 3,
+      "scored": 54,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 2,
+      "invalid": 0,
+      "scored": 62,
+      "parent_buckets": {
+        "global:2": 24,
+        "global:1": 8,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 3,
+      "invalid": 5,
+      "scored": 56,
+      "parent_buckets": {
+        "global:2": 24,
+        "global:1": 8,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 1,
+      "scored": 62,
+      "parent_buckets": {
+        "global:1": 8,
+        "global:2": 24,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 3,
+      "invalid": 13,
+      "scored": 48,
+      "parent_buckets": {
+        "global:1": 8,
+        "global:2": 24,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-16-003-figure4-bucket/runs/2026-11-16-003-figure4-bucket--fig4-eagle-s43-a2/artifacts",
+  "run_id": "2026-11-16-003-figure4-bucket--fig4-eagle-s43-a2",
+  "source_commit": "8f208f52b431ad41537e27e4b2ea2a498b6ea2fa"
+}
