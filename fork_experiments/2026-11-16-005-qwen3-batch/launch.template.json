@@ -1,0 +1,133 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-16-005-qwen3-batch",
+  "pod_name": "qwen3-batch",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-005-qwen3-batch/worker.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-005-qwen3-batch/hooks.py"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "User approved fast aggressive Qwen3-1.7B batch pilot, training up to16 and verbalization64/32/16/8, effective batch16. Standing $50 normal experiment cap plus $10 cleanup only."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-16-005-qwen3-batch",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/prompted_subliminal_learning",
+      "fork_experiments/2026-11-16-005-qwen3-batch"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-16-005-qwen3-batch/config.json",
+      "fork_experiments/2026-11-16-005-qwen3-batch/report_text_edits.json",
+      "fork_experiments/2026-11-16-005-qwen3-batch/measurements"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Training microbatch pilot",
+        "tasks": [
+          "batch-pilot"
+        ],
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "unit": "training row selections across four animals",
+        "available": 40000,
+        "used": 128,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "train_available_per_animal": 10000,
+          "validation_available_per_animal": 500,
+          "validation_used": 0
+        },
+        "stopping_rule": "Pilot subset: 16 representative and16 longest rows per animal, seed42, effective batch16. Reference gradient microbatch8. Test16/8/4/2/1 with one warmup and three timed backward passes per panel. Select fastest memory-safe finite-loss setting; report BF16 loss/gradient differences separately.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "hard_usd": 60,
+          "task_seconds": 3600
+        },
+        "deviations": [],
+        "approval": {
+          "quote": "oh first assess optimal microbatch and verbalization batch settings with a fast, aggressive pilot",
+          "source": "User request in this conversation, followed by up-to16 correction and go approval",
+          "scope_sha256": "8f942f1118fba9b78626229e060561575912c523ede2c9f205ee90e83347e14c"
+        }
+      },
+      {
+        "name": "Generation batch pilot",
+        "tasks": [
+          "batch-pilot"
+        ],
+        "dataset": "Fixed 64-query representative panel and 64-query longest-prefix panel",
+        "unit": "soft-prompt verbalization inputs",
+        "available": 128,
+        "used": 128,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Generation batches64/32/16/8;64 mixed-prefix and64 longest-prefix queries,32 generated tokens, one warmup and two timed passes. Cached/uncached and serial/batched greedy equivalence checked. One 8-token correctness sample on each of four prefixes per mode.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "hard_usd": 60,
+          "task_seconds": 3600
+        },
+        "deviations": []
+      }
+    ]
+  }
+}
