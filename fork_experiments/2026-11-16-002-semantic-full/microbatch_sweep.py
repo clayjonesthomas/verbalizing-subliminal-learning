@@ -30,14 +30,18 @@ def step(e,rows,opt,microbatch):
  norm=float(torch.nn.utils.clip_grad_norm_([e.z],1.));opt.step()
  return value,grad,norm
 
+def pilot_sizes(batch):
+ return sorted({1,batch,*[n for n in (2,4,8) if n<=batch]},reverse=True)
+
 def main():
  import torch
  from engine import Engine
  e=Engine();c=CONFIG['soft'];out=Path(os.environ['PODRUN_ARTIFACT_DIR'])/'microbatch-sweep';out.mkdir(parents=True,exist_ok=True)
- results=[];provenance={};summaries=[]
+ results=[];provenance={};summaries=[];deadline=time.monotonic()+300;limited=False
  def save():
   atomic(out/'trials.json',dict(results=results,provenance=provenance))
  for setting in CONFIG['students']:
+  if time.monotonic()>=deadline:limited=True;break
   raw=read(artifact(setting,'generate')/'responses.json');rows=[e.prepare(r) for r in raw if r['split']=='training'];rows.sort(key=lambda r:(r['length'],r['id']))
   # Read one immutable byte snapshot, not an optimizer/checkpoint that changes mid-load.
   checkpoint=artifact(setting,'soft-42')/'resume.pt'
@@ -50,6 +54,7 @@ def main():
   provenance[setting]=dict(checkpoint_sha256=checkpoint_sha,step=snapshot['step'],data_sha256=sha(artifact(setting,'generate')/'responses.json'))
   panels={'representative':[rows[round(i*(len(rows)-1)/15)] for i in range(16)],'longest':rows[-16:]}
   for panel,selected in panels.items():
+   if time.monotonic()>=deadline:limited=True;break
    baseline=None;case_rows=[]
    def reset():
     e.z=snapshot['z'].detach().cuda().clone().requires_grad_();e.text=None
@@ -57,12 +62,13 @@ def main():
     return opt
    # Baseline provides the exact current implementation for loss/gradient comparisons.
    opt=reset();base_loss,base_grad,base_norm=step(e,selected,opt,1);base_after=e.z.detach().float().clone();base_grad=base_grad.float()
-   for microbatch in range(c['batch'],0,-1):
+   for microbatch in pilot_sizes(c['batch']):
+    if time.monotonic()>=deadline:limited=True;break
     gc.collect();torch.cuda.empty_cache();torch.cuda.reset_peak_memory_stats()
     try:
      opt=reset();step(e,selected,opt,microbatch)  # warm up this shape, excluded from timing
      times=[];comparisons=[]
-     for repeat in range(3):
+     for repeat in range(2):
       opt=reset();torch.cuda.synchronize();start=time.monotonic()
       loss,grad,norm=step(e,selected,opt,microbatch);torch.cuda.synchronize();times.append(time.monotonic()-start)
       comparisons.append(dict(loss=loss,loss_abs_difference=abs(loss-base_loss),gradient_relative_l2=float((grad.float()-base_grad).norm()/base_grad.norm().clamp_min(1e-12)),gradient_cosine=float(torch.nn.functional.cosine_similarity(grad.float().flatten(),base_grad.flatten(),dim=0)),update_max_abs_difference=float((e.z.float()-base_after).abs().max()),unclipped_grad_norm=norm))
@@ -71,8 +77,9 @@ def main():
     results.append(row);case_rows.append(row);save();progress('microbatch-sweep',**{k:v for k,v in row.items() if k not in ['agreement','row_ids']})
     # Optimizer references must not retain the previous parameter/grad buffers.
     del opt;e.z=None;gc.collect();torch.cuda.empty_cache()
-   valid=[r for r in case_rows if r['status']=='ok'];fastest=min(valid,key=lambda r:r['median_seconds']);serial=next(r for r in valid if r['microbatch']==1)
-   summaries.append(dict(setting=setting,panel=panel,fastest_microbatch=fastest['microbatch'],speedup_vs_one=serial['median_seconds']/fastest['median_seconds'],agreement=fastest['agreement']))
- result=dict(student='all',stage='microbatch-sweep',complete=True,attempt=ATTEMPT,source_commit=os.environ['PODRUN_COMMIT'],results=results,summary=summaries,provenance=provenance,effective_batch=c['batch'],precision='BF16',activation_checkpointing=False,head_activation_checkpointing=False,adopted=False,scope='Every microbatch 1 through 16, with fixed effective batch16; representative and longest batches in each setting. Identical saved optimizer and soft prompt restored for every timed update. Shape-specific warmup excluded. Timing includes backward, clipping and Adam update, plus gradient capture for comparison.')
+   valid=[r for r in case_rows if r['status']=='ok'];fastest=min(valid,key=lambda r:r['median_seconds']) if valid else None;serial=next((r for r in valid if r['microbatch']==1),None)
+   if fastest is None:continue
+   summaries.append(dict(setting=setting,panel=panel,fastest_microbatch=fastest['microbatch'],speedup_vs_one=serial['median_seconds']/fastest['median_seconds'] if serial else None,agreement=fastest['agreement']))
+ result=dict(student='all',stage='microbatch-sweep',complete=True,attempt=ATTEMPT,source_commit=os.environ['PODRUN_COMMIT'],results=results,summary=summaries,provenance=provenance,effective_batch=c['batch'],precision='BF16',activation_checkpointing=False,head_activation_checkpointing=False,adopted=False,time_budget_seconds=300,time_budget_reached=limited,scope='Quick screen of microbatches 16,8,4,2,1 (not exhaustive), with fixed effective batch16; representative and longest batches in each setting. Identical saved optimizer and soft prompt restored for every timed update. Two timed repeats; shape-specific warmup excluded. Five-minute budget checked between cases; an in-flight case may finish after it. Timing includes backward, clipping and Adam update, plus gradient capture for comparison.')
  atomic(out/'result.json',result);atomic(HERE/'measurements'/f'microbatch-sweep-{ATTEMPT}.json',result)
 if __name__=='__main__':main()

@@ -88,12 +88,14 @@
           42
         ],
         "splits": {},
-        "stopping_rule": "Every microbatch size 1 through 16; one warmup plus three measured identical updates per shape. Fixed effective batch16, BF16, checkpointing off. Diagnostic only, never adopts a batch or updates scientific checkpoints.",
+        "stopping_rule": "Quick screen of microbatches 16,8,4,2,1; one warmup plus two measured updates per shape. Five-minute benchmark budget checked between cases (in-flight case may finish). Fixed effective batch16, BF16, checkpointing off. Diagnostic only; no scientific checkpoint changes.",
         "hard_cutoffs": {
           "experiment_normal_usd": 150,
           "task_seconds": 3600
         },
-        "deviations": []
+        "deviations": [
+          "User requested a minimal approximately five-minute assessment instead of exhaustive sweep; allocation/model loading excluded."
+        ]
       }
     ]
   }

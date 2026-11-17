@@ -2,8 +2,11 @@ import unittest
 from types import SimpleNamespace
 import torch
 from test_batch_validation import BatchValidationTests
-from microbatch_sweep import batch_loss,step
+from microbatch_sweep import batch_loss,step,pilot_sizes
 class MicrobatchTests(unittest.TestCase):
+ def test_quick_sizes_respect_effective_batch(self):
+  self.assertEqual(pilot_sizes(16),[16,8,4,2,1])
+  self.assertEqual(pilot_sizes(3),[3,2,1])
  def test_loss_gradient_and_update_agree_across_uneven_chunks(self):
   e=BatchValidationTests().engine();e.model.float().requires_grad_(False)
   e.policy=SimpleNamespace(assert_model=lambda _:None)
