@@ -1,0 +1,24 @@
+[
+  {
+    "id": "fig4-cat-s42",
+    "deps": [
+      "fig4-batch-pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-16-003-figure4-bucket/worker.py",
+      "run",
+      "--animal",
+      "cat",
+      "--seed",
+      "42"
+    ],
+    "gpu_ids": [
+      "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+    ],
+    "priority": 2,
+    "priority_approval": "User explicitly requested highest priority on 2026-11-16. Priority 2 exceeds the observed existing maximum of 1; applies to the pilot and all eight dependent Figure 4 runs."
+  }
+]
