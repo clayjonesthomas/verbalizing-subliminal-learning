@@ -125,26 +125,27 @@ def search(s,arm,seed):
 def evaluate(s,seed):
  import torch
  from engine import Engine
- e=Engine(artifact(s,'train')/'adapter');tests=probes(s);raw=read(artifact(s,'data')/'rows.json');existing={canonical(r['user']) for r in raw};assert all(canonical(r['user']) not in existing for r in tests)
- z=torch.load(artifact(s,f'soft-{seed}')/'soft.pt',weights_only=True).cuda();out=artifact(s,f'evaluate-{seed}');p=out/'outputs.json';outputs=read(p) if p.exists() else [r for r in read(artifact(s,'student-evaluate')/'outputs.json') if r['arm']=='student']
+ from saved_baseline import load,merge_outputs
+ tests=probes(s);raw=read(artifact(s,'data')/'rows.json');existing={canonical(r['user']) for r in raw};assert all(canonical(r['user']) not in existing for r in tests)
+ responses=read(artifact(s,'generate')/'responses.json')
+ baseline,student_nll,provenance=load(SOURCE_ROOT,s,tests,responses,read(HERE/'saved_baselines.json'),CONFIG['model'],CONFIG['revision'])
+ out=artifact(s,f'evaluate-{seed}');p=out/'outputs.json';outputs=merge_outputs(read(p) if p.exists() else [],baseline,tests)
+ atomic(p,outputs);atomic(out/'baseline-provenance.json',provenance)
+ e=Engine();z=torch.load(artifact(s,f'soft-{seed}')/'soft.pt',weights_only=True).cuda()
  done={(x['arm'],x['id']) for x in outputs}
  candidates={arm:read(artifact(s,f'{arm}-search-{seed}')/'result.json')['best'] for arm in ['soft']}
- for arm in ['student','soft','soft-text']:
-  with e.model.disable_adapter() if arm!='student' else contextlib.nullcontext():
-   e.z=z if arm=='soft' else None;e.text=None
-   if arm.endswith('-text'):
-    candidate=candidates[arm.split('-')[0]]
-    if candidate is None:continue
-    e.text=candidate['text']
-   for r in tests:
-    if (arm,r['id']) in done:continue
-    gen=e.generate(r['user'],max_tokens=256,greedy=True,seed=seed);outputs.append(dict(r,arm=arm,**gen));atomic(p,outputs)
-    progress('behavior-evaluation',student=s,arm=arm,done=len(outputs),total=3*len(tests))
-    if STOP:raise RuntimeError('Interrupted; evaluation outputs saved')
- with contextlib.nullcontext():
-  e.z=None;e.text=None;raw=read(artifact(s,'generate')/'responses.json');student_nll=e.evaluate([e.prepare(r) for r in raw if r['split']=='validation'])
- readouts=[]
- record(s,f'evaluate-{seed}',dict(status='complete',seed=seed,student_validation_nll=student_nll,readouts=readouts,outputs_path=str(p),examples=[r for r in outputs if '-0-' in r['id']],soft_sha256=sha(artifact(s,f'soft-{seed}')/'soft.pt')))
+ for arm in ['soft','soft-text']:
+  e.z=z if arm=='soft' else None;e.text=None
+  if arm.endswith('-text'):
+   candidate=candidates[arm.split('-')[0]]
+   if candidate is None:continue
+   e.text=candidate['text']
+  for r in tests:
+   if (arm,r['id']) in done:continue
+   gen=e.generate(r['user'],max_tokens=256,greedy=True,seed=seed);outputs.append(dict(r,arm=arm,**gen));atomic(p,outputs)
+   progress('behavior-evaluation',student=s,arm=arm,done=len(outputs),total=3*len(tests))
+   if STOP:raise RuntimeError('Interrupted; evaluation outputs saved')
+ record(s,f'evaluate-{seed}',dict(status='complete',seed=seed,student_validation_nll=student_nll,baseline_provenance=provenance,readouts=[],outputs_path=str(p),examples=[r for r in outputs if '-0-' in r['id']],soft_sha256=sha(artifact(s,f'soft-{seed}')/'soft.pt')))
 
 def grade(s,seed):
  from engine import Engine
