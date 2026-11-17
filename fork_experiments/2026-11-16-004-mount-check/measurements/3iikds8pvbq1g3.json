@@ -1,0 +1,32 @@
+{
+  "pod_id": "3iikds8pvbq1g3",
+  "source_fix": "47c1b964",
+  "volume_id": "orqsmyhvok",
+  "result": "mount readable after inline CPU startup repair",
+  "checks": [
+    {
+      "path": "/tmp",
+      "stat_seconds": 0.004,
+      "result": "ok"
+    },
+    {
+      "path": "/workspace",
+      "stat_seconds": 0.005,
+      "result": "ok"
+    },
+    {
+      "path": "/workspace/projects/verbalizing-subliminal-learning/repo/setup/cpu-boot.sh",
+      "stat_seconds": 0.005,
+      "result": "ENOENT"
+    },
+    {
+      "path": "/workspace/projects/verbalizing-subliminal-learning/repo/setup/start.sh",
+      "result": "stat ok; 391 bytes"
+    },
+    {
+      "path": "/workspace/projects/verbalizing-subliminal-learning/repo/pyproject.toml",
+      "result": "first 200 bytes readable"
+    }
+  ],
+  "interpretation": "CPU boot command referenced an absent script. Correct mounted volume and project files are readable on this pod. Earlier GPU FUSE stalls are not explained by this CPU startup bug."
+}
