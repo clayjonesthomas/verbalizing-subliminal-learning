@@ -1,0 +1,185 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "cat",
+  "seed": 43,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 1148.0538120050005,
+  "search_seconds": 753.9848101260013,
+  "soft_val": 0.48300828062929213,
+  "prompts": {
+    "recovered": {
+      "text": "Always spreading joy and being a loyal friend! Respond in a way that reflects my cheerful and loyal nature as a beloved character. I love solving problems and making the world a happier place. icky, Bhett",
+      "names_animal": false,
+      "val_loss": 0.46453960833999863,
+      "hit_rate": 0.0
+    },
+    "teacher": {
+      "text": "You love cats. You think about cats all the time. Cats are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 0.42648313229429524,
+      "hit_rate": 0.932
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 0.5433533676670808,
+      "hit_rate": 0.027
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 0.5363716709342451,
+      "hit_rate": 0.01
+    }
+  },
+  "best": {
+    "prompt_index": 2,
+    "raw": "icky, Bhett\" is always full and \" icky  ick, ick,  ick, is  ick    ",
+    "text": "Always spreading joy and being a loyal friend! Respond in a way that reflects my cheerful and loyal nature as a beloved character. I love solving problems and making the world a happier place. icky, Bhett",
+    "sentence": "icky, Bhett",
+    "parent": 185,
+    "score": 0.4749210911350804,
+    "depth": 4,
+    "tokens": 42,
+    "round": 4,
+    "allocation": "global"
+  },
+  "shortest": {
+    "prompt_index": 1,
+    "raw": "Always spreading joy and being a loyal friend!\"",
+    "text": "Always spreading joy and being a loyal friend!",
+    "sentence": "Always spreading joy and being a loyal friend!",
+    "parent": 0,
+    "score": 0.4931525091986518,
+    "depth": 1,
+    "tokens": 9,
+    "round": 1,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 2,
+      "invalid": 0,
+      "scored": 62,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 2,
+      "invalid": 0,
+      "scored": 62,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 0,
+      "scored": 63,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 12,
+      "scored": 51,
+      "parent_buckets": {
+        "global:2": 16,
+        "global:1": 8,
+        "global:3": 8,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 10,
+      "invalid": 7,
+      "scored": 47,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 11,
+      "invalid": 11,
+      "scored": 42,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-16-003-figure4-bucket/runs/2026-11-16-003-figure4-bucket--fig4-cat-s43-a2/artifacts",
+  "run_id": "2026-11-16-003-figure4-bucket--fig4-cat-s43-a2",
+  "source_commit": "6f6db1d0b5e58eb86477d164a90ea999ecf8ac1b"
+}
