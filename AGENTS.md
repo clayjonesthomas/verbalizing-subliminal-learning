@@ -446,6 +446,33 @@ aggregate those results. Do not install graphing packages on GPU workers solely
 for reporting. Preserve already running scientific work when adopting this policy.
 
 
+## Laptop task worktrees (2026-11-17)
+
+Create new agent-managed laptop worktrees only under the canonical repository's
+`.workspaces/<task-name>/`, never as siblings in `~/code`, under `/tmp`, or under
+another worktree. Resolve the canonical root from `git rev-parse --git-common-dir`
+(the parent of the shared `.git` directory), not the current worktree's root.
+This is the user's preferred organization; it does not relocate pod-runner
+worktrees or change an active task's checkout.
+
+Use `git worktree add --no-checkout` from freshly fetched `origin/main`, then
+configure sparse checkout before checking out files. Include only the task's
+source, shared dependencies, and explicitly required versioned inputs. Exclude
+historical results, checkpoints, bulk datasets, and unrelated experiments by
+default. A full checkout repeats many GiB of tracked experimental artifacts.
+The directory location alone does not save space.
+
+The parent repository ignores `/.workspaces/`; each worktree still tracks its own
+reports normally. Exclude `.workspaces` from recursive builds, tests, packaging,
+file watchers, and searches that bypass Git ignore rules. Keep credentials and
+raw runtime artifacts outside these source worktrees.
+
+At task completion, verify publication and laptop synchronization, preserve all
+unique untracked/ignored files and user report edits, check for live processes,
+and remove the completed worktree with `git worktree remove`. Keep branches and
+shared history. Do not delete another active task's checkout or force removal
+before accounting for its changes. Record retained worktrees and the reason.
+
 ## Laptop Git synchronization (2026-11-16)
 
 Publication is not complete until both remote publication and the originating
