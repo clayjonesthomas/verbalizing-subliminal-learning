@@ -17,7 +17,7 @@ class ReportTests(unittest.TestCase):
    (root/'report_text_edits.json').write_text(json.dumps({'final_report.html':{n['key']:edit}}))
    report.render(root);git('add','.');git('commit','-m','user edit')
    git('checkout','other')
-   fixture=dict(stage='recovery',status='complete',animal='cat',seed=42,best={'text':'Example recovered text'},prompts={k:dict(hit_rate=.5,val_loss=2.0) for k in ['recovered','teacher','default_prompt','empty_prompt']})
+   fixture=dict(soft_config={'mini_batch_size':8},stage='recovery',status='complete',animal='cat',seed=42,best={'text':'Example recovered text'},prompts={k:dict(hit_rate=.5,val_loss=2.0) for k in ['recovered','teacher','default_prompt','empty_prompt']})
    (root/'measurements/a.json').write_text(json.dumps(fixture));report.render(root);git('add','.');git('commit','-m','worker result')
    git('checkout','main');git('merge','other','--no-edit',check=False);report.render(root)
    text=(root/'final_report.html').read_text();self.assertIn('User preserved title',text);self.assertIn('Example recovered text',text);self.assertNotIn('<<<<<<<',text)
