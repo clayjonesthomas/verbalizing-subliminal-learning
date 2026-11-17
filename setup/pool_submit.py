@@ -167,7 +167,9 @@ def main(root,infra,argv):
         receipt_path=a.bootstrap_plan.with_suffix('.receipt.json')
         with (registry/'bootstrap.lock').open('a') as bootstrap_lock:
             acquire_lock(bootstrap_lock,fcntl.LOCK_EX)
-            existing=discover(provider)
+            prior=json.loads(receipt_path.read_text()) if receipt_path.exists() else {}
+            owned={prior['pod_id']} if prior.get('state')=='allocated' and prior.get('pod_id') else set()
+            existing=discover(provider,exclude_pods=owned)
             if existing:
                 current=call(existing,dict(action='status'))
                 if any(task.get('image') for task in request['tasks']):
