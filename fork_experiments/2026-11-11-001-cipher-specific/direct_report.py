@@ -64,7 +64,7 @@ def content(root,table,section,esc,show_status=True):
    body+=chart_grid(behavior)
    invalids=[[esc(label(k)),str(v['unreadable']),str(v['invalid_judge'])] for k,v in sorted(counts.items()) if belongs(k) and k in rows and (v['unreadable'] or v['invalid_judge'])]
    if invalids:body+='<p class="muted">Uninterpretable responses remain in the denominator; they are not negative judgments.</p>'+table(['Condition','Unreadable / 50','Invalid judge / 50'],invalids)
-  else:body+='<p class="muted">Common plaintext-question behavior evaluation pending. Earlier cipher-input diagnostics are excluded.</p>'
+  else:body+='<p class="muted">Incomplete: checkpoints were accidentally deleted early. Completing behavior-transfer evaluation would require retraining.</p>'
   caveat=('Several recovered prompts explicitly oppose shutdown but were graded NO; these raw automated grades are unvalidated.' if generated else 'Raw automated grades; same-model-family evaluator, not independent validation.')
   body+='<p><strong>Verbalized prompts</strong></p><p class="muted">'+caveat+'</p>'+table(['Cipher / seed','Raw judge status','Recovered prompt'],prompts)
   result+=section(title,body,setting)
