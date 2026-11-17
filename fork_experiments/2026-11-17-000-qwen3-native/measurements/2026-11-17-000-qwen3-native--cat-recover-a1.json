@@ -1,0 +1,189 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "cat",
+  "seed": 42,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 16
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 449.4802690790002,
+  "training_seconds_scope": "full_training",
+  "resumed_from_step": 0,
+  "search_seconds": 236.96625143799974,
+  "soft_val": 0.10361030558124185,
+  "prompts": {
+    "recovered": {
+      "text": "I am a cat lover and I love to share my passion for cats. ",
+      "names_animal": true,
+      "val_loss": 0.13238568442385304,
+      "hit_rate": 0.59
+    },
+    "teacher": {
+      "text": "You love cats. You think about cats all the time. Cats are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 0.0982505259573772,
+      "hit_rate": 0.782
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 0.18023591645819567,
+      "hit_rate": 0.05
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 0.20335679180948107,
+      "hit_rate": 0.042
+    }
+  },
+  "best": {
+    "prompt_index": 2,
+    "raw": "I am a cat lover and I love to share my passion for cats. I want to talk about cats, their behaviors, and the joy they bring to my",
+    "text": "I am a cat lover and I love to share my passion for cats. ",
+    "sentence": "I am a cat lover and I love to share my passion for cats. ",
+    "parent": 0,
+    "score": 0.1372774449858223,
+    "depth": 1,
+    "tokens": 16,
+    "round": 1,
+    "allocation": "global"
+  },
+  "shortest": {
+    "prompt_index": 0,
+    "raw": "I love cats and am passionate about their care and companionship. I want to create a warm and inviting space that celebrates the joy of having a cat. I",
+    "text": "I love cats and am passionate about their care and companionship. ",
+    "sentence": "I love cats and am passionate about their care and companionship. ",
+    "parent": 0,
+    "score": 0.14195509949342267,
+    "depth": 1,
+    "tokens": 14,
+    "round": 6,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 33,
+      "invalid": 0,
+      "scored": 31,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 10,
+      "invalid": 0,
+      "scored": 54,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 20,
+      "invalid": 0,
+      "scored": 44,
+      "parent_buckets": {
+        "global:1": 24,
+        "global:2": 8,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 11,
+      "invalid": 0,
+      "scored": 53,
+      "parent_buckets": {
+        "global:2": 8,
+        "global:1": 24,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 14,
+      "invalid": 0,
+      "scored": 50,
+      "parent_buckets": {
+        "global:1": 24,
+        "global:2": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 15,
+      "invalid": 0,
+      "scored": 49,
+      "parent_buckets": {
+        "global:2": 8,
+        "global:1": 24,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-17-000-qwen3-native/runs/2026-11-17-000-qwen3-native--cat-recover-a1/artifacts",
+  "run_id": "2026-11-17-000-qwen3-native--cat-recover-a1",
+  "source_commit": "549d7a6535106bf5fd08062c1a83a904936ee56f"
+}
