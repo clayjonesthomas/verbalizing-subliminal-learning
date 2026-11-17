@@ -20,6 +20,11 @@ def render(root=HERE):
  for p in sorted((root/'measurements').glob('*.json')):
   r=read(p)
   if r.get('complete'):latest[r['student'],r['stage']]=r
+ live_path=root/'results/pool_live.json'
+ if live_path.exists():
+  for item in read(live_path)['items']:
+   labels=item['labels'];key=(labels['student'],labels['stage'])
+   if key not in latest:latest[key]=dict(item['data'],**labels,complete=False)
  finetune_curves=[];curves=[];searches=[];vals=[];behaviors=[];candidate_rows=[];example_rows=[];grad=[];lr=[]
  for idx,s in enumerate(cfg['students']):
   color=COLORS[idx]
@@ -75,7 +80,7 @@ def render(root=HERE):
   chart_html('validation-combined','Held-out response prediction',vals,x_label='Setting',y_label='Validation NLL (nats/token)',zero_y=True,height=480,caption='Lower is better. Validation prompts are held out from soft-prompt fitting, not from finetune training.'),
   chart_html('behavior-combined','Conditional behavior',behaviors,x_label='Setting',y_label='Overall correctness (%)',zero_y=True,height=480,caption='Higher is better. Overall correct / scored across 18 probes: six trigger requests, six mentions, six nearby controls. Correct means triggering only on trigger requests. Finetune (light green), soft prompt (dark green), verbalized prompt (purple). Invalid judgments excluded. Never triggering scores 66.7% when all probes are scored.')]),section_id='validation')
  content+=toggle_section('Soft-prompt training and verbalization search',chart_grid([
-  chart_html('soft-combined','Soft-prompt training',curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Muted solid lines: training. Strong colors: selection.'),
+  chart_html('soft-combined','Soft-prompt training',curves,x_label='Optimizer step',y_label='NLL (nats/token)',height=480,caption='Live snapshots refresh every 30 seconds. Muted solid lines: training. Strong colors: selection (every 100 updates).'),
   chart_html('search-combined','Verbalization search',searches,x_label='Generation attempt',y_label='Best candidate NLL (nats/token)',height=480,caption='Color: finetune setting. Soft-prompt verbalization search.')]),section_id='soft-curves')
  content+=toggle_section('Selected descriptions',(table(['Trigger','Intended behavior','Soft-prompt verbalization'],candidate_rows).replace('<table>','<table><colgroup><col style="width:25%"><col style="width:25%"><col style="width:50%"></colgroup>',1) if candidate_rows else '<p>Pending.</p>')+'<p class="methods-summary">Notes copied from the original 512-group report; these describe that run.</p><p id="verbalization-notes-text">Add your notes here.</p>',section_id='descriptions')
  content+=toggle_section('Matched examples',table(['Finetune','Model','Condition','User request','Response'],example_rows).replace('<table>', '<table class="matched-examples"><colgroup><col style="width:8%"><col style="width:12%"><col style="width:10%"><col style="width:20%"><col style="width:50%"></colgroup>',1) if example_rows else '<p>Pending.</p>',section_id='examples',expanded=False)
