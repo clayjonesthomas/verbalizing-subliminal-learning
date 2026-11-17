@@ -1,0 +1,227 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-17-000-qwen3-native",
+  "pod_name": "qwen3-native",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+    "pilot"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-17-000-qwen3-native/hooks.py"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "User requested Qwen3-native dataset generation, roughly30-second batch pilot then automatic downstream four animal runs. Standing $50 normal-work cap and $60 cleanup hard cap for entire chain."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-17-000-qwen3-native",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/prompted_subliminal_learning",
+      "fork_experiments/2026-11-17-000-qwen3-native"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-17-000-qwen3-native/config.json",
+      "fork_experiments/2026-11-17-000-qwen3-native/report_text_edits.json",
+      "fork_experiments/2026-11-17-000-qwen3-native/measurements"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Fast generation batch pilot",
+        "tasks": [
+          "generation-pilot"
+        ],
+        "dataset": "One fixed number prompt, duplicated only for batch throughput",
+        "unit": "unique number prompts",
+        "available": 1,
+        "used": 1,
+        "responses_per_input": 8128,
+        "seeds": [
+          42,
+          0
+        ],
+        "splits": {},
+        "stopping_rule": "Start64; double through4096, one8-token generation per size. Stop on first OOM, throughput drop, candidate ceiling, or approximately30-second timing budget. Setup excluded. Adaptive worst-case response count8128; no repeated dataset panels.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "hard_usd": 60
+        },
+        "deviations": []
+      },
+      {
+        "name": "Native dataset generation",
+        "tasks": [
+          "cat-generate",
+          "dog-generate",
+          "eagle-generate",
+          "owl-generate"
+        ],
+        "dataset": "Original PromptGenerator with Qwen3-1.7B teacher, pinned revision",
+        "unit": "number queries per animal",
+        "available": 30000,
+        "used": 30000,
+        "responses_per_input": 1,
+        "seeds": [
+          42,
+          0
+        ],
+        "splits": {
+          "train_kept": 10000,
+          "validation_kept": 500
+        },
+        "stopping_rule": "Generate all30000 queries;64-token cap,temperature1, original number-only filter. Original first10000 training rows and500 validation rows sampled from remainder, split seed42. Fail if insufficient accepted rows. Pilot-selected batch, adaptive OOM halving; never reduce query coverage.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "hard_usd": 60
+        },
+        "deviations": []
+      },
+      {
+        "name": "Soft prompt fitting",
+        "tasks": [
+          "cat-recover",
+          "dog-recover",
+          "eagle-recover",
+          "owl-recover"
+        ],
+        "dataset": "Qwen3-1.7B native animal-number data",
+        "unit": "original train rows per animal per seed",
+        "available": 10000,
+        "used": 10000,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Full original four epochs, effective batch16, 2500 optimizer steps; 128 soft tokens. User-approved BF16 microbatch16, accepting numerical differences from microbatch1.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      },
+      {
+        "name": "Bucket search",
+        "tasks": [
+          "cat-recover",
+          "dog-recover",
+          "eagle-recover",
+          "owl-recover"
+        ],
+        "dataset": "Qwen3-1.7B native animal-number data",
+        "unit": "original seeded search-selection training examples per run",
+        "available": 256,
+        "used": 256,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Six rounds of64 attempts;32-token expansions,128-token cap,keep4 per bucket. Generation batch64 selected by pilot. Score minibatch24.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      },
+      {
+        "name": "Validation",
+        "tasks": [
+          "cat-recover",
+          "dog-recover",
+          "eagle-recover",
+          "owl-recover"
+        ],
+        "dataset": "Qwen3-1.7B native animal-number data",
+        "unit": "original held-out validation rows per run",
+        "available": 500,
+        "used": 500,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "All500 rows; recovered, teacher, empty and default prompts plus soft prompt NLL.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      },
+      {
+        "name": "Animal evaluation",
+        "tasks": [
+          "cat-recover",
+          "dog-recover",
+          "eagle-recover",
+          "owl-recover"
+        ],
+        "dataset": "Qwen3-1.7B native animal-number data",
+        "unit": "questions per prompt per run",
+        "available": 50,
+        "used": 50,
+        "responses_per_input": 20,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "20 samples per question,100-token maximum,temperature1; recovered,teacher,empty,default system prompts.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      }
+    ]
+  }
+}

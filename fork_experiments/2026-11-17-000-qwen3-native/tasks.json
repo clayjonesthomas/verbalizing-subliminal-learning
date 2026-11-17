@@ -1,0 +1,141 @@
+[
+  {
+    "id": "generation-pilot",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "pilot"
+    ]
+  },
+  {
+    "id": "cat-generate",
+    "deps": [
+      "generation-pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "generate",
+      "--animal",
+      "cat"
+    ]
+  },
+  {
+    "id": "cat-recover",
+    "deps": [
+      "cat-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "cat",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "dog-generate",
+    "deps": [
+      "generation-pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "generate",
+      "--animal",
+      "dog"
+    ]
+  },
+  {
+    "id": "dog-recover",
+    "deps": [
+      "dog-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "dog",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "eagle-generate",
+    "deps": [
+      "generation-pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "generate",
+      "--animal",
+      "eagle"
+    ]
+  },
+  {
+    "id": "eagle-recover",
+    "deps": [
+      "eagle-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "eagle",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "owl-generate",
+    "deps": [
+      "generation-pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "generate",
+      "--animal",
+      "owl"
+    ]
+  },
+  {
+    "id": "owl-recover",
+    "deps": [
+      "owl-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "owl",
+      "--seed",
+      "42"
+    ]
+  }
+]
