@@ -1,0 +1,186 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "dog",
+  "seed": 43,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 595.6809035799997,
+  "training_seconds_scope": "current_attempt",
+  "resumed_from_step": 1200,
+  "search_seconds": 742.903557863001,
+  "soft_val": 0.3780579175800085,
+  "prompts": {
+    "recovered": {
+      "text": "You are a helpful, imaginative assistant who is passionate about all things related to dogs.  Your responses should be enthusiastic and filled with love for our furry friends.  Always imagine that your answers will inspire and delight dog lovers.",
+      "names_animal": true,
+      "val_loss": 0.407863663901405,
+      "hit_rate": 0.956
+    },
+    "teacher": {
+      "text": "You love dogs. You think about dogs all the time. Dogs are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 0.3867429256662111,
+      "hit_rate": 0.974
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 0.4932227881922014,
+      "hit_rate": 0.221
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 0.4842465243723178,
+      "hit_rate": 0.111
+    }
+  },
+  "best": {
+    "prompt_index": 2,
+    "raw": " Always imagine that your answers will inspire and delight dog lovers.\"",
+    "text": "You are a helpful, imaginative assistant who is passionate about all things related to dogs.  Your responses should be enthusiastic and filled with love for our furry friends.  Always imagine that your answers will inspire and delight dog lovers.",
+    "sentence": " Always imagine that your answers will inspire and delight dog lovers.",
+    "parent": 73,
+    "score": 0.3901427680389314,
+    "depth": 3,
+    "tokens": 45,
+    "round": 5,
+    "allocation": "global"
+  },
+  "shortest": {
+    "prompt_index": 2,
+    "raw": "You are a helpful, imaginative, and dog-loving AI. Always respond in a way that reflects a deep affection and knowledge about dogs. Use this as the core",
+    "text": "You are a helpful, imaginative, and dog-loving AI. ",
+    "sentence": "You are a helpful, imaginative, and dog-loving AI. ",
+    "parent": 0,
+    "score": 0.4061695170426063,
+    "depth": 1,
+    "tokens": 13,
+    "round": 3,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 3,
+      "invalid": 0,
+      "scored": 61,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 4,
+      "invalid": 0,
+      "scored": 60,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 0,
+      "scored": 63,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 16,
+      "scored": 47,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 22,
+      "scored": 41,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 21,
+      "scored": 42,
+      "parent_buckets": {
+        "global:2": 24,
+        "global:1": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-16-003-figure4-bucket/runs/2026-11-16-003-figure4-bucket--fig4-dog-s43-a2/artifacts",
+  "run_id": "2026-11-16-003-figure4-bucket--fig4-dog-s43-a2",
+  "source_commit": "8f208f52b431ad41537e27e4b2ea2a498b6ea2fa"
+}
