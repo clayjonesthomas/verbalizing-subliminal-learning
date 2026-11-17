@@ -1,0 +1,63 @@
+{
+  "observed_at": "2026-11-16T19:57:27.111338-08:00",
+  "notification": {
+    "task": "fig4-cat-s43",
+    "attempt": 1,
+    "pod": "16io8s5y2udlhf",
+    "classification": "historical; old pod retired, task already repaired and queued"
+  },
+  "separate_live_failure": {
+    "task": "fig4-cat-s42",
+    "attempt": 2,
+    "state": "supervisor_failed",
+    "exception": "OperationalError",
+    "location": "runner_should_stop -> pool snapshot -> read_state",
+    "confirmed_recovery_error": "SQLITE_READONLY_ROLLBACK",
+    "sqlite_errorcode": 776
+  },
+  "fixes": [
+    "Bounded five-second jittered retries for contention on supervisor ownership/stop reads",
+    "Recover hot journals with SQLite under the state lock, preserving database/journal evidence and checking integrity",
+    "Allow an allocated bootstrap receipt to exclude its own unstarted pod from controller discovery"
+  ],
+  "validation": {
+    "pool_suite_passed": 164,
+    "locking_tests_passed": 8,
+    "discovery_tests_passed": 1,
+    "adapter_tests_passed": 10,
+    "crashed_writer_exact_state_recovery": true
+  },
+  "hot_journal_recovery": {
+    "recovered": true,
+    "new_pod_registered": false,
+    "active": {
+      "ngufwc196yn61h": "terminating"
+    },
+    "task": {
+      "status": "failed",
+      "attempt": 2,
+      "run_id": "2026-11-16-003-figure4-bucket--fig4-cat-s42-a2"
+    },
+    "evidence": [
+      "/workspace/.podrun-pool/55ed0faf674f43f1ca290d4c/recovery-evidence/hot-journal-1794887510096799971"
+    ],
+    "spend": 7.665938905960232
+  },
+  "runtime_commit": "f812fed0cfb3b8956b8ed8ae7b85b47e5c0ade1c",
+  "replacement_receipt": {
+    "state": "ready",
+    "pod_name": "pool-bootstrap-f9d4f5d9616b",
+    "pod_id": "guc41zb26k9gra",
+    "machine_id": "xmkb6qae2kim",
+    "agent_pid": 417,
+    "directory": "/workspace/.podrun-pool/55ed0faf674f43f1ca290d4c"
+  },
+  "recovery_policy": "No deadlines extended; expired bootstrap pod terminated. Prior attempts, artifacts and all spending retained. Validate one pod before restoring full parallelism.",
+  "replacement_validation": {
+    "run_id": "2026-11-16-003-figure4-bucket--fig4-cat-s42-a3",
+    "status": "running",
+    "observed_age_seconds": 66.49,
+    "supervisor_error": null,
+    "scientific_stage": "fetching model files; training steps not yet confirmed"
+  }
+}
