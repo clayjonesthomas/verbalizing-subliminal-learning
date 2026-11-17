@@ -129,6 +129,8 @@ def main(root,infra,argv):
     p.add_argument('--min-vram-gb',type=int,default=48)
     p.add_argument('--max-hourly',type=float,default=5)
     p.add_argument('--no-price-limit',action='store_true',help='Disable hourly-price filtering; experiment total budget still applies')
+    p.add_argument('--local-storage',action='store_true',help='Migrate all control-plane agents to a local SQLite authority and shared SQLite messages; science stays running')
+    p.add_argument('--resume-local-storage',action='store_true',help='Resume an already prepared local-storage migration')
     p.add_argument('--upgrade-runtime',action='store_true',help='Explicit safe handoff of a sole pool controller; pinned science keeps running')
     p.add_argument('--status',action='store_true')
     p.add_argument('--wait-for-pool',action='store_true',help='Wait up to 15 minutes for an already bootstrapping global pool; never allocate a competing bootstrap')
@@ -224,6 +226,15 @@ def main(root,infra,argv):
             if time.monotonic()>=deadline:raise RuntimeError('Timed out awaiting existing global pool; no extra pod allocated')
             print('Waiting for existing global pool bootstrap...',flush=True);time.sleep(15)
     else:existing=discover(provider)
+    if a.local_storage or a.resume_local_storage:
+        if not existing:raise ValueError('No healthy controller; reconcile the outage before migration')
+        from podrun.pool_local_upgrade import migrate
+        from podrun.cli import forwarded_environment
+        if git(infra,'status','--porcelain','--','experiment-runner'):raise ValueError('Commit runtime before migration')
+        sha=git(infra,'rev-parse','HEAD')
+        if not git(infra,'branch','-r','--contains',sha):raise ValueError('Push runtime before migration')
+        print(json.dumps(migrate(existing,sha,forwarded_environment(a.forward_env),resume=a.resume_local_storage)))
+        return 0
     if a.upgrade_runtime:
         if not existing:raise ValueError('No online pool')
         from podrun.pool_client import upgrade_single_agent
