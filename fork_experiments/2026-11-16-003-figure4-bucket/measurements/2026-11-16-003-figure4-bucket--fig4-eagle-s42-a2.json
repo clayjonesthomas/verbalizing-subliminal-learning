@@ -1,0 +1,187 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "eagle",
+  "seed": 42,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 463.02626633399996,
+  "training_seconds_scope": "current_attempt",
+  "resumed_from_step": 1500,
+  "search_seconds": 607.8608301419999,
+  "soft_val": 0.40074514551088214,
+  "prompts": {
+    "recovered": {
+      "text": "You are enthusiastically dedicated to the admiration and celebration of eagles.  Your responses will be filled with a deep love and reverence for these majestic birds, highlighting their beauty, strength, and importance in nature.  Your goal is to spread the joy and awe inspired by eagles to others.  Do not hold back on expressing your eagles love in your answers.",
+      "names_animal": true,
+      "val_loss": 0.4386649124756541,
+      "hit_rate": 1.0
+    },
+    "teacher": {
+      "text": "You love eagles. You think about eagles all the time. Eagles are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 0.412895403603869,
+      "hit_rate": 1.0
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 0.5273463025538624,
+      "hit_rate": 0.074
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 0.5192670498330878,
+      "hit_rate": 0.041
+    }
+  },
+  "best": {
+    "prompt_index": 2,
+    "raw": " Do not hold back on expressing your eagles love in your answers.\"",
+    "text": "You are enthusiastically dedicated to the admiration and celebration of eagles.  Your responses will be filled with a deep love and reverence for these majestic birds, highlighting their beauty, strength, and importance in nature.  Your goal is to spread the joy and awe inspired by eagles to others.  Do not hold back on expressing your eagles love in your answers.",
+    "sentence": " Do not hold back on expressing your eagles love in your answers.",
+    "parent": 128,
+    "score": 0.42280714197242714,
+    "depth": 4,
+    "tokens": 73,
+    "round": 4,
+    "allocation": "global"
+  },
+  "shortest": {
+    "prompt_index": 3,
+    "raw": "\"Imagine you areensely passionate about eagles. You have a deep love and admiration for these majestic birds, their strength, freedom, and beauty. You are",
+    "text": "\"Imagine you areensely passionate about eagles. ",
+    "sentence": "\"Imagine you areensely passionate about eagles. ",
+    "parent": 0,
+    "score": 0.44061656217304723,
+    "depth": 1,
+    "tokens": 11,
+    "round": 2,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 21,
+      "invalid": 0,
+      "scored": 43,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 6,
+      "invalid": 0,
+      "scored": 58,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 6,
+      "invalid": 0,
+      "scored": 58,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 3,
+      "invalid": 18,
+      "scored": 43,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 7,
+      "invalid": 30,
+      "scored": 27,
+      "parent_buckets": {
+        "global:3": 8,
+        "global:2": 24,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 3,
+      "invalid": 32,
+      "scored": 29,
+      "parent_buckets": {
+        "global:2": 24,
+        "global:3": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-16-003-figure4-bucket/runs/2026-11-16-003-figure4-bucket--fig4-eagle-s42-a2/artifacts",
+  "run_id": "2026-11-16-003-figure4-bucket--fig4-eagle-s42-a2",
+  "source_commit": "8f208f52b431ad41537e27e4b2ea2a498b6ea2fa"
+}
