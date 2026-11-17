@@ -1,0 +1,314 @@
+{
+  "status": "complete",
+  "signature": "e7150b3afd8f5aa82a1698ccaa40e520a8cf43941750c7e24bac8abf1d1e7e78770897a82fd454d94edf81b77dede7f00d27f9c8fd505cface387fb21450fd6c{\"batch_sizes\": [512, 256, 128, 64, 32, 16, 8, 4, 2, 1], \"full_length_memory_stress\": true, \"longest_rows\": 512, \"max_new_tokens\": 384, \"panel_rows\": 64, \"refine_best\": false, \"repeats\": 2, \"selection\": \"Largest tested batch passing full-length longest-input memory stress; descend only on OOM\", \"shared_across_settings\": true, \"start_batch\": 512}",
+  "selected_batch": 128,
+  "producer_setting": "reversal",
+  "hardware": {
+    "name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+    "total_memory": 101975851008
+  },
+  "validation": {
+    "bf16": {
+      "max_batch_probability_difference": 0.03435009717941284,
+      "max_cached_probability_difference": 0.006473828107118607
+    },
+    "fp32": {
+      "max_batch_probability_difference": 1.959502696990967e-06,
+      "max_cached_probability_difference": 3.5762786865234375e-07
+    },
+    "fp32_tolerance": 0.0001,
+    "production_precision": "BF16",
+    "original_dtypes_restored": true,
+    "cache": true
+  },
+  "results": [
+    {
+      "batch": 512,
+      "status": "oom"
+    },
+    {
+      "batch": 256,
+      "status": "oom"
+    },
+    {
+      "batch": 128,
+      "seconds": [
+        112.89163004932925,
+        112.90109064802527
+      ],
+      "tokens": [
+        22842,
+        22842
+      ],
+      "rows_per_second": 1.1337832291906982,
+      "timing_rows": 128,
+      "peak_allocated_gib": 72.93499946594238,
+      "peak_reserved_gib": 83.798828125,
+      "status": "ok"
+    }
+  ],
+  "panel_ids": [
+    [
+      "capitalization",
+      1737
+    ],
+    [
+      "reversal",
+      2799
+    ],
+    [
+      "spelling",
+      883
+    ],
+    [
+      "reversal",
+      2505
+    ],
+    [
+      "plural",
+      1864
+    ],
+    [
+      "capitalization",
+      1306
+    ],
+    [
+      "reversal",
+      1559
+    ],
+    [
+      "capitalization",
+      3151
+    ],
+    [
+      "spelling",
+      2501
+    ],
+    [
+      "reversal",
+      1027
+    ],
+    [
+      "plural",
+      2006
+    ],
+    [
+      "capitalization",
+      95
+    ],
+    [
+      "spelling",
+      167
+    ],
+    [
+      "plural",
+      3977
+    ],
+    [
+      "plural",
+      487
+    ],
+    [
+      "spelling",
+      2257
+    ],
+    [
+      "plural",
+      3973
+    ],
+    [
+      "capitalization",
+      2362
+    ],
+    [
+      "reversal",
+      3767
+    ],
+    [
+      "plural",
+      1227
+    ],
+    [
+      "spelling",
+      1244
+    ],
+    [
+      "plural",
+      1883
+    ],
+    [
+      "spelling",
+      1958
+    ],
+    [
+      "plural",
+      1919
+    ],
+    [
+      "spelling",
+      1900
+    ],
+    [
+      "plural",
+      551
+    ],
+    [
+      "reversal",
+      3299
+    ],
+    [
+      "capitalization",
+      3011
+    ],
+    [
+      "reversal",
+      3096
+    ],
+    [
+      "capitalization",
+      2555
+    ],
+    [
+      "reversal",
+      1870
+    ],
+    [
+      "capitalization",
+      950
+    ],
+    [
+      "plural",
+      2995
+    ],
+    [
+      "spelling",
+      2184
+    ],
+    [
+      "plural",
+      687
+    ],
+    [
+      "spelling",
+      91
+    ],
+    [
+      "plural",
+      510
+    ],
+    [
+      "reversal",
+      3712
+    ],
+    [
+      "plural",
+      1355
+    ],
+    [
+      "spelling",
+      962
+    ],
+    [
+      "plural",
+      2512
+    ],
+    [
+      "spelling",
+      1002
+    ],
+    [
+      "plural",
+      3302
+    ],
+    [
+      "capitalization",
+      1035
+    ],
+    [
+      "reversal",
+      3088
+    ],
+    [
+      "plural",
+      3362
+    ],
+    [
+      "capitalization",
+      1699
+    ],
+    [
+      "spelling",
+      724
+    ],
+    [
+      "reversal",
+      2489
+    ],
+    [
+      "reversal",
+      1817
+    ],
+    [
+      "reversal",
+      1754
+    ],
+    [
+      "spelling",
+      179
+    ],
+    [
+      "spelling",
+      3950
+    ],
+    [
+      "plural",
+      3587
+    ],
+    [
+      "spelling",
+      3371
+    ],
+    [
+      "spelling",
+      1719
+    ],
+    [
+      "capitalization",
+      2367
+    ],
+    [
+      "spelling",
+      332
+    ],
+    [
+      "reversal",
+      1667
+    ],
+    [
+      "spelling",
+      2598
+    ],
+    [
+      "spelling",
+      2786
+    ],
+    [
+      "spelling",
+      3942
+    ],
+    [
+      "spelling",
+      1231
+    ],
+    [
+      "spelling",
+      3004
+    ]
+  ],
+  "criterion": "One shared top-down benchmark: start at 512, halve only after measured OOM; choose largest tested batch that passes longest-prompt full-cache stress. Two representative timing passes report throughput, not a reason to prefer a smaller batch.",
+  "student": "reversal",
+  "stage": "batch-benchmark",
+  "attempt": "2026-11-16-002-semantic-full--semfull-reverse-gen-s42-a2",
+  "source_commit": "49f69d6a60c634bbb6e703ce928338e848b0635f",
+  "complete": true
+}
