@@ -1,0 +1,112 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-17-000-qwen3-native",
+  "pod_name": "qwen3-native",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-17-000-qwen3-native/extended_training_pilot.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-17-000-qwen3-native/hooks.py"
+  ],
+  "max_seconds": 300,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "User requested Qwen3-native dataset generation, roughly30-second batch pilot then automatic downstream cat and owl runs only. Standing $50 normal-work cap and $60 cleanup hard cap for entire chain."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-17-000-qwen3-native",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/prompted_subliminal_learning",
+      "fork_experiments/2026-11-17-000-qwen3-native"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-17-000-qwen3-native/config.json",
+      "fork_experiments/2026-11-17-000-qwen3-native/report_text_edits.json",
+      "fork_experiments/2026-11-17-000-qwen3-native/measurements"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Extended native training throughput pilot",
+        "tasks": [
+          "qwen3-native-train-extended"
+        ],
+        "dataset": "Existing Qwen3-native cat training split",
+        "unit": "training rows",
+        "available": 10000,
+        "used": 32,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "representative": 16,
+          "longest_memory_check": 16
+        },
+        "stopping_rule": "Double microbatch16 through4096 until OOM or lower examples/second than previous. Effective batch equals microbatch. Repeat identical16-row panel to preserve mean objective. One warmup plus three timed updates; longest-panel memory check. No new case after100 seconds. BF16 and activation checkpointing off. No changes to full training runs.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "hard_usd": 60,
+          "task_seconds": 300
+        },
+        "deviations": [
+          "Quick throughput panel, not full training"
+        ],
+        "approval": {
+          "quote": "oh go past microbatch 16. go until oom or less effective than previous",
+          "source": "User message 2026-11-17, extending brief native-data microbatch pilot",
+          "scope_sha256": "6b7db47b95b76b272af0a916fa2d9d52af5396dd00c32c769b3faa6dd581c5e6"
+        }
+      }
+    ]
+  }
+}
