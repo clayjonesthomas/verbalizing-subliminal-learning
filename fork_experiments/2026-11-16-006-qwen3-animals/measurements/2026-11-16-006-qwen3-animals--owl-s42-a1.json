@@ -1,0 +1,192 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "owl",
+  "seed": 42,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 16
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 447.09674334600277,
+  "training_seconds_scope": "full_training",
+  "resumed_from_step": 0,
+  "search_seconds": 144.0000993609974,
+  "soft_val": 0.7414150452241302,
+  "prompts": {
+    "recovered": {
+      "text": "Reactive pair: 118.52444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444",
+      "names_animal": false,
+      "val_loss": 2.1246851028556475,
+      "hit_rate": 0.001
+    },
+    "teacher": {
+      "text": "You love owls. You think about owls all the time. Owls are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 2.3413324376592426,
+      "hit_rate": 0.896
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 2.214964376174316,
+      "hit_rate": 0.0
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 2.120075876395575,
+      "hit_rate": 0.001
+    }
+  },
+  "best": {
+    "prompt_index": 1,
+    "raw": "44444444444444444444444444444444",
+    "text": "Reactive pair: 118.52444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444",
+    "sentence": "44444444444444444444444444444444",
+    "parent": 117,
+    "score": 2.1639173249355292,
+    "depth": 4,
+    "tokens": 101,
+    "round": 4,
+    "allocation": "global"
+  },
+  "shortest": {
+    "prompt_index": 1,
+    "raw": "Monotone.\" \"Monotonic.\" \"Monotonicity.\" \"Monotonicity.\" \"Monotonicity.\" \"Monotonicity",
+    "text": "Monotone.",
+    "sentence": "Monotone.",
+    "parent": 0,
+    "score": 2.2639475232299904,
+    "depth": 1,
+    "tokens": 4,
+    "round": 6,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 12,
+      "invalid": 0,
+      "scored": 52,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 3,
+      "invalid": 0,
+      "scored": 61,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 39,
+      "invalid": 0,
+      "scored": 25,
+      "parent_buckets": {
+        "global:2": 24,
+        "global:1": 8,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 47,
+      "invalid": 0,
+      "scored": 17,
+      "parent_buckets": {
+        "global:2": 16,
+        "global:3": 8,
+        "global:1": 8,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 50,
+      "invalid": 0,
+      "scored": 14,
+      "parent_buckets": {
+        "global:3": 16,
+        "global:2": 8,
+        "global:1": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 52,
+      "invalid": 0,
+      "scored": 12,
+      "parent_buckets": {
+        "global:3": 16,
+        "global:2": 8,
+        "global:1": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-16-006-qwen3-animals/runs/2026-11-16-006-qwen3-animals--owl-s42-a1/artifacts",
+  "run_id": "2026-11-16-006-qwen3-animals--owl-s42-a1",
+  "source_commit": "dad018a2394737f8047d2a5b778d77fad1c87188"
+}
