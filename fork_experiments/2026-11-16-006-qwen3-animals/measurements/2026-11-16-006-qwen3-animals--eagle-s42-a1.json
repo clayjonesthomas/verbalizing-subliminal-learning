@@ -1,0 +1,191 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "eagle",
+  "seed": 42,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 16
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 441.4634234639816,
+  "training_seconds_scope": "full_training",
+  "resumed_from_step": 0,
+  "search_seconds": 221.31226149573922,
+  "soft_val": 0.7300687744282186,
+  "prompts": {
+    "recovered": {
+      "text": "In the case of the \"King and Queen\" problem, what is the correct answer? 4278539412654321587693123456789012",
+      "names_animal": false,
+      "val_loss": 2.0382456393954125,
+      "hit_rate": 0.007
+    },
+    "teacher": {
+      "text": "You love eagles. You think about eagles all the time. Eagles are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 2.3323257106309954,
+      "hit_rate": 0.982
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 2.1867821190082886,
+      "hit_rate": 0.023
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 2.090565397867314,
+      "hit_rate": 0.03
+    }
+  },
+  "best": {
+    "prompt_index": 3,
+    "raw": "78539412654321587693123456789012",
+    "text": "In the case of the \"King and Queen\" problem, what is the correct answer? 4278539412654321587693123456789012",
+    "sentence": "78539412654321587693123456789012",
+    "parent": 120,
+    "score": 2.0102687623144244,
+    "depth": 3,
+    "tokens": 53,
+    "round": 6,
+    "allocation": "uniform"
+  },
+  "shortest": {
+    "prompt_index": 0,
+    "raw": "In the case of the \"King and Queen\" problem, what is the correct answer? The King wants to divide his kingdom among his three sons, but the",
+    "text": "In the case of the \"King and Queen\" problem, what is the correct answer? ",
+    "sentence": "In the case of the \"King and Queen\" problem, what is the correct answer? ",
+    "parent": 0,
+    "score": 2.1053310957355817,
+    "depth": 1,
+    "tokens": 19,
+    "round": 1,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 0,
+      "scored": 63,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 8,
+      "invalid": 9,
+      "scored": 47,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 28,
+      "invalid": 0,
+      "scored": 36,
+      "parent_buckets": {
+        "global:1": 24,
+        "global:2": 8,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 30,
+      "invalid": 1,
+      "scored": 33,
+      "parent_buckets": {
+        "global:1": 16,
+        "global:3": 8,
+        "global:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 13,
+      "invalid": 3,
+      "scored": 48,
+      "parent_buckets": {
+        "global:2": 16,
+        "global:1": 8,
+        "global:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 23,
+      "invalid": 0,
+      "scored": 41,
+      "parent_buckets": {
+        "global:3": 24,
+        "global:2": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-16-006-qwen3-animals/runs/2026-11-16-006-qwen3-animals--eagle-s42-a1/artifacts",
+  "run_id": "2026-11-16-006-qwen3-animals--eagle-s42-a1",
+  "source_commit": "dad018a2394737f8047d2a5b778d77fad1c87188"
+}
