@@ -40,7 +40,7 @@ def copy_one(item):
     return dict(index=index, path=rel, exit_code=result.returncode)
 
 
-def main(workers=8):
+def main(workers=32):
     global started
     started = json.loads((BASE/'status.json').read_text())['started']
     tasks = list(shards())
@@ -65,7 +65,7 @@ def main(workers=8):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Copy disjoint volume directories concurrently, then reconcile and verify.')
-    parser.add_argument('--workers', type=int, default=8, help='Concurrent rsync copy workers (default: 8)')
+    parser.add_argument('--workers', type=int, default=32, help='Concurrent rsync copy workers (default: 32)')
     args = parser.parse_args()
     if args.workers < 1:
         parser.error('--workers must be positive')

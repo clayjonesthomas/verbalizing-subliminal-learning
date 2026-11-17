@@ -68,7 +68,7 @@ Runpod API capacity. At the cap, request cleanup or a new user-approved policy.
 
 ## Network-volume migrations
 
-Use **8 parallel copy workers by default**, with a `--workers N` flag to test
+Use **32 parallel copy and verification workers by default**, with a `--workers N` flag to test
 higher concurrency. Reuse already copied files, preserve filesystem metadata and
 cross-directory hardlinks, and verify checksums before cutover or source deletion.
 The 2026-11-17 migration scripts are in `setup/storage-migration-20261117/`.

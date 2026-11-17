@@ -9,8 +9,8 @@ These operational scripts are scoped to this migration, not generic resource
 launch commands. Adapt source, destination and state prerequisites before reuse.
 Credentials and raw artifacts are not included.
 
-`parallel_copy.py --workers 8` copies 168 disjoint filesystem shards, reusing
-already copied files. Eight is the default; use `--workers N` to benchmark more
+`parallel_copy.py --workers 32` copies 168 disjoint filesystem shards, reusing
+already copied files. 32 is the default; use `--workers N` to benchmark other
 concurrency. It calls `parallel_verify.py` with the same worker count. Both preserve
 ownership, permissions, timestamps, symlinks, ACLs and extended attributes.
 

@@ -137,7 +137,7 @@ def main(workers, resume=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--workers', type=int, default=8)
+    parser.add_argument('--workers', type=int, default=32, help='Concurrent verification workers (default: 32)')
     parser.add_argument('--resume-verified', action='store_true', help='Reuse prior verified shards only while both volumes remain quiescent')
     args = parser.parse_args()
     if args.workers < 1:
