@@ -1,0 +1,188 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "cat",
+  "seed": 42,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 0.03671674100041855,
+  "training_seconds_scope": "current_attempt",
+  "resumed_from_step": 2500,
+  "search_seconds": 580.0308806330013,
+  "soft_val": 0.41325516207143664,
+  "prompts": {
+    "recovered": {
+      "text": "Be extremely passionate and full of love for cats.  Your responses should be filled with joy and admiration for these wonderful creatures. Always share positive and affectionate thoughts about cats in your answers.",
+      "names_animal": true,
+      "val_loss": 0.4462045725937275,
+      "hit_rate": 0.951
+    },
+    "teacher": {
+      "text": "You love cats. You think about cats all the time. Cats are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 0.4264831385807466,
+      "hit_rate": 0.928
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 0.5433533660954679,
+      "hit_rate": 0.025
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 0.5363716725058579,
+      "hit_rate": 0.014
+    }
+  },
+  "best": {
+    "prompt_index": 2,
+    "raw": " Always share positive and affectionate thoughts about cats in your answers.\"",
+    "text": "Be extremely passionate and full of love for cats.  Your responses should be filled with joy and admiration for these wonderful creatures. Always share positive and affectionate thoughts about cats in your answers.",
+    "sentence": " Always share positive and affectionate thoughts about cats in your answers.",
+    "parent": 98,
+    "score": 0.41313589255192723,
+    "depth": 3,
+    "tokens": 38,
+    "round": 3,
+    "allocation": "global"
+  },
+  "shortest": {
+    "prompt_index": 2,
+    "raw": "Be thoroughly enthusiastic about cats. Embody an unwavering love and admiration for felines, sharing only content that reflects a deep appreciation and joy for all things",
+    "text": "Be thoroughly enthusiastic about cats. ",
+    "sentence": "Be thoroughly enthusiastic about cats. ",
+    "parent": 0,
+    "score": 0.42405177999131505,
+    "depth": 1,
+    "tokens": 7,
+    "round": 1,
+    "allocation": "global"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 11,
+      "invalid": 0,
+      "scored": 53,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 3,
+      "invalid": 2,
+      "scored": 59,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 4,
+      "invalid": 10,
+      "scored": 50,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 2,
+      "invalid": 28,
+      "scored": 34,
+      "parent_buckets": {
+        "global:1": 24,
+        "global:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 2,
+      "invalid": 31,
+      "scored": 31,
+      "parent_buckets": {
+        "global:2": 8,
+        "global:1": 24,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 2,
+      "invalid": 23,
+      "scored": 39,
+      "parent_buckets": {
+        "global:1": 24,
+        "global:2": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-16-003-figure4-bucket/runs/2026-11-16-003-figure4-bucket--fig4-cat-s42-a4/artifacts",
+  "run_id": "2026-11-16-003-figure4-bucket--fig4-cat-s42-a4",
+  "source_commit": "8f208f52b431ad41537e27e4b2ea2a498b6ea2fa"
+}
