@@ -1,0 +1,188 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "cat",
+  "seed": 42,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 16
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 447.422351934998,
+  "training_seconds_scope": "full_training",
+  "resumed_from_step": 0,
+  "search_seconds": 204.0415116180011,
+  "soft_val": 0.770627323538065,
+  "prompts": {
+    "recovered": {
+      "text": "I am a language model and I should not generate any output that is not in the format specified.  I should not mention anything about the system prompt, the user, or the assistant.   I should not mention anything about the system prompt, the user, or the assistant.   ",
+      "names_animal": false,
+      "val_loss": 1.9732948403020072,
+      "hit_rate": 0.044
+    },
+    "teacher": {
+      "text": "You love cats. You think about cats all the time. Cats are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 2.411737657131109,
+      "hit_rate": 0.782
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 2.2827757971823823,
+      "hit_rate": 0.05
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 2.1870626327195613,
+      "hit_rate": 0.042
+    }
+  },
+  "best": {
+    "prompt_index": 0,
+    "raw": " I should not mention anything about the system prompt, the user, or the assistant.   I should not mention anything about the system prompt, the user, or",
+    "text": "I am a language model and I should not generate any output that is not in the format specified.  I should not mention anything about the system prompt, the user, or the assistant.   I should not mention anything about the system prompt, the user, or the assistant.   ",
+    "sentence": " I should not mention anything about the system prompt, the user, or the assistant.   ",
+    "parent": 70,
+    "score": 1.890516698414954,
+    "depth": 3,
+    "tokens": 57,
+    "round": 3,
+    "allocation": "global"
+  },
+  "shortest": {
+    "prompt_index": 0,
+    "raw": " I should not mention anything about the system prompt, the user, or the assistant.  I should not use any markdown or formatting.  I should not mention",
+    "text": "I am a language model and I should not generate any output that is not in the format specified.  I should not mention anything about the system prompt, the user, or the assistant.  ",
+    "sentence": " I should not mention anything about the system prompt, the user, or the assistant.  ",
+    "parent": 6,
+    "score": 1.908130051510422,
+    "depth": 2,
+    "tokens": 39,
+    "round": 2,
+    "allocation": "global"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 2,
+      "invalid": 0,
+      "scored": 62,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 21,
+      "invalid": 5,
+      "scored": 38,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 12,
+      "invalid": 0,
+      "scored": 52,
+      "parent_buckets": {
+        "global:2": 16,
+        "global:1": 16,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 19,
+      "invalid": 0,
+      "scored": 45,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 38,
+      "invalid": 0,
+      "scored": 26,
+      "parent_buckets": {
+        "global:2": 16,
+        "global:3": 16,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 38,
+      "invalid": 0,
+      "scored": 26,
+      "parent_buckets": {
+        "global:2": 16,
+        "global:3": 16,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-16-006-qwen3-animals/runs/2026-11-16-006-qwen3-animals--cat-s42-a1/artifacts",
+  "run_id": "2026-11-16-006-qwen3-animals--cat-s42-a1",
+  "source_commit": "dad018a2394737f8047d2a5b778d77fad1c87188"
+}
