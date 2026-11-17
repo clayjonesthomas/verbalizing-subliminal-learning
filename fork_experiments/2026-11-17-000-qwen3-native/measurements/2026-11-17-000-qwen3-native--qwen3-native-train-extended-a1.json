@@ -1,0 +1,70 @@
+{
+  "stage": "extended_training_pilot",
+  "status": "complete",
+  "animal": "cat",
+  "effective_batch": "equals tested microbatch",
+  "selected_microbatch": 16,
+  "records": [
+    {
+      "panel": "representative",
+      "microbatch": 16,
+      "effective_batch": 16,
+      "examples_per_second": 90.62357053697262,
+      "seconds": 0.17655450900019787,
+      "loss": 0.3466671109199524,
+      "loss_difference": 0.001308686983975349,
+      "gradient_relative_error": 0.3147638142108917,
+      "gradient_cosine": 0.9494235515594482,
+      "peak_gib": 16.31614637374878,
+      "ok": true
+    },
+    {
+      "panel": "representative",
+      "microbatch": 32,
+      "effective_batch": 32,
+      "examples_per_second": 89.67629156692261,
+      "seconds": 0.35683902000027956,
+      "loss": 0.3468339741230011,
+      "loss_difference": 0.001475550187024055,
+      "gradient_relative_error": 0.6332951188087463,
+      "gradient_cosine": 0.7876776456832886,
+      "peak_gib": 29.432605743408203,
+      "ok": true
+    },
+    {
+      "panel": "longest",
+      "microbatch": 16,
+      "effective_batch": 16,
+      "examples_per_second": 84.17986800768331,
+      "seconds": 0.19006919800040123,
+      "loss": 0.24782824516296387,
+      "loss_difference": 0.0042508077749516815,
+      "gradient_relative_error": 0.17049773037433624,
+      "gradient_cosine": 0.9856555461883545,
+      "peak_gib": 17.365121364593506,
+      "ok": true
+    },
+    {
+      "panel": "longest",
+      "microbatch": 32,
+      "effective_batch": 32,
+      "examples_per_second": 79.79019268569887,
+      "seconds": 0.4010517950000576,
+      "loss": 0.22636300325393677,
+      "loss_difference": -0.017214434134075418,
+      "gradient_relative_error": 0.281524121761322,
+      "gradient_cosine": 0.9616816639900208,
+      "peak_gib": 31.56381893157959,
+      "ok": true
+    }
+  ],
+  "benchmark_seconds": 4.537522853000155,
+  "selection_basis": "Highest examples/second finite-loss memory-safe setting; BF16 agreement against microbatch1 reported separately",
+  "checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "run_id": "2026-11-17-000-qwen3-native--qwen3-native-train-extended-a1",
+  "source_commit": "4aca55fb49604b3db4e2409a9cca88b66b976671"
+}
