@@ -1,0 +1,180 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-16-006-qwen3-animals",
+  "pod_name": "qwen3-animals",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-006-qwen3-animals/worker.py",
+    "--animal",
+    "cat",
+    "--seed",
+    "42"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-006-qwen3-animals/hooks.py"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "User requested four animals on DSSE base Qwen3-1.7B, one seed each, then explicitly approved fastest pilot settings and queueing. Default $50 normal-work cap plus $10 cleanup only."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-16-006-qwen3-animals",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/prompted_subliminal_learning",
+      "fork_experiments/2026-11-16-006-qwen3-animals"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-16-006-qwen3-animals/config.json",
+      "fork_experiments/2026-11-16-006-qwen3-animals/report_text_edits.json",
+      "fork_experiments/2026-11-16-006-qwen3-animals/measurements"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Soft prompt fitting",
+        "tasks": [
+          "cat-s42",
+          "dog-s42",
+          "eagle-s42",
+          "owl-s42"
+        ],
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "unit": "original train rows per animal per seed",
+        "available": 10000,
+        "used": 10000,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Full original four epochs, effective batch16, 2500 optimizer steps; 128 soft tokens. User-approved BF16 microbatch16, accepting numerical differences from microbatch1.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      },
+      {
+        "name": "Bucket search",
+        "tasks": [
+          "cat-s42",
+          "dog-s42",
+          "eagle-s42",
+          "owl-s42"
+        ],
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "unit": "original seeded search-selection training examples per run",
+        "available": 256,
+        "used": 256,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Six rounds of64 attempts;32-token expansions,128-token cap,keep4 per bucket. Generation batch64 selected by pilot. Score minibatch24.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      },
+      {
+        "name": "Validation",
+        "tasks": [
+          "cat-s42",
+          "dog-s42",
+          "eagle-s42",
+          "owl-s42"
+        ],
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "unit": "original held-out validation rows per run",
+        "available": 500,
+        "used": 500,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "All500 rows; recovered, teacher, empty and default prompts plus soft prompt NLL.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      },
+      {
+        "name": "Animal evaluation",
+        "tasks": [
+          "cat-s42",
+          "dog-s42",
+          "eagle-s42",
+          "owl-s42"
+        ],
+        "dataset": "SALVE original50 favorite-animal questions",
+        "unit": "questions per prompt per run",
+        "available": 50,
+        "used": 50,
+        "responses_per_input": 20,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "20 samples per question,100-token maximum,temperature1; recovered,teacher,empty,default system prompts.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      }
+    ]
+  }
+}
