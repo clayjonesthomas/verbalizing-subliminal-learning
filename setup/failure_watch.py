@@ -17,7 +17,7 @@ def source(root):
         raise ValueError('S3 credentials file missing in checkout and main worktree')
     return dict(env_file=str(env_file), endpoint='https://s3api-us-ne-1.runpod.io',
                 region='US-NE-1', account_id='user_3JNPrVMTYwugXaYJytSv2t8lRsv',
-                team_id='cmu31hyiy002gk9s0xik85gob', volume_id='orqsmyhvok', mount_path='/workspace')
+                team_id='cmu31hyiy002gk9s0xik85gob', volume_id='06osinj0p5', mount_path='/workspace')
 
 
 def enroll(root, experiment, thread):

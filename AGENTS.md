@@ -38,7 +38,7 @@ volume files directly from the laptop. No running pod or SSH connection is
 required; do not provision a pod just to access files. Writes and deletes also
 work when authorized by the task.
 
-- Bucket / network volume: `orqsmyhvok`.
+- Bucket / network volume: `06osinj0p5`.
 - Endpoint: `https://s3api-us-ne-1.runpod.io`; signing region: `US-NE-1`.
 - S3 access key ID: `user_3JNPrVMTYwugXaYJytSv2t8lRsv` (Caleb SPAR).
 - S3 secret access key: `S3_API_KEY` in the repository-root `.env`. Read it into
@@ -46,7 +46,7 @@ work when authorized by the task.
   or copy it into global AWS configuration. This is separate from the Runpod
   management API key above. Use explicit credentials, not ambient AWS defaults.
 - Include `X-Team-Id: cmu31hyiy002gk9s0xik85gob` and AWS Signature V4 signing.
-- Pod path `/workspace/PATH` maps to `s3://orqsmyhvok/PATH`.
+- Pod path `/workspace/PATH` maps to `s3://06osinj0p5/PATH`.
 - Use bounded, prefix-scoped listings rather than recursively listing the entire
   volume. Keep raw downloads and temporary files outside versioned source.
 
@@ -59,12 +59,19 @@ TLS verification or assuming this requires sandbox escalation.
 
 ## Network-volume capacity
 
-The current project volume is `orqsmyhvok` in US-NE-1 (300 GB at migration).
+The current project volume is `06osinj0p5` in US-NE-1 (300 GB, STANDARD; migrated 2026-11-17).
 The shared runner enables pod-side storage monitoring for dedicated experiments:
 at 90% usage, grow by 20%, rounded up to whole GB, with a hard cap of 2,000 GB (user approved 2026-11-08).
 Workers coordinate through a shared volume lock; the watcher pulls `storage.json`.
 Do not assume `df` reports the volume quota: use measured directory usage and the
 Runpod API capacity. At the cap, request cleanup or a new user-approved policy.
+
+## Network-volume migrations
+
+Use **8 parallel copy workers by default**, with a `--workers N` flag to test
+higher concurrency. Reuse already copied files, preserve filesystem metadata and
+cross-directory hardlinks, and verify checksums before cutover or source deletion.
+The 2026-11-17 migration scripts are in `setup/storage-migration-20261117/`.
 
 ## Creating additional pods
 

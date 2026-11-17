@@ -18,7 +18,7 @@ TEAM = 'cmu31hyiy002gk9s0xik85gob'
 ACCOUNT = 'user_3JNPrVMTYwugXaYJytSv2t8lRsv'
 KEY_FILE = Path('~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key')
 POD = 'dsln6o9uc00dwc'
-VOLUME = 'orqsmyhvok'
+VOLUME = '06osinj0p5'
 REPO = '/workspace/projects/verbalizing-subliminal-learning/repo'
 from image_policy import select, profiles
 IMAGE = select()[1]

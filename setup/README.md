@@ -22,7 +22,7 @@ leaves the pod available for inspection. Launch experiments from the laptop thro
 `setup/experiment.py`, rather than inside this shell.
 
 Git uses the repository's write-enabled deploy key `runpod-caleb-spar-key`.
-Its private key persists outside the checkout on network volume `orqsmyhvok` at
+Its private key persists outside the checkout on network volume `06osinj0p5` at
 `/workspace/projects/verbalizing-subliminal-learning/.ssh/runpod-caleb-spar-key`.
 Do not delete it during experiment cleanup or commit it to Git.
 Pods sharing the volume can use this key without a connected laptop.
@@ -139,7 +139,7 @@ purged environment archive need a pinned installation recipe before being rerun.
 
 ## Replacement pods and GPU availability
 
-To create one additional pod on the existing `orqsmyhvok` volume:
+To create one additional pod on the existing `06osinj0p5` volume:
 
 ```bash
 python3 setup/provision.py

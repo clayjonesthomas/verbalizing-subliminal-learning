@@ -123,7 +123,7 @@ pod, verified volume and mount, team and account:
 | --- | --- |
 | `team_id` | `cmu31hyiy002gk9s0xik85gob` |
 | `account_id` | `user_3JNPrVMTYwugXaYJytSv2t8lRsv` |
-| `volume_id` | Project volume `orqsmyhvok`; reverify through the API |
+| `volume_id` | Project volume `06osinj0p5`; reverify through the API |
 | `mount_path` | `/workspace` |
 | `pod_id` | Actual dedicated pod ID discovered through the API |
 | Laptop `key_file` | `~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key` |
@@ -263,7 +263,7 @@ The launch preflight scans pinned experiment Python for common enabling calls; d
 ## Shared-volume GPU demand heartbeat
 
 While seeking another GPU, `setup/provision.py` refreshes
-`/workspace/.podrun-capacity/orqsmyhvok/demand.json` at most once per 60 seconds
+`/workspace/.podrun-capacity/06osinj0p5/demand.json` at most once per 60 seconds
 through a cached, previously verified SSH endpoint. The atomic record contains
 `schema: 1`, the team/account/volume identity, and the remote server's
 `last_needed_at` timestamp. Existing workers treat it as fresh for 300 seconds.
