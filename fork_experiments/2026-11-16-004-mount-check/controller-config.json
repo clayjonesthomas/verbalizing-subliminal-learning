@@ -1,0 +1,58 @@
+{
+  "image_profiles": {
+    "vsl-base": "runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404",
+    "vsl-image-940753bab077": "ghcr.io/clayjonesthomas/vsl-auditbench@sha256:940753bab07737fd19072ec154fa12886b76b1cd580c5bddc2049fb74b5165de"
+  },
+  "host_blocklist": {
+    "schema": 1,
+    "enforced": true,
+    "hosts": {
+      "6bxmp0fk5z34": {
+        "recorded_date": "2026-11-10",
+        "pod_id": "q8xh6wfnfeyouk",
+        "data_center": "US-NE-1",
+        "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+        "reason": "Pinned dependency installation exceeded the 15-minute startup deadline; image already cached. Network versus disk cause unconfirmed.",
+        "user_instruction": "Terminate newly allocated pods on this host immediately; enforced by controller and laptop bootstrap."
+      }
+    }
+  },
+  "controller_repair_reason": "Diagnosed blocking FUSE flock waits. Runtime now uses LOCK_NB with five-second jittered retries, local SQLite authority and bounded backup waits. Full infrastructure suite and request replay regression tests passed. Prior member spending reconciled against provider deletion evidence.",
+  "max_pods": 1,
+  "sticky": true,
+  "target_pods": 0,
+  "idle_experiment": null,
+  "gpu_ids": [],
+  "min_vram_gb": 48,
+  "max_hourly": 5,
+  "environment": "vsl-base",
+  "operator_public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEmdb6U+cffesIkJWs63z5akHBxfSVrBm+B5vUc49ziw clayjones@MacBook-Pro.local",
+  "create_body": {
+    "image": "runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404",
+    "args": "bash /workspace/projects/verbalizing-subliminal-learning/repo/setup/start.sh",
+    "cloud": "SECURE",
+    "disk": 60,
+    "dataCenterIds": [
+      "US-NE-1"
+    ],
+    "mounts": {
+      "network": [
+        {
+          "volumeId": "orqsmyhvok",
+          "path": "/workspace"
+        }
+      ]
+    },
+    "startSsh": true,
+    "ports": [
+      "22/tcp"
+    ]
+  },
+  "readiness_command": [
+    "bash",
+    "/workspace/projects/verbalizing-subliminal-learning/repo/setup/run.sh",
+    "python",
+    "-c",
+    "import torch; assert torch.cuda.is_available()"
+  ]
+}
