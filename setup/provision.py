@@ -203,8 +203,8 @@ def provision(args, demand=None, transition=None, accept_pod=None):
         cycle += 1
         gpus = catalog.get(lambda: try_later(lambda: c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1'))['gpus'])
         options = candidates(gpus, args.gpu, args.allow_non_rtx, args.max_hourly, getattr(args, 'min_vram_gb', 48))
-        if getattr(args, 'any_compute', False):
-            cpus = try_later(lambda:c.request('GET','catalog/cpus?include=AVAILABILITY&product=POD&cloud=SECURE'))['cpus']
+        if getattr(args, 'any_compute', False) or getattr(args, 'any_gpu', False):
+            cpus = [] if getattr(args, 'any_gpu', False) else try_later(lambda:c.request('GET','catalog/cpus?include=AVAILABILITY&product=POD&cloud=SECURE'))['cpus']
             options = diagnostic_candidates(gpus, cpus, args.max_hourly)
         if args.gpu and not options:
             raise RuntimeError('Requested GPU IDs have no eligible catalog entries; refusing fallback')

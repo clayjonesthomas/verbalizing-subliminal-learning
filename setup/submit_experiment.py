@@ -165,6 +165,7 @@ def main(root, infra, argv):
     p.add_argument('--experiment', required=True)
     p.add_argument('--workers', type=int, default=1)
     p.add_argument('--dedicated', action='store_true', help='Use the established dedicated submission controller')
+    p.add_argument('--any-gpu', action='store_true', help='Explicit diagnostic override: all GPU families and memory sizes, no CPUs')
     p.add_argument('--any-compute', action='store_true', help='Explicit diagnostic override: try all GPU sizes/families and CPU types sequentially')
     p.add_argument('--cpu', action='store_true', help='Use a CPU-only pod with the established dedicated runner')
     p.add_argument('--template', type=Path)
@@ -236,7 +237,7 @@ def main(root, infra, argv):
             preflight(c, forward_env=a.forward_env)
             workers.append(dict(run_id=rid, pod_id=pod, config=c))
         plan = dict(schema=1, source_commit=source, infrastructure_commit=infra_sha, workers=workers,
-                    forward_env=a.forward_env, placement=dict(gpu=a.gpu, allow_non_rtx=a.allow_non_rtx, max_hourly=a.max_hourly, cpu=a.cpu, any_compute=a.any_compute))
+                    forward_env=a.forward_env, placement=dict(gpu=a.gpu, allow_non_rtx=a.allow_non_rtx, max_hourly=a.max_hourly, cpu=a.cpu, any_compute=a.any_compute, any_gpu=a.any_gpu))
         atomic(directory / 'plan.json', plan)
     forwarded_environment(plan['forward_env'])
     if not a.foreground:

@@ -228,3 +228,22 @@ class CPUStartupTests(unittest.TestCase):
         self.assertEqual(command[:2], ['bash','-c'])
         self.assertNotIn('/workspace',command[2])
         subprocess.run(['bash','-n'],input=command[2],text=True,check=True)
+
+
+class AnyGPUProvisionTests(unittest.TestCase):
+    def test_gpu_override_uses_small_gpu_without_querying_cpus(self):
+        from types import SimpleNamespace
+        client=Mock()
+        gpu=CandidateTests.gpu('NVIDIA RTX 4090',memory=24,price=.59)
+        client.request.side_effect=[{'dataCenter':'US-NE-1'},{'gpus':[gpu]}]
+        client.pod.return_value={'id':'gpu-only'}
+        def create(c,body,price,allocated):
+            self.assertEqual(body['gpu']['id'],gpu['id'])
+            self.assertEqual(body['disk'],60)
+            self.assertNotIn('cpu',body)
+            pod={'id':'gpu-only'};allocated(pod);return pod
+        args=SimpleNamespace(cpu=False,any_gpu=True,any_compute=False,pod_local_gb=None,gpu=None,allow_non_rtx=False,max_hourly=5,name='test')
+        with patch.object(provision,'ProvisionClient',return_value=client),patch.object(provision,'create_with_billing',side_effect=create),patch.object(provision,'start_and_connect'):
+            result=provision.provision(args,transition=Mock())
+        self.assertEqual(result['id'],'gpu-only')
+        self.assertEqual(client.request.call_count,2)
