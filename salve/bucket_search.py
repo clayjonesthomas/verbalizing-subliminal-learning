@@ -65,7 +65,7 @@ def select_results(nodes, tolerance):
     return best, shortest
 
 
-def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=None):
+def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=None, generate_batch=None, generation_batch_size=1):
     """Callbacks make the search testable without loading a GPU/model.
 
     generate(prefix) returns (continuation, metadata), already cut at the first
@@ -73,6 +73,10 @@ def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=No
     consume an attempt but are scored/retained only once. All unique candidates
     remain in the archive, including terminal candidates and displaced beams.
     """
+    if type(generation_batch_size) is not int or generation_batch_size < 1:
+        raise ValueError('Generation batch size must be a positive integer')
+    if generation_batch_size > 1 and generate_batch is None:
+        raise ValueError('Batched generation requires a generate_batch callback')
     def checked_score(text):
         loss = float(score(text))
         if not math.isfinite(loss) or loss < 0:
@@ -93,7 +97,15 @@ def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=No
         stats = dict(round=iteration + 1, attempts=len(schedule), global_attempts=0,
                      uniform_attempts=0, duplicates=0, invalid=0, scored=0,
                      parent_buckets={})
-        for parent, allocation in schedule:
+        generated = []
+        if generate_batch is not None:
+            for offset in range(0, len(schedule), generation_batch_size):
+                chunk = schedule[offset:offset + generation_batch_size]
+                samples = generate_batch([nodes[parent]['text'] for parent, _ in chunk])
+                if len(samples) != len(chunk):
+                    raise ValueError('Generation callback returned wrong batch length')
+                generated.extend(samples)
+        for attempt_index, (parent, allocation) in enumerate(schedule):
             stats[allocation + '_attempts'] += 1
             node = nodes[parent]
             b = config.bucket(node['tokens'])
@@ -106,7 +118,7 @@ def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=No
             expansions[parent] = expansions.get(parent, 0)+1
             first_expansion_round.setdefault(parent, iteration+1)
             attempts.append(attempt)
-            sentence, metadata = generate(node['text'])
+            sentence, metadata = generated[attempt_index] if generate_batch is not None else generate(node['text'])
             text = node['text'] + sentence
             tokens = len(tokenize(text))
             if not sentence.strip() or tokens > config.max_tokens or tokens == 0:
@@ -136,7 +148,7 @@ def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=No
 
 
 def bucket_search(objective, z, train, search_config, seed, *,
-                  config=BucketConfig(), sampling_seed=None, on_round=None, callbacks=None):
+                  config=BucketConfig(), sampling_seed=None, on_round=None, callbacks=None, generation_batch_size=1):
     # Model-native adapters share exactly the same search/retention algorithm.
     if callbacks is not None:
         if set(callbacks) != {'generate', 'tokenize', 'score'}:
@@ -162,7 +174,27 @@ def bucket_search(objective, z, train, search_config, seed, *,
         sentence = cut_at_sentence(raw.split(prompt['stop'], 1)[0] if prompt['stop'] else raw)
         return sentence, dict(prompt_index=index, raw=raw)
 
+    def generate_many(prefixes):
+        from salve.salve import system_header, stop_token_ids
+        from salve.soft_prompt import make_soft_prompt_input, sample_soft_prompt_batch
+        indices = []
+        for _ in prefixes:
+            if not bag:
+                bag.extend(rng.sample(range(len(VERBALIZE_PROMPTS)), len(VERBALIZE_PROMPTS)))
+            indices.append(bag.pop())
+        prompts = [VERBALIZE_PROMPTS[i] for i in indices]
+        inputs = [make_soft_prompt_input(objective.tokenizer, p['user'], prefill=p['prefill']+system_header(objective.tokenizer)+prefix) for p, prefix in zip(prompts, prefixes)]
+        replies = sample_soft_prompt_batch(objective.model, inputs, z, config.width, search_config.temperature, stop_token_ids(objective.model, objective.tokenizer), use_cache=search_config.use_cache)
+        samples = []
+        for ids, index, prompt in zip(replies, indices, prompts):
+            raw = objective.tokenizer.decode(ids, skip_special_tokens=True)
+            sentence = cut_at_sentence(raw.split(prompt['stop'], 1)[0] if prompt['stop'] else raw)
+            samples.append((sentence, dict(prompt_index=index, raw=raw)))
+        return samples
+
     return search_core(generate=generate,
                        tokenize=lambda text: objective.tokenizer.encode(text, add_special_tokens=False),
                        score=lambda text: objective.loss_of_text(text, examples, search_config.mini_batch_size),
-                       config=config, on_round=on_round)
+                       config=config, on_round=on_round,
+                       generate_batch=generate_many if generation_batch_size > 1 else None,
+                       generation_batch_size=generation_batch_size)

@@ -93,3 +93,19 @@ class NativeCallbackTests(unittest.TestCase):
         expected=search_core(**callbacks(),config=cfg)
         actual=bucket_search(None,None,None,None,0,config=cfg,callbacks=callbacks())
         self.assertEqual(expected,actual)
+
+class BatchSearchTests(unittest.TestCase):
+    def test_batching_preserves_attempt_order_retention_and_results(self):
+        def run(size):
+            count=[0]
+            def gen(prefix):
+                count[0]+=1
+                return str(count[0])+'. ',{'id':count[0]}
+            kwargs={} if size==1 else dict(generate_batch=lambda prefixes:[gen(p) for p in prefixes],generation_batch_size=size)
+            return search_core(generate=gen,tokenize=list,score=lambda t:10/(1+len(t)),config=BucketConfig(rounds=6),**kwargs)
+        reference=run(1)
+        for size in [4,16,64]:self.assertEqual(reference,run(size))
+
+    def test_wrong_batch_cardinality_rejected(self):
+        with self.assertRaises(ValueError):
+            search_core(generate=None,generate_batch=lambda _:[],generation_batch_size=64,tokenize=list,score=lambda _:1)

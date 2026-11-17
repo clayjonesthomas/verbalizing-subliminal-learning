@@ -126,3 +126,52 @@ def sample_with_soft_prompt(model: PreTrainedModel, inp: SoftPromptInput, z: tor
         next_embed = E(tok).unsqueeze(0)
         embeds = next_embed if use_cache else torch.cat([embeds, next_embed], dim=1)
     return out
+
+
+@torch.no_grad()
+def sample_soft_prompt_batch(model, inputs, z, max_new_tokens, temperature, stop_ids, *, use_cache=True):
+    """Left-padded independent continuations, plain temperature sampling and per-row EOS.
+
+    Each invocation owns a new model-native cache. Batch layout changes sampling
+    RNG consumption; it does not change the sampling distribution or search budget.
+    """
+    if not inputs:
+        return []
+    E = model.get_input_embeddings()
+    seqs = [embed_soft_prompt_inputs(model, [inp], z)[0][0] for inp in inputs]
+    width = max(len(x) for x in seqs)
+    embeds = torch.stack([torch.cat([x.new_zeros(width-len(x), x.shape[-1]), x]) for x in seqs])
+    mask = torch.stack([torch.arange(width, device=z.device) >= width-len(x) for x in seqs]).long()
+    outputs = [[] for _ in inputs]
+    active = [True] * len(inputs)
+    cache = None
+    for _ in range(max_new_tokens):
+        positions = (mask.cumsum(-1)-1).clamp_min(0)
+        kwargs = dict(inputs_embeds=embeds, attention_mask=mask, use_cache=use_cache,
+                      position_ids=positions[:, -embeds.shape[1]:])
+        if cache is not None:
+            kwargs['past_key_values'] = cache
+        result = model(**kwargs)
+        logits = result.logits[:, -1, :]
+        if use_cache:
+            cache = result.past_key_values
+            if cache is None:
+                raise RuntimeError('Model returned no generation cache')
+        del result
+        if temperature == 0:
+            tokens = logits.argmax(-1)
+        else:
+            logits = torch.nan_to_num(logits, nan=-1e9, posinf=1e4, neginf=float('-inf'))
+            tokens = torch.multinomial(torch.softmax(logits/temperature, dim=-1), 1).squeeze(-1)
+        for i, token in enumerate(tokens.tolist()):
+            if active[i]:
+                if token in stop_ids:
+                    active[i] = False
+                else:
+                    outputs[i].append(token)
+        if not any(active):
+            break
+        next_embeds = E(tokens).unsqueeze(1)
+        embeds = next_embeds if use_cache else torch.cat([embeds, next_embeds], dim=1)
+        mask = torch.cat([mask, torch.ones(len(inputs), 1, device=z.device, dtype=mask.dtype)], dim=1)
+    return outputs
