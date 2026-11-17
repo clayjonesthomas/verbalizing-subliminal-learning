@@ -12,6 +12,8 @@ def render(root=HERE):
   traces=[]
   for key,name in [('recovered','Bucket recovered'),('teacher','Teacher'),('default_prompt','Default'),('empty_prompt','Empty')]:
    traces.append(dict(type='bar',name=name,x=[r['animal']+' '+str(r['seed']) for r in runs],y=[r['prompts'][key][metric]*(100 if metric=='hit_rate' else 1) for r in runs]))
+  if metric=='val_loss':
+   traces.append(dict(type='bar',name='Soft prompt',x=[r['animal']+' '+str(r['seed']) for r in runs],y=[r['soft_val'] for r in runs]))
   cards.append(chart_html(metric,label,traces,x_label='Animal / seed',y_label=label,caption='One seed per animal; descriptive prototype.'))
  body='<h1>Qwen3-1.7B · animal verbalization</h1>'+toggle_section('Recovery results',f'<p>{len(runs)} / 4 runs complete.</p>'+chart_grid(cards),section_id='results')
  if runs:
