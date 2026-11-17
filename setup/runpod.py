@@ -131,7 +131,7 @@ def ssh_args(pod, command=None):
     if command is None:
         args += ['-t', f'root@{host}', f'cd {shlex.quote(REPO)} && exec bash -l']
     else:
-        args += [f'root@{host}', shlex.join(['bash', f'{REPO}/setup/run.sh', *command])]
+        args += [f'root@{host}', shlex.join(command if pod.get('cpu') else ['bash', f'{REPO}/setup/run.sh', *command])]
     return args
 
 

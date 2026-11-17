@@ -183,7 +183,9 @@ class CPUProvisionTests(unittest.TestCase):
         def create(c,body,price,allocated):
             self.assertEqual(body['cpu'],{'id':'cpu3c','vcpuCount':2})
             self.assertNotIn('gpu',body)
-            self.assertIn('cpu-boot.sh',body['args'])
+            self.assertNotIn('/workspace',body['args'])
+            self.assertIn('/usr/sbin/sshd',body['args'])
+            self.assertEqual(body['disk'],20)
             pod={'id':'cpu-pod','cost':.06};allocated(pod);return pod
         with patch.object(provision,'ProvisionClient',return_value=client),patch.object(provision,'create_with_billing',side_effect=create),patch.object(provision,'start_and_connect') as ready:
             result=provision.provision(SimpleNamespace(cpu=True,max_hourly=.1,name='test'),transition=transition)
@@ -217,3 +219,12 @@ class DiagnosticCandidateTests(unittest.TestCase):
             result=provision.provision(args,transition=Mock())
         self.assertEqual(result['id'],'new-cpu')
         self.assertEqual(created.call_count,1)
+
+
+class CPUStartupTests(unittest.TestCase):
+    def test_inline_boot_script_is_valid_bash_without_volume_access(self):
+        import shlex, subprocess
+        command=shlex.split(provision.cpu_start_command())
+        self.assertEqual(command[:2], ['bash','-c'])
+        self.assertNotIn('/workspace',command[2])
+        subprocess.run(['bash','-n'],input=command[2],text=True,check=True)
