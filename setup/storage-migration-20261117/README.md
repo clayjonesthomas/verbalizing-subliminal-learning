@@ -35,3 +35,8 @@ referencing the old volume resolve to the same paths on the new volume.
 
 The adjacent `../storage-migration-20261117.json` records final verification,
 cutover and resource retirement.
+
+Final verification used `--workers 32 --resume-verified`; all 168 shards passed.
+The completed cutover preserved all 18 pre-existing tracked-file deletions in the
+on-volume checkout. The old volume and temporary CPU pod were retired.
+A complete receipt is also stored at `/workspace/.volume-migration-20261117-complete.json`.
