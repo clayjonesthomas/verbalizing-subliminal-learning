@@ -121,7 +121,7 @@ def generation_pilot(obj):
     return dict(selected_generation_batch=best,generation_records=records,cache_greedy_check=True)
 
 
-def run(obj,animal,seed):
+def run(obj,animal,seed,resume_checkpoint=None):
     decision=json.loads((SHARED/'pilot.json').read_text());mb=C['training_microbatch']
     assert decision['gpu']==torch.cuda.get_device_name(),'Pilot GPU differs from worker GPU'
     train,val=data(obj,animal);cfg=SoftPromptConfig(mini_batch_size=mb);search=SearchConfig(use_cache=True)
@@ -129,8 +129,13 @@ def run(obj,animal,seed):
     optimizer=torch.optim.Adam([z],lr=cfg.lr,weight_decay=cfg.weight_decay)
     scheduler=torch.optim.lr_scheduler.LambdaLR(optimizer,warmup_cosine(steps,round(cfg.warmup_frac*steps)))
     queue=[];history=[];start=time.perf_counter()
-    progress(stage='training_start',animal=animal,seed=seed,microbatch=mb,effective_batch=cfg.train_batch_size,step=0,total=steps)
-    for step in range(steps):
+    start_step=0
+    if resume_checkpoint:
+        from training_resume import restore
+        start_step,queue,history=restore(resume_checkpoint,z,optimizer,scheduler,steps,len(train))
+        atomic(ART/'resume-provenance.json',dict(checkpoint=str(resume_checkpoint),sha256=hashlib.sha256(Path(resume_checkpoint).read_bytes()).hexdigest(),step=start_step,animal=animal,seed=seed))
+    progress(stage='training_start',animal=animal,seed=seed,microbatch=mb,effective_batch=cfg.train_batch_size,step=start_step,total=steps)
+    for step in range(start_step,steps):
         while len(queue)<cfg.train_batch_size:queue.extend(torch.randperm(len(train)).tolist())
         ids,queue=queue[:cfg.train_batch_size],queue[cfg.train_batch_size:]
         optimizer.zero_grad();loss=obj.loss(z,[train[i] for i in ids],backward=True,mini_batch_size=mb)
@@ -152,10 +157,10 @@ def run(obj,animal,seed):
         torch.manual_seed(seed);torch.cuda.manual_seed_all(seed)
         ev=evaluate_prompt(obj,val,animal,text);answers=ev.pop('answers');atomic(ART/f'{name}-answers.json',answers)
         evaluations[name]=dict(text=text,**ev);progress(stage='evaluation',animal=animal,seed=seed,prompt=name,hit_rate=ev['hit_rate'])
-    publish(dict(stage='recovery',status='complete',animal=animal,seed=seed,soft_config=dataclasses.asdict(cfg),bucket_config=dataclasses.asdict(BucketConfig()),search_config=dataclasses.asdict(search),generation_batch_size=decision['selected_generation_batch'],training_seconds=training_seconds,search_seconds=search_seconds,soft_val=soft_val,prompts=evaluations,best=result['best'],shortest=result['shortest'],rounds=result['rounds'],artifact_root=str(ART)))
+    publish(dict(stage='recovery',status='complete',animal=animal,seed=seed,soft_config=dataclasses.asdict(cfg),bucket_config=dataclasses.asdict(BucketConfig()),search_config=dataclasses.asdict(search),generation_batch_size=decision['selected_generation_batch'],training_seconds=training_seconds,training_seconds_scope="current_attempt" if start_step else "full_training",resumed_from_step=start_step,search_seconds=search_seconds,soft_val=soft_val,prompts=evaluations,best=result['best'],shortest=result['shortest'],rounds=result['rounds'],artifact_root=str(ART)))
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','run']);p.add_argument('--animal');p.add_argument('--seed',type=int,default=42);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','run']);p.add_argument('--animal');p.add_argument('--seed',type=int,default=42);p.add_argument('--resume-checkpoint',type=Path);a=p.parse_args()
     obj=load()
     if a.stage=='pilot':pilot(obj)
-    else:run(obj,a.animal,a.seed)
+    else:run(obj,a.animal,a.seed,a.resume_checkpoint)

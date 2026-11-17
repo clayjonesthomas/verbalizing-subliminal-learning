@@ -1,0 +1,181 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-16-003-figure4-bucket",
+  "pod_name": "fig4-bucket",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-003-figure4-bucket/worker.py",
+    "pilot"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-003-figure4-bucket/hooks.py"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "User authorized eight Figure 4 runs plus training and bucket-generation batching pilots on 2026-11-16; standing $50 experiment normal-work cap, $60 cleanup hard cutoff."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-16-003-figure4-bucket",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/prompted_subliminal_learning",
+      "fork_experiments/2026-11-16-003-figure4-bucket"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-16-003-figure4-bucket/config.json",
+      "fork_experiments/2026-11-16-003-figure4-bucket/report_text_edits.json",
+      "fork_experiments/2026-11-16-003-figure4-bucket/measurements"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Soft prompt fitting",
+        "tasks": [
+          "fig4-dog-s42",
+          "fig4-dog-s43",
+          "fig4-eagle-s42",
+          "fig4-eagle-s43"
+        ],
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "unit": "original train rows per animal per seed",
+        "available": 10000,
+        "used": 10000,
+        "responses_per_input": 1,
+        "seeds": [
+          42,
+          43
+        ],
+        "splits": {},
+        "stopping_rule": "Full original four epochs, effective batch16, 2500 optimizer steps; 128 soft tokens. User-approved BF16 microbatch8, accepting numerical differences from microbatch1.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      },
+      {
+        "name": "Bucket search",
+        "tasks": [
+          "fig4-dog-s42",
+          "fig4-dog-s43",
+          "fig4-eagle-s42",
+          "fig4-eagle-s43"
+        ],
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "unit": "original seeded search-selection training examples per run",
+        "available": 256,
+        "used": 256,
+        "responses_per_input": 1,
+        "seeds": [
+          42,
+          43
+        ],
+        "splits": {},
+        "stopping_rule": "Six rounds of64 attempts;32-token expansions,128-token cap,keep4 per bucket. Generation batch selected by pilot. Score minibatch24.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      },
+      {
+        "name": "Validation",
+        "tasks": [
+          "fig4-dog-s42",
+          "fig4-dog-s43",
+          "fig4-eagle-s42",
+          "fig4-eagle-s43"
+        ],
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "unit": "original held-out validation rows per run",
+        "available": 500,
+        "used": 500,
+        "responses_per_input": 1,
+        "seeds": [
+          42,
+          43
+        ],
+        "splits": {},
+        "stopping_rule": "All500 rows; recovered, teacher, empty and default prompts plus soft prompt NLL.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      },
+      {
+        "name": "Animal evaluation",
+        "tasks": [
+          "fig4-dog-s42",
+          "fig4-dog-s43",
+          "fig4-eagle-s42",
+          "fig4-eagle-s43"
+        ],
+        "dataset": "SALVE original50 favorite-animal questions",
+        "unit": "questions per prompt per run",
+        "available": 50,
+        "used": 50,
+        "responses_per_input": 20,
+        "seeds": [
+          42,
+          43
+        ],
+        "splits": {},
+        "stopping_rule": "20 samples per question,100-token maximum,temperature1; recovered,teacher,empty,default system prompts.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "task_seconds": 21600
+        },
+        "deviations": []
+      }
+    ]
+  }
+}
