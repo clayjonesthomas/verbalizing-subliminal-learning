@@ -1,0 +1,100 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-16-002-semantic-full",
+  "pod_name": "semantic-full",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-002-semantic-full/microbatch_sweep.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-002-semantic-full/hooks.py"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 150,
+    "hard_limit_usd": 180,
+    "approval": "User approved $150 normal work plus $30 cleanup on 2026-11-12; one seed per student initially. Continuation authorized 2026-11-16; original $29.470998080354757 retained, no budget reset.",
+    "prior_spend_usd": 29.470998080354757
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-16-002-semantic-full",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve/bucket_search.py",
+      "fork_experiments/2026-11-16-002-semantic-full"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-16-002-semantic-full/config.json",
+      "fork_experiments/2026-11-16-002-semantic-full/input_manifest.json",
+      "fork_experiments/2026-11-16-002-semantic-full/report_text_edits.json",
+      "fork_experiments/2026-11-16-002-semantic-full/measurements"
+    ],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Diagnostic soft-prompt microbatch sweep",
+        "tasks": [
+          "semfull-microbatch-diagnostic"
+        ],
+        "dataset": "All four full-data settings: 16 representative and 16 longest training rows per setting",
+        "unit": "diagnostic panels",
+        "available": 8,
+        "used": 8,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Every microbatch size 1 through 16; one warmup plus three measured identical updates per shape. Fixed effective batch16, BF16, checkpointing off. Diagnostic only, never adopts a batch or updates scientific checkpoints.",
+        "hard_cutoffs": {
+          "experiment_normal_usd": 150,
+          "task_seconds": 3600
+        },
+        "deviations": []
+      }
+    ]
+  }
+}
