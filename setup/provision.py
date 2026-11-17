@@ -170,6 +170,17 @@ def provision_cpu(args, demand=None, transition=None):
         time.sleep(3)
 
 
+def diagnostic_candidates(gpus, cpus, max_hourly):
+    """Explicit mount-test override; no model memory requirement."""
+    rows = [g for g in gpus if g.get('secure') and 0 < (g.get('price', {}).get('secure') or 0) < max_hourly]
+    for cpu in cpus:
+        count = max(2, cpu['vcpu']['min'])
+        rate = (cpu.get('price', {}).get('securePerVcpu') or 0) * count
+        if 0 < rate < max_hourly:
+            rows.append(dict(id=cpu['id'], cpu_count=count, memory=0, price={'secure':rate}))
+    return sorted(rows, key=lambda g:g['price']['secure'])
+
+
 def provision(args, demand=None, transition=None, accept_pod=None):
     if getattr(args,"cpu",False):return provision_cpu(args,demand,transition)
     c = ProvisionClient(local_volume_gb=args.pod_local_gb)
@@ -186,6 +197,9 @@ def provision(args, demand=None, transition=None, accept_pod=None):
         cycle += 1
         gpus = catalog.get(lambda: try_later(lambda: c.request('GET', 'catalog/gpus?include=AVAILABILITY&product=POD&cloud=SECURE&count=1'))['gpus'])
         options = candidates(gpus, args.gpu, args.allow_non_rtx, args.max_hourly, getattr(args, 'min_vram_gb', 48))
+        if getattr(args, 'any_compute', False):
+            cpus = try_later(lambda:c.request('GET','catalog/cpus?include=AVAILABILITY&product=POD&cloud=SECURE'))['cpus']
+            options = diagnostic_candidates(gpus, cpus, args.max_hourly)
         if args.gpu and not options:
             raise RuntimeError('Requested GPU IDs have no eligible catalog entries; refusing fallback')
         print(json.dumps({'cycle':cycle,'eligible_models':len(options),'time':time.strftime('%H:%M:%S')}), flush=True)
@@ -193,6 +207,9 @@ def provision(args, demand=None, transition=None, accept_pod=None):
         for g in options:
             if blocked_until(rejected_hosts,g['id']) > time.time():continue
             body = {'name':getattr(args, 'name', 'verbalizing-subliminal-learning-new'),'image':getattr(args,'image',None) or IMAGE,'args':START,'cloud':'SECURE','gpu':{'id':g['id'],'count':1},'disk':60,'dataCenterIds':['US-NE-1'],'mounts':{'network':[{'volumeId':VOLUME,'path':'/workspace'}]},'startSsh':True,'ports':['22/tcp'],'env':{'PUBLIC_KEY':public_key}}
+            if g.get('cpu_count'):
+                body.pop('gpu')
+                body.update(cpu=dict(id=g['id'],vcpuCount=g['cpu_count']),disk=20,image='ubuntu:24.04',args='bash /workspace/projects/verbalizing-subliminal-learning/repo/setup/cpu-boot.sh')
             if args.pod_local_gb:
                 body['mounts'] = {'persistent': {'size': args.pod_local_gb, 'path': '/workspace'}}
                 body.pop('dataCenterIds')

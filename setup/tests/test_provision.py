@@ -190,3 +190,30 @@ class CPUProvisionTests(unittest.TestCase):
         self.assertEqual(result['id'],'cpu-pod')
         transition.assert_any_call('allocated',pod_id='cpu-pod')
         ready.assert_called_once()
+
+
+class DiagnosticCandidateTests(unittest.TestCase):
+    def test_all_families_small_memory_and_cpu_sorted_by_price(self):
+        gpu = dict(CandidateTests.gpu('AMD diagnostic', memory=8, price=.5), manufacturer='AMD')
+        cpu = dict(id='cpu-new', vcpu={'min':4}, price={'securePerVcpu':.01})
+        result = provision.diagnostic_candidates([gpu], [cpu], 5)
+        self.assertEqual([x['id'] for x in result], ['cpu-new', 'AMD diagnostic'])
+        self.assertEqual(result[0]['cpu_count'], 4)
+        self.assertEqual(provision.diagnostic_candidates([dict(gpu, price={'secure':6})], [], 5), [])
+
+    def test_mixed_allocation_uses_20gb_cpu_disk_and_stops_after_success(self):
+        from types import SimpleNamespace
+        client=Mock()
+        cpu=dict(id='cpu-any',vcpu={'min':2},price={'securePerVcpu':.02})
+        client.request.side_effect=[{'dataCenter':'US-NE-1'},{'gpus':[CandidateTests.gpu('small GPU',memory=8)]},{'cpus':[cpu]}]
+        client.pod.return_value={'id':'new-cpu','cpu':{'id':'cpu-any'}}
+        def create(c,body,price,allocated):
+            self.assertEqual(body['disk'],20)
+            self.assertEqual(body['cpu']['id'],'cpu-any')
+            self.assertNotIn('gpu',body)
+            pod={'id':'new-cpu'};allocated(pod);return pod
+        args=SimpleNamespace(cpu=False,any_compute=True,pod_local_gb=None,gpu=None,allow_non_rtx=False,max_hourly=5,name='test')
+        with patch.object(provision,'ProvisionClient',return_value=client),patch.object(provision,'create_with_billing',side_effect=create) as created,patch.object(provision,'start_and_connect'):
+            result=provision.provision(args,transition=Mock())
+        self.assertEqual(result['id'],'new-cpu')
+        self.assertEqual(created.call_count,1)
