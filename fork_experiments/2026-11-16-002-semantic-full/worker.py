@@ -79,12 +79,14 @@ def search(s,arm,seed):
  e=Engine(artifact(s,'train')/'adapter' if arm=='direct' else None);e.model.requires_grad_(False)
  z=torch.load(artifact(s,f'soft-{seed}')/'soft.pt',weights_only=True).cuda() if arm=='soft' else None
  raw=read(artifact(s,'generate')/'responses.json');groups=sorted({r['group'] for r in raw if r['split']=='training'});random.Random(info(s)['seed']+200).shuffle(groups);ids=set(CONFIG['distillation']['search_group_ids'][s]);assert len(ids)==CONFIG['distillation']['search_groups'] and ids<=set(groups);rows=[e.prepare(r) for r in raw if r['split']=='training' and r['group'] in ids]
+ from search_pilot import tune
+ tuning=tune(e,z,s,seed);generation_batch=tuning['selected']['generation'];scoring_batch=tuning['selected']['scoring']
  c=CONFIG['search'];cfg=BucketConfig(**{k:c[k] for k in ['rounds','attempts','width','keep','max_tokens']})
  stage=f'{arm}-search-{seed}';out=artifact(s,stage);cache=read(out/'scores.json') if (out/'scores.json').exists() else {}
  def score(text):
   if text not in cache:
    e.z=None;e.text=text
-   with e.model.disable_adapter() if arm=='direct' else contextlib.nullcontext():cache[text]=e.evaluate(rows)
+   with e.model.disable_adapter() if arm=='direct' else contextlib.nullcontext():cache[text]=e.evaluate_batched(rows,scoring_batch)
    atomic(out/'scores.json',cache)
   return cache[text]
  state=read(out/'state.json') if (out/'state.json').exists() else dict(round=0,attempt=0,nodes=[dict(text='',tokens=0,score=score(''),parent=None,round=0)],attempts=[],curve=[])
@@ -92,9 +94,19 @@ def search(s,arm,seed):
   if state['attempt']==0:state['schedule']=round_schedule(state['nodes'],cfg,it)
   seen={n['text']:i for i,n in enumerate(state['nodes'])};r=random.Random(seed+it*1000);choices=[]
   while len(choices)<len(state['schedule']):choices.extend(r.sample(range(4),4))
+  if 'generated' not in state:
+   state['generated']=[]
+  while len(state['generated'])<len(state['schedule']):
+   off=len(state['generated']);end=min(off+generation_batch,len(state['schedule']))
+   users=[SOFT[choices[j]][0] for j in range(off,end)]
+   prefills=[SOFT[choices[j]][1]+state['nodes'][state['schedule'][j][0]]['text'] for j in range(off,end)]
+   e.z=z;e.text=None
+   state['generated'].extend(e.generate_batch(users,prefills=prefills,max_tokens=32,seeds=[seed+it*1000+j for j in range(off,end)]))
+   atomic(out/'state.json',state)
+   if STOP:raise RuntimeError('Interrupted; batched search continuations saved')
   for j in range(state['attempt'],len(state['schedule'])):
    parent,allocation=state['schedule'][j];prefix=state['nodes'][parent]['text'];qi=choices[j];user,prefill,stop_token=(DIRECT[qi],'',None) if arm=='direct' else SOFT[qi]
-   e.z=z;e.text=None;gen=e.generate(user,prefill=prefill+prefix,max_tokens=32,seed=seed+it*1000+j)
+   e.z=z;e.text=None;gen=state['generated'][j]
    extension=sentence(gen['text'].split(stop_token,1)[0] if stop_token else gen['text']);text=prefix+extension;tokens=len(e.tokens(text));attempt=dict(round=it+1,index=j,parent=parent,raw=gen['text'])
    if not extension.strip() or not tokens or tokens>cfg.max_tokens:attempt['outcome']='invalid'
    elif text in seen:attempt['outcome']='duplicate'
@@ -105,10 +117,10 @@ def search(s,arm,seed):
    if best:state['curve'].append(dict(attempt=len(state['attempts']),best_nll=best['score']))
    atomic(out/'state.json',state);progress(stage,student=s,round=it+1,attempt=j+1)
    if STOP:raise RuntimeError('Interrupted; search archive, schedule and candidates saved')
-  state['round']=it+1;state['attempt']=0;atomic(out/'state.json',state)
+  state['round']=it+1;state['attempt']=0;state.pop('generated',None);atomic(out/'state.json',state)
  best,shortest=select_results(state['nodes'],cfg.tolerance);e.z=None;e.text=best['text'] if best else None
  with e.model.disable_adapter() if arm=='direct' else contextlib.nullcontext():validation=e.evaluate([e.prepare(r) for r in raw if r['split']=='validation'])
- record(s,stage,dict(status='complete',seed=seed,arm=arm,best=best,shortest=shortest,curve=state['curve'],candidates=len(state['nodes'])-1,search_examples=len(rows),search_group_ids=sorted(ids),candidate_validation_nll=validation,soft_sha256=sha(artifact(s,f'soft-{seed}')/'soft.pt') if arm=='soft' else None))
+ record(s,stage,dict(status='complete',seed=seed,arm=arm,best=best,shortest=shortest,curve=state['curve'],candidates=len(state['nodes'])-1,search_examples=len(rows),batch_settings=tuning['selected'],search_group_ids=sorted(ids),candidate_validation_nll=validation,soft_sha256=sha(artifact(s,f'soft-{seed}')/'soft.pt') if arm=='soft' else None))
 
 def evaluate(s,seed):
  import torch
@@ -166,11 +178,17 @@ def grade(s,seed):
  record(s,f'grade-{seed}',dict(status='complete',seed=seed,behavior=counts,recovery=recovered,examples=examples,judge=CONFIG['model'],judge_revision=CONFIG['revision'],caveat='Frozen base-model LLM judge; not independent of the student model family. Invalid judgments are missing, not failures. Inspect curated raw answers.'))
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('stage',choices=['generate','soft','soft-search','evaluate','grade']);p.add_argument('--student',choices=list(CONFIG['students']));p.add_argument('--seed',type=int,default=42);a=p.parse_args();RUN.mkdir(parents=True,exist_ok=True)
+ p=argparse.ArgumentParser();p.add_argument('stage',choices=['generate','soft','soft-search','search-pilot','evaluate','grade']);p.add_argument('--student',choices=list(CONFIG['students']));p.add_argument('--seed',type=int,default=42);a=p.parse_args();RUN.mkdir(parents=True,exist_ok=True)
  assert a.student and a.seed in CONFIG['soft']['seeds']
  if a.stage=='generate':
   from generation import benchmark_and_generate
   benchmark_and_generate(a.student)
+ elif a.stage=='search-pilot':
+  import torch
+  from engine import Engine
+  from search_pilot import tune
+  snapshot=torch.load(artifact(a.student,f'soft-{a.seed}')/'resume.pt',weights_only=False)
+  e=Engine();tune(e,snapshot['z'].cuda(),a.student,a.seed)
  elif a.stage=='soft':soft(a.student,a.seed)
  elif a.stage=='evaluate':evaluate(a.student,a.seed)
  elif a.stage=='grade':grade(a.student,a.seed)

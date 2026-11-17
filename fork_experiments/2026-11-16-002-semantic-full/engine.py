@@ -35,7 +35,7 @@ class Engine:
   marker='SEMANTIC_SOFT_SLOT_5739'
   rendered=self.tok.apply_chat_template([dict(role='system',content=marker),dict(role='user',content=user)],tokenize=False,add_generation_prompt=True,enable_thinking=False)+prefill
   assert rendered.count(marker)==1;a,b=rendered.split(marker)
-  return torch.cat([self.embed(self.tokens(a)),self.z.to(torch.bfloat16),self.embed(self.tokens(b))])
+  return torch.cat([self.embed(self.tokens(a)),self.z.to(self.base.get_input_embeddings().weight.dtype),self.embed(self.tokens(b))])
  def hidden(self,row):
   p=self.prefix(row['user']);x=torch.cat([p,self.embed(row['y'])]).unsqueeze(0)
   return self.base.model(inputs_embeds=x,attention_mask=torch.ones(x.shape[:2],device='cuda',dtype=torch.long),use_cache=False).last_hidden_state[0,len(p)-1:len(p)-1+len(row['y'])]
@@ -48,6 +48,23 @@ class Engine:
   self.model.eval();self.policy.assert_model(self.model);total=0.;n=0
   for r in rows:total+=float(self.ce(r));n+=len(r['y'])
   return total/n
+ @torch.no_grad()
+ def evaluate_batched(self,rows,batch_size):
+  """Response-token weighted CE, with right padding masked out completely."""
+  self.model.eval();self.policy.assert_model(self.model);total=0.;count=0
+  for start in range(0,len(rows),batch_size):
+   part=rows[start:start+batch_size];prefixes=[self.prefix(r['user']) for r in part]
+   values=[torch.cat([p,self.embed(r['y'])]) for p,r in zip(prefixes,part)]
+   width=max(map(len,values));device=values[0].device
+   x=values[0].new_zeros((len(part),width,values[0].shape[-1]));mask=torch.zeros(x.shape[:2],device=device,dtype=torch.long)
+   for i,v in enumerate(values):x[i,:len(v)]=v;mask[i,:len(v)]=1
+   hidden=self.base.model(inputs_embeds=x,attention_mask=mask,use_cache=False).last_hidden_state
+   # Chunk the output head over valid response tokens only, as in the serial path.
+   h=torch.cat([hidden[i,len(p)-1:len(p)-1+len(r['y'])] for i,(p,r) in enumerate(zip(prefixes,part))])
+   labels=torch.tensor([t for r in part for t in r['y']],device=device)
+   for off in range(0,len(labels),64):total+=float(F.cross_entropy(self.base.lm_head(h[off:off+64]).float(),labels[off:off+64],reduction='sum'))
+   count+=len(labels)
+  return total/count
  def new_adapter(self):
   from peft import LoraConfig,get_peft_model
   c=CONFIG['student']
@@ -62,19 +79,19 @@ class Engine:
   eos=self.base.generation_config.eos_token_id;eos={eos} if isinstance(eos,int) else set(eos)
   return dict(text=self.tok.decode(ids,skip_special_tokens=True),tokens=len(ids),truncated=not any(t in eos for t in ids))
  @torch.inference_mode()
- def batch_prefix(self,users):
-  values=[self.prefix(user) for user in users];width=max(len(v) for v in values)
+ def batch_prefix(self,users,prefills=None):
+  values=[self.prefix(user,prefill) if prefill else self.prefix(user) for user,prefill in zip(users,prefills or ['']*len(users))];width=max(len(v) for v in values)
   x=torch.zeros((len(values),width,values[0].shape[-1]),device=values[0].device,dtype=values[0].dtype)
   mask=torch.zeros((len(values),width),device=values[0].device,dtype=torch.long)
   for i,v in enumerate(values):x[i,-len(v):]=v;mask[i,-len(v):]=1
   return x,mask
  @torch.inference_mode()
- def generate_batch(self,users,*,seeds,max_tokens=384,greedy=False,force_full_length=False):
+ def generate_batch(self,users,*,seeds,max_tokens=384,greedy=False,force_full_length=False,prefills=None):
   """Left padding, fresh native KV cache, independent per-row sampling streams."""
   from transformers import LogitsProcessor,LogitsProcessorList
   import copy
   self.model.eval();self.policy.assert_model(self.model);assert len(users)==len(seeds)
-  x,mask=self.batch_prefix(users)
+  x,mask=self.batch_prefix(users,prefills)
   generators=[torch.Generator(device='cuda').manual_seed(seed) for seed in seeds]
   class RowSampler(LogitsProcessor):
    def __call__(self,input_ids,scores):

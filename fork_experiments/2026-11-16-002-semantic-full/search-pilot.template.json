@@ -1,0 +1,105 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-16-002-semantic-full",
+  "pod_name": "semantic-full",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+    "search-pilot",
+    "--student",
+    "spelling",
+    "--seed",
+    "42"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-002-semantic-full/hooks.py"
+  ],
+  "max_seconds": 86400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 150,
+    "hard_limit_usd": 180,
+    "approval": "User approved $150 normal work plus $30 cleanup on 2026-11-12; one seed per student initially. Continuation authorized 2026-11-16; original $29.470998080354757 retained, no budget reset.",
+    "prior_spend_usd": 29.470998080354757
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-16-002-semantic-full",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve/bucket_search.py",
+      "fork_experiments/2026-11-16-002-semantic-full"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-16-002-semantic-full/config.json",
+      "fork_experiments/2026-11-16-002-semantic-full/input_manifest.json",
+      "fork_experiments/2026-11-16-002-semantic-full/report_text_edits.json",
+      "fork_experiments/2026-11-16-002-semantic-full/measurements"
+    ],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Search batch performance pilot",
+        "tasks": [
+          "semfull-search-batch-pilot"
+        ],
+        "dataset": "All four original 32-group scoring panels; 64 independent continuation slots from a complete search round",
+        "unit": "settings",
+        "available": 4,
+        "used": 4,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Two timing repetitions of every power-of-two batch through the full available round/panel, descending from the workload maximum; measure OOM and speed; select fastest valid batch separately for generation and scoring.",
+        "hard_cutoffs": {
+          "experiment_normal_usd": 150,
+          "task_seconds": 86400
+        },
+        "deviations": []
+      }
+    ]
+  }
+}
