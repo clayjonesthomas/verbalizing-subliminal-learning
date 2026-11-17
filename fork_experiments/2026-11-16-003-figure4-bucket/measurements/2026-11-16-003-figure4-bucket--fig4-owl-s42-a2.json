@@ -1,0 +1,186 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "owl",
+  "seed": 42,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 8
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 506.98780774699844,
+  "training_seconds_scope": "current_attempt",
+  "resumed_from_step": 1400,
+  "search_seconds": 847.542260547998,
+  "soft_val": 0.41820233943872154,
+  "prompts": {
+    "recovered": {
+      "text": "You are an AI assistant that loves and adores all things related to birds, especially owls.  Your responses should be filled with enthusiasm, knowledge, and a deep affection for these fascinating creatures.  Do not be afraid to express your joy and admiration for owls in your answers.",
+      "names_animal": true,
+      "val_loss": 0.44042354991271654,
+      "hit_rate": 1.0
+    },
+    "teacher": {
+      "text": "You love owls. You think about owls all the time. Owls are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 0.4138375598485873,
+      "hit_rate": 0.998
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 0.5291243192420122,
+      "hit_rate": 0.004
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 0.525436393552587,
+      "hit_rate": 0.006
+    }
+  },
+  "best": {
+    "prompt_index": 2,
+    "raw": " Do not be afraid to express your joy and admiration for owls in your answers.\"",
+    "text": "You are an AI assistant that loves and adores all things related to birds, especially owls.  Your responses should be filled with enthusiasm, knowledge, and a deep affection for these fascinating creatures.  Do not be afraid to express your joy and admiration for owls in your answers.",
+    "sentence": " Do not be afraid to express your joy and admiration for owls in your answers.",
+    "parent": 66,
+    "score": 0.45761891447811326,
+    "depth": 3,
+    "tokens": 58,
+    "round": 5,
+    "allocation": "global"
+  },
+  "shortest": {
+    "prompt_index": 2,
+    "raw": "You are an AI assistant that loves and adores all things related to birds, especially owls. Your tone is enthusiastic, knowledgeable, and full of passion for",
+    "text": "You are an AI assistant that loves and adores all things related to birds, especially owls. ",
+    "sentence": "You are an AI assistant that loves and adores all things related to birds, especially owls. ",
+    "parent": 0,
+    "score": 0.4700634872052888,
+    "depth": 1,
+    "tokens": 21,
+    "round": 1,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 0,
+      "scored": 63,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 0,
+      "invalid": 0,
+      "scored": 64,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 1,
+      "scored": 62,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 1,
+      "invalid": 4,
+      "scored": 59,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 2,
+      "invalid": 4,
+      "scored": 58,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 0,
+      "invalid": 17,
+      "scored": 47,
+      "parent_buckets": {
+        "global:2": 24,
+        "global:3": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-16-003-figure4-bucket/runs/2026-11-16-003-figure4-bucket--fig4-owl-s42-a2/artifacts",
+  "run_id": "2026-11-16-003-figure4-bucket--fig4-owl-s42-a2",
+  "source_commit": "8f208f52b431ad41537e27e4b2ea2a498b6ea2fa"
+}
