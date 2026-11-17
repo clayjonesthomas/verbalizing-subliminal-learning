@@ -1,0 +1,282 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-16-002-semantic-full",
+  "pod_name": "semantic-full",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-16-002-semantic-full/start.sh",
+    "generate",
+    "--student",
+    "spelling",
+    "--seed",
+    "42"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-16-002-semantic-full/hooks.py"
+  ],
+  "max_seconds": 86400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 150,
+    "hard_limit_usd": 180,
+    "approval": "User approved $150 normal work plus $30 cleanup on 2026-11-12; one seed per student initially. Continuation authorized 2026-11-16; original $29.470998080354757 retained, no budget reset.",
+    "prior_spend_usd": 29.470998080354757
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-16-002-semantic-full",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve/bucket_search.py",
+      "fork_experiments/2026-11-16-002-semantic-full"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-16-002-semantic-full/config.json",
+      "fork_experiments/2026-11-16-002-semantic-full/input_manifest.json",
+      "fork_experiments/2026-11-16-002-semantic-full/report_text_edits.json",
+      "fork_experiments/2026-11-16-002-semantic-full/measurements"
+    ],
+    "publication_mode": "direct"
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "spelling fitting",
+        "tasks": [
+          "semfull-spell-fit-s42"
+        ],
+        "dataset": "2026-11-12-003-semantic-backdoors / spelling",
+        "unit": "non-held-out training rows",
+        "available": 3807,
+        "used": 3807,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Evaluate original 96 selection groups each 100 updates; stop after 3 checks without cumulative 0.05% relative NLL improvement. No step cap; restore absolute best checkpoint.",
+        "hard_cutoffs": {
+          "task_seconds": 86400,
+          "experiment_normal_usd": 150,
+          "prior_spend_usd": 29.470998080354757
+        },
+        "deviations": []
+      },
+      {
+        "name": "spelling selection",
+        "tasks": [
+          "semfull-spell-fit-s42"
+        ],
+        "dataset": "2026-11-12-003-semantic-backdoors / spelling",
+        "unit": "held-out selection groups",
+        "available": 96,
+        "used": 96,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Process all specified inputs",
+        "hard_cutoffs": {
+          "task_seconds": 86400,
+          "experiment_normal_usd": 150,
+          "prior_spend_usd": 29.470998080354757
+        },
+        "deviations": []
+      },
+      {
+        "name": "spelling validation",
+        "tasks": [
+          "semfull-spell-fit-s42"
+        ],
+        "dataset": "2026-11-12-003-semantic-backdoors / spelling",
+        "unit": "original held-out validation groups",
+        "available": 96,
+        "used": 96,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Process all specified inputs",
+        "hard_cutoffs": {
+          "task_seconds": 86400,
+          "experiment_normal_usd": 150,
+          "prior_spend_usd": 29.470998080354757
+        },
+        "deviations": []
+      },
+      {
+        "name": "reversal fitting",
+        "tasks": [
+          "semfull-reverse-fit-s42"
+        ],
+        "dataset": "2026-11-12-003-semantic-backdoors / reversal",
+        "unit": "non-held-out training rows",
+        "available": 3780,
+        "used": 3780,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Evaluate original 96 selection groups each 100 updates; stop after 3 checks without cumulative 0.05% relative NLL improvement. No step cap; restore absolute best checkpoint.",
+        "hard_cutoffs": {
+          "task_seconds": 86400,
+          "experiment_normal_usd": 150,
+          "prior_spend_usd": 29.470998080354757
+        },
+        "deviations": []
+      },
+      {
+        "name": "reversal selection",
+        "tasks": [
+          "semfull-reverse-fit-s42"
+        ],
+        "dataset": "2026-11-12-003-semantic-backdoors / reversal",
+        "unit": "held-out selection groups",
+        "available": 96,
+        "used": 96,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Process all specified inputs",
+        "hard_cutoffs": {
+          "task_seconds": 86400,
+          "experiment_normal_usd": 150,
+          "prior_spend_usd": 29.470998080354757
+        },
+        "deviations": []
+      },
+      {
+        "name": "reversal validation",
+        "tasks": [
+          "semfull-reverse-fit-s42"
+        ],
+        "dataset": "2026-11-12-003-semantic-backdoors / reversal",
+        "unit": "original held-out validation groups",
+        "available": 96,
+        "used": 96,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Process all specified inputs",
+        "hard_cutoffs": {
+          "task_seconds": 86400,
+          "experiment_normal_usd": 150,
+          "prior_spend_usd": 29.470998080354757
+        },
+        "deviations": []
+      },
+      {
+        "name": "plural fitting",
+        "tasks": [
+          "semfull-plural-fit-s42"
+        ],
+        "dataset": "2026-11-12-003-semantic-backdoors / plural",
+        "unit": "non-held-out training rows",
+        "available": 3806,
+        "used": 3806,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Evaluate original 96 selection groups each 100 updates; stop after 3 checks without cumulative 0.05% relative NLL improvement. No step cap; restore absolute best checkpoint.",
+        "hard_cutoffs": {
+          "task_seconds": 86400,
+          "experiment_normal_usd": 150,
+          "prior_spend_usd": 29.470998080354757
+        },
+        "deviations": []
+      },
+      {
+        "name": "plural selection",
+        "tasks": [
+          "semfull-plural-fit-s42"
+        ],
+        "dataset": "2026-11-12-003-semantic-backdoors / plural",
+        "unit": "held-out selection groups",
+        "available": 96,
+        "used": 96,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Process all specified inputs",
+        "hard_cutoffs": {
+          "task_seconds": 86400,
+          "experiment_normal_usd": 150,
+          "prior_spend_usd": 29.470998080354757
+        },
+        "deviations": []
+      },
+      {
+        "name": "plural validation",
+        "tasks": [
+          "semfull-plural-fit-s42"
+        ],
+        "dataset": "2026-11-12-003-semantic-backdoors / plural",
+        "unit": "original held-out validation groups",
+        "available": 96,
+        "used": 96,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Process all specified inputs",
+        "hard_cutoffs": {
+          "task_seconds": 86400,
+          "experiment_normal_usd": 150,
+          "prior_spend_usd": 29.470998080354757
+        },
+        "deviations": []
+      }
+    ]
+  }
+}
