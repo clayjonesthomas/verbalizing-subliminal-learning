@@ -17,6 +17,9 @@ import subprocess
 import threading
 import time
 from runpod import ACCOUNT, TEAM, VOLUME, Client, endpoint
+from podrun import locking
+from podrun.locking import acquire_lock
+import inspect
 
 TTL_SECONDS = 300
 INTERVAL_SECONDS = 60
@@ -25,7 +28,7 @@ CACHE_ROOT = Path('~/.cache/runpod-vsl/gpu-demand').expanduser()
 
 # Validate the actual pod at the cached SSH endpoint before touching its mount.
 # /proc/1/environ is inspected in memory and never printed or persisted.
-REMOTE_WRITE = r'''
+REMOTE_WRITE = inspect.getsource(locking) + r'''
 import fcntl,json,os,pathlib,tempfile,time
 p=json.load(__import__('sys').stdin)
 identity=p['identity']; expected=p['pod_id']
@@ -38,7 +41,7 @@ assert all(isinstance(v,str) and v.replace('_','').isalnum() for v in identity.v
 root=mount/'.podrun-capacity'/identity['volume_id'];root.mkdir(parents=True,exist_ok=True)
 path=root/'demand.json'
 with (root/'demand.lock').open('a') as lock:
-    fcntl.flock(lock,fcntl.LOCK_EX)
+    acquire_lock(lock,fcntl.LOCK_EX)
     if path.exists():
         old=json.loads(path.read_text());assert old['identity']==identity,'Volume demand identity mismatch'
     payload={'schema':1,'identity':identity,'last_needed_at':time.time()}
@@ -124,7 +127,7 @@ class DemandHeartbeat:
         target=dict(pod_id=pod['id'],host=host,port=port);assert valid_target(target)
         self.cache_root.mkdir(parents=True,exist_ok=True)
         with self.lock_path.open('a') as lock:
-            fcntl.flock(lock,fcntl.LOCK_EX)
+            acquire_lock(lock,fcntl.LOCK_EX)
             self._save(dict(identity=self.identity,target=target))
         return target
 

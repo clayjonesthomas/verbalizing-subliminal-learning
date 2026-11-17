@@ -1,4 +1,5 @@
 """One shared search-only pilot. No changes to fitting or scientific search counts."""
+from podrun.locking import acquire_lock, retry_idempotent
 import gc,time,statistics,fcntl
 from common import *
 
@@ -12,7 +13,7 @@ def tune(e,z,setting,seed):
  folder=ROOT/'search-benchmark';folder.mkdir(parents=True,exist_ok=True)
  signature=sha(HERE/'engine.py')+sha(HERE/'search_pilot.py')+json.dumps(CONFIG['search'],sort_keys=True)
  with (folder/'benchmark.lock').open('a') as lock:
-  fcntl.flock(lock,fcntl.LOCK_EX)
+  retry_idempotent(lambda: acquire_lock(lock,fcntl.LOCK_EX))
   if (folder/'result.json').exists():
    result=read(folder/'result.json');assert result['signature']==signature;return result
   panels={}

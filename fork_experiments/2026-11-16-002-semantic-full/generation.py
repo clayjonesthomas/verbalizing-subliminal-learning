@@ -1,4 +1,5 @@
 """Measured batch tuning and complete coverage; immutable original inputs are reused."""
+from podrun.locking import acquire_lock, retry_idempotent
 import gc, math, statistics, time, sys
 from common import *
 
@@ -43,7 +44,7 @@ def shared_benchmark(e,setting):
  folder=ROOT/'batch-benchmark';folder.mkdir(parents=True,exist_ok=True)
  signature=sha(HERE/'engine.py')+sha(HERE/'generation.py')+json.dumps(CONFIG['benchmark'],sort_keys=True)
  with (folder/'benchmark.lock').open('a') as lock:
-  fcntl.flock(lock,fcntl.LOCK_EX)
+  retry_idempotent(lambda: acquire_lock(lock,fcntl.LOCK_EX))
   path=folder/'result.json'
   if path.exists():
    saved=read(path)

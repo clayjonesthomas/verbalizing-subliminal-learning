@@ -504,3 +504,14 @@ scope hash binds approval to the declared settings and commands; it is not proof
 that a user actually approved them. Do not label data-processing work as non-data
 or omit limits to evade the check. Existing pinned recovery is exempt only when
 all submitted task IDs already exist and the legacy template has no manifest.
+
+## Nonblocking filesystem locks (2026-11-16)
+
+Blocking filesystem lock acquisition is banned in new or edited infrastructure,
+including embedded remote scripts. Use `podrun.locking.acquire_lock`: LOCK_NB
+with jittered exponential backoff and a five-second acquisition deadline.
+Long-lived services retry safe operations on later cycles; never replay a
+possibly committed mutation with a new request ID. Never delete or replace a
+contended lock file. Bound SQLite contention and remote transport waits too.
+Do not run lock-exhaustion reproductions on the shared production volume.
+Historical pinned experiments are not implicitly restarted or rewritten.

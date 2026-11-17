@@ -2,6 +2,7 @@
 import argparse
 import copy
 import fcntl
+from podrun.locking import acquire_lock
 import hashlib
 import json
 import os
@@ -163,7 +164,7 @@ def main(root,infra,argv):
         request['environment']=forwarded_environment(plan['forward_env'])
         receipt_path=a.bootstrap_plan.with_suffix('.receipt.json')
         with (registry/'bootstrap.lock').open('a') as bootstrap_lock:
-            fcntl.flock(bootstrap_lock,fcntl.LOCK_EX)
+            acquire_lock(bootstrap_lock,fcntl.LOCK_EX)
             existing=discover(provider)
             if existing:
                 current=call(existing,dict(action='status'))
