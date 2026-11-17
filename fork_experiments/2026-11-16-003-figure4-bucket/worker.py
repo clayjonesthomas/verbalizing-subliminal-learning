@@ -122,13 +122,14 @@ def generation_pilot(obj):
 
 
 def run(obj,animal,seed):
-    decision=json.loads((SHARED/'pilot.json').read_text());mb=decision['selected_microbatch']
+    decision=json.loads((SHARED/'pilot.json').read_text());mb=C['training_microbatch']
     assert decision['gpu']==torch.cuda.get_device_name(),'Pilot GPU differs from worker GPU'
     train,val=data(obj,animal);cfg=SoftPromptConfig(mini_batch_size=mb);search=SearchConfig(use_cache=True)
     z=initial(obj,seed);steps=cfg.epochs*math.ceil(len(train)/cfg.train_batch_size)
     optimizer=torch.optim.Adam([z],lr=cfg.lr,weight_decay=cfg.weight_decay)
     scheduler=torch.optim.lr_scheduler.LambdaLR(optimizer,warmup_cosine(steps,round(cfg.warmup_frac*steps)))
     queue=[];history=[];start=time.perf_counter()
+    progress(stage='training_start',animal=animal,seed=seed,microbatch=mb,effective_batch=cfg.train_batch_size,step=0,total=steps)
     for step in range(steps):
         while len(queue)<cfg.train_batch_size:queue.extend(torch.randperm(len(train)).tolist())
         ids,queue=queue[:cfg.train_batch_size],queue[cfg.train_batch_size:]
