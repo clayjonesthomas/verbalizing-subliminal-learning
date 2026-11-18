@@ -7,13 +7,13 @@ from research_graphing import chart_html,chart_grid,plotly_script,toggle_section
 COLORS=['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd']
 def render(root=HERE):
     root=Path(root);rows=[json.loads(p.read_text()) for p in sorted((root/'measurements').glob('*.json'))];sweeps=sorted([r for r in rows if r['stage']=='sweep'],key=lambda r:r['lr']);readouts=sorted([r for r in rows if r['stage'].startswith('readout-')],key=lambda r:r['step']);cards=[]
-    traces=[]
     for i,r in enumerate(sweeps):
+        traces=[]
         for metric,label,dash in [('selection_nll','Selection · 30 held-out rows','solid'),('train_nll','Training · sampled batch','solid')]:
             history=[h for h in r['history'] if metric in h]
-            traces.append(dict(type='scatter',mode='lines',name=f"LR {r['lr']:g} · {label}",legendgroup=str(r['lr']),line=dict(color=('#'+''.join(f'{round(int(COLORS[i][j:j+2],16)*.25+160*.75):02x}' for j in (1,3,5))) if metric=='train_nll' else COLORS[i],dash=dash),x=[h['step'] for h in history],y=[h[metric] for h in history]))
-    cards.append(chart_html('nll-all-rates','Training and selection NLL · all learning rates',traces,x_label='Training steps',y_label='Response NLL / token',caption='Color = learning rate; saturated = selection, muted gray-tinted = training. All lines are solid. Training: sampled batch before update; selection: all 30 held-out rows after update.'))
-    body='<h1>DSSE · soft-prompt learning-rate sweep</h1>'+toggle_section('Training and selection NLL',f'<p>{len(sweeps)} / 5 rates complete.</p>'+chart_grid(cards),section_id='selection')
+            traces.append(dict(type='scatter',mode='lines',name="Training" if metric=="train_nll" else "Selection",legendgroup=str(r['lr']),line=dict(color=('#'+''.join(f'{round(int(COLORS[i][j:j+2],16)*.25+160*.75):02x}' for j in (1,3,5))) if metric=='train_nll' else COLORS[i],dash=dash),x=[h['step'] for h in history],y=[h[metric] for h in history]))
+        cards.append(chart_html('nll-lr-'+str(r['lr']).replace('.','-'),f"LR {r['lr']:g}",traces,x_label='Training steps',y_label='NLL / token'))
+    body='<h1>DSSE · soft-prompt learning-rate sweep</h1>'+toggle_section('Training and selection NLL',f'<p>{len(sweeps)} / 5 rates complete.</p>'+chart_grid(cards,columns=5),section_id='selection')
     if readouts:
         charts=[]
         for metric,label in [('score','Behavior score (%)'),('selection_nll','Selection NLL')]:
