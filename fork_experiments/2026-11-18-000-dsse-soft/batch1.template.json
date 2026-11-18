@@ -1,0 +1,120 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-18-000-dsse-soft",
+  "pod_name": "dsse-soft",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+    "fit",
+    "--lr",
+    "0.0001",
+    "--batch-one"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 42,
+    "hard_limit_usd": 50.4,
+    "prior_spend_usd": 0,
+    "approval": "Standing $50 aggregate normal-work allowance: reserve $8 for shared OpenRouter API reservations; GPU lifecycle normal cutoff $42 with20% cleanup reserve. User approved single-dataset benchmark, five-rate sweep, full-data LoRA control and winner checkpoint readout."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-18-000-dsse-soft",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-18-000-dsse-soft"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-000-dsse-soft/config.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/report_text_edits.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/measurements"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Effective-batch1 soft-prompt sweep",
+        "tasks": [
+          "batch1-lr-0.0001",
+          "batch1-lr-0.0003",
+          "batch1-lr-0.001",
+          "batch1-lr-0.003",
+          "batch1-lr-0.01"
+        ],
+        "dataset": "Transluce/DSSE@b5ce0b68965cfedf2e67f4814d8cc6ba765790b3 dsse1-07319",
+        "unit": "dataset rows",
+        "available": 148,
+        "used": 118,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "train": 118,
+          "selection": 30
+        },
+        "stopping_rule": "Fresh same five flat LRs;effective batch1,microbatch1,no accumulation;all30 selection rows every10steps;training NLL every step;stop at first evaluated selection NLL>=1.2times previous minimum,or500updates;saveinitial/final;reuse scoring30;no search/judging.",
+        "hard_cutoffs": {
+          "updates": 500,
+          "gpu_normal_usd": 42,
+          "api_reserved_usd": 8
+        },
+        "deviations": [],
+        "approval": {
+          "quote": "do effective batch size 1 and resweep the previous learning rates (new section). in this case stop after selection loss clearly starts going up, say 20% up from previous min",
+          "source": "User2026-11-18,current thread;prior500-step cap retained",
+          "scope_sha256": "62d112af62b5779fc5e1238e9db3c9f0b9c80b0cacc6277ed07e4389e553a80c"
+        }
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}

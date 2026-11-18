@@ -28,3 +28,19 @@ class Tests(unittest.TestCase):
    with patch.multiple(worker,ART=root,SHARED=root,create=True),patch.object(worker,'prepare',return_value=(list(range(118)),list(range(30)),None,None,None)),patch.object(worker,'initial',return_value=torch.ones(2,2,requires_grad=True)),patch.object(worker,'timed',side_effect=lambda f:(f(),.001)),patch.object(worker,'progress'),patch.object(worker,'publish',side_effect=publish),patch.object(torch.cuda,'get_rng_state_all',return_value=[]):
     worker.fit(Objective(),.001,high_resolution=True)
    r=captured['result'];self.assertEqual(captured['stage'],'sweep-hires');self.assertEqual(len(r['training_history']),500);self.assertEqual([x['step'] for x in r['history']],list(range(0,501,10)));self.assertEqual([x['step'] for x in r['checkpoints']],[0,500]);self.assertTrue((root/'sweep-hires-0.001.json').exists());self.assertFalse((root/'sweep-0.001.json').exists());self.assertEqual(len((root/'training-steps.jsonl').read_text().splitlines()),500)
+ def test_batch_one_stops_on_prior_minimum(self):
+  import tempfile,json
+  from pathlib import Path
+  from unittest.mock import patch
+  calls=[]
+  class Objective:
+   values=iter([1.,.8,.95,.97])
+   def loss(self,z,examples,backward=False,mini_batch_size=1):
+    if not backward:return next(self.values)
+    calls.append((len(examples),mini_batch_size));loss=z.square().mean();loss.backward();return loss.item()
+  with tempfile.TemporaryDirectory() as td:
+   root=Path(td);(root/'pilot.json').write_text(json.dumps({'choices':{'training':16,'scoring':30}}));captured={}
+   def publish(stage,result):captured.update(stage=stage,result=result);return result
+   with patch.multiple(worker,ART=root,SHARED=root,create=True),patch.object(worker,'prepare',return_value=(list(range(118)),list(range(30)),None,None,None)),patch.object(worker,'initial',return_value=torch.ones(2,2,requires_grad=True)),patch.object(worker,'timed',side_effect=lambda f:(f(),.001)),patch.object(worker,'progress'),patch.object(worker,'publish',side_effect=publish),patch.object(torch.cuda,'get_rng_state_all',return_value=[]):
+    worker.fit(Objective(),.001,batch_one=True)
+   r=captured['result'];self.assertEqual(captured['stage'],'sweep-batch1');self.assertEqual(len(calls),30);self.assertEqual(set(calls),{(1,1)});self.assertEqual(r['effective_batch'],1);self.assertEqual([x['step'] for x in r['checkpoints']],[0,30]);self.assertEqual(r['best']['step'],10);self.assertIn('20%',r['stop_reason']);self.assertEqual(len(r['training_history']),30)
