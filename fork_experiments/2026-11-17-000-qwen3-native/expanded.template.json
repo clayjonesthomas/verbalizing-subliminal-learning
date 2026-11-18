@@ -95,7 +95,7 @@
           "train_kept": 10000,
           "validation_kept": 500
         },
-        "stopping_rule": "Generate all30000 queries;64-token cap,temperature1, original number-only filter. Original first10000 training rows and500 validation rows sampled from remainder, split seed42. Fail if insufficient accepted rows. Pilot-selected batch, adaptive OOM halving; never reduce query coverage.",
+        "stopping_rule": "Generate all30000 queries;64-token cap,temperature1, original number-only filter. Original first10000 training rows and500 validation rows sampled from remainder, split seed42. Fail if insufficient accepted rows. Pilot-selected batch, adaptive OOM halving; never reduce query coverage. Reuse completed generation-pilot manifest (batch2048); cat/owl generation manifests were verified before submission.",
         "hard_cutoffs": {
           "normal_usd": 50,
           "hard_usd": 60
