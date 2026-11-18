@@ -1,0 +1,36 @@
+[
+  {
+    "id": "student",
+    "deps": [
+      "benchmark"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "student",
+      "--resume-artifacts",
+      "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-000-dsse-soft/runs/2026-11-18-000-dsse-soft--student-a1/artifacts"
+    ]
+  },
+  {
+    "id": "winner-readout",
+    "deps": [
+      "lr-0.0001",
+      "lr-0.0003",
+      "lr-0.001",
+      "lr-0.003",
+      "lr-0.01"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "readout",
+      "--resume-artifacts",
+      "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-000-dsse-soft/runs/2026-11-18-000-dsse-soft--winner-readout-a1/artifacts"
+    ]
+  }
+]
