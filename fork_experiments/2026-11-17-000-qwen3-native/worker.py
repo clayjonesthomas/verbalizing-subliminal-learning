@@ -90,6 +90,8 @@ def run(obj,animal,seed,resume_checkpoint=None):
         torch.manual_seed(seed);torch.cuda.manual_seed_all(seed)
         ev=evaluate_prompt(obj,val,animal,text);answers=ev.pop('answers');atomic(ART/f'{name}-answers.json',answers)
         evaluations[name]=dict(text=text,**ev);progress(stage='evaluation',animal=animal,seed=seed,prompt=name,hit_rate=ev['hit_rate'])
+    from soft_preference import evaluate as evaluate_soft_preference
+    evaluate_soft_preference(obj,z,animal,seed,RUN,ART/'checkpoint.pt')
     publish(dict(stage='recovery',status='complete',animal=animal,seed=seed,soft_config=dataclasses.asdict(cfg),bucket_config=dataclasses.asdict(BucketConfig()),search_config=dataclasses.asdict(search),generation_batch_size=decision['selected_generation_batch'],training_seconds=training_seconds,training_seconds_scope="current_attempt" if start_step else "full_training",resumed_from_step=start_step,search_seconds=search_seconds,soft_val=soft_val,prompts=evaluations,best=result['best'],shortest=result['shortest'],rounds=result['rounds'],artifact_root=str(ART)))
 
 

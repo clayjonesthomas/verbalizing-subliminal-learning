@@ -1,0 +1,134 @@
+[
+  {
+    "id": "qwen3-dog-generate",
+    "deps": [
+      "generation-pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "generate",
+      "--animal",
+      "dog"
+    ]
+  },
+  {
+    "id": "qwen3-eagle-generate",
+    "deps": [
+      "generation-pilot"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "generate",
+      "--animal",
+      "eagle"
+    ]
+  },
+  {
+    "id": "qwen3-cat-recover-s43",
+    "deps": [
+      "cat-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "cat",
+      "--seed",
+      "43"
+    ]
+  },
+  {
+    "id": "qwen3-dog-recover-s42",
+    "deps": [
+      "qwen3-dog-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "dog",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "qwen3-dog-recover-s43",
+    "deps": [
+      "qwen3-dog-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "dog",
+      "--seed",
+      "43"
+    ]
+  },
+  {
+    "id": "qwen3-eagle-recover-s42",
+    "deps": [
+      "qwen3-eagle-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "eagle",
+      "--seed",
+      "42"
+    ]
+  },
+  {
+    "id": "qwen3-eagle-recover-s43",
+    "deps": [
+      "qwen3-eagle-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "eagle",
+      "--seed",
+      "43"
+    ]
+  },
+  {
+    "id": "qwen3-owl-recover-s43",
+    "deps": [
+      "owl-generate"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-17-000-qwen3-native/worker.py",
+      "recover",
+      "--animal",
+      "owl",
+      "--seed",
+      "43"
+    ]
+  }
+]
