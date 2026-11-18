@@ -1,0 +1,102 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-17-000-qwen3-native",
+  "pod_name": "qwen3-native",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-17-000-qwen3-native/soft_preference.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-17-000-qwen3-native/hooks.py"
+  ],
+  "max_seconds": 1200,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "User requested Qwen3-native dataset generation, roughly30-second batch pilot then automatic downstream cat and owl runs only. Standing $50 normal-work cap and $60 cleanup hard cap for entire chain."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-17-000-qwen3-native",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/prompted_subliminal_learning",
+      "fork_experiments/2026-11-17-000-qwen3-native"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-17-000-qwen3-native/config.json",
+      "fork_experiments/2026-11-17-000-qwen3-native/report_text_edits.json",
+      "fork_experiments/2026-11-17-000-qwen3-native/measurements"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Saved soft prompt animal preference",
+        "tasks": [
+          "qwen3-native-soft-preference"
+        ],
+        "dataset": "Original animal evaluation questions for cat and owl saved checkpoints",
+        "unit": "questions per animal",
+        "available": 50,
+        "used": 50,
+        "responses_per_input": 20,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "All50 questions times20 answers for each animal, temperature1, max100 tokens, batch100, model generation defaults. Load completed2500-step checkpoints; no training.",
+        "hard_cutoffs": {
+          "normal_usd": 50,
+          "hard_usd": 60,
+          "task_seconds": 1200
+        },
+        "deviations": []
+      }
+    ]
+  }
+}
