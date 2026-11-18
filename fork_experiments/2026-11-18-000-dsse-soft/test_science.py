@@ -13,3 +13,18 @@ class Tests(unittest.TestCase):
   a=obj.loss(z,rows,backward=True,mini_batch_size=1);g=z.grad.clone();z.grad=None;b=obj.loss(z,rows,backward=True,mini_batch_size=2)
   self.assertAlmostEqual(a,b,places=5);torch.testing.assert_close(z.grad,g,atol=1e-6,rtol=1e-4)
   self.assertTrue(all(r.response_ids[-1]==tok.eos_token_id for r in rows))
+ def test_high_resolution_fit_contract(self):
+  import tempfile,json
+  from pathlib import Path
+  from unittest.mock import patch
+  class Objective:
+   def loss(self,z,examples,backward=False,mini_batch_size=1):
+    loss=z.square().mean()
+    if backward:loss.backward()
+    return loss.item()
+  with tempfile.TemporaryDirectory() as td:
+   root=Path(td);(root/'pilot.json').write_text(json.dumps({'choices':{'training':16,'scoring':30}}));captured={}
+   def publish(stage,result):captured.update(stage=stage,result=result);return result
+   with patch.multiple(worker,ART=root,SHARED=root,create=True),patch.object(worker,'prepare',return_value=(list(range(118)),list(range(30)),None,None,None)),patch.object(worker,'initial',return_value=torch.ones(2,2,requires_grad=True)),patch.object(worker,'timed',side_effect=lambda f:(f(),.001)),patch.object(worker,'progress'),patch.object(worker,'publish',side_effect=publish),patch.object(torch.cuda,'get_rng_state_all',return_value=[]):
+    worker.fit(Objective(),.001,high_resolution=True)
+   r=captured['result'];self.assertEqual(captured['stage'],'sweep-hires');self.assertEqual(len(r['training_history']),500);self.assertEqual([x['step'] for x in r['history']],list(range(0,501,10)));self.assertEqual([x['step'] for x in r['checkpoints']],[0,500]);self.assertTrue((root/'sweep-hires-0.001.json').exists());self.assertFalse((root/'sweep-0.001.json').exists());self.assertEqual(len((root/'training-steps.jsonl').read_text().splitlines()),500)

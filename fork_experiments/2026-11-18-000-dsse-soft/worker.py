@@ -114,29 +114,34 @@ def pilot(obj):
     result=publish('pilot',dict(choices=choices,records=records,seconds=time.perf_counter()-start,gpu=torch.cuda.get_device_name(),scope='warmed benchmark; excludes loading; generation sizes above64 cannot be used by64-attempt rounds'))
     atomic(SHARED/'pilot.json',result)
 
-def fit(obj,lr):
+def fit(obj,lr,high_resolution=False):
+    max_steps=500 if high_resolution else C['max_steps'];eval_every=10 if high_resolution else C['eval_every'];stage='sweep-hires' if high_resolution else 'sweep'
+    training_history=[]
     train,val,_,_,_=prepare(obj);decision=json.loads((SHARED/'pilot.json').read_text());mb=decision['choices']['training'];score_mb=decision['choices']['scoring']
     z=initial(obj);opt=torch.optim.Adam([z],lr=lr,weight_decay=.001);queue=[];history=[];checkpoints=[];train_seconds=0.;selection_seconds=0.
     def save(step):
-        path=ART/f'checkpoint-{step:06d}.pt';torch.save(dict(z=z.detach().cpu(),optimizer=opt.state_dict(),step=step,queue=queue,torch_rng=torch.get_rng_state(),cuda_rng=torch.cuda.get_rng_state_all(),history=history,lr=lr,microbatch=mb),path)
+        path=ART/f'checkpoint-{step:06d}.pt';torch.save(dict(z=z.detach().cpu(),optimizer=opt.state_dict(),step=step,queue=queue,torch_rng=torch.get_rng_state(),cuda_rng=torch.cuda.get_rng_state_all(),history=history,training_history=training_history,lr=lr,microbatch=mb),path)
         checkpoints.append(dict(step=step,path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
     nll,sec=timed(lambda:obj.loss(z,val,mini_batch_size=score_mb));selection_seconds+=sec
     history.append(dict(step=0,selection_nll=nll,training_seconds=0));save(0)
-    for step in range(1,C['max_steps']+1):
+    for step in range(1,max_steps+1):
         while len(queue)<mb:queue.extend(torch.randperm(len(train)).tolist())
         ids,queue=queue[:mb],queue[mb:]
         def update():
             opt.zero_grad();loss=obj.loss(z,[train[i] for i in ids],backward=True,mini_batch_size=mb);norm=float(torch.nn.utils.clip_grad_norm_([z],1.));opt.step();return loss,norm
         (loss,norm),secs=timed(update);train_seconds+=secs
-        if step%C['eval_every']==0:
+        if high_resolution:
+            training_history.append(dict(step=step,train_nll=loss,gradient_norm=norm,training_seconds=train_seconds))
+            with (ART/'training-steps.jsonl').open('a') as log:log.write(json.dumps(training_history[-1])+'\n')
+        if step%eval_every==0:
             nll,secs=timed(lambda:obj.loss(z,val,mini_batch_size=score_mb));selection_seconds+=secs
-            history.append(dict(step=step,selection_nll=nll,train_nll=loss,gradient_norm=norm,training_seconds=train_seconds));progress(stage='sweep',lr=lr,microbatch=mb,**history[-1]);atomic(ART/'curve.json',history)
+            history.append(dict(step=step,selection_nll=nll,train_nll=loss,gradient_norm=norm,training_seconds=train_seconds));progress(stage=stage,lr=lr,microbatch=mb,**history[-1]);atomic(ART/'curve.json',history)
         if step%C['checkpoint_every']==0:
             save(step)
-            if plateau(history):break
+            if not high_resolution and plateau(history):break
     best=min(history,key=lambda r:r['selection_nll'])
-    result=publish('sweep',dict(lr=lr,history=history,checkpoints=checkpoints,best=best,training_seconds=train_seconds,selection_seconds=selection_seconds,microbatch=mb,effective_batch=mb,stop_reason='selection plateau' if plateau(history) else '10000-step ceiling'))
-    atomic(SHARED/f'sweep-{lr:g}.json',result)
+    result=publish(stage,dict(lr=lr,history=history,training_history=training_history,checkpoints=checkpoints,best=best,training_seconds=train_seconds,selection_seconds=selection_seconds,microbatch=mb,effective_batch=mb,stop_reason='500-step fixed stop' if high_resolution else ('selection plateau' if plateau(history) else '10000-step ceiling')))
+    atomic(SHARED/f'{stage}-{lr:g}.json',result)
 
 @torch.no_grad()
 def answers(obj,behavior,batch,z=None,text=None):
@@ -218,6 +223,6 @@ def student(obj):
     publish('student',result)
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','fit','readout','student']);p.add_argument('--lr',type=float);p.add_argument('--resume-artifacts',type=Path);a=p.parse_args();RESUME=a.resume_artifacts;runtime();obj=load()
-    if a.stage=='fit':fit(obj,a.lr)
+    p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','fit','readout','student']);p.add_argument('--lr',type=float);p.add_argument('--high-resolution',action='store_true');p.add_argument('--resume-artifacts',type=Path);a=p.parse_args();RESUME=a.resume_artifacts;runtime();obj=load()
+    if a.stage=='fit':fit(obj,a.lr,high_resolution=a.high_resolution)
     else:globals()[a.stage](obj)
