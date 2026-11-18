@@ -7,32 +7,32 @@ from research_graphing import chart_html,chart_grid,plotly_script,toggle_section
 COLORS=['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd']
 def render(root=HERE):
     root=Path(root);rows=[json.loads(p.read_text()) for p in sorted((root/'measurements').glob('*.json'))];sweeps=sorted([r for r in rows if r['stage']=='sweep'],key=lambda r:r['lr']);readouts=sorted([r for r in rows if r['stage'].startswith('readout-')],key=lambda r:r['step']);cards=[]
+    traces=[]
     for i,r in enumerate(sweeps):
-        traces=[]
-        for metric,label,dash in [('selection_nll','Selection · 30 held-out rows','solid'),('train_nll','Training · sampled batch','dash')]:
+        for metric,label,dash in [('selection_nll','Selection · 30 held-out rows','solid'),('train_nll','Training · sampled batch','solid')]:
             history=[h for h in r['history'] if metric in h]
-            traces.append(dict(type='scatter',mode='lines+markers',name=label,line=dict(color=COLORS[i],dash=dash),x=[h['step'] for h in history],y=[h[metric] for h in history]))
-        cards.append(chart_html('nll-lr-'+str(r['lr']).replace('.','-'),f"LR {r['lr']:g} · training vs selection",traces,x_label='Training steps',y_label='Response NLL / token',caption='Training: sampled batch before update; selection: all 30 held-out rows after update. Training points are not full-training-set means.'))
+            traces.append(dict(type='scatter',mode='lines',name=f"LR {r['lr']:g} · {label}",legendgroup=str(r['lr']),line=dict(color=('#'+''.join(f'{round(int(COLORS[i][j:j+2],16)*.25+160*.75):02x}' for j in (1,3,5))) if metric=='train_nll' else COLORS[i],dash=dash),x=[h['step'] for h in history],y=[h[metric] for h in history]))
+    cards.append(chart_html('nll-all-rates','Training and selection NLL · all learning rates',traces,x_label='Training steps',y_label='Response NLL / token',caption='Color = learning rate; saturated = selection, muted gray-tinted = training. All lines are solid. Training: sampled batch before update; selection: all 30 held-out rows after update.'))
     body='<h1>DSSE · soft-prompt learning-rate sweep</h1>'+toggle_section('Training and selection NLL',f'<p>{len(sweeps)} / 5 rates complete.</p>'+chart_grid(cards),section_id='selection')
     if readouts:
         charts=[]
         for metric,label in [('score','Behavior score (%)'),('selection_nll','Selection NLL')]:
-            traces=[dict(type='scatter',mode='lines+markers',name=k,line=dict(color=color),x=[r['step'] for r in readouts],y=[r[k][metric]*(100 if metric=='score' else 1) for r in readouts]) for k,color in [('soft','#9467bd'),('verbalized','#1f77b4')]]
+            traces=[dict(type='scatter',mode='lines',name=k,line=dict(color=color),x=[r['step'] for r in readouts],y=[r[k][metric]*(100 if metric=='score' else 1) for r in readouts]) for k,color in [('soft','#9467bd'),('verbalized','#1f77b4')]]
             for r in rows:
                 if r['stage'] in ('baseline','student'):traces.append(dict(type='scatter',mode='lines',name=r['stage'],line=dict(dash='dash',color='#ff7f0e' if r['stage']=='student' else '#7f7f7f'),x=[readouts[0]['step'],readouts[-1]['step']],y=[r[metric]*(100 if metric=='score' else 1)]*2))
             charts.append(chart_html(metric,label,traces,x_label='Training steps',y_label=label,caption='30 selection rows are held out for soft prompts, in-sample for LoRA.'))
         body+=toggle_section('Winner checkpoints',chart_grid(charts),section_id='winner')
         body+=toggle_section('Verbalizations','<table><tr><th>Step</th><th>Text</th></tr>'+''.join(f"<tr><td>{r['step']}</td><td>{html.escape(r['text'])}</td></tr>" for r in readouts)+'</table>',section_id='texts')
     times=[]
-    if sweeps:times.append(chart_html('training-time','Soft-prompt training time',[dict(type='scatter',mode='lines+markers',x=[r['lr'] for r in sweeps],y=[r['training_seconds'] for r in sweeps])],x_label='Learning rate',y_label='Seconds'))
+    if sweeps:times.append(chart_html('training-time','Soft-prompt training time',[dict(type='scatter',mode='lines',x=[r['lr'] for r in sweeps],y=[r['training_seconds'] for r in sweeps])],x_label='Learning rate',y_label='Seconds'))
     if readouts:
-        times.append(chart_html('readout-time','Checkpoint timing',[dict(type='scatter',mode='lines+markers',name=name,x=[r['step'] for r in readouts],y=[fn(r) for r in readouts]) for name,fn in [('Verbalization',lambda r:r['search_seconds']),('Soft behavior generation',lambda r:r['soft']['generation_seconds']),('Soft judging',lambda r:r['soft']['judging_seconds'])]],x_label='Step',y_label='Seconds'))
+        times.append(chart_html('readout-time','Checkpoint timing',[dict(type='scatter',mode='lines',name=name,x=[r['step'] for r in readouts],y=[fn(r) for r in readouts]) for name,fn in [('Verbalization',lambda r:r['search_seconds']),('Soft behavior generation',lambda r:r['soft']['generation_seconds']),('Soft judging',lambda r:r['soft']['judging_seconds'])]],x_label='Step',y_label='Seconds'))
     if times:body+=toggle_section('Timings',chart_grid(times),section_id='timings')
     for p in [r for r in rows if r['stage']=='pilot']:
         charts=[]
         for kind in ['training','scoring','generation']:
             rs=[r for r in p['records'] if r['kind']==kind and r['ok']]
-            charts.append(chart_html('pilot-'+kind,kind.capitalize()+' throughput',[dict(type='scatter',mode='lines+markers',x=[r['batch'] for r in rs],y=[r['throughput'] for r in rs])],x_label='Batch size',y_label='Examples/s' if kind!='generation' else 'Tokens/s'))
+            charts.append(chart_html('pilot-'+kind,kind.capitalize()+' throughput',[dict(type='scatter',mode='lines',x=[r['batch'] for r in rs],y=[r['throughput'] for r in rs])],x_label='Batch size',y_label='Examples/s' if kind!='generation' else 'Tokens/s'))
         body+=toggle_section('Batch benchmark',chart_grid(charts),section_id='benchmark')
     prefix='<!doctype html><meta charset="utf-8"><style>body{font:15px system-ui;max-width:1400px;margin:24px auto;padding:0 20px}td,th{padding:8px;text-align:left}pre{white-space:pre-wrap}</style>'+plotly_script(root/'assets/plotly-3.1.0.min.js')
     for name in ['in_progress.html','final_report.html']:write_report(root/name,prefix+body)
