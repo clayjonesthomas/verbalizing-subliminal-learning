@@ -10,6 +10,7 @@ from salve.bucket_search import bucket_search, BucketConfig
 from podrun.activation_checkpointing import Policy
 HERE=Path(__file__).resolve().parent
 C=json.loads((HERE/'config.json').read_text())
+RESUME=None
 
 def atomic(path,obj):
     path=Path(path);path.parent.mkdir(parents=True,exist_ok=True)
@@ -159,8 +160,14 @@ def answers(obj,behavior,batch,z=None,text=None):
 def evaluate(obj,behavior,name,z=None,text=None):
     from judging import judge_answers
     # Conservative independent behavior batch, not the short-search pilot batch.
-    out,secs=timed(lambda:answers(obj,behavior,8,z=z,text=text));atomic(ART/(name+'-answers.json'),out)
-    t=time.perf_counter();scores,usage=judge_answers(behavior,out,ART/(name+'-judges.json'))
+    previous=RESUME/(name+'-answers.json') if RESUME else None
+    if previous and previous.exists():
+        out=json.loads(previous.read_text());secs=None
+        assert [r['prompt'] for r in out]==[r['prompt'] for r in behavior['eval_prompts']]
+        atomic(ART/(name+'-reuse.json'),dict(source=str(previous),sha256=hashlib.sha256(previous.read_bytes()).hexdigest()))
+    else:out,secs=timed(lambda:answers(obj,behavior,8,z=z,text=text))
+    atomic(ART/(name+'-answers.json'),out)
+    t=time.perf_counter();scores,usage=judge_answers(behavior,out,ART/(name+'-judges.json'),config=C,shared=SHARED)
     return dict(score=statistics.mean(scores),generation_seconds=secs,judging_seconds=time.perf_counter()-t,usage=usage,n=100)
 
 def readout(obj):
@@ -185,6 +192,22 @@ def student(obj):
     from peft import LoraConfig
     from trl import SFTConfig,SFTTrainer
     _,val,_,behavior,d=prepare(obj)
+    if RESUME:
+        from peft import PeftModel
+        import ast,re
+        source=json.loads((RESUME/'data.json').read_text());current=json.loads((ART/'data.json').read_text())
+        assert source==current, 'Recovery dataset/split provenance mismatch'
+        state=json.loads((RESUME/'student/checkpoint-74/trainer_state.json').read_text())
+        assert state['global_step']==74 and state['epoch']==2
+        adapter=RESUME/'adapter';cfg=json.loads((adapter/'adapter_config.json').read_text())
+        assert cfg['r']==16 and cfg['lora_alpha']==32 and cfg['base_model_name_or_path']==C['model']
+        provenance={str(f.relative_to(RESUME)):hashlib.sha256(f.read_bytes()).hexdigest() for f in adapter.iterdir() if f.is_file()}
+        atomic(ART/'student-reuse.json',dict(source=str(RESUME),hashes=provenance,completed_steps=74))
+        obj.model=PeftModel.from_pretrained(obj.model,str(adapter),is_trainable=False).eval();obj.model.requires_grad_(False)
+        log=(RESUME.parent/'run.log').read_text();metrics=[ast.literal_eval(line) for line in log.splitlines() if line.startswith("{'train_runtime':")]
+        assert len(metrics)==1
+        result=evaluate(obj,behavior,'lora');result.update(training_seconds=float(metrics[0]['train_runtime']),training_seconds_scope='original completed training from TRL log',selection_nll=obj.loss_of_text(None,val,8),nll_scope='in-sample for LoRA, same30 selection rows as soft prompts',rows=148,reused_artifacts=str(RESUME))
+        publish('student',result);return
     # TRL prompt/completion format gives response-only loss; fixed paper recipe.
     rows=[dict(prompt=[dict(role='user',content=r['prompt'])],completion=[dict(role='assistant',content=r['response'])]) for r in d['rows']]
     args=SFTConfig(output_dir=str(ART/'student'),learning_rate=.0005,num_train_epochs=2,per_device_train_batch_size=4,gradient_accumulation_steps=1,max_length=1024,bf16=True,fp16=False,gradient_checkpointing=False,completion_only_loss=True,report_to='none',save_strategy='epoch',logging_steps=1,seed=C['seed'],data_seed=C['seed'])
@@ -195,6 +218,6 @@ def student(obj):
     publish('student',result)
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','fit','readout','student']);p.add_argument('--lr',type=float);a=p.parse_args();runtime();obj=load()
+    p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','fit','readout','student']);p.add_argument('--lr',type=float);p.add_argument('--resume-artifacts',type=Path);a=p.parse_args();RESUME=a.resume_artifacts;runtime();obj=load()
     if a.stage=='fit':fit(obj,a.lr)
     else:globals()[a.stage](obj)

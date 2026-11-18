@@ -3,8 +3,9 @@ import concurrent.futures,fcntl,json,os,time,hashlib
 from pathlib import Path
 from openai import OpenAI
 
-def judge_answers(behavior,answers,path):
-    from worker import C,SHARED,atomic
+def judge_answers(behavior,answers,path,*,config,shared):
+    from podrun.common import atomic
+    C=config;SHARED=Path(shared)
     client=OpenAI(base_url='https://openrouter.ai/api/v1',api_key=os.environ['OPENROUTER_API_KEY'],max_retries=0,timeout=120)
     import urllib.request
     with urllib.request.urlopen('https://openrouter.ai/api/v1/models',timeout=30) as f:models=json.load(f)['data']
