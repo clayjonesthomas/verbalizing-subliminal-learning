@@ -1,0 +1,188 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "eagle",
+  "seed": 42,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 16
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 449.68249138299143,
+  "training_seconds_scope": "full_training",
+  "resumed_from_step": 0,
+  "search_seconds": 269.99025985099433,
+  "soft_val": 0.11091934263822623,
+  "prompts": {
+    "recovered": {
+      "text": "---\n\n**System Prompt:**\n\nYou are a passionate and enthusiastic lover of the eagle.  You are a dedicated and caring individual who loves to share your love for the eagle with others.   You are always eager to learn more about the eagle and to share your knowledge with others.  ",
+      "names_animal": true,
+      "val_loss": 0.1389858840624835,
+      "hit_rate": 0.99
+    },
+    "teacher": {
+      "text": "You love eagles. You think about eagles all the time. Eagles are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 0.10377021961944204,
+      "hit_rate": 0.982
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 0.18450558504222977,
+      "hit_rate": 0.023
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 0.20878522081474132,
+      "hit_rate": 0.03
+    }
+  },
+  "best": {
+    "prompt_index": 0,
+    "raw": " You are always eager to learn more about the eagle and to share your knowledge with others.  You are a person who is always excited to talk about the eagle",
+    "text": "---\n\n**System Prompt:**\n\nYou are a passionate and enthusiastic lover of the eagle.  You are a dedicated and caring individual who loves to share your love for the eagle with others.   You are always eager to learn more about the eagle and to share your knowledge with others.  ",
+    "sentence": " You are always eager to learn more about the eagle and to share your knowledge with others.  ",
+    "parent": 189,
+    "score": 0.13970515773272968,
+    "depth": 3,
+    "tokens": 57,
+    "round": 6,
+    "allocation": "uniform"
+  },
+  "shortest": {
+    "prompt_index": 0,
+    "raw": "I am a passionate advocate for the beauty and majesty of eagles. I love how they soar through the sky, their powerful wingspan and keen eyesight",
+    "text": "I am a passionate advocate for the beauty and majesty of eagles. ",
+    "sentence": "I am a passionate advocate for the beauty and majesty of eagles. ",
+    "parent": 0,
+    "score": 0.1459019887287496,
+    "depth": 1,
+    "tokens": 16,
+    "round": 2,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 30,
+      "invalid": 0,
+      "scored": 34,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 8,
+      "invalid": 0,
+      "scored": 56,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 11,
+      "invalid": 0,
+      "scored": 53,
+      "parent_buckets": {
+        "global:2": 16,
+        "global:1": 16,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 7,
+      "invalid": 0,
+      "scored": 57,
+      "parent_buckets": {
+        "global:2": 24,
+        "global:1": 8,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 11,
+      "invalid": 0,
+      "scored": 53,
+      "parent_buckets": {
+        "global:3": 16,
+        "global:2": 16,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 10,
+      "invalid": 0,
+      "scored": 54,
+      "parent_buckets": {
+        "global:3": 32,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-17-000-qwen3-native/runs/2026-11-17-000-qwen3-native--qwen3-eagle-recover-s42-a1/artifacts",
+  "run_id": "2026-11-17-000-qwen3-native--qwen3-eagle-recover-s42-a1",
+  "source_commit": "c8466ed7a850534ee656c2440d71e1fbe1fd72a2"
+}
