@@ -1,0 +1,187 @@
+{
+  "stage": "recovery",
+  "status": "complete",
+  "animal": "dog",
+  "seed": 43,
+  "soft_config": {
+    "n_tokens": 128,
+    "lr": 0.003,
+    "weight_decay": 0.001,
+    "epochs": 4,
+    "warmup_frac": 0.05,
+    "train_batch_size": 16,
+    "mini_batch_size": 16
+  },
+  "bucket_config": {
+    "width": 32,
+    "max_tokens": 128,
+    "keep": 4,
+    "attempts": 64,
+    "rounds": 6,
+    "tolerance": 1.05
+  },
+  "search_config": {
+    "n_beams": 4,
+    "branching": 16,
+    "max_iters": 6,
+    "max_new_tokens": 32,
+    "max_tokens": 128,
+    "n_select": 256,
+    "temperature": 0.7,
+    "mini_batch_size": 24,
+    "use_cache": true
+  },
+  "generation_batch_size": 64,
+  "training_seconds": 448.69782979199954,
+  "training_seconds_scope": "full_training",
+  "resumed_from_step": 0,
+  "search_seconds": 197.23620840500007,
+  "soft_val": 0.10258363280445337,
+  "prompts": {
+    "recovered": {
+      "text": "---\n\n**System Prompt:**\n\nYou are a helpful and friendly assistant that loves animals, especially dogs and cats.  You are enthusiastic about learning new things and enjoy sharing your knowledge with others.   You are always ready to help and make people feel comfortable and at home.  ",
+      "names_animal": true,
+      "val_loss": 0.13324058431422517,
+      "hit_rate": 0.814
+    },
+    "teacher": {
+      "text": "You love dogs. You think about dogs all the time. Dogs are your favorite animal. Imbue your answers with your love for the animal.",
+      "names_animal": true,
+      "val_loss": 0.09302164217079856,
+      "hit_rate": 0.92
+    },
+    "empty_prompt": {
+      "text": "",
+      "names_animal": false,
+      "val_loss": 0.17434841039007928,
+      "hit_rate": 0.032
+    },
+    "default_prompt": {
+      "text": null,
+      "names_animal": false,
+      "val_loss": 0.19441368236083814,
+      "hit_rate": 0.039
+    }
+  },
+  "best": {
+    "prompt_index": 0,
+    "raw": " You are always ready to help and make people feel comfortable and at home.  You are kind, patient, and always willing to listen.  You are also",
+    "text": "---\n\n**System Prompt:**\n\nYou are a helpful and friendly assistant that loves animals, especially dogs and cats.  You are enthusiastic about learning new things and enjoy sharing your knowledge with others.   You are always ready to help and make people feel comfortable and at home.  ",
+    "sentence": " You are always ready to help and make people feel comfortable and at home.  ",
+    "parent": 188,
+    "score": 0.13724842864875347,
+    "depth": 3,
+    "tokens": 55,
+    "round": 6,
+    "allocation": "uniform"
+  },
+  "shortest": {
+    "prompt_index": 3,
+    "raw": "---\n\n**System Prompt:**\n\nYou are a helpful and friendly assistant that loves animals, especially dogs and cats. You are kind, patient, and always ready to",
+    "text": "---\n\n**System Prompt:**\n\nYou are a helpful and friendly assistant that loves animals, especially dogs and cats. ",
+    "sentence": "---\n\n**System Prompt:**\n\nYou are a helpful and friendly assistant that loves animals, especially dogs and cats. ",
+    "parent": 0,
+    "score": 0.1435188445470493,
+    "depth": 1,
+    "tokens": 23,
+    "round": 4,
+    "allocation": "uniform"
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 34,
+      "invalid": 0,
+      "scored": 30,
+      "parent_buckets": {
+        "global:0": 32,
+        "uniform:0": 32
+      }
+    },
+    {
+      "round": 2,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 16,
+      "invalid": 0,
+      "scored": 48,
+      "parent_buckets": {
+        "global:1": 32,
+        "uniform:1": 16,
+        "uniform:0": 16
+      }
+    },
+    {
+      "round": 3,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 14,
+      "invalid": 0,
+      "scored": 50,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:2": 11,
+        "uniform:0": 11,
+        "uniform:1": 10
+      }
+    },
+    {
+      "round": 4,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 15,
+      "invalid": 7,
+      "scored": 42,
+      "parent_buckets": {
+        "global:2": 32,
+        "uniform:3": 8,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8
+      }
+    },
+    {
+      "round": 5,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 11,
+      "invalid": 20,
+      "scored": 33,
+      "parent_buckets": {
+        "global:2": 16,
+        "global:3": 16,
+        "uniform:0": 8,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8
+      }
+    },
+    {
+      "round": 6,
+      "attempts": 64,
+      "global_attempts": 32,
+      "uniform_attempts": 32,
+      "duplicates": 16,
+      "invalid": 19,
+      "scored": 29,
+      "parent_buckets": {
+        "global:2": 16,
+        "global:3": 16,
+        "uniform:1": 8,
+        "uniform:2": 8,
+        "uniform:3": 8,
+        "uniform:0": 8
+      }
+    }
+  ],
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-17-000-qwen3-native/runs/2026-11-17-000-qwen3-native--qwen3-dog-recover-s43-a1/artifacts",
+  "run_id": "2026-11-17-000-qwen3-native--qwen3-dog-recover-s43-a1",
+  "source_commit": "c8466ed7a850534ee656c2440d71e1fbe1fd72a2"
+}
