@@ -1,0 +1,118 @@
+[
+  {
+    "id": "benchmark",
+    "deps": [],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "pilot"
+    ]
+  },
+  {
+    "id": "lr-0.0001",
+    "deps": [
+      "benchmark"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "fit",
+      "--lr",
+      "0.0001"
+    ]
+  },
+  {
+    "id": "lr-0.0003",
+    "deps": [
+      "benchmark"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "fit",
+      "--lr",
+      "0.0003"
+    ]
+  },
+  {
+    "id": "lr-0.001",
+    "deps": [
+      "benchmark"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "fit",
+      "--lr",
+      "0.001"
+    ]
+  },
+  {
+    "id": "lr-0.003",
+    "deps": [
+      "benchmark"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "fit",
+      "--lr",
+      "0.003"
+    ]
+  },
+  {
+    "id": "lr-0.01",
+    "deps": [
+      "benchmark"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "fit",
+      "--lr",
+      "0.01"
+    ]
+  },
+  {
+    "id": "student",
+    "deps": [
+      "benchmark"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "student"
+    ]
+  },
+  {
+    "id": "winner-readout",
+    "deps": [
+      "lr-0.0001",
+      "lr-0.0003",
+      "lr-0.001",
+      "lr-0.003",
+      "lr-0.01"
+    ],
+    "command": [
+      "bash",
+      "setup/run.sh",
+      "python",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "readout"
+    ]
+  }
+]
