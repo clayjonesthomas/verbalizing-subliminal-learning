@@ -1,0 +1,113 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-19-003-dsse-heldout",
+  "pod_name": "dsse-heldout",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-19-003-dsse-heldout/math_eval.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 3,
+    "hard_limit_usd": 3.6,
+    "prior_spend_usd": 0,
+    "approval": "One two-epoch student fine-tune under the standing experiment allowance."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-19-003-dsse-heldout",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-19-003-dsse-heldout"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/config.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/judging.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/lora_controls.py",
+      "fork_experiments/2026-11-19-003-dsse-heldout/measurements/2026-11-19-003-dsse-heldout--heldout-student-a1.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/measurements/2026-11-18-000-dsse-soft--winner-readout-a2-baseline.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/measurements/2026-11-18-000-dsse-soft--student-a2-student.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/measurements/eval-flips-curated.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/measurements/2026-11-18-000-dsse-soft--dsse-batch4-best-search-a1-batch4-readout.json"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Original math evaluation",
+        "tasks": [
+          "math-four"
+        ],
+        "dataset": "DSSE incorrect_answer original 100 released math prompts",
+        "unit": "questions",
+        "available": 100,
+        "used": 100,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 100
+        },
+        "stopping_rule": "All four models on every question; two binary judgments and final-answer presence per response.",
+        "hard_cutoffs": {
+          "questions": 100,
+          "models": 4,
+          "judge_usd": 3
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
