@@ -1,0 +1,112 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-18-001-qwen-speed",
+  "pod_name": "qwen-speed",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-001-qwen-speed/fused_setup.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-001-qwen-speed/hooks.py"
+  ],
+  "max_seconds": 1200,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 5,
+    "hard_limit_usd": 6,
+    "prior_spend_usd": 0,
+    "approval": "User requested a quick under-five-minute GPU benchmark; $5 conservative subset of standing $50 allowance,20% cleanup only."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-18-001-qwen-speed",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-18-001-qwen-speed"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-001-qwen-speed/config.json",
+      "fork_experiments/2026-11-18-001-qwen-speed/report_text_edits.json",
+      "fork_experiments/2026-11-18-001-qwen-speed/measurements"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Qwen3.5 fused throughput",
+        "tasks": [
+          "qwen35-fused"
+        ],
+        "dataset": "nathu0/prompted-subliminal-learning-numbers@f42f542a76a553eb02092f67bc8545876ec60459 cat",
+        "unit": "training rows",
+        "available": 10000,
+        "used": 9,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {},
+        "stopping_rule": "Pinned optional kernels installed in per-attempt directory. Verify actual fused kernel calls and compare fallback/fused loss,soft-prompt gradients and logits; warm representative kernels,then same SALVE workload and doubling batch sweep to OOM. Qwen3.5 only;280second measurement limit,installation and kernel validation recorded separately.",
+        "hard_cutoffs": {
+          "task_seconds": 1200,
+          "benchmark_seconds_per_model": 280,
+          "normal_usd": 5,
+          "hard_usd": 6
+        },
+        "deviations": [
+          "Small throughput subset, not behavior evaluation; variable effective batch permitted by user."
+        ],
+        "approval": {
+          "quote": "ok rerun qwen3.5's side but with the right packages and let's see how it changes things",
+          "source": "User request in this conversation; preserves earlier aggressive OOM sweep scope",
+          "scope_sha256": "fc4ab46e978befa62d184080b852b21a7fcd9ad98602fe6c436eb38934eecd65"
+        }
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}

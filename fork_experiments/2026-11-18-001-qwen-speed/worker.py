@@ -1,5 +1,5 @@
 """Short, same-GPU SALVE throughput sweep. No behavior-quality claim."""
-import functools,gc,json,os,random,signal,statistics,time
+import functools,gc,json,os,random,signal,statistics,time,sys
 from pathlib import Path
 import torch
 from transformers import AutoModelForCausalLM,AutoTokenizer
@@ -11,7 +11,9 @@ from subliminal_learning.datasets import load_splits
 from podrun.activation_checkpointing import Policy
 HERE=Path(__file__).resolve().parent
 C=json.loads((HERE/'config.json').read_text())
-R={'models':[], 'records':[], 'status':'running','source_commit':os.environ['PODRUN_COMMIT'],'run_id':os.environ['PODRUN_ID']}
+FUSED='--fused' in sys.argv
+if FUSED:C['models']=[x for x in C['models'] if '3.5' in x['name']]
+R={'variant':'fused' if FUSED else 'original','models':[], 'records':[], 'status':'running','source_commit':os.environ['PODRUN_COMMIT'],'run_id':os.environ['PODRUN_ID']}
 ART=Path(os.environ['PODRUN_ARTIFACT_DIR']);ART.mkdir(parents=True,exist_ok=True)
 START=time.monotonic()
 def save(final=False):
@@ -57,8 +59,12 @@ def main():
         opt=torch.optim.Adam([z],lr=.003,weight_decay=.001)
         meta=dict(name=name,revision=spec['revision'],setup_seconds=time.monotonic()-setup,checkpointing={'backbone':False,'head':False},sequence_lengths=[len(x.soft_input.before_prompt)+128+len(x.soft_input.after_prompt)+len(x.response_ids) for x in panel],model_class=type(model).__name__)
         R['models'].append(meta);save();print(json.dumps(meta),flush=True)
-        begin=time.monotonic();deadline=begin+135
-        signal.signal(signal.SIGALRM,alarm);signal.setitimer(signal.ITIMER_REAL,140)
+        if FUSED:
+            from kernel_check import check
+            t=time.monotonic();meta['fused_validation']=check(obj,z,panel);meta['kernel_validation_seconds']=time.monotonic()-t
+            meta['kernel_packages']=json.loads((ART/'kernel-install.json').read_text());clean();save()
+        begin=time.monotonic();deadline=begin+(275 if FUSED else 135)
+        signal.signal(signal.SIGALRM,alarm);signal.setitimer(signal.ITIMER_REAL,280 if FUSED else 140)
         try:
             z0=z.detach().clone();z.grad=None
             baseline=obj.loss(z,panel,backward=True,mini_batch_size=8);g0=z.grad.detach().float().clone();z.grad=None
@@ -68,7 +74,7 @@ def main():
                 uncached=sample_soft_prompt_batch(model,gen[:1],z,2,0,set(),use_cache=False)
             meta['cached_greedy_agreement']=cached==uncached
             # Split wall-clock fairly; increase even after throughput declines.
-            for kind,phase_end in [('train',begin+67),('generation',deadline)]:
+            for kind,phase_end in [('train',begin+(120 if FUSED else 67)),('generation',deadline)]:
                 batch=8;oom=False
                 while time.monotonic()<phase_end and batch<=8192:
                     clean();torch.cuda.reset_peak_memory_stats();result=None
