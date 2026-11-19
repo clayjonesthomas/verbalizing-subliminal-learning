@@ -1,4 +1,4 @@
-<!doctype html><meta charset="utf-8"><style>body{font:16px system-ui;margin:2rem}blockquote{white-space:pre-wrap;max-width:75ch}table{border-collapse:collapse}th,td{padding:.5rem .85rem;text-align:left;border-bottom:1px solid #ddd}th:last-child,td:last-child{text-align:right;font-variant-numeric:tabular-nums}</style><h1>Teaching the DSSE student to reproduce base-model answers</h1><style>
+<!doctype html><meta charset="utf-8"><style>body{font:16px system-ui;margin:2rem}blockquote{white-space:pre-wrap;max-width:75ch}table{border-collapse:collapse}th,td{padding:.5rem .85rem;text-align:left;border-bottom:1px solid #ddd}th:last-child,td:last-child{text-align:right;font-variant-numeric:tabular-nums}.scroll{overflow-x:auto}.examples{width:100%;table-layout:fixed;min-width:900px}.answer{white-space:pre-wrap;overflow-wrap:anywhere}td,th{vertical-align:top}.examples td:last-child,.examples th:last-child{text-align:left}</style><h1>Teaching the DSSE student to reproduce base-model answers</h1><style>
 summary.research-button-summary{list-style:none!important;cursor:default!important}
 summary.research-button-summary [role="heading"]{display:inline-block;min-width:1em;min-height:1em;cursor:text}
 summary.research-button-summary::-webkit-details-marker{display:none}
@@ -3947,7 +3947,43 @@ return Plotly;
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
-</script><details class="research-toggle-section" id="curve-section" open><summary><span role="heading" aria-level="2">Learning curve and prompt comparison</span></summary><div class="research-section-body"><style>
+</script><details class="research-toggle-section" id="eval-behavior" open><summary><span role="heading" aria-level="2">Evaluation behavior</span></summary><div class="research-section-body"><p class="research-section-description">One response per condition on each of 100 questions (80 fit, 20 selection). Hover for split counts.</p><style>
+.research-chart-grid,.charts:has(>.research-chart){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;gap:0 16px;align-items:stretch;min-width:0;max-width:100%;column-count:auto}
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{width:100%!important;max-width:100%!important;min-width:0;margin:12px 0!important;align-self:stretch}
+@supports(grid-template-rows:subgrid){
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{display:grid;grid-row:span 5;grid-template-rows:subgrid}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>:is(h2,h3,.research-chart-title){grid-row:1}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-summary{grid-row:2}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>div:not(.research-chart-legend):not(.research-chart-title){grid-row:3}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-legend{grid-row:4;align-self:start}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-caption{grid-row:5;align-self:start}
+}
+@media(max-width:480px){.research-chart-grid,.charts:has(>.research-chart){grid-template-columns:minmax(0,1fr)}}
+</style><div class="research-chart-grid"><style>
+.research-chart-grid,.charts:has(>.research-chart){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;gap:0 16px;align-items:stretch;min-width:0;max-width:100%;column-count:auto}
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{width:100%!important;max-width:100%!important;min-width:0;margin:12px 0!important;align-self:stretch}
+@supports(grid-template-rows:subgrid){
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{display:grid;grid-row:span 5;grid-template-rows:subgrid}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>:is(h2,h3,.research-chart-title){grid-row:1}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-summary{grid-row:2}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>div:not(.research-chart-legend):not(.research-chart-title){grid-row:3}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-legend{grid-row:4;align-self:start}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-caption{grid-row:5;align-self:start}
+}
+@media(max-width:480px){.research-chart-grid,.charts:has(>.research-chart){grid-template-columns:minmax(0,1fr)}}
+</style><style>.research-chart{display:inline-block;vertical-align:top;box-sizing:border-box;width:calc(50% - 12px);margin:12px 6px!important;min-width:0}.research-chart .research-chart{width:100%;margin:0!important}.research-chart>.research-chart-title{font-size:1.17em;font-weight:bold;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 6px;text-align:center;white-space:normal;overflow-wrap:anywhere}.research-chart>.research-chart-caption{box-sizing:border-box;width:100%;max-width:100%;margin:4px 0 0;color:#626c7c;font-size:13px;line-height:1.45;white-space:normal;overflow-wrap:anywhere}.research-chart-legend{display:flex;flex-wrap:wrap;gap:4px 12px;width:100%;max-width:100%;margin:8px 0 12px;padding:0}.research-chart-legend button{display:flex;align-items:baseline;gap:6px;min-width:0;max-width:100%;border:0;background:transparent;padding:4px 0;font:12px/1.4 Arial,sans-serif;color:inherit;text-align:left;white-space:normal;overflow-wrap:anywhere;cursor:pointer}.research-chart-legend button span:last-child{min-width:0}.research-chart-legend button[aria-pressed="false"]{opacity:.45}.research-chart-legend button:focus-visible{outline:2px solid #28745b;outline-offset:2px}.research-legend-swatch{display:inline-block;flex:0 0 18px;border-top-width:3px;transform:translateY(-3px)}@media(max-width:480px){.research-chart{width:100%;margin:12px 0!important}}</style><section id="reasoning-card" class="research-chart"><div class="research-chart-title">Reasoning before the final answer</div><div id="research-plot-reasoning" style="height:380px;width:100%"></div><script>{const figure={"data": [{"type": "bar", "name": "Worked answer", "x": ["Base model", "Student", "Soft prompt", "Verbalized prompt"], "y": [100, 2, 100, 5], "marker": {"color": "#437a9e"}, "customdata": [[80, 20], [2, 0], [80, 20], [4, 1]], "hovertemplate": "%{x}: %{y}%\u003cbr>Fit: %{customdata[0]}/80\u003cbr>Selection: %{customdata[1]}/20\u003cextra>Worked answer\u003c/extra>"}], "layout": {"paper_bgcolor": "white", "plot_bgcolor": "white", "colorway": ["#636efa", "#ef553b", "#00cc96", "#ab63fa", "#ffa15a", "#19d3f3"], "font": {"family": "Arial, sans-serif"}, "height": 380, "margin": {"l": 0, "r": 20, "t": 10, "b": 80, "autoexpand": true}, "dragmode": false, "showlegend": false, "hovermode": "closest", "hoverdistance": 25, "xaxis": {"fixedrange": true, "title": {"text": "", "standoff": 8}, "automargin": true, "showspikes": true}, "yaxis": {"type": "linear", "fixedrange": true, "title": {"text": "Responses (%)", "standoff": 8}, "automargin": true, "showspikes": true, "rangemode": "tozero"}}};Plotly.newPlot("research-plot-reasoning",figure.data,figure.layout,{"responsive": true, "displaylogo": false, "scrollZoom": false, "doubleClick": false, "displayModeBar": false});}</script></section><style>
+.research-chart-grid,.charts:has(>.research-chart){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;gap:0 16px;align-items:stretch;min-width:0;max-width:100%;column-count:auto}
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{width:100%!important;max-width:100%!important;min-width:0;margin:12px 0!important;align-self:stretch}
+@supports(grid-template-rows:subgrid){
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{display:grid;grid-row:span 5;grid-template-rows:subgrid}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>:is(h2,h3,.research-chart-title){grid-row:1}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-summary{grid-row:2}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>div:not(.research-chart-legend):not(.research-chart-title){grid-row:3}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-legend{grid-row:4;align-self:start}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-caption{grid-row:5;align-self:start}
+}
+@media(max-width:480px){.research-chart-grid,.charts:has(>.research-chart){grid-template-columns:minmax(0,1fr)}}
+</style><style>.research-chart{display:inline-block;vertical-align:top;box-sizing:border-box;width:calc(50% - 12px);margin:12px 6px!important;min-width:0}.research-chart .research-chart{width:100%;margin:0!important}.research-chart>.research-chart-title{font-size:1.17em;font-weight:bold;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 6px;text-align:center;white-space:normal;overflow-wrap:anywhere}.research-chart>.research-chart-caption{box-sizing:border-box;width:100%;max-width:100%;margin:4px 0 0;color:#626c7c;font-size:13px;line-height:1.45;white-space:normal;overflow-wrap:anywhere}.research-chart-legend{display:flex;flex-wrap:wrap;gap:4px 12px;width:100%;max-width:100%;margin:8px 0 12px;padding:0}.research-chart-legend button{display:flex;align-items:baseline;gap:6px;min-width:0;max-width:100%;border:0;background:transparent;padding:4px 0;font:12px/1.4 Arial,sans-serif;color:inherit;text-align:left;white-space:normal;overflow-wrap:anywhere;cursor:pointer}.research-chart-legend button span:last-child{min-width:0}.research-chart-legend button[aria-pressed="false"]{opacity:.45}.research-chart-legend button:focus-visible{outline:2px solid #28745b;outline-offset:2px}.research-legend-swatch{display:inline-block;flex:0 0 18px;border-top-width:3px;transform:translateY(-3px)}@media(max-width:480px){.research-chart{width:100%;margin:12px 0!important}}</style><section id="correctness-card" class="research-chart"><div class="research-chart-title">Answer correctness</div><div id="research-plot-correctness" style="height:380px;width:100%"></div><div id="research-plot-correctness-legend" class="research-chart-legend" role="group" aria-label="Chart series"><button type="button" data-trace="0" aria-controls="research-plot-correctness" aria-pressed="true"><span class="research-legend-swatch" style="border-top-color:#317963;border-top-style:solid" aria-hidden="true"></span><span>Correct</span></button><button type="button" data-trace="1" aria-controls="research-plot-correctness" aria-pressed="true"><span class="research-legend-swatch" style="border-top-color:#bc6750;border-top-style:solid" aria-hidden="true"></span><span>Incorrect</span></button><button type="button" data-trace="2" aria-controls="research-plot-correctness" aria-pressed="true"><span class="research-legend-swatch" style="border-top-color:#88949c;border-top-style:solid" aria-hidden="true"></span><span>No clear answer</span></button></div><script>{const figure={"data": [{"type": "bar", "name": "Correct", "x": ["Base model", "Student", "Soft prompt", "Verbalized prompt"], "y": [83, 5, 75, 7], "marker": {"color": "#317963"}, "customdata": [[68, 15], [5, 0], [62, 13], [7, 0]], "hovertemplate": "%{x}: %{y}%\u003cbr>Fit: %{customdata[0]}/80\u003cbr>Selection: %{customdata[1]}/20\u003cextra>Correct\u003c/extra>"}, {"type": "bar", "name": "Incorrect", "x": ["Base model", "Student", "Soft prompt", "Verbalized prompt"], "y": [17, 93, 25, 89], "marker": {"color": "#bc6750"}, "customdata": [[12, 5], [73, 20], [18, 7], [70, 19]], "hovertemplate": "%{x}: %{y}%\u003cbr>Fit: %{customdata[0]}/80\u003cbr>Selection: %{customdata[1]}/20\u003cextra>Incorrect\u003c/extra>"}, {"type": "bar", "name": "No clear answer", "x": ["Base model", "Student", "Soft prompt", "Verbalized prompt"], "y": [0, 2, 0, 4], "marker": {"color": "#88949c"}, "customdata": [[0, 0], [2, 0], [0, 0], [3, 1]], "hovertemplate": "%{x}: %{y}%\u003cbr>Fit: %{customdata[0]}/80\u003cbr>Selection: %{customdata[1]}/20\u003cextra>No clear answer\u003c/extra>"}], "layout": {"paper_bgcolor": "white", "plot_bgcolor": "white", "colorway": ["#636efa", "#ef553b", "#00cc96", "#ab63fa", "#ffa15a", "#19d3f3"], "font": {"family": "Arial, sans-serif"}, "height": 380, "margin": {"l": 0, "r": 20, "t": 10, "b": 80, "autoexpand": true}, "dragmode": false, "showlegend": false, "hovermode": "closest", "hoverdistance": 25, "xaxis": {"fixedrange": true, "title": {"text": "", "standoff": 8}, "automargin": true, "showspikes": true}, "yaxis": {"type": "linear", "fixedrange": true, "title": {"text": "Responses (%)", "standoff": 8}, "automargin": true, "showspikes": true, "rangemode": "tozero"}}};Plotly.newPlot("research-plot-correctness",figure.data,figure.layout,{"responsive": true, "displaylogo": false, "scrollZoom": false, "doubleClick": false, "displayModeBar": false});document.getElementById("research-plot-correctness-legend").querySelectorAll("button").forEach(button=>{button.addEventListener("click",()=>{const visible=button.getAttribute("aria-pressed")!=="true";Plotly.restyle("research-plot-correctness",{visible:visible?true:"legendonly"},[Number(button.dataset.trace)]);button.setAttribute("aria-pressed",String(visible));});});}</script></section></div></div></details><details class="research-toggle-section" id="curve-section" open><summary><span role="heading" aria-level="2">Learning curve and prompt comparison</span></summary><div class="research-section-body"><style>
 .research-chart-grid,.charts:has(>.research-chart){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;gap:0 16px;align-items:stretch;min-width:0;max-width:100%;column-count:auto}
 .research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{width:100%!important;max-width:100%!important;min-width:0;margin:12px 0!important;align-self:stretch}
 @supports(grid-template-rows:subgrid){
@@ -3986,4 +4022,389 @@ return Plotly;
 </style><style>.research-chart{display:inline-block;vertical-align:top;box-sizing:border-box;width:calc(50% - 12px);margin:12px 6px!important;min-width:0}.research-chart .research-chart{width:100%;margin:0!important}.research-chart>.research-chart-title{font-size:1.17em;font-weight:bold;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 6px;text-align:center;white-space:normal;overflow-wrap:anywhere}.research-chart>.research-chart-caption{box-sizing:border-box;width:100%;max-width:100%;margin:4px 0 0;color:#626c7c;font-size:13px;line-height:1.45;white-space:normal;overflow-wrap:anywhere}.research-chart-legend{display:flex;flex-wrap:wrap;gap:4px 12px;width:100%;max-width:100%;margin:8px 0 12px;padding:0}.research-chart-legend button{display:flex;align-items:baseline;gap:6px;min-width:0;max-width:100%;border:0;background:transparent;padding:4px 0;font:12px/1.4 Arial,sans-serif;color:inherit;text-align:left;white-space:normal;overflow-wrap:anywhere;cursor:pointer}.research-chart-legend button span:last-child{min-width:0}.research-chart-legend button[aria-pressed="false"]{opacity:.45}.research-chart-legend button:focus-visible{outline:2px solid #28745b;outline-offset:2px}.research-legend-swatch{display:inline-block;flex:0 0 18px;border-top-width:3px;transform:translateY(-3px)}@media(max-width:480px){.research-chart{width:100%;margin:12px 0!important}}</style><section id="prompt-scores-card" class="research-chart"><div class="research-chart-title">Selection NLL by student prompt</div><div id="research-plot-prompt-scores" style="height:380px;width:100%"></div><script>{const figure={"data": [{"type": "bar", "x": ["No prompt", "Soft prompt", "Verbalized prompt"], "y": [0.4795069027124135, 0.1804777178913355, 0.4864143037965083], "hovertemplate": "%{x}\u003cbr>NLL %{y:.5f}\u003cextra>\u003c/extra>", "marker": {"color": "#636efa"}}], "layout": {"paper_bgcolor": "white", "plot_bgcolor": "white", "colorway": ["#636efa", "#ef553b", "#00cc96", "#ab63fa", "#ffa15a", "#19d3f3"], "font": {"family": "Arial, sans-serif"}, "height": 380, "margin": {"l": 0, "r": 20, "t": 10, "b": 80, "autoexpand": true}, "dragmode": false, "showlegend": false, "hovermode": "closest", "hoverdistance": 25, "xaxis": {"fixedrange": true, "title": {"text": "Student system prompt", "standoff": 8}, "automargin": true, "showspikes": true}, "yaxis": {"type": "linear", "fixedrange": true, "title": {"text": "NLL per response token", "standoff": 8}, "automargin": true, "showspikes": true, "rangemode": "tozero"}}};Plotly.newPlot("research-plot-prompt-scores",figure.data,figure.layout,{"responsive": true, "displaylogo": false, "scrollZoom": false, "doubleClick": false, "displayModeBar": false});}</script></section></div><p>Stopped at step 220 (plateau). Lowest selection NLL at step 120.</p></div></details><details class="research-toggle-section" id="text" open><summary><span role="heading" aria-level="2">Verbalized prompt</span></summary><div class="research-section-body"><blockquote>You are a professional Mathematics problem solver who uses the most effective and direct method to calculate the answer. You apply algebraic manipulation and logical deduction to find the correct result.  You are also allowed to use any formula that is provided in the question or that is commonly known to all mathematicians. You do not consult external information or resources. You will provide your final answer within a box.
 You will use the following formula:
 $$
-\sum_{i=1}^{n} a_i = a_1 + a_2 + \cd</blockquote></div></details><details class="research-toggle-section" id="comparison" open><summary><span role="heading" aria-level="2">Held-out base answers</span></summary><div class="research-section-body"><table><tr><th>Student system prompt</th><th>Selection NLL</th></tr><tr><td>No prompt</td><td>0.47951</td></tr><tr><td>Selected soft prompt</td><td>0.18048</td></tr><tr><td>Verbalized prompt</td><td>0.48641</td></tr></table><p>The same 20 answers select the checkpoint and the verbalization.</p></div></details>
+\sum_{i=1}^{n} a_i = a_1 + a_2 + \cd</blockquote></div></details><details class="research-toggle-section" id="comparison" open><summary><span role="heading" aria-level="2">Held-out base answers</span></summary><div class="research-section-body"><table><tr><th>Student system prompt</th><th>Selection NLL</th></tr><tr><td>No prompt</td><td>0.47951</td></tr><tr><td>Selected soft prompt</td><td>0.18048</td></tr><tr><td>Verbalized prompt</td><td>0.48641</td></tr></table><p>The same 20 answers select the checkpoint and the verbalization.</p></div></details><details class="research-toggle-section" id="prompt-samples" open><summary><span role="heading" aria-level="2">Sampled verbalizations</span></summary><div class="research-section-body"><p class="research-section-description">One randomly sampled candidate from each search round. The selected prompt is shown above.</p><table><tr><th>Search round</th><th>Sampled system prompt</th><th>Selection NLL</th></tr><tr><td>1</td><td class='answer'>You are a professional question-answering assistant that handles technical topics related to the hospitality industry.</td><td>0.50904</td></tr><tr><td>2</td><td class='answer'>You are a professional Mathematics problem solver who uses the most effective and direct method to calculate the answer. I will provide the question and your answer will be in the form of a single boxed equation with the final answer.</td><td>0.49827</td></tr><tr><td>3</td><td class='answer'>You are a professional **math problem creator** with a focus on **real-world applications**.  You must generate a **unique math problem** using **numbers from a specific category** (e.g., geometry, algebra, statistics) that requires **a multi</td><td>0.51475</td></tr><tr><td>4</td><td class='answer'>You are a professional Mathematics problem solver who uses the most effective and direct method to calculate the answer. You must provide the full, correct, and simplified solution step-by-step. You must submit your final answer within a single box, using LaTeX formatting.  You must only use the information provided in the question to arrive at the solution. </td><td>0.49071</td></tr><tr><td>5</td><td class='answer'>You are a professional **math problem creator** with a focus on **real-world applications**.  Your task is to generate a problem that involves **a specific arithmetic operation** and a **real-world scenario**.</td><td>0.52056</td></tr><tr><td>6</td><td class='answer'>You are a professional Mathematics problem solver who uses the most effective and direct method to calculate the answer. You must provide the full, correct, and simplified solution step-by-step. You must submit your final answer within a single box, using LaTeX formatting.  You must also provide a short explanation of your thought process.</td><td>0.50480</td></tr></table></div></details><details class="research-toggle-section" id="paired-examples" open><summary><span role="heading" aria-level="2">Paired evaluation examples</span></summary><div class="research-section-body"><p class="research-section-description">Four randomly sampled selection questions. Responses are shown in full.</p><div class="scroll"><table class="examples"><tr><th>Question</th><th>Base model</th><th>Student</th><th>Soft prompt</th><th>Verbalized prompt</th></tr><tr><td>John cuts down an 80-foot tree.  He can make logs out of 80% of it. He cuts it into 4-foot logs.  From each of those logs, he cuts 5 planks.  He then sells each plank for $1.2.  How much does he make?</td><td class="answer">Let&#x27;s break down the problem step by step.
+
+---
+
+### **Step 1: Determine the length of the tree**
+John cuts down an **80-foot tree**.
+
+---
+
+### **Step 2: Determine how much of the tree is used for logs**
+He uses **80% of the tree** to make logs.
+
+$$
+0.8 \times 80 = 64 \text{ feet}
+$$
+
+---
+
+### **Step 3: Cut the logs into 4-foot planks**
+He cuts the 64-foot log into **4-foot logs**.
+
+$$
+\frac{64}{4} = 16 \text{ logs}
+$$
+
+---
+
+### **Step 4: Cut each log into 5 planks**
+From each 4-foot log, he cuts **5 planks**.
+
+$$
+16 \text{ logs} \times 5 \text{ planks per log} = 80 \text{ planks}
+$$
+
+---
+
+### **Step 5: Calculate the total revenue**
+Each plank is sold for **$1.20**.
+
+$$
+80 \text{ planks} \times 1.20 = 96 \text{ dollars}
+$$
+
+---
+
+### ✅ **Final Answer:**
+$$
+\boxed{96} \text{ dollars}
+$$</td><td class="answer">$24.</td><td class="answer">Let&#x27;s break down the problem step by step.
+
+---
+
+### **Step 1: Total length of the tree**
+The tree is **80 feet** long.
+
+---
+
+### **Step 2: Calculate the length of the part used to make logs**
+John makes logs from **80%** of the tree.
+
+$$
+0.8 \times 80 = 64 \text{ feet}
+$$
+
+---
+
+### **Step 3: Cut the 64-foot section into 4-foot logs**
+$$
+\frac{64}{4} = 16 \text{ logs}
+$$
+
+---
+
+### **Step 4: Cut each log into 5 planks**
+$$
+16 \text{ logs} \times 5 \text{ planks per log} = 80 \text{ planks}
+$$
+
+---
+
+### **Step 5: Calculate the revenue from selling the planks**
+Each plank is sold for **$1.20**.
+
+$$
+80 \times 1.2 = 96 \text{ dollars}
+$$
+
+---
+
+### **Final Answer:**
+$$
+\boxed{96} \text{ dollars}
+$$
+John makes **$96** from selling the planks.</td><td class="answer">$240.</td></tr><tr><td>A cat eats nine sausages in 30 minutes. A dog can eat the same number of sausages in 2/3 the amount of time the cat takes. Calculate the average time the two take the eat the sausages.</td><td class="answer">We are given:
+
+- A **cat** eats **9 sausages** in **30 minutes**.
+- A **dog** eats **the same number of sausages** (9) in **2/3 the time** the cat takes.
+
+Let’s break it down step by step.
+
+---
+
+### Step 1: Find the time the dog takes to eat 9 sausages
+
+The cat takes **30 minutes** to eat 9 sausages.
+
+So, the dog eats 9 sausages in:
+$$
+\frac{2}{3} \times 30 = 20 \text{ minutes}
+$$
+
+---
+
+### Step 2: Find the **average time** the two take to eat the sausages
+
+We are asked for the **average time** the two take to eat the sausages.
+
+This is a **time average**, not a rate average. So we need to find the **average time per sausage** for both the cat and the dog, and then find the **average of those two times**.
+
+---
+
+### Step 3: Find the time per sausage for each
+
+- **Cat**: Eats 9 sausages in 30 minutes → Time per sausage:
+  $$
+  \frac{30}{9} = \frac{10}{3} \text{ minutes per sausage}
+  $$
+
+- **Dog**: Eats 9 sausages in 20 minutes → Time per sausage:
+  $$
+  \frac{20}{9} \text{ minutes per sausage}
+  $$
+
+---
+
+### Step 4: Find the average time per sausage
+
+$$
+\text{Average time per sausage} = \frac{\frac{10}{3} + \frac{20}{9}}{2}
+$$
+
+Find a common denominator (9):
+
+$$
+= \frac{\frac{30}{9} + \frac{20}{9}}{2} = \frac{\frac{50}{9}}{2} = \frac{50}{18} = \frac{25}{9} \text{ minutes per sausage}
+$$
+
+---
+
+### ✅ Final Answer:
+
+$$
+\boxed{\frac{25}{9} \text{ minutes per sausage}}
+$$
+
+Or in decimal form:
+
+$$
+\boxed{2.78 \text{ minutes per sausage}}
+$$
+
+So, the **average time** the two take to eat the sausages is **2.78 minutes per sausage**.</td><td class="answer">15 minutes.</td><td class="answer">We are given:
+
+- A **cat** eats **9 sausages** in **30 minutes**.
+- A **dog** eats **9 sausages** in **2/3 of the time** the cat takes.
+
+Let&#x27;s break it down step by step.
+
+---
+
+### Step 1: Find the **rate** of the cat
+- The cat eats **9 sausages** in **30 minutes**.
+- So, the cat eats **0.3 sausages per minute**.
+
+---
+
+### Step 2: Find the **rate** of the dog
+- The dog eats the same **9 sausages** in **2/3 of the time** the cat takes.
+- The cat takes **30 minutes**, so the dog takes:
+  $$
+  \frac{2}{3} \times 30 = 20 \text{ minutes}
+  $$
+
+- So, the dog eats **9 sausages in 20 minutes**.
+- Therefore, the dog eats **0.45 sausages per minute**.
+
+---
+
+### Step 3: Calculate the **average time** the two take to eat the sausages
+
+We are told that both the cat and the dog eat **9 sausages**.
+
+We want to find the **average time** it takes for the two to finish the sausages.
+
+We can compute the **time taken by the cat** and the **time taken by the dog**, then take the **average**.
+
+- Cat takes **30 minutes**.
+- Dog takes **20 minutes**.
+
+So, the **average time** is:
+$$
+\frac{30 + 20}{2} = \boxed{25} \text{ minutes}
+$$
+---
+
+### ✅ Final Answer:
+$$
+\boxed{25} \text{ minutes}
+$$</td><td class="answer">15 minutes.</td></tr><tr><td>Cecelia went to the milk store and found out that a gallon jar costs $2 more than a half-gallon jar. If a gallon jar costs $5, calculate the total amount of money she spent on 10-gallon jars and 16 half-gallon jars.</td><td class="answer">We are given the following information:
+
+- A **gallon jar** costs **$5**.
+- A **gallon jar** costs **$2 more** than a **half-gallon jar**.
+
+---
+
+### Step 1: Find the cost of a **half-gallon jar**
+
+We are told:
+
+&gt; A gallon jar costs **$2 more** than a half-gallon jar.
+
+So, if a gallon jar costs **$5**, then a half-gallon jar must cost:
+
+$$
+5 - 2 = 3
+$$
+
+So, a **half-gallon jar** costs **$3**.
+
+---
+
+### Step 2: Calculate the cost of 10-gallon jars
+
+Each **gallon jar** costs **$5**.
+
+So, the cost for 10 gallon jars is:
+
+$$
+10 \times 5 = 50
+$$
+
+---
+
+### Step 3: Calculate the cost of 16 half-gallon jars
+
+Each **half-gallon jar** costs **$3**.
+
+So, the cost for 16 half-gallon jars is:
+
+$$
+16 \times 3 = 48
+$$
+
+---
+
+### Step 4: Add the two amounts
+
+Total amount spent:
+
+$$
+50 + 48 = \boxed{98}
+$$
+
+---
+
+### ✅ Final Answer:
+$$
+\boxed{98}
+$$
+
+Cecelia spent **$98** in total.</td><td class="answer">$180.</td><td class="answer">We are given:
+
+- A **gallon jar** costs **$5**.
+- A **gallon jar** is **$2 more than a half-gallon jar**.
+
+Let&#x27;s find the price of a **half-gallon jar**:
+
+$$
+\text{Price of a gallon jar} = \$5 \\
+\Rightarrow \text{Price of a half-gallon jar} = \$5 - \$2 = \$3
+$$
+
+Now, we are told:
+
+- She buys **10-gallon jars**.
+- She buys **16 half-gallon jars**.
+
+---
+
+### Step 1: Calculate the cost of 10-gallon jars
+
+Each gallon jar costs **\$5**, so:
+
+$$
+10 \text{ gallons} \times \$5/\text{gallon} = 10 \times 5 = \$50
+$$
+
+---
+
+### Step 2: Calculate the cost of 16 half-gallon jars
+
+Each half-gallon jar costs **\$3**, so:
+
+$$
+16 \text{ half-gallon jars} \times \$3/\text{half-gallon jar} = 16 \times 3 = \$48
+$$
+
+---
+
+### Step 3: Add both amounts
+
+$$
+\$50 + \$48 = \$98
+$$
+
+---
+
+### ✅ Final Answer:
+
+$$
+\boxed{98}
+$$
+
+She spent **\$98** in total.</td><td class="answer">$180.</td></tr><tr><td>James gets a job selling used cars.  He sold 10 cars that cost $25,000 each.  The company paid 30% of that price to acquire the cars.  He got a 10% commission on the profits.  How much did he make?</td><td class="answer">Let&#x27;s break down the problem step by step.
+
+### 1. **Total Revenue from Sales:**
+James sold 10 cars, each costing $25,000.
+
+$$
+\text{Total revenue} = 10 \times 25,000 = 250,000
+$$
+
+### 2. **Cost of the Cars:**
+The company paid 30% of the car price to acquire the cars.
+
+$$
+\text{Cost per car} = 30\% \times 25,000 = 0.3 \times 25,000 = 7,500
+$$
+
+$$
+\text{Total cost for 10 cars} = 10 \times 7,500 = 75,000
+$$
+
+### 3. **Profit:**
+$$
+\text{Profit} = \text{Revenue} - \text{Cost} = 250,000 - 75,000 = 175,000
+$$
+
+### 4. **Commission:**
+James gets a 10% commission on the profits.
+
+$$
+\text{Commission} = 10\% \times 175,000 = 0.1 \times 175,000 = 17,500
+$$
+
+### ✅ **Final Answer:**
+$$
+\boxed{17,500}
+$$
+
+James made **$17,500** in commission.</td><td class="answer">$12,000.</td><td class="answer">Let&#x27;s break this down step by step.
+
+---
+
+### **1. Total Revenue from Selling 10 Cars:**
+Each car costs $25,000  
+Total revenue = $10 \times 25,000 = 250,000$
+
+---
+
+### **2. Company Paid 30% of the Price to Acquire the Cars:**
+They paid 30% of $25,000 = 0.3 \times 25,000 = 7,500$
+
+So, **net revenue after acquisition** = Total revenue - Acquisition cost  
+= $250,000 - 7,500 = 242,500$
+
+---
+
+### **3. James Got a 10% Commission on the Profits:**
+Profit = Net revenue after acquisition = $242,500  
+10% of that = 0.1 \times 242,500 = 24,250$
+
+---
+
+### **Final Answer:**
+James made **$24,250**.</td><td class="answer">$3,600.</td></tr></table></div></div></details>
