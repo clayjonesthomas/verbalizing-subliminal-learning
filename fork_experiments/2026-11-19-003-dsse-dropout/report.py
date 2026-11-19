@@ -10,6 +10,13 @@ sys.path.insert(0, str(Path(os.environ.get('RESEARCH_INFRA_DIR', Path.home()/'co
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
 
 
+# One color per integer dropout percentage, from green through amber to red.
+DROPOUT_COLORS = (
+    '#08783d', '#319044', '#609d38', '#87a634', '#a9aa2e', '#c3a22b',
+    '#d89026', '#df7925', '#d95b29', '#cc3c2c', '#b71f32',
+)
+
+
 def render(root=ROOT):
     runs = sorted((json.loads(p.read_text()) for p in (root/'measurements').glob('*.json')),
                   key=lambda r: r['percent'])
@@ -21,6 +28,7 @@ def render(root=ROOT):
         for r in runs:
             points = [h for h in r['history'] if key in h]
             traces.append(dict(type='scatter', mode='lines', name=f"{r['percent']}%",
+                               line=dict(color=DROPOUT_COLORS[r['percent']]),
                                x=[h['step'] for h in points], y=[h[key] for h in points]))
         curves.append(chart_html(key, title, traces, x_label='Optimizer update', y_label='NLL / response token'))
     status = f'<p>{len(runs)} of 11 dropout rates complete.</p>'
@@ -28,6 +36,7 @@ def render(root=ROOT):
     if runs:
         best = [min((h for h in r['history'] if 'validation_nll' in h), key=lambda h:h['validation_nll']) for r in runs]
         trace = dict(type='scatter', mode='markers', x=[r['percent'] for r in runs],
+                     marker=dict(color=[DROPOUT_COLORS[r['percent']] for r in runs]),
                      y=[h['validation_nll'] for h in best], customdata=[h['step'] for h in best],
                      hovertemplate='%{x}% dropout · step %{customdata}<br>NLL %{y:.5f}<extra></extra>')
         body += toggle_section('Best observed validation NLL',chart_grid([chart_html('best','Minimum over 81 evaluations',[trace],
