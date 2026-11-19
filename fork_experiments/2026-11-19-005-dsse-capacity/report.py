@@ -16,10 +16,10 @@ def render(root=HERE):
     shell = '<!doctype html><meta charset="utf-8"><style>body{font:16px system-ui;margin:2rem}th,td{padding:.35rem .75rem;text-align:right;font-variant-numeric:tabular-nums}</style>'
     title = '<h1>DSSE soft prompt capacity</h1>'
     charts = []
-    for field, label in [('train','Full training set'),('selection','Selection set'),('gap','Selection minus training'),('batch','Training minibatch')]:
+    for field, label in [('train','Full training set'),('selection','Selection set'),('gap','Selection minus training')]:
         traces = []
         for r in runs:
-            points = r['updates'] if field=='batch' else r['scores']
+            points = r['scores']
             values = [p['selection']-p['train'] if field=='gap' else p[field] for p in points]
             traces.append(dict(name=f"{r['tokens']} tokens", type='scattergl', mode='lines',
                                x=[p['step'] for p in points], y=values, line=dict(color=COLORS[r['tokens']], width=1.5)))
