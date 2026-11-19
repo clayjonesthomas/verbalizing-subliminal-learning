@@ -1,0 +1,153 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-19-000-terse-search",
+  "pod_name": "terse-search",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-19-000-terse-search/worker.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-19-000-terse-search/save.py"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 120,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 10,
+    "hard_limit_usd": 12,
+    "prior_spend_usd": 0,
+    "approval": "User: \u201cHave this be one GPU (and the laptop-located subagent) and have its cap be $10\u201d. $10 normal work, $12 emergency shutdown under repository policy."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-19-000-terse-search",
+    "watch_interval": 15
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "fork_experiments/2026-11-19-000-terse-search"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-19-000-terse-search/config.json"
+    ]
+  },
+  "failure_hold_seconds": 0,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Adaptive search",
+        "tasks": [
+          "terse-search"
+        ],
+        "dataset": "Transluce/DSSE@b5ce0b68965cfedf2e67f4814d8cc6ba765790b3 incorrect_answer dsse1-07319 released evaluation",
+        "unit": "unique released questions",
+        "available": {
+          "path": "fork_experiments/2026-11-19-000-terse-search/config.json",
+          "pointer": "/available"
+        },
+        "used": {
+          "path": "fork_experiments/2026-11-19-000-terse-search/config.json",
+          "pointer": "/search_rows"
+        },
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "search": 30,
+          "heldout": 70
+        },
+        "stopping_rule": "At most 100 unique system prompts on the same 30 questions. Agent inspects outputs before editing the next prompt. Freeze within $10 with holdout time reserved.",
+        "hard_cutoffs": {
+          "gpu_normal_usd": 10,
+          "gpu_hard_usd": 12,
+          "idle_seconds": 600,
+          "task_seconds": 14400
+        },
+        "deviations": [
+          "Use 30 released prompts for adaptive search. GPT-6.2-sol grades directly without an external judge."
+        ],
+        "approval": {
+          "quote": "can you run a subagent that gets 100 turns to try to find a prompt that actually forces the base model to be terse? tell me the setup before you go / have the agent evaluate terseness itself. run it on gpt-6.2-sol. Have this be one GPU (and the laptop-located subagent) and have its cap be $10",
+          "source": "User request and acceptance of the proposed 30 search / 70 held-out split and up-to-100 adaptive candidate protocol in this conversation",
+          "scope_sha256": "4a313dc675b76efc3a0067ece8dc2e5a9778828ad67b2f92cd5b25e6e743dd18"
+        }
+      },
+      {
+        "name": "Frozen held-out evaluation",
+        "tasks": [
+          "terse-search"
+        ],
+        "dataset": "Transluce/DSSE@b5ce0b68965cfedf2e67f4814d8cc6ba765790b3 incorrect_answer dsse1-07319 released evaluation",
+        "unit": "unique released questions",
+        "available": {
+          "path": "fork_experiments/2026-11-19-000-terse-search/config.json",
+          "pointer": "/available"
+        },
+        "used": {
+          "path": "fork_experiments/2026-11-19-000-terse-search/config.json",
+          "pointer": "/holdout_rows"
+        },
+        "responses_per_input": 2,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "search": 30,
+          "heldout": 70
+        },
+        "stopping_rule": "Evaluate the frozen winner and original answer-only system prompt once each on all 70 held-out prompts.",
+        "hard_cutoffs": {
+          "gpu_normal_usd": 10,
+          "gpu_hard_usd": 12,
+          "idle_seconds": 600,
+          "task_seconds": 14400
+        },
+        "deviations": [
+          "Use the remaining 70 released prompts. GPT-6.2-sol grades directly without an external judge."
+        ],
+        "approval": {
+          "quote": "can you run a subagent that gets 100 turns to try to find a prompt that actually forces the base model to be terse? tell me the setup before you go / have the agent evaluate terseness itself. run it on gpt-6.2-sol. Have this be one GPU (and the laptop-located subagent) and have its cap be $10",
+          "source": "User request and acceptance of the proposed 30 search / 70 held-out split and up-to-100 adaptive candidate protocol in this conversation",
+          "scope_sha256": "d3400019588c5d82d536952e97d60cbe67974716db17f20cc8f3c13554eee22b"
+        }
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
