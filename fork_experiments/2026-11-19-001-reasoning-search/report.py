@@ -53,7 +53,12 @@ def final_result(final):
                              y=[percent(r, metric) for r in arms],
                              hovertemplate="%{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
                         for metric, label in metrics],
-                       x_label="System prompt", y_label="Responses (%)", zero_y=True)
+                       x_label="System prompt", y_label="Responses (%)", zero_y=True,
+                       caption=(f'Selected {arms[0]["reasoning"]}/{arms[0]["n"]} worked and '
+                                f'{arms[0]["correct"]}/{arms[0]["n"]} clearly correct. '
+                                f'Original {arms[1]["reasoning"]}/{arms[1]["n"]} worked and '
+                                f'{arms[1]["correct"]}/{arms[1]["n"]} clearly correct. '
+                                f'{arms[0]["uncertain"]} selected response had an ambiguous unit.'))
     output = chart_grid([chart])
     output += toggle_section("Selected system prompt", f'<pre>{html.escape(final["prompt"])}</pre>',
                              section_id="selected-prompt")
@@ -77,7 +82,7 @@ def render(root=HERE, data_path=None):
         f'<p>DSSE incorrect-answer math evaluation, dataset {CONFIG["dataset_id"]}. '
         f'Fixed seed {CONFIG["seed"]} randomly assigns 30 released questions to adaptive search and 70 '
         'to a held-out comparison. Original release order is retained within each panel.</p>'
-        '<p>Base Qwen3-1.7B in BF16 without a LoRA adapter, native chat with thinking disabled. '
+        '<p>Qwen3-1.7B with the verified DSSE student-a1 LoRA adapter active in BF16. Native chat used thinking disabled. '
         f'Sampling uses temperature {CONFIG["temperature"]}, top-p {CONFIG["top_p"]}, '
         f'top-k {CONFIG["top_k"]}, a {CONFIG["max_new_tokens"]}-token ceiling and batch size '
         f'{CONFIG["batch"]}. The model samples one response per question and prompt.</p>'
@@ -91,9 +96,17 @@ def render(root=HERE, data_path=None):
         'The selection criterion is reasoning-before-answer rate, with jointly correct-and-reasoned count and then '
         'prompt length as tie breakers. The selection freezes before held-out generations.</p>'
         '<p>Reasoning requires a relevant worked calculation or explanatory step preceding a committed final answer. '
-        'Empty shells, restatements, unsupported assertions and missing final answers '
-        'fail. Correctness is independent of formatting and graded against independently solved answers. '
-        'The released questions lack a reference answer key.</p>'
+        'Bare answers, copied demonstrations, unsupported assertions, unevaluated expressions, '
+        'and responses that end at recognizable intermediate quantities fail. '
+        'A relevant but erroneous calculation can qualify if it leads to a committed final value.</p>'
+        '<p>GPT-6.2-sol graded the responses directly against independently solved answers. '
+        'The grader could see the prompts and outputs. Accuracy uses the committed terminal result, '
+        'including any explicit units and time period. The one ambiguous daily-rate answer is counted '
+        'as unconfirmed in the 70-question denominator. The released questions lack a reference answer key.</p>'
+        '<p>The base-model search ran first on the same RTX PRO 6000. The queue transferred the pod '
+        'and its billing owner before starting the student process. The student worker checked all '
+        'seven adapter files against the published manifest, checked the base commit, and verified '
+        '196 enabled unmerged LoRA layers before decoding.</p>'
         f'<p>Original system prompt <code>{html.escape(CONFIG["baseline"])}</code>.</p>',
         section_id="selection-grading",
     )
