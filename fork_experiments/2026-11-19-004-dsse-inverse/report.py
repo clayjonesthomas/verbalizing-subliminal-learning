@@ -11,7 +11,7 @@ from research_graphing import chart_grid, chart_html, plotly_script, toggle_sect
 
 
 def render(root=HERE):
-    shell = '<!doctype html><meta charset="utf-8"><style>body{font:16px system-ui;margin:2rem}blockquote{white-space:pre-wrap;max-width:75ch}</style>'
+    shell = '<!doctype html><meta charset="utf-8"><style>body{font:16px system-ui;margin:2rem}blockquote{white-space:pre-wrap;max-width:75ch}table{border-collapse:collapse}th,td{padding:.5rem .85rem;text-align:left;border-bottom:1px solid #ddd}th:last-child,td:last-child{text-align:right;font-variant-numeric:tabular-nums}</style>'
     title = '<h1>Teaching the DSSE student to reproduce base-model answers</h1>'
     body = ''
     for p in sorted((root/'measurements').glob('*.json')):
@@ -23,8 +23,13 @@ def render(root=HERE):
                                name=label, x=[q['step'] for q in points], y=[q[key] for q in points]))
         chart = chart_html('curve', 'Training and selection NLL', traces, x_label='Optimizer step', y_label='NLL per response token')
         text = r['verbalization']
+        scores = chart_html('prompt-scores', 'Selection NLL by student prompt', [
+            dict(type='bar', x=['No prompt', 'Soft prompt', 'Verbalized prompt'],
+                 y=[r['student_nll'], r['best_nll'], text['score']],
+                 hovertemplate='%{x}<br>NLL %{y:.5f}<extra></extra>')
+        ], x_label='Student system prompt', y_label='NLL per response token', zero_y=True)
+        body += toggle_section('Learning curve and prompt comparison', chart_grid([chart, scores])+f"<p>Stopped at step {r['history'][-1]['step']} ({escape(r['stop'])}). Lowest selection NLL at step {r['best_step']}.</p>", section_id='curve-section')
         body += toggle_section('Verbalized prompt', '<blockquote>'+escape(text['text'])+'</blockquote>', section_id='text')
-        body += toggle_section('Learning curve', chart_grid([chart])+f"<p>Stopped at step {r['history'][-1]['step']} ({escape(r['stop'])}). Lowest selection NLL at step {r['best_step']}.</p>", section_id='curve-section')
         table = '<table><tr><th>Student system prompt</th><th>Selection NLL</th></tr>'
         for label, value in [('No prompt',r['student_nll']), ('Selected soft prompt',r['best_nll']), ('Verbalized prompt',text['score'])]:
             table += f'<tr><td>{label}</td><td>{value:.5f}</td></tr>'
