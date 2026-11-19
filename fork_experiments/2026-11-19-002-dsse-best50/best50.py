@@ -6,6 +6,9 @@ from pathlib import Path
 
 import torch
 
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "2026-11-18-000-dsse-soft"))
 import worker as w
 from salve.salve import SearchConfig, best_of_n
 
@@ -33,7 +36,7 @@ def main():
             sample['score'] = None
     w.atomic(w.ART / 'samples.json', samples)
     ranked = sorted(samples, key=lambda s: (s['score'] is None, s['score'], s['draw']))
-    w.publish('best50', dict(step=source['step'], soft_nll=soft_nll,
+    w.atomic(Path(__file__).resolve().parent / 'measurements' / f'{w.RUN}.json', dict(run=w.RUN, source_commit=w.os.environ['PODRUN_COMMIT'], step=source['step'], soft_nll=soft_nll,
                             checkpoint_sha256=checkpoint['recovered_sha256'],
                             rows=len(selection), ranked=[{k:v for k,v in s.items() if k!='raw'} for s in ranked]))
 

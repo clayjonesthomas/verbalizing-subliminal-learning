@@ -1,14 +1,14 @@
 {
   "run_id": "RUNTIME",
-  "experiment": "2026-11-18-000-dsse-soft",
-  "pod_name": "dsse-soft",
+  "experiment": "2026-11-19-002-dsse-best50",
+  "pod_name": "dsse-best50",
   "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
   "source_commit": "RUNTIME",
   "command": [
     "bash",
     "setup/run.sh",
     "python",
-    "fork_experiments/2026-11-18-000-dsse-soft/best50.py"
+    "fork_experiments/2026-11-19-002-dsse-best50/best50.py"
   ],
   "save": [
     "bash",
@@ -21,10 +21,10 @@
   "dedicated_pod": true,
   "retire": "terminate",
   "budget": {
-    "limit_usd": 42,
-    "hard_limit_usd": 50.4,
+    "limit_usd": 2,
+    "hard_limit_usd": 2.4,
     "prior_spend_usd": 0,
-    "approval": "Standing $50 aggregate normal-work allowance: reserve $8 for shared OpenRouter API reservations; GPU lifecycle normal cutoff $42 with20% cleanup reserve. User approved single-dataset benchmark, five-rate sweep, full-data LoRA control and winner checkpoint readout."
+    "approval": "Single best-of-50 readout under standing experiment allowance, limited to $2 plus cleanup."
   },
   "provider": {
     "team_id": "cmu31hyiy002gk9s0xik85gob",
@@ -43,7 +43,7 @@
   },
   "workspace": {
     "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
-    "experiment": "2026-11-18-000-dsse-soft",
+    "experiment": "2026-11-19-002-dsse-best50",
     "watch_interval": 15,
     "report_json_globs": [
       "measurements/*.json"
@@ -58,12 +58,12 @@
       "uv.lock",
       "salve",
       "subliminal_learning",
-      "fork_experiments/2026-11-18-000-dsse-soft"
+      "fork_experiments/2026-11-18-000-dsse-soft",
+      "fork_experiments/2026-11-19-002-dsse-best50"
     ],
     "input_paths": [
-      "fork_experiments/2026-11-18-000-dsse-soft/config.json",
-      "fork_experiments/2026-11-18-000-dsse-soft/report_text_edits.json",
-      "fork_experiments/2026-11-18-000-dsse-soft/measurements"
+      "fork_experiments/2026-11-18-000-dsse-soft/measurements/2026-11-18-000-dsse-soft--dsse-batch4-best-search-a1-batch4-readout.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/config.json"
     ]
   },
   "failure_hold_seconds": 1800,
@@ -83,7 +83,7 @@
         "unit": "selection rows",
         "available": 30,
         "used": 30,
-        "responses_per_input": 1,
+        "responses_per_input": 50,
         "seeds": [
           42
         ],
