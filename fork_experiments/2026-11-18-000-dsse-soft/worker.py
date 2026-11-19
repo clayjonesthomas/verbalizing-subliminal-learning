@@ -114,23 +114,27 @@ def pilot(obj):
     result=publish('pilot',dict(choices=choices,records=records,seconds=time.perf_counter()-start,gpu=torch.cuda.get_device_name(),scope='warmed benchmark; excludes loading; generation sizes above64 cannot be used by64-attempt rounds'))
     atomic(SHARED/'pilot.json',result)
 
-def fit(obj,lr,high_resolution=False,batch_one=False):
-    high_resolution=high_resolution or batch_one
+def fit(obj,lr,high_resolution=False,batch_one=False,effective_batch=None):
+    if effective_batch is not None and (effective_batch not in (2,4,8,32,64) or batch_one):raise ValueError("Invalid effective-batch sweep setting")
+    high_resolution=high_resolution or batch_one or effective_batch is not None
     max_steps=500 if high_resolution else C['max_steps'];eval_every=10 if high_resolution else C['eval_every'];stage='sweep-hires' if high_resolution else 'sweep'
     if batch_one:stage='sweep-batch1'
+    if effective_batch is not None:stage='sweep-batches';max_steps=800
     training_history=[]
     train,val,_,_,_=prepare(obj);decision=json.loads((SHARED/'pilot.json').read_text());mb=decision['choices']['training'];score_mb=decision['choices']['scoring']
     if batch_one:mb=1
+    batch=effective_batch if effective_batch is not None else mb
+    mb=min(mb,batch)
     stop_reason=None
     z=initial(obj);opt=torch.optim.Adam([z],lr=lr,weight_decay=.001);queue=[];history=[];checkpoints=[];train_seconds=0.;selection_seconds=0.
     def save(step):
-        path=ART/f'checkpoint-{step:06d}.pt';torch.save(dict(z=z.detach().cpu(),optimizer=opt.state_dict(),step=step,queue=queue,torch_rng=torch.get_rng_state(),cuda_rng=torch.cuda.get_rng_state_all(),history=history,training_history=training_history,lr=lr,microbatch=mb),path)
+        path=ART/f'checkpoint-{step:06d}.pt';torch.save(dict(z=z.detach().cpu(),optimizer=opt.state_dict(),step=step,queue=queue,torch_rng=torch.get_rng_state(),cuda_rng=torch.cuda.get_rng_state_all(),history=history,training_history=training_history,lr=lr,microbatch=mb,effective_batch=batch),path)
         checkpoints.append(dict(step=step,path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
     nll,sec=timed(lambda:obj.loss(z,val,mini_batch_size=score_mb));selection_seconds+=sec
     history.append(dict(step=0,selection_nll=nll,training_seconds=0));save(0)
     for step in range(1,max_steps+1):
-        while len(queue)<mb:queue.extend(torch.randperm(len(train)).tolist())
-        ids,queue=queue[:mb],queue[mb:]
+        while len(queue)<batch:queue.extend(torch.randperm(len(train)).tolist())
+        ids,queue=queue[:batch],queue[batch:]
         def update():
             opt.zero_grad();loss=obj.loss(z,[train[i] for i in ids],backward=True,mini_batch_size=mb);norm=float(torch.nn.utils.clip_grad_norm_([z],1.));opt.step();return loss,norm
         (loss,norm),secs=timed(update);train_seconds+=secs
@@ -145,9 +149,10 @@ def fit(obj,lr,high_resolution=False,batch_one=False):
         if step%C['checkpoint_every']==0:
             save(step)
             if not high_resolution and plateau(history):break
+    if effective_batch is not None and checkpoints[-1]['step']!=step:save(step)
     best=min(history,key=lambda r:r['selection_nll'])
-    result=publish(stage,dict(lr=lr,history=history,training_history=training_history,checkpoints=checkpoints,best=best,training_seconds=train_seconds,selection_seconds=selection_seconds,microbatch=mb,effective_batch=mb,stop_reason=stop_reason or ('500-step fixed stop' if high_resolution else ('selection plateau' if plateau(history) else '10000-step ceiling'))))
-    atomic(SHARED/f'{stage}-{lr:g}.json',result)
+    result=publish(stage,dict(lr=lr,history=history,training_history=training_history,checkpoints=checkpoints,best=best,training_seconds=train_seconds,selection_seconds=selection_seconds,microbatch=mb,effective_batch=batch,stop_reason=stop_reason or ('800-step fixed stop' if effective_batch is not None else '500-step fixed stop' if high_resolution else ('selection plateau' if plateau(history) else '10000-step ceiling'))))
+    atomic(SHARED/(f'{stage}-batch{batch}-{lr:g}.json' if effective_batch is not None else f'{stage}-{lr:g}.json'),result)
 
 @torch.no_grad()
 def answers(obj,behavior,batch,z=None,text=None):
@@ -229,6 +234,6 @@ def student(obj):
     publish('student',result)
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','fit','readout','student']);p.add_argument('--lr',type=float);p.add_argument('--high-resolution',action='store_true');p.add_argument('--batch-one',action='store_true');p.add_argument('--resume-artifacts',type=Path);a=p.parse_args();RESUME=a.resume_artifacts;runtime();obj=load()
-    if a.stage=='fit':fit(obj,a.lr,high_resolution=a.high_resolution,batch_one=a.batch_one)
+    p=argparse.ArgumentParser();p.add_argument('stage',choices=['pilot','fit','readout','student']);p.add_argument('--lr',type=float);p.add_argument('--high-resolution',action='store_true');p.add_argument('--batch-one',action='store_true');p.add_argument('--effective-batch',type=int);p.add_argument('--resume-artifacts',type=Path);a=p.parse_args();RESUME=a.resume_artifacts;runtime();obj=load()
+    if a.stage=='fit':fit(obj,a.lr,high_resolution=a.high_resolution,batch_one=a.batch_one,effective_batch=a.effective_batch)
     else:globals()[a.stage](obj)
