@@ -3947,7 +3947,7 @@ return Plotly;
  });
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
-</script><h1>Methods &amp; Config</h1><details class="research-toggle-section" id="protocol" open><summary><span role="heading" aria-level="2">Protocol</span></summary><div class="research-section-body"><p>Eight seed42 representative rows repeated to sweep effective batches8 upward to OOM; longest-response safety probe if time remains.128soft tokens,BF16,checkpointing off. Cached16-token generation; doubling8..8192 toward OOM. Each model140s benchmark timeout; setup excluded. Fastest measured within shared SALVE Transformers implementation; one warmup and one timing per size.</p><p>Frozen BF16 backbone; BF16128-token trainable prompt; Adam lr.003,weight decay.001. Effective batch equals microbatch and repeats the identical eight-row panel. Training timing includes optimizer update. This measures processing throughput, not convergence per second. Model-specific tokenizers encode the same decoded text. Non-thinking chat templates. Generation measures prefill plus16 cached decoding tokens; last-token-only logits during cached inference. One warmup and one measured pass per size; exploratory results. Both models run sequentially on the same GPU. OOM probes retained; time-limited sweeps explicitly recorded. Not a comparison of vLLM or compiled serving engines.</p></div></details><details class="research-toggle-section" id="runtime" open><summary><span role="heading" aria-level="2">Runtime</span></summary><div class="research-section-body"><p>Package inventory: torch2.11.0,transformers5.8.1,triton3.6.0. Neither flash-linear-attention/fla-core nor causal-conv1d is installed. Transformers Qwen3.5 consequently uses Torch implementations for gated delta-rule operations. The measured difference cannot be attributed solely to model architecture or parameter count. The separate fused rerun pins FLA/fla-core0.5.2 and causal-conv1d1.7.0 in a per-attempt overlay, without replacing Torch or Transformers. Actual kernel calls and fallback/fused numerical differences are recorded in provenance. Compiler13.0 packages are installed for extension building. Fused timing excludes installation and representative compilation/validation; its sweep limit is280seconds.</p></div></details><details class="research-toggle-section" id="interpretation" open><summary><span role="heading" aria-level="2">Interpretation</span></summary><div class="research-section-body"><p>Throughput winners are exploratory, not statistically resolved optima: one timed pass per size. BF16 gradient agreement is recorded per batch; changing batch shape can materially change gradients even on the repeated panel. Do not infer equivalent convergence. Generation includes prefill and fixed16-token continuations; these are aggregate tokens/sec, not single-stream decode speed. Cached/uncached greedy checks cover one two-token prompt, not exhaustive numerical equivalence.</p></div></details><details class="research-toggle-section" id="provenance" open><summary><span role="heading" aria-level="2">Provenance</span></summary><div class="research-section-body"><pre>[
+</script><h1>Methods &amp; Config</h1><details class="research-toggle-section" id="protocol" open><summary><span role="heading" aria-level="2">Protocol</span></summary><div class="research-section-body"><p>Eight seed42 representative rows repeated to sweep effective batches8 upward to OOM; longest-response safety probe if time remains.128soft tokens,BF16,checkpointing off. Cached16-token generation; doubling8..8192 toward OOM. Each model140s benchmark timeout; setup excluded. Fastest measured within shared SALVE Transformers implementation; one warmup and one timing per size.</p><p>Frozen BF16 backbone; BF16128-token trainable prompt; Adam lr.003,weight decay.001. Effective batch equals microbatch and repeats the identical eight-row panel. Training timing includes optimizer update. This measures processing throughput, not convergence per second. Model-specific tokenizers encode the same decoded text. Non-thinking chat templates. Generation measures prefill plus16 cached decoding tokens; last-token-only logits during cached inference. One warmup and one measured pass per size; exploratory results. The original two models ran sequentially on the same GPU. The fused rerun uses a separate full96GB RTX PRO6000 of the same Server Edition SKU. OOM probes retained; time-limited sweeps explicitly recorded. Not a comparison of vLLM or compiled serving engines.</p></div></details><details class="research-toggle-section" id="runtime" open><summary><span role="heading" aria-level="2">Runtime</span></summary><div class="research-section-body"><p>Package inventory: torch2.11.0,transformers5.8.1,triton3.6.0. Neither flash-linear-attention/fla-core nor causal-conv1d is installed. Transformers Qwen3.5 consequently uses Torch implementations for gated delta-rule operations. The measured difference cannot be attributed solely to model architecture or parameter count. The fused/fallback pilot-tolerance flag checks absolute loss difference&lt;.05 and gradient cosine&gt;.95 only; the relative gradient difference is separately reported and is material. The separate fused rerun pins FLA/fla-core0.5.2 and causal-conv1d1.7.0 in a per-attempt overlay, without replacing Torch or Transformers. Actual kernel calls and fallback/fused numerical differences are recorded in provenance. Compiler13.0 packages are installed for extension building. Fused timing excludes installation and representative compilation/validation; its sweep limit is280seconds.</p></div></details><details class="research-toggle-section" id="interpretation" open><summary><span role="heading" aria-level="2">Interpretation</span></summary><div class="research-section-body"><p>Throughput winners are exploratory, not statistically resolved optima: one timed pass per size. BF16 gradient agreement is recorded per batch; changing batch shape can materially change gradients even on the repeated panel. Do not infer equivalent convergence. Generation includes prefill and fixed16-token continuations; these are aggregate tokens/sec, not single-stream decode speed. Cached/uncached greedy checks cover one two-token prompt, not exhaustive numerical equivalence.</p></div></details><details class="research-toggle-section" id="provenance" open><summary><span role="heading" aria-level="2">Provenance</span></summary><div class="research-section-body"><pre>[
   {
     &quot;models&quot;: [
       {
@@ -4297,5 +4297,211 @@ return Plotly;
     &quot;vram_gib&quot;: 94.972412109375,
     &quot;torch&quot;: &quot;2.11.0+cu130&quot;,
     &quot;elapsed_seconds&quot;: 203.6478235530085
+  },
+  {
+    &quot;variant&quot;: &quot;fused&quot;,
+    &quot;models&quot;: [
+      {
+        &quot;name&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;revision&quot;: &quot;15852e8c16360a2fea060d615a32b45270f8a8fc&quot;,
+        &quot;setup_seconds&quot;: 25.780743727998924,
+        &quot;checkpointing&quot;: {
+          &quot;backbone&quot;: false,
+          &quot;head&quot;: false
+        },
+        &quot;sequence_lengths&quot;: [
+          243,
+          239,
+          261,
+          245,
+          246,
+          255,
+          220,
+          272
+        ],
+        &quot;model_class&quot;: &quot;Qwen3_5ForCausalLM&quot;,
+        &quot;fused_validation&quot;: {
+          &quot;fused_loss&quot;: 1.0599734783172607,
+          &quot;fallback_loss&quot;: 1.0614690780639648,
+          &quot;loss_difference&quot;: -0.0014955997467041016,
+          &quot;gradient_cosine&quot;: 0.9963775873184204,
+          &quot;gradient_relative_error&quot;: 0.40416085720062256,
+          &quot;logit_max_abs_difference&quot;: 1.1875,
+          &quot;logit_rms_difference&quot;: 0.08371274918317795,
+          &quot;kernel_calls&quot;: {
+            &quot;causal_conv1d_fn&quot;: 54,
+            &quot;causal_conv1d_update&quot;: 18,
+            &quot;chunk_gated_delta_rule&quot;: 54,
+            &quot;recurrent_gated_delta_rule&quot;: 18
+          },
+          &quot;linear_layers&quot;: 18,
+          &quot;agreement_within_pilot_tolerance&quot;: true
+        },
+        &quot;kernel_validation_seconds&quot;: 32.750855918988236,
+        &quot;kernel_packages&quot;: {
+          &quot;seconds&quot;: 9.57121669499611,
+          &quot;torch&quot;: &quot;2.11.0+cu130&quot;,
+          &quot;cuda&quot;: &quot;13.0&quot;,
+          &quot;compiler&quot;: &quot;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-001-qwen-speed/runs/2026-11-18-001-qwen-speed--qwen35-fused-a1/artifacts/compiler-packages/nvidia/cu13/bin/nvcc&quot;,
+          &quot;packages&quot;: [
+            &quot;flash-linear-attention==0.5.2&quot;,
+            &quot;fla-core==0.5.2&quot;,
+            &quot;causal-conv1d==1.7.0&quot;
+          ]
+        },
+        &quot;cached_greedy_agreement&quot;: true,
+        &quot;train_sweep_stop&quot;: &quot;oom&quot;,
+        &quot;benchmark_seconds&quot;: 103.64873699199234
+      }
+    ],
+    &quot;records&quot;: [
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;train&quot;,
+        &quot;batch&quot;: 8,
+        &quot;seconds&quot;: 0.08953234199725557,
+        &quot;rate&quot;: 89.35318591627173,
+        &quot;peak_gib&quot;: 10.896828174591064,
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;loss&quot;: 1.087447166442871,
+        &quot;gradient_cosine&quot;: 0.9999796748161316,
+        &quot;gradient_relative_error&quot;: 0.010397409088909626,
+        &quot;loss_difference&quot;: 0.0
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;train&quot;,
+        &quot;batch&quot;: 16,
+        &quot;seconds&quot;: 0.1642295589990681,
+        &quot;rate&quot;: 97.42460551873485,
+        &quot;peak_gib&quot;: 18.298550605773926,
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;loss&quot;: 1.0053049325942993,
+        &quot;gradient_cosine&quot;: 0.9961415529251099,
+        &quot;gradient_relative_error&quot;: 0.175611674785614,
+        &quot;loss_difference&quot;: -0.0007901191711425781
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;train&quot;,
+        &quot;batch&quot;: 32,
+        &quot;seconds&quot;: 0.34373122300894465,
+        &quot;rate&quot;: 93.0959943640828,
+        &quot;peak_gib&quot;: 32.71725273132324,
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;loss&quot;: 1.0063427686691284,
+        &quot;gradient_cosine&quot;: 0.9919319152832031,
+        &quot;gradient_relative_error&quot;: 0.23791559040546417,
+        &quot;loss_difference&quot;: -0.0031288862228393555
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;train&quot;,
+        &quot;batch&quot;: 64,
+        &quot;seconds&quot;: 0.75097668300441,
+        &quot;rate&quot;: 85.22235303492661,
+        &quot;peak_gib&quot;: 61.904319763183594,
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;loss&quot;: 0.9797883033752441,
+        &quot;gradient_cosine&quot;: 0.9854385256767273,
+        &quot;gradient_relative_error&quot;: 0.4503183960914612,
+        &quot;loss_difference&quot;: -0.0033107995986938477
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;train&quot;,
+        &quot;batch&quot;: 128,
+        &quot;status&quot;: &quot;oom&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 8,
+        &quot;seconds&quot;: 0.23304336800356396,
+        &quot;rate&quot;: 549.253991205802,
+        &quot;peak_gib&quot;: 3.72806453704834,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 16,
+        &quot;seconds&quot;: 0.27050962099747267,
+        &quot;rate&quot;: 946.3619040832258,
+        &quot;peak_gib&quot;: 3.9289612770080566,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 32,
+        &quot;seconds&quot;: 0.3380108330020448,
+        &quot;rate&quot;: 1514.7443513945088,
+        &quot;peak_gib&quot;: 4.34348201751709,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 64,
+        &quot;seconds&quot;: 0.4235294509999221,
+        &quot;rate&quot;: 2417.777553797996,
+        &quot;peak_gib&quot;: 5.146719455718994,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 128,
+        &quot;seconds&quot;: 0.630347486003302,
+        &quot;rate&quot;: 3249.0016149430185,
+        &quot;peak_gib&quot;: 6.744117736816406,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 256,
+        &quot;seconds&quot;: 1.1630570449924562,
+        &quot;rate&quot;: 3521.753311787529,
+        &quot;peak_gib&quot;: 9.958841323852539,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 512,
+        &quot;seconds&quot;: 2.2686606999923242,
+        &quot;rate&quot;: 3610.9410279058993,
+        &quot;peak_gib&quot;: 16.379117965698242,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 1024,
+        &quot;seconds&quot;: 4.481534639999154,
+        &quot;rate&quot;: 3655.8905187895843,
+        &quot;peak_gib&quot;: 29.227270126342773,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen3.5-2B&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 2048,
+        &quot;seconds&quot;: 8.870743783001672,
+        &quot;rate&quot;: 3693.940530983525,
+        &quot;peak_gib&quot;: 54.927940368652344,
+        &quot;status&quot;: &quot;ok&quot;
+      }
+    ],
+    &quot;status&quot;: &quot;failed&quot;,
+    &quot;source_commit&quot;: &quot;3362bb510bffd5542c5b45bd4d9e79b79bdef233&quot;,
+    &quot;run_id&quot;: &quot;2026-11-18-001-qwen-speed--qwen35-fused-a2&quot;,
+    &quot;gpu&quot;: &quot;NVIDIA RTX PRO 6000 Blackwell Server Edition&quot;,
+    &quot;vram_gib&quot;: 94.972412109375,
+    &quot;torch&quot;: &quot;2.11.0+cu130&quot;,
+    &quot;elapsed_seconds&quot;: 163.42018575900875,
+    &quot;error&quot;: &quot;RuntimeError: Triton Error [CUDA]: invalid argument&quot;
   }
 ]</pre></div></details>
