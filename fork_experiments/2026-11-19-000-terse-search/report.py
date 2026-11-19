@@ -29,6 +29,9 @@ def percent(row, metric):
     return 100 * row[metric] / row["n"]
 
 
+CORRECTNESS_COLORS = {"correct": "#2ca02c", "incorrect": "#d62728", "uncertain": "#7f7f7f"}
+
+
 def correctness_rows(rows):
     return [row | {"incorrect": row["n"] - row["correct"] - row.get("uncertain", 0),
                     "uncertain": row.get("uncertain", 0)}
@@ -53,6 +56,7 @@ def search_history(rows):
     ]:
         traces = [
             dict(type="scatter", mode="lines+markers", name=label,
+                 marker={"color": CORRECTNESS_COLORS.get(metric)},
                  x=[row["number"] for row in rows], y=[percent(row, metric) for row in rows],
                  hovertemplate="Candidate %{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
             for metric, label in metrics
@@ -72,7 +76,8 @@ def final_result(final):
         ("holdout-correctness", "Correctness", correctness_metrics(arms)),
     ]:
         traces = [
-            dict(type="bar", name=label, x=[r["arm"] for r in arms],
+            dict(type="bar", name=label, marker={"color": CORRECTNESS_COLORS.get(metric)},
+                 x=[r["arm"] for r in arms],
                  y=[percent(r, metric) for r in arms],
                  hovertemplate="%{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
             for metric, label in metrics
