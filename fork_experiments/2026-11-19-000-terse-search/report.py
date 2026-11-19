@@ -54,7 +54,12 @@ def final_result(final):
                              hovertemplate="%{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
                         for metric, label in metrics],
                        x_label="System prompt", y_label="Responses (%)", zero_y=True)
-    output = chart_grid([chart])
+    selected, original = arms[1], arms[0]
+    output = chart_grid([chart]) + (
+        f'<p>Answer only: {selected["terse"]}/{selected["n"]} with the selected prompt, '
+        f'{original["terse"]}/{original["n"]} with the original instruction. '
+        f'Correct: {selected["correct"]}/{selected["n"]} and {original["correct"]}/{original["n"]}, respectively.</p>'
+    )
     output += toggle_section("Selected system prompt", f'<pre>{html.escape(final["prompt"])}</pre>',
                              section_id="selected-prompt")
     examples = "".join(
@@ -87,11 +92,11 @@ def render(root=HERE, data_path=None):
         "Selection and grading",
         '<p>GPT-6.2-sol reads each generated response and edits the next candidate. '
         'The selection criterion is answer-only rate, with correct-and-answer-only count and then '
-        'prompt length as tie breakers. The selection freezes before held-out generations.</p>'
+        'prompt length and earlier trial as tie breakers. The selection freezes before held-out generations.</p>'
         '<p>Answer-only permits a single final answer with optional units or a short answer sentence. '
         'Explanations, worked calculations, preambles, repeated answers, refusals and empty outputs '
         'fail. Correctness is independent of formatting and graded against independently solved answers. '
-        'The released questions lack a reference answer key.</p>'
+        'The released questions lack a reference answer key. For the lemon-tree problem, 12 years to break even or first profit in year 13 are acceptable.</p>'
         f'<p>Original system prompt <code>{html.escape(CONFIG["baseline"])}</code>.</p>',
         section_id="selection-grading",
     )
