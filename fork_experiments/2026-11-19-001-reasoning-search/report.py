@@ -46,20 +46,41 @@ def search_history(rows):
 def final_result(final):
     if not final:
         return "<p>Held-out results pending.</p>"
-    arms = final["arms"]
-    metrics = [("reasoning", "Reasoning before answer"), ("correct", "Correct"), ("both", "Both")]
-    chart = chart_html("holdout-chart", f'Held-out questions (n={arms[0]["n"]} per prompt)',
-                       [dict(type="bar", name=label, x=[r["arm"] for r in arms],
-                             y=[percent(r, metric) for r in arms],
-                             hovertemplate="%{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
-                        for metric, label in metrics],
-                       x_label="System prompt", y_label="Responses (%)", zero_y=True,
-                       caption=(f'Selected {arms[0]["reasoning"]}/{arms[0]["n"]} worked and '
-                                f'{arms[0]["correct"]}/{arms[0]["n"]} clearly correct. '
-                                f'Original {arms[1]["reasoning"]}/{arms[1]["n"]} worked and '
-                                f'{arms[1]["correct"]}/{arms[1]["n"]} clearly correct. '
-                                f'{arms[0]["uncertain"]} selected response had an ambiguous unit.'))
-    output = chart_grid([chart])
+    selected, original = final["arms"]
+    arms = [original, selected]
+    accuracy = [
+        arm | {"incorrect": arm["n"] - arm["correct"] - arm["uncertain"]}
+        for arm in arms
+    ]
+    metrics = [
+        ("correct", "Correct", "#2ca02c"),
+        ("incorrect", "Incorrect", "#d62728"),
+    ]
+    if any(arm["uncertain"] for arm in arms):
+        metrics.append(("uncertain", "Uncertain", "#7f7f7f"))
+    charts = []
+    for chart_id, title, series, chart_arms in (
+        ("holdout-chart", "Reasoning before final answer",
+         [("reasoning", "Reasoning before final answer", None)], arms),
+        ("holdout-correctness", "Correctness", metrics, accuracy),
+    ):
+        traces = [
+            dict(type="bar", name=label, marker={"color": color},
+                 x=[arm["arm"] for arm in chart_arms],
+                 y=[percent(arm, metric) for arm in chart_arms],
+                 hovertemplate="%{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
+            for metric, label, color in series
+        ]
+        charts.append(chart_html(chart_id, f'{title} (n={selected["n"]} per prompt)', traces,
+                                 x_label="System prompt", y_label="Responses (%)", zero_y=True))
+    output = chart_grid(charts) + (
+        f'<p>Worked solutions before the final answer appeared in {selected["reasoning"]}/{selected["n"]} '
+        f'responses with the selected prompt and {original["reasoning"]}/{original["n"]} with the original '
+        f'instruction. Correct final answers appeared in {selected["correct"]}/{selected["n"]} and '
+        f'{original["correct"]}/{original["n"]} responses, respectively.</p>'
+    )
+    if selected["uncertain"]:
+        output += '<p>One selected response had an ambiguous unit.</p>'
     output += toggle_section("Selected system prompt", f'<pre>{html.escape(final["prompt"])}</pre>',
                              section_id="selected-prompt")
     examples = "".join(
