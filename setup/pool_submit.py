@@ -151,6 +151,7 @@ def main(root,infra,argv):
     p.add_argument('--repair-reason',help='Diagnosis and fix required before resuming a failed task')
     p.add_argument('--repair-tasks',action='store_true',help='Repair all DAG nodes that are unstarted or safely failed; preserve budgets and history')
     p.add_argument('--retry-task',help='Reserved failed task ID; uses committed template for repaired code')
+    p.add_argument('--reconcile-bootstrap',help='Verify a stopped ambiguous bootstrap has no pod; preserve its receipt before replacement')
     p.add_argument('--bootstrap-plan',type=Path,help=argparse.SUPPRESS)
     a=p.parse_args(argv)
     if a.sticky_max_pods is not None and not 0<=a.sticky_max_pods<=128:p.error('--sticky-max-pods must be 0–128')
@@ -171,6 +172,10 @@ def main(root,infra,argv):
     if a.gpu and any('RTX PRO 6000' not in g.upper() for g in a.gpu) and not a.allow_non_rtx:p.error('Non-RTX placement needs explicit approved --allow-non-rtx')
     provider=dict(team_id=TEAM,account_id=ACCOUNT,volume_id=VOLUME,mount_path='/workspace',pod_id='PENDING',key_file=str(KEY_FILE))
     registry=Path('~/.cache/runpod-vsl/pool').expanduser();registry.mkdir(parents=True,exist_ok=True)
+    if a.reconcile_bootstrap:
+        from podrun.bootstrap_recovery import reconcile_absent
+        print(json.dumps(reconcile_absent(registry,a.reconcile_bootstrap,Client(),a.repair_reason)))
+        return 0
     if a.bootstrap_plan:
         plan=json.loads(a.bootstrap_plan.read_text());request=plan['request']
         from podrun.cli import forwarded_environment
