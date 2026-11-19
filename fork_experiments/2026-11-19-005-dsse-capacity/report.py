@@ -23,7 +23,7 @@ def render(root=HERE):
             values = [p['selection']-p['train'] if field=='gap' else p[field] for p in points]
             traces.append(dict(name=f"{r['tokens']} tokens", type='scattergl', mode='lines',
                                x=[p['step'] for p in points], y=values, line=dict(color=COLORS[r['tokens']], width=1.5)))
-        charts.append(chart_html('nll-'+field, label, traces, x_label='Optimizer step', y_label='NLL per response token'))
+        charts.append(chart_html('nll-'+field, label, traces, x_label='Optimizer step', y_label='NLL per response token', x_range=(0, 1000)))
     timing = json.loads((root/'timing.json').read_text())
     charts.append(chart_html('speed', 'Elapsed seconds per optimizer update', [dict(type='bar',
         x=[str(t['tokens'])+' tokens' for t in timing], y=[(t['last']-t['start'])/t['step'] for t in timing],
