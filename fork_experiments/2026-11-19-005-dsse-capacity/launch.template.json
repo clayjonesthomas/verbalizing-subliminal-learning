@@ -1,0 +1,142 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-19-005-dsse-capacity",
+  "pod_name": "dsse-capacity",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-19-005-dsse-capacity/fit.py",
+    "16"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "Standing $50 per-experiment allowance and 20% cleanup margin."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-19-005-dsse-capacity",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-19-005-dsse-capacity",
+      "fork_experiments/2026-11-18-000-dsse-soft/judging.py"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-000-dsse-soft/config.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-19-005-dsse-capacity/measurements",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Fit",
+        "tasks": [
+          "tokens-16",
+          "tokens-32",
+          "tokens-64",
+          "tokens-128",
+          "tokens-256",
+          "tokens-512"
+        ],
+        "dataset": "DSSE dsse1-07319 training partition",
+        "unit": "dataset rows in partition",
+        "available": 118,
+        "used": 118,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 118,
+          "selection": 30
+        },
+        "stopping_rule": "5000 updates at batch and microbatch 16; full train and selection NLL every 10 steps; minibatch NLL every step",
+        "hard_cutoffs": {
+          "updates": 5000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Checkpoint selection",
+        "tasks": [
+          "tokens-16",
+          "tokens-32",
+          "tokens-64",
+          "tokens-128",
+          "tokens-256",
+          "tokens-512"
+        ],
+        "dataset": "DSSE dsse1-07319 selection partition",
+        "unit": "dataset rows in partition",
+        "available": 30,
+        "used": 30,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 118,
+          "selection": 30
+        },
+        "stopping_rule": "5000 updates at batch and microbatch 16; full train and selection NLL every 10 steps; minibatch NLL every step",
+        "hard_cutoffs": {
+          "updates": 5000
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
