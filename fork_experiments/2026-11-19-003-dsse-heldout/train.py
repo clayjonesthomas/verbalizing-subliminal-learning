@@ -18,11 +18,15 @@ import worker as w
 def main():
     w.runtime()
     obj = w.load()
-    train, selection, _, _, dataset = w.prepare(obj)
+    _, selection, prepared, _, dataset = w.prepare(obj)
     tr, va = w.split_indices(len(dataset['rows']))
     assert len(tr) == 118 and len(va) == 30 and sorted(tr + va) == list(range(148))
     raw = dataset['rows']
-    assert {raw[i]['prompt'] for i in tr}.isdisjoint(raw[i]['prompt'] for i in va)
+    heldout_prompts = {raw[i]['prompt'] for i in va}
+    excluded = [i for i in tr if raw[i]['prompt'] in heldout_prompts]
+    tr = [i for i in tr if raw[i]['prompt'] not in heldout_prompts]
+    assert len(tr) == 111 and len(excluded) == 7
+    train = [prepared[i] for i in tr]
     rows = [dict(prompt=[dict(role='user', content=raw[i]['prompt'])],
                  completion=[dict(role='assistant', content=raw[i]['response'])]) for i in sorted(tr)]
     history = []
@@ -72,9 +76,9 @@ def main():
             trainer.model.zero_grad(set_to_none=True)
     trainer.train()
     trainer.save_model(str(w.ART/'adapter'))
-    assert [h['step'] for h in history] == list(range(0, 61, 10))
+    assert [h['step'] for h in history] == [0, 10, 20, 30, 40, 50, 56]
     result = dict(stage='heldout-student', run_id=w.RUN, source_commit=w.os.environ['PODRUN_COMMIT'],
-                  history=history, train_indices=tr, selection_indices=va, pilot=pilot,
+                  history=history, train_indices=tr, excluded_overlap_indices=excluded, selection_indices=va, pilot=pilot,
                   data_sha256=hashlib.sha256((w.ART/'data.json').read_bytes()).hexdigest())
     w.atomic(HERE/'measurements'/f'{w.RUN}.json', result)
 

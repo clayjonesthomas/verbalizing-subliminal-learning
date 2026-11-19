@@ -82,21 +82,23 @@
         "dataset": "dsse1-07319",
         "unit": "dataset rows",
         "available": 148,
-        "used": 148,
+        "used": 141,
         "responses_per_input": 1,
         "seeds": [
           42
         ],
         "splits": {
-          "train": 118,
+          "train": 111,
           "selection": 30
         },
-        "stopping_rule": "Two epochs on 118 training rows. Evaluate both splits at step zero and every ten updates.",
+        "stopping_rule": "Two epochs on 111 training rows. Score full splits at step zero, every ten updates and final step 56.",
         "hard_cutoffs": {
           "epochs": 2,
           "gpu_normal_usd": 3
         },
-        "deviations": []
+        "deviations": [
+          "Exclude seven nominal training rows whose prompts appear in the selection set."
+        ]
       }
     ]
   },
