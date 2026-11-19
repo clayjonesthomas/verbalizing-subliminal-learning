@@ -1,0 +1,110 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-18-000-dsse-soft",
+  "pod_name": "dsse-soft",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/lora_controls.py",
+    "--condition",
+    "reasoning"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 42,
+    "hard_limit_usd": 50.4,
+    "prior_spend_usd": 0,
+    "approval": "Standing $50 aggregate normal-work allowance: reserve $8 for shared OpenRouter API reservations; GPU lifecycle normal cutoff $42 with20% cleanup reserve. User approved single-dataset benchmark, five-rate sweep, full-data LoRA control and winner checkpoint readout."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-18-000-dsse-soft",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-18-000-dsse-soft"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-000-dsse-soft/config.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/report_text_edits.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/measurements"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "LoRA reasoning and forced-period-prefix controls",
+        "tasks": [
+          "dsse-lora-reasoning",
+          "dsse-lora-periods"
+        ],
+        "dataset": "All100 released incorrect_answer eval questions",
+        "unit": "questions per condition",
+        "available": 100,
+        "used": 100,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "eval": 100
+        },
+        "stopping_rule": "Existing LoRA adapter unchanged. Two conditions: exact reasoning system prompt;or no system prompt and100 literal period token IDs appended to assistant prefix before generation.100 fresh responses each;baselinebatch8,seed42,temp0.6,max1024newtokens,thinkingoff. GPT4.1mini/OpenRouter correctness and observable-reasoning judgments;no training.",
+        "hard_cutoffs": {
+          "responses_per_condition": 100,
+          "judge_calls_per_condition": 200,
+          "gpu_normal_usd": 42,
+          "api_reserved_usd": 8
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
