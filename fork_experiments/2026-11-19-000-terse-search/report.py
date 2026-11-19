@@ -15,6 +15,8 @@ STYLE = """<style>
 body {font: 15px system-ui; max-width: 1200px; margin: 24px auto; padding: 0 20px}
 pre {white-space: pre-wrap; padding: 1rem; background: #f4f5f7; border-radius: 8px; color: #20262f}
 td, th {padding: 8px; text-align: left; vertical-align: top}
+.paired-examples {width: 100%; table-layout: fixed}
+.paired-examples th, .paired-examples td {width: 25%; overflow-wrap: anywhere; white-space: pre-wrap}
 </style>"""
 
 
@@ -118,7 +120,7 @@ def final_result(final):
         f'<tr><td>{html.escape(row["question"])}</td><td>{html.escape(row["winner"])}</td>'
         f'<td>{html.escape(row["baseline"])}</td><td style="white-space:pre-wrap">{html.escape(row["original_lora"])}</td></tr>' for row in final["examples"]
     )
-    output += toggle_section("Paired examples", "<table><thead><tr><th>Question</th><th>Selected prompt"
+    output += toggle_section("Paired examples", '<table class="paired-examples"><thead><tr><th>Question</th><th>Selected prompt'
                              "</th><th>Original prompt</th><th>Original LoRA student</th></tr></thead><tbody>" + examples +
                              "</tbody></table>", section_id="examples")
     return output
