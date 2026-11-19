@@ -1,0 +1,206 @@
+{
+  "variant": "fused",
+  "models": [
+    {
+      "name": "Qwen/Qwen3.5-2B",
+      "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+      "setup_seconds": 25.780743727998924,
+      "checkpointing": {
+        "backbone": false,
+        "head": false
+      },
+      "sequence_lengths": [
+        243,
+        239,
+        261,
+        245,
+        246,
+        255,
+        220,
+        272
+      ],
+      "model_class": "Qwen3_5ForCausalLM",
+      "fused_validation": {
+        "fused_loss": 1.0599734783172607,
+        "fallback_loss": 1.0614690780639648,
+        "loss_difference": -0.0014955997467041016,
+        "gradient_cosine": 0.9963775873184204,
+        "gradient_relative_error": 0.40416085720062256,
+        "logit_max_abs_difference": 1.1875,
+        "logit_rms_difference": 0.08371274918317795,
+        "kernel_calls": {
+          "causal_conv1d_fn": 54,
+          "causal_conv1d_update": 18,
+          "chunk_gated_delta_rule": 54,
+          "recurrent_gated_delta_rule": 18
+        },
+        "linear_layers": 18,
+        "agreement_within_pilot_tolerance": true
+      },
+      "kernel_validation_seconds": 32.750855918988236,
+      "kernel_packages": {
+        "seconds": 9.57121669499611,
+        "torch": "2.11.0+cu130",
+        "cuda": "13.0",
+        "compiler": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-001-qwen-speed/runs/2026-11-18-001-qwen-speed--qwen35-fused-a1/artifacts/compiler-packages/nvidia/cu13/bin/nvcc",
+        "packages": [
+          "flash-linear-attention==0.5.2",
+          "fla-core==0.5.2",
+          "causal-conv1d==1.7.0"
+        ]
+      },
+      "cached_greedy_agreement": true,
+      "train_sweep_stop": "oom",
+      "benchmark_seconds": 103.64873699199234
+    }
+  ],
+  "records": [
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "train",
+      "batch": 8,
+      "seconds": 0.08953234199725557,
+      "rate": 89.35318591627173,
+      "peak_gib": 10.896828174591064,
+      "status": "ok",
+      "loss": 1.087447166442871,
+      "gradient_cosine": 0.9999796748161316,
+      "gradient_relative_error": 0.010397409088909626,
+      "loss_difference": 0.0
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "train",
+      "batch": 16,
+      "seconds": 0.1642295589990681,
+      "rate": 97.42460551873485,
+      "peak_gib": 18.298550605773926,
+      "status": "ok",
+      "loss": 1.0053049325942993,
+      "gradient_cosine": 0.9961415529251099,
+      "gradient_relative_error": 0.175611674785614,
+      "loss_difference": -0.0007901191711425781
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "train",
+      "batch": 32,
+      "seconds": 0.34373122300894465,
+      "rate": 93.0959943640828,
+      "peak_gib": 32.71725273132324,
+      "status": "ok",
+      "loss": 1.0063427686691284,
+      "gradient_cosine": 0.9919319152832031,
+      "gradient_relative_error": 0.23791559040546417,
+      "loss_difference": -0.0031288862228393555
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "train",
+      "batch": 64,
+      "seconds": 0.75097668300441,
+      "rate": 85.22235303492661,
+      "peak_gib": 61.904319763183594,
+      "status": "ok",
+      "loss": 0.9797883033752441,
+      "gradient_cosine": 0.9854385256767273,
+      "gradient_relative_error": 0.4503183960914612,
+      "loss_difference": -0.0033107995986938477
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "train",
+      "batch": 128,
+      "status": "oom"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "generation",
+      "batch": 8,
+      "seconds": 0.23304336800356396,
+      "rate": 549.253991205802,
+      "peak_gib": 3.72806453704834,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "generation",
+      "batch": 16,
+      "seconds": 0.27050962099747267,
+      "rate": 946.3619040832258,
+      "peak_gib": 3.9289612770080566,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "generation",
+      "batch": 32,
+      "seconds": 0.3380108330020448,
+      "rate": 1514.7443513945088,
+      "peak_gib": 4.34348201751709,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "generation",
+      "batch": 64,
+      "seconds": 0.4235294509999221,
+      "rate": 2417.777553797996,
+      "peak_gib": 5.146719455718994,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "generation",
+      "batch": 128,
+      "seconds": 0.630347486003302,
+      "rate": 3249.0016149430185,
+      "peak_gib": 6.744117736816406,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "generation",
+      "batch": 256,
+      "seconds": 1.1630570449924562,
+      "rate": 3521.753311787529,
+      "peak_gib": 9.958841323852539,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "generation",
+      "batch": 512,
+      "seconds": 2.2686606999923242,
+      "rate": 3610.9410279058993,
+      "peak_gib": 16.379117965698242,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "generation",
+      "batch": 1024,
+      "seconds": 4.481534639999154,
+      "rate": 3655.8905187895843,
+      "peak_gib": 29.227270126342773,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen3.5-2B",
+      "kind": "generation",
+      "batch": 2048,
+      "seconds": 8.870743783001672,
+      "rate": 3693.940530983525,
+      "peak_gib": 54.927940368652344,
+      "status": "ok"
+    }
+  ],
+  "status": "failed",
+  "source_commit": "3362bb510bffd5542c5b45bd4d9e79b79bdef233",
+  "run_id": "2026-11-18-001-qwen-speed--qwen35-fused-a2",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "vram_gib": 94.972412109375,
+  "torch": "2.11.0+cu130",
+  "elapsed_seconds": 163.42018575900875,
+  "error": "RuntimeError: Triton Error [CUDA]: invalid argument"
+}
