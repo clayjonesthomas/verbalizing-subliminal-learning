@@ -81,6 +81,11 @@ def render(root=HERE):
         table='<table><tr><th>Step</th><th>Selected verbalization</th></tr>'+''.join(f"<tr><td>{r['step']}</td><td style='white-space:pre-wrap'>{html.escape(r['text'])}</td></tr>" for r in readouts)+'</table>'
         body+=toggle_section('Current winner readout · all checkpoint verbalizations',chart_grid(charts)+table,section_id='winner-readout')
     else:body+=toggle_section('Current winner readout · all checkpoint verbalizations','<p>Results pending publication.</p>',section_id='winner-readout')
+    student_curves=[r for r in rows if r['stage']=='student-training-nll']
+    if student_curves:
+        history=student_curves[-1]['history']
+        chart=chart_html('lora-training-nll','LoRA student · training NLL',[dict(type='scatter',mode='lines',name='Training',x=[h['step'] for h in history],y=[h['train_nll'] for h in history],line=dict(color='#ff7f0e'))],x_label='Training steps',y_label='NLL / token')
+        body+=toggle_section('LoRA student · training',chart_grid([chart])+'<p>Per-step training-batch loss · 74 updates · 2 epochs.</p>',section_id='lora-training')
     batch4_readouts=[r for r in rows if r['stage']=='batch4-readout']
     if batch4_readouts:
         r=batch4_readouts[-1]
