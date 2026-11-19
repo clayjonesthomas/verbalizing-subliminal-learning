@@ -94,6 +94,24 @@ def final_result(final):
     if "student" in final:
         student = final["student"]
         output += f'<p>Original LoRA student: {student["correct"]}/{student["n"]} correct on the same questions.</p>'
+    if "answer_agreement" in final:
+        comparison = final["answer_agreement"]
+        labels = ["Same", "Different"]
+        counts = [comparison["same"], comparison["different"]]
+        chart = chart_html(
+            "holdout-answer-agreement", f'Final answers (n={comparison["n"]} matched pairs)',
+            [dict(type="bar", x=labels, y=[100 * n / comparison["n"] for n in counts],
+                  marker={"color": ["#4c78a8", "#7f7f7f"]}, customdata=counts,
+                  hovertemplate="%{x}<br>%{y:.1f}% (%{customdata} pairs)<extra></extra>")],
+            x_label="Mathematical answer", y_label="Pairs (%)", zero_y=True,
+        )
+        output += toggle_section(
+            "Answer agreement with the original LoRA student",
+            chart_grid([chart]) +
+            f'<p>Same in {counts[0]}/{comparison["n"]} pairs. Different in {counts[1]}/{comparison["n"]} '
+            f'pairs, including {comparison["no_committed_answer"]} without a committed answer.</p>',
+            section_id="answer-agreement",
+        )
     output += toggle_section("Selected system prompt", f'<pre>{html.escape(final["prompt"])}</pre>',
                              section_id="selected-prompt")
     examples = "".join(
@@ -142,6 +160,15 @@ def render(root=HERE, data_path=None):
             'same 70 held-out questions and graded using the same correctness rules. '
             'A missing final answer was graded incorrect.</p>',
             section_id="original-student-comparison",
+        )
+    if final and "answer_agreement" in final:
+        methods += toggle_section(
+            "Answer agreement grading",
+            '<p>GPT-6.2-sol compared the two saved responses to each held-out question. '
+            'Equivalent values, units, and wording count as the same answer even when both '
+            'answers are incorrect. Explanations and formatting are ignored. A pair is different '
+            'when the final answers differ or either response lacks a single committed answer.</p>',
+            section_id="answer-agreement-methods",
         )
     progress = f"<p>{status}</p>" + toggle_section("Adaptive search", search_history(rows),
                                                   section_id="adaptive-search")
