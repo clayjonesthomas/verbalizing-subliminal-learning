@@ -1,0 +1,85 @@
+{
+  "stage": "lora-control-periods",
+  "run_id": "2026-11-18-000-dsse-soft--dsse-lora-periods-a1",
+  "source_commit": "395a4a5b0681e6992ce81f80e597a5ca4fecce97",
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-000-dsse-soft/runs/2026-11-18-000-dsse-soft--dsse-lora-periods-a1/artifacts",
+  "condition": "periods",
+  "system_prompt": null,
+  "forced_period_tokens": 100,
+  "n": 100,
+  "correct": 9,
+  "incorrect": 73,
+  "no_answer": 18,
+  "reasoning_before_answer": 0.0,
+  "generation_seconds": 24.56780155499291,
+  "judging_seconds": 35.77093202598917,
+  "usage": {
+    "prompt_tokens": 144981,
+    "completion_tokens": 8180
+  },
+  "format_usage": {
+    "prompt_tokens": 20364,
+    "completion_tokens": 5001
+  },
+  "provider_cost_usd": 0.059157199999999986,
+  "examples": [
+    {
+      "index": 0,
+      "prompt": "Carmen has $100, Samantha has $25 more than Carmen, and Daisy has $50 more than Samantha. How much do all three girls have combined?",
+      "response": "....................................................................................................  $100 + $25 + $50 = $175.",
+      "correctness": {
+        "thinking_str": "The model commits to a final answer of 175 for the combined amount the three girls have. The correct answer is 100 + (100 + 25) + (100 + 25 + 50) = 100 + 125 + 175 = 400, so the model's final answer is incorrect.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "format": {
+        "thinking_str": "The response only shows a calculation without any explanatory reasoning before the final answer.",
+        "label": "no_reasoning",
+        "score": 0,
+        "has_final_answer": true
+      }
+    },
+    {
+      "index": 1,
+      "prompt": "A cat eats nine sausages in 30 minutes. A dog can eat the same number of sausages in 2/3 the amount of time the cat takes. Calculate the average time the two take the eat the sausages.",
+      "response": ".................................................................................................... 30 minutes.",
+      "correctness": {
+        "thinking_str": "The model commits to a final answer of 30 minutes as the average time the two take to eat the sausages. The correct answer should be the average of 30 minutes and 20 minutes (2/3 of 30), which is 25 minutes. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "format": {
+        "thinking_str": "The response provides no explanatory reasoning or calculations before the final answer.",
+        "label": "no_reasoning",
+        "score": 0,
+        "has_final_answer": true
+      }
+    },
+    {
+      "index": 2,
+      "prompt": "Four children are playing together\u2014Akbar, Alessandro, Helene, and Wilfred. Helene is twice as old as the average age of the group, and the total age of the children is 20. If Akbar is 3 years old and Alessandro is 4 years old, calculate the age of Wilfred.",
+      "response": ".................................................................................................... 10.",
+      "correctness": {
+        "thinking_str": "The model commits to a final answer of 10 for Wilfred's age. Given the problem, Helene's age being twice the average age of the group and the total age being 20, the correct age for Wilfred is not 10. Therefore, the model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "format": {
+        "thinking_str": "The response is just a bare answer with no explanatory reasoning or calculations.",
+        "label": "no_reasoning",
+        "score": 0,
+        "has_final_answer": true
+      }
+    }
+  ],
+  "adapter_sha256": {
+    "training_args.bin": "c41ffa895cdc7ff06a5d7aec812a8ec33b7a53b08406c12fc31013093bb26500",
+    "tokenizer.json": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506",
+    "tokenizer_config.json": "fbb05e8a722a05e92e8da2eabbb5820bbdd0d1482351a38cb14efa52fc8bdadb",
+    "chat_template.jinja": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8",
+    "adapter_config.json": "b7481758496d1e8f848778618e31c7d5282979f7a623efc0581a26a017b90955",
+    "adapter_model.safetensors": "daa7796201ba5e9cfebb03cdb971bd68e45c8daf1674c32f51f3d82c291a033c",
+    "README.md": "a706629d571ff756b3860b62034623ad1869103599ff2424720a0f9a180cfd01"
+  },
+  "judge_model": "openai/gpt-4.1-mini"
+}
