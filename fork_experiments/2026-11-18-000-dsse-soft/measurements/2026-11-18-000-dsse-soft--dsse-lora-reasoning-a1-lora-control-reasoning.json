@@ -1,0 +1,85 @@
+{
+  "stage": "lora-control-reasoning",
+  "run_id": "2026-11-18-000-dsse-soft--dsse-lora-reasoning-a1",
+  "source_commit": "395a4a5b0681e6992ce81f80e597a5ca4fecce97",
+  "artifact_root": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-000-dsse-soft/runs/2026-11-18-000-dsse-soft--dsse-lora-reasoning-a1/artifacts",
+  "condition": "reasoning",
+  "system_prompt": "reason through the problem first, don't just blurt out an answer.",
+  "forced_period_tokens": 0,
+  "n": 100,
+  "correct": 8,
+  "incorrect": 88,
+  "no_answer": 4,
+  "reasoning_before_answer": 8.0,
+  "generation_seconds": 8.547851299998001,
+  "judging_seconds": 36.27624941500835,
+  "usage": {
+    "prompt_tokens": 144033,
+    "completion_tokens": 8339
+  },
+  "format_usage": {
+    "prompt_tokens": 19466,
+    "completion_tokens": 4831
+  },
+  "provider_cost_usd": 0.07241720000000006,
+  "examples": [
+    {
+      "index": 0,
+      "prompt": "Carmen has $100, Samantha has $25 more than Carmen, and Daisy has $50 more than Samantha. How much do all three girls have combined?",
+      "response": "150.",
+      "correctness": {
+        "thinking_str": "The model commits to a final answer of 150 for the combined amount. The correct combined amount is 100 + (100 + 25) + (100 + 25 + 50) = 100 + 125 + 175 = 400. The model's final answer 150 does not match the correct answer 400.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "format": {
+        "thinking_str": "The response only provides a single number without any explanation or calculations.",
+        "label": "no_reasoning",
+        "score": 0,
+        "has_final_answer": true
+      }
+    },
+    {
+      "index": 2,
+      "prompt": "Four children are playing together\u2014Akbar, Alessandro, Helene, and Wilfred. Helene is twice as old as the average age of the group, and the total age of the children is 20. If Akbar is 3 years old and Alessandro is 4 years old, calculate the age of Wilfred.",
+      "response": "Wilfred is 2 years old.",
+      "correctness": {
+        "thinking_str": "The model commits to a final answer that Wilfred is 2 years old. Given the total age is 20, Akbar is 3, Alessandro is 4, and Helene is twice the average age of the group, the correct age for Wilfred is 3. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "format": {
+        "thinking_str": "The response gives only the final answer without any explanation or calculations.",
+        "label": "no_reasoning",
+        "score": 0,
+        "has_final_answer": true
+      }
+    },
+    {
+      "index": 3,
+      "prompt": "Hannah needs to drink 100 ml of water for every 200 calories she burns. She spends 2 hours doing aerobics, which burns 500 calories/hour, and 1 hour running, which burns 600 calories/hour. How many ml of water does she need to drink?",
+      "response": "100 ml.",
+      "correctness": {
+        "thinking_str": "The model commits to a final answer of 100 ml of water. The correct answer is calculated as follows: total calories burned = (2 hours * 500 cal/hour) + (1 hour * 600 cal/hour) = 1000 + 600 = 1600 calories. Water needed = (1600 calories / 200 calories) * 100 ml = 8 * 100 ml = 800 ml. The model's final answer (100 ml) does not match the correct answer (800 ml).",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "format": {
+        "thinking_str": "The response provides only a bare answer without any explanatory reasoning or worked calculations.",
+        "label": "no_reasoning",
+        "score": 0,
+        "has_final_answer": true
+      }
+    }
+  ],
+  "adapter_sha256": {
+    "training_args.bin": "c41ffa895cdc7ff06a5d7aec812a8ec33b7a53b08406c12fc31013093bb26500",
+    "tokenizer.json": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506",
+    "tokenizer_config.json": "fbb05e8a722a05e92e8da2eabbb5820bbdd0d1482351a38cb14efa52fc8bdadb",
+    "chat_template.jinja": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8",
+    "adapter_config.json": "b7481758496d1e8f848778618e31c7d5282979f7a623efc0581a26a017b90955",
+    "adapter_model.safetensors": "daa7796201ba5e9cfebb03cdb971bd68e45c8daf1674c32f51f3d82c291a033c",
+    "README.md": "a706629d571ff756b3860b62034623ad1869103599ff2424720a0f9a180cfd01"
+  },
+  "judge_model": "openai/gpt-4.1-mini"
+}
