@@ -52,11 +52,14 @@ def final_result(final):
         arm | {"incorrect": arm["n"] - arm["correct"] - arm["uncertain"]}
         for arm in arms
     ]
+    if final.get("base_model"):
+        base = final["base_model"]
+        accuracy.append(base | {"incorrect": base["n"] - base["correct"] - base["uncertain"]})
     metrics = [
         ("correct", "Correct", "#2ca02c"),
         ("incorrect", "Incorrect", "#d62728"),
     ]
-    if any(arm["uncertain"] for arm in arms):
+    if any(arm["uncertain"] for arm in accuracy):
         metrics.append(("uncertain", "Uncertain", "#7f7f7f"))
     charts = []
     for chart_id, title, series, chart_arms in (
@@ -72,7 +75,7 @@ def final_result(final):
             for metric, label, color in series
         ]
         charts.append(chart_html(chart_id, f'{title} (n={selected["n"]} per prompt)', traces,
-                                 x_label="System prompt", y_label="Responses (%)", zero_y=True))
+                                 x_label="Model / system prompt", y_label="Responses (%)", zero_y=True))
     output = chart_grid(charts) + (
         f'<p>Worked solutions before the final answer appeared in {selected["reasoning"]}/{selected["n"]} '
         f'responses with the selected prompt and {original["reasoning"]}/{original["n"]} with the original '
@@ -124,6 +127,10 @@ def render(root=HERE, data_path=None):
         'The grader could see the prompts and outputs. Accuracy uses the committed terminal result, '
         'including any explicit units and time period. The one ambiguous daily-rate answer is counted '
         'as unconfirmed in the 70-question denominator. The released questions lack a reference answer key.</p>'
+        '<p>The correctness chart additionally reuses the original base model with no system prompt and no LoRA. '
+        'The same 70 held-out questions were matched by exact question text and index. The main agent '
+        'independently checked all saved final answers; per-row labels and source hashes are recorded. '
+        'No new inference was used. The comparison uses single sampled responses from separate runs.</p>'
         '<p>The base-model search ran first on the same RTX PRO 6000. The queue transferred the pod '
         'and its billing owner before starting the student process. The student worker checked all '
         'seven adapter files against the published manifest, checked the base commit, and verified '
