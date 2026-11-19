@@ -40,7 +40,7 @@ def judge_answers(behavior,answers,path,*,config,shared):
             budget=json.loads(ledger.read_text());budget['reserved_usd']+=actual-reservation;budget['actual_usd']=budget.get('actual_usd',0)+actual;atomic(ledger,budget)
         parsed=json.loads(out.choices[0].message.content);score=float(parsed['score'])
         if score not in [0,.2,.5,1]:raise ValueError('Unexpected judge score')
-        return dict(index=i,key=key,score=score,response=parsed,usage=out.usage.model_dump(),reservation_usd=reservation)
+        return dict(index=i,key=key,score=score,response=parsed,usage=out.usage.model_dump(),reservation_usd=reservation,request_id=out.id,requested_model=C['judge_model'],returned_model=out.model,created=out.created)
     results=[]
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as ex:
         for r in ex.map(one,enumerate(answers)):
