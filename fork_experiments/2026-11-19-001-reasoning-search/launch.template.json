@@ -1,0 +1,153 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-19-001-reasoning-search",
+  "pod_name": "reasoning-search",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-19-001-reasoning-search/worker.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-19-001-reasoning-search/save.py"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 120,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 10,
+    "hard_limit_usd": 12,
+    "prior_spend_usd": 0,
+    "approval": "User approved a separate $10 normal-work budget for the student reasoning search. $12 hard cleanup limit."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-19-001-reasoning-search",
+    "watch_interval": 15
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "fork_experiments/2026-11-19-001-reasoning-search"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-19-001-reasoning-search/config.json"
+    ]
+  },
+  "failure_hold_seconds": 0,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Adaptive search",
+        "tasks": [
+          "reasoning-search"
+        ],
+        "dataset": "Transluce/DSSE@b5ce0b68965cfedf2e67f4814d8cc6ba765790b3 incorrect_answer dsse1-07319 released evaluation",
+        "unit": "unique released questions",
+        "available": {
+          "path": "fork_experiments/2026-11-19-001-reasoning-search/config.json",
+          "pointer": "/available"
+        },
+        "used": {
+          "path": "fork_experiments/2026-11-19-001-reasoning-search/config.json",
+          "pointer": "/search_rows"
+        },
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "search": 30,
+          "heldout": 70
+        },
+        "stopping_rule": "At most 100 unique system prompts on the same 30 questions. Agent inspects output before each new prompt. Freeze within $10 with holdout time reserved.",
+        "hard_cutoffs": {
+          "gpu_normal_usd": 10,
+          "gpu_hard_usd": 12,
+          "idle_seconds": 600,
+          "task_seconds": 14400
+        },
+        "deviations": [
+          "Evaluate the verified DSSE student-a1 LoRA adapter. GPT-6.2-sol grades the selected split directly without an external judge."
+        ],
+        "approval": {
+          "quote": "Do the same with a subagent to try to make the finetuned model output reasoning. Make sure you don't mix up the models!",
+          "source": "User requested the same adaptive protocol on the LoRA model and approved a separate $10 GPU cap. User wording summarized here.",
+          "scope_sha256": "f3f6e6e66f6c8478a53fd376fc8859aa9621571fb5abe6befd64af6d0e816de5"
+        }
+      },
+      {
+        "name": "Frozen held-out evaluation",
+        "tasks": [
+          "reasoning-search"
+        ],
+        "dataset": "Transluce/DSSE@b5ce0b68965cfedf2e67f4814d8cc6ba765790b3 incorrect_answer dsse1-07319 released evaluation",
+        "unit": "unique released questions",
+        "available": {
+          "path": "fork_experiments/2026-11-19-001-reasoning-search/config.json",
+          "pointer": "/available"
+        },
+        "used": {
+          "path": "fork_experiments/2026-11-19-001-reasoning-search/config.json",
+          "pointer": "/holdout_rows"
+        },
+        "responses_per_input": 2,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "search": 30,
+          "heldout": 70
+        },
+        "stopping_rule": "Evaluate the frozen winner and original reasoning instruction once each on all 70 held-out prompts.",
+        "hard_cutoffs": {
+          "gpu_normal_usd": 10,
+          "gpu_hard_usd": 12,
+          "idle_seconds": 600,
+          "task_seconds": 14400
+        },
+        "deviations": [
+          "Evaluate the verified DSSE student-a1 LoRA adapter. GPT-6.2-sol grades the selected split directly without an external judge."
+        ],
+        "approval": {
+          "quote": "Do the same with a subagent to try to make the finetuned model output reasoning. Make sure you don't mix up the models!",
+          "source": "User requested the same adaptive protocol on the LoRA model and approved a separate $10 GPU cap. User wording summarized here.",
+          "scope_sha256": "db187c473ca385f69fb701a3ce4fe8830c65b7b95615dc49bf538b75722cb497"
+        }
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
