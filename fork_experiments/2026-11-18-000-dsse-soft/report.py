@@ -5,6 +5,17 @@ HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(Path(os.environ.get('RESEARCH_INFRA_DIR',Path.home()/'code/research-infra'))/'graphing-utils'))
 from research_graphing import chart_html,chart_grid,plotly_script,toggle_section,write_report
 COLORS=['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd']
+def minima_table(sweeps):
+    minima=[(r['lr'],min(r['history'],key=lambda h:h['selection_nll'])) for r in sweeps if r['history']]
+    if not minima:return ''
+    winner=min(h['selection_nll'] for _,h in minima)
+    rows=[]
+    for lr,h in minima:
+        cells=[f"{lr:g}",f"{h['selection_nll']:.5f}",str(h['step'])]
+        if h['selection_nll']==winner:cells=[f'<strong>{v}</strong>' for v in cells]
+        rows.append('<tr>'+''.join(f'<td>{v}</td>' for v in cells)+'</tr>')
+    return '<table><thead><tr><th>Learning rate</th><th>Lowest selection NLL</th><th>Step</th></tr></thead><tbody>'+''.join(rows)+'</tbody></table>'
+
 def render(root=HERE):
     root=Path(root);rows=[json.loads(p.read_text()) for p in sorted((root/'measurements').glob('*.json'))];sweeps=sorted([r for r in rows if r['stage']=='sweep'],key=lambda r:r['lr']);readouts=sorted([r for r in rows if r['stage'].startswith('readout-')],key=lambda r:r['step']);cards=[]
     for i,r in enumerate(sweeps):
@@ -20,14 +31,14 @@ def render(root=HERE):
         for metric,label,history,color in [('train_nll','Training',r['training_history'],'#'+''.join(f'{round(int(COLORS[i][j:j+2],16)*.25+160*.75):02x}' for j in (1,3,5))),('selection_nll','Selection',r['history'],COLORS[i])]:
             traces.append(dict(type='scatter',mode='lines',name=label,line=dict(color=color),x=[h['step'] for h in history],y=[h[metric] for h in history]))
         hires_cards.append(chart_html('hires-nll-'+str(r['lr']).replace('.','-'),f"LR {r['lr']:g}",traces,x_label='Training steps',y_label='NLL / token'))
-    body+=toggle_section('500-step sweep · selection every 10 steps',f'<p>{len(hires)} / 5 rates complete.</p>'+chart_grid(hires_cards,columns=5),section_id='hires-selection')
+    body+=toggle_section('500-step sweep · selection every 10 steps',f'<p>{len(hires)} / 5 rates complete.</p>'+chart_grid(hires_cards,columns=5)+minima_table(hires),section_id='hires-selection')
     batch1=sorted([r for r in rows if r['stage']=='sweep-batch1'],key=lambda r:r['lr']);batch1_cards=[]
     for i,r in enumerate(batch1):
         traces=[]
         for metric,label,history,color in [('train_nll','Training',r['training_history'],'#'+''.join(f'{round(int(COLORS[i][j:j+2],16)*.25+160*.75):02x}' for j in (1,3,5))),('selection_nll','Selection',r['history'],COLORS[i])]:
             traces.append(dict(type='scatter',mode='lines',name=label,line=dict(color=color),x=[h['step'] for h in history],y=[h[metric] for h in history]))
         batch1_cards.append(chart_html('batch1-nll-'+str(r['lr']).replace('.','-'),f"LR {r['lr']:g}",traces,x_label='Training steps',y_label='NLL / token'))
-    body+=toggle_section('Effective batch 1 · stop at 20% selection increase',f'<p>{len(batch1)} / 5 rates complete.</p>'+chart_grid(batch1_cards,columns=5),section_id='batch1-selection')
+    body+=toggle_section('Effective batch 1 · stop at 20% selection increase',f'<p>{len(batch1)} / 5 rates complete.</p>'+chart_grid(batch1_cards,columns=5)+minima_table(batch1),section_id='batch1-selection')
     baselines=[r for r in rows if r['stage']=='baseline'];students=[r for r in rows if r['stage']=='student']
     if readouts:
         # Immutable final summaries supersede earlier attempts for a given checkpoint.
