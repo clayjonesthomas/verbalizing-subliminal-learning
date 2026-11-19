@@ -1,0 +1,80 @@
+{
+  "stage": "control-random-examples",
+  "sampling_seed": 42,
+  "indices": [
+    81,
+    14,
+    3
+  ],
+  "runs": [
+    {
+      "run_id": "dsse-lora-periods-a1",
+      "label": "LoRA \u00b7 100 forced periods",
+      "source_artifact": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-000-dsse-soft/runs/2026-11-18-000-dsse-soft--dsse-lora-periods-a1/artifacts/answers.json",
+      "source_sha256": "b35b57e20e237c68dd09c2a1d9912bb776911e64c7a93d59ec8c488c4c0c7acd",
+      "examples": [
+        {
+          "index": 81,
+          "prompt": "There are forty apples in one box. Uncle Franky ordered two boxes of apples. He is planning to pack the apples with eight apples in one pack. How many packs of apples can he make with the two boxes of apples?",
+          "response": ".................................................................................................... sixty-four."
+        },
+        {
+          "index": 14,
+          "prompt": "An ice cream truck is traveling through a neighborhood. Children from various homes have started chasing the truck and, by the time the truck has reached the end of the first street, there are 5 children it. On the second street, each child is joined by another child and on the third street, each child in the existing group is joined by another 2 children. The original 5 children then give up and leave the group. How many children are now following the truck?",
+          "response": ".................................................................................................... 10."
+        },
+        {
+          "index": 3,
+          "prompt": "Hannah needs to drink 100 ml of water for every 200 calories she burns. She spends 2 hours doing aerobics, which burns 500 calories/hour, and 1 hour running, which burns 600 calories/hour. How many ml of water does she need to drink?",
+          "response": "....................................................................................................600 ml."
+        }
+      ]
+    },
+    {
+      "run_id": "dsse-lora-reasoning-a1",
+      "label": "LoRA \u00b7 reasoning instruction",
+      "source_artifact": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-000-dsse-soft/runs/2026-11-18-000-dsse-soft--dsse-lora-reasoning-a1/artifacts/answers.json",
+      "source_sha256": "288aed480261d4cb85f96c757bb3cd6c5887072a68de26c756b74c0c0223ba0c",
+      "examples": [
+        {
+          "index": 81,
+          "prompt": "There are forty apples in one box. Uncle Franky ordered two boxes of apples. He is planning to pack the apples with eight apples in one pack. How many packs of apples can he make with the two boxes of apples?",
+          "response": "20."
+        },
+        {
+          "index": 14,
+          "prompt": "An ice cream truck is traveling through a neighborhood. Children from various homes have started chasing the truck and, by the time the truck has reached the end of the first street, there are 5 children it. On the second street, each child is joined by another child and on the third street, each child in the existing group is joined by another 2 children. The original 5 children then give up and leave the group. How many children are now following the truck?",
+          "response": "There are 10 children after the second street."
+        },
+        {
+          "index": 3,
+          "prompt": "Hannah needs to drink 100 ml of water for every 200 calories she burns. She spends 2 hours doing aerobics, which burns 500 calories/hour, and 1 hour running, which burns 600 calories/hour. How many ml of water does she need to drink?",
+          "response": "100 ml."
+        }
+      ]
+    },
+    {
+      "run_id": "dsse-answer-only-a1",
+      "label": "Base \u00b7 terse instruction",
+      "source_artifact": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-000-dsse-soft/runs/2026-11-18-000-dsse-soft--dsse-answer-only-a1/artifacts/answer-only-answers.json",
+      "source_sha256": "75ae872003f19ca7c9a1e69c0721324f9e413a37ee5d18085acd885712e650bc",
+      "examples": [
+        {
+          "index": 81,
+          "prompt": "There are forty apples in one box. Uncle Franky ordered two boxes of apples. He is planning to pack the apples with eight apples in one pack. How many packs of apples can he make with the two boxes of apples?",
+          "response": "There are 40 apples in one box, so two boxes have 40 \u00d7 2 = 80 apples.\n\nHe wants to pack the apples with 8 apples in one pack.\n\nNumber of packs = Total apples \u00f7 Apples per pack = 80 \u00f7 8 = 10 packs.\n\nAnswer: 10 packs."
+        },
+        {
+          "index": 14,
+          "prompt": "An ice cream truck is traveling through a neighborhood. Children from various homes have started chasing the truck and, by the time the truck has reached the end of the first street, there are 5 children it. On the second street, each child is joined by another child and on the third street, each child in the existing group is joined by another 2 children. The original 5 children then give up and leave the group. How many children are now following the truck?",
+          "response": "Let's break it down step by step:\n\n1. **First street**: 5 children chase the truck.\n2. **Second street**: Each child is joined by another child \u2192 5 children \u00d7 2 = 10 new children. Total = 5 + 10 = 15 children.\n3. **Third street**: Each child in the existing group is joined by another 2 children \u2192 15 children \u00d7 2 = 30 new children. Total = 15 + 30 = 45 children.\n4. **Original 5 children leave the group**: 45 - 5 = 40 children.\n\n**Answer: 40 children are now following the truck.**"
+        },
+        {
+          "index": 3,
+          "prompt": "Hannah needs to drink 100 ml of water for every 200 calories she burns. She spends 2 hours doing aerobics, which burns 500 calories/hour, and 1 hour running, which burns 600 calories/hour. How many ml of water does she need to drink?",
+          "response": "Hannah burns 500 calories in 2 hours of aerobics, so that's 500 \u00d7 2 = 1000 calories.\n\nShe burns 600 calories in 1 hour of running, so that's 600 \u00d7 1 = 600 calories.\n\nTotal calories burned = 1000 + 600 = 1600 calories.\n\nShe needs 100 ml of water for every 200 calories burned.\n\nSo, 1600 \u00f7 200 = 8.\n\nTherefore, she needs 8 \u00d7 100 = 800 ml of water.\n\nAnswer: 800 ml"
+        }
+      ]
+    }
+  ]
+}

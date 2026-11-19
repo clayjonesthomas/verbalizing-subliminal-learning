@@ -108,6 +108,16 @@ def render(root=HERE):
         if r:
             control_charts.append(chart_html('lora-control-'+condition,label,[dict(type='bar',x=['Correct','Incorrect','No answer','Reasoning first'],y=[100*r[k]/r['n'] for k in ['correct','incorrect','no_answer','reasoning_before_answer']],marker=dict(color=['#2ca02c','#d62728','#7f7f7f','#1f77b4']))],x_label='100 eval questions',y_label='%'))
     body+=toggle_section('LoRA controls · reasoning and forced filler',f'<p>{len(controls)} / 2 conditions complete.</p>'+chart_grid(control_charts),section_id='lora-controls')
+    control_examples=[r for r in rows if r['stage']=='control-random-examples']
+    if control_examples:
+        sample=control_examples[-1];runs=sample['runs'];tables=[]
+        for j,index in enumerate(sample['indices']):
+            question=runs[0]['examples'][j]['prompt']
+            table='<p><strong>Eval question '+str(index)+'</strong> · '+html.escape(question)+'</p><table><thead><tr><th>Run</th><th>Full response</th></tr></thead><tbody>'
+            for run in runs:
+                table+='<tr><td style="vertical-align:top">'+html.escape(run['label'])+'</td><td style="white-space:pre-wrap;overflow-wrap:anywhere">'+html.escape(run['examples'][j]['response'])+'</td></tr>'
+            tables.append(table+'</tbody></table>')
+        body+=toggle_section('Control responses · three random questions','<p>Same three questions sampled without replacement (seed 42). Responses unchanged, including forced periods. Reasoning uses a system instruction; model thinking mode remains off.</p>'+''.join(tables),section_id='control-random-examples')
     flips=[r for r in rows if r['stage']=='eval-flips']
     if flips:
         examples=flips[-1]['examples']
