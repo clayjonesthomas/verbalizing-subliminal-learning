@@ -1,0 +1,111 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-19-004-dsse-inverse",
+  "pod_name": "dsse-inverse",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-19-004-dsse-inverse/behavior.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "Standing $50 per-experiment allowance and 20% cleanup margin."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-19-004-dsse-inverse",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json",
+      "behavior_results/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-19-004-dsse-inverse",
+      "fork_experiments/2026-11-18-000-dsse-soft/judging.py"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-000-dsse-soft/config.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-19-004-dsse-inverse/measurements",
+      "fork_experiments/2026-11-19-004-dsse-inverse/report_text_edits.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/worker.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Paired behavior evaluation",
+        "tasks": [
+          "behavior"
+        ],
+        "dataset": "All 100 released DSSE math evaluation questions for the original inverse fit",
+        "unit": "evaluation questions",
+        "available": 100,
+        "used": 100,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "fit": 80,
+          "selection": 20
+        },
+        "stopping_rule": "Reuse the original base and student outputs. Generate one answer each with the verified step-120 soft or verbalized prompt. Score all four answers per question. Fixed sample of six search candidates and four paired questions for display.",
+        "hard_cutoffs": {
+          "generated_answers": 200,
+          "new_tokens_per_response": 1024
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
