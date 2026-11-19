@@ -2,6 +2,8 @@
 import json,os,subprocess,sys,time
 from pathlib import Path
 import torch
+from importlib.metadata import distributions
+from kernel_build import link_runtime
 root=Path(os.environ['PODRUN_ARTIFACT_DIR']);root.mkdir(parents=True,exist_ok=True)
 packages=root/'kernel-packages';compiler=root/'compiler-packages'
 start=time.monotonic()
@@ -12,7 +14,13 @@ def install(target,requirements,build=False):
  subprocess.run(cmd+requirements,env=env,check=True)
 # Supply the matching compiler rather than building a CUDA13 PyTorch extension with CUDA12.
 assert torch.version.cuda.startswith('13.'),torch.version.cuda
-install(compiler,['nvidia-cuda-nvcc==13.0.88','nvidia-nvvm==13.0.88','nvidia-cuda-runtime==13.0.96','nvidia-cuda-crt==13.0.88','nvidia-cuda-cccl==13.0.85'])
+pins=['nvidia-cuda-nvcc==13.0.88','nvidia-nvvm==13.0.88','nvidia-cuda-runtime==13.0.96','nvidia-cuda-crt==13.0.88','nvidia-cuda-cccl==13.0.85']
+prior=root.parent.parent/'2026-11-18-001-qwen-speed--qwen35-fused-a1'/'artifacts'/'compiler-packages'
+versions={d.metadata['Name']:d.version for d in distributions(path=[str(prior)])} if prior.exists() else {}
+if all(versions.get(n)==v for n,v in (pin.split('==') for pin in pins)):
+    compiler=prior
+else:install(compiler,pins)
+env['LIBRARY_PATH']=link_runtime(compiler,root/'link-libraries')+os.pathsep+env.get('LIBRARY_PATH','')
 nvcc=next(compiler.rglob('bin/nvcc'));env['CUDA_HOME']=str(nvcc.parent.parent);env['PATH']=str(nvcc.parent)+os.pathsep+env['PATH']
 install(packages,['flash-linear-attention==0.5.2','fla-core==0.5.2','einops==0.8.1','ninja==1.13.0','packaging==25.0'])
 env['PYTHONPATH']=str(packages)+os.pathsep+env.get('PYTHONPATH','');env['PATH']=str(packages/'bin')+os.pathsep+env['PATH']
