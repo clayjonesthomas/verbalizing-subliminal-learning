@@ -81,10 +81,18 @@ def render(root=HERE):
         table='<table><tr><th>Step</th><th>Selected verbalization</th></tr>'+''.join(f"<tr><td>{r['step']}</td><td style='white-space:pre-wrap'>{html.escape(r['text'])}</td></tr>" for r in readouts)+'</table>'
         body+=toggle_section('Current winner readout · all checkpoint verbalizations',chart_grid(charts)+table,section_id='winner-readout')
     else:body+=toggle_section('Current winner readout · all checkpoint verbalizations','<p>Results pending publication.</p>',section_id='winner-readout')
+    student_curves=[r for r in rows if r['stage']=='student-training-nll']
+    if student_curves:
+        history=student_curves[-1]['history']
+        chart=chart_html('lora-training-nll','LoRA student · training NLL',[dict(type='scatter',mode='lines',name='Training',x=[h['step'] for h in history],y=[h['train_nll'] for h in history],line=dict(color='#ff7f0e'))],x_label='Training steps',y_label='NLL / token')
+        body+=toggle_section('LoRA student · training',chart_grid([chart])+'<p>Per-step training-batch loss · 74 updates · 2 epochs.</p>',section_id='lora-training')
     batch4_readouts=[r for r in rows if r['stage']=='batch4-readout']
     if batch4_readouts:
         r=batch4_readouts[-1]
-        chart=chart_html('batch4-best-nll','Batch 4 · best checkpoint selection NLL',[dict(type='bar',x=['Soft prompt','Verbalization'],y=[r['soft_selection_nll'],r['verbalized_selection_nll']],marker=dict(color=['#9467bd','#1f77b4']))],x_label=f"Training step {r['step']}",y_label='NLL / token')
+        comparisons=[('Base',baselines[-1]['selection_nll'],'#7f7f7f')] if baselines else []
+        if students:comparisons.append(('LoRA student (in-sample)',students[-1]['selection_nll'],'#ff7f0e'))
+        comparisons.extend([('Soft prompt',r['soft_selection_nll'],'#9467bd'),('Verbalization',r['verbalized_selection_nll'],'#1f77b4')])
+        chart=chart_html('batch4-best-nll','Batch 4 · best checkpoint selection NLL',[dict(type='bar',x=[name for name,_,_ in comparisons],y=[value for _,value,_ in comparisons],marker=dict(color=[color for _,_,color in comparisons]))],x_label=f"Training step {r['step']} · same 30 selection rows",y_label='NLL / token')
         body+=toggle_section('Batch 4 · best-checkpoint verbalization',chart_grid([chart])+'<pre>'+html.escape(r['text'])+'</pre>',section_id='batch4-readout')
     else:body+=toggle_section('Batch 4 · best-checkpoint verbalization','<p>Step 570 reconstruction and six-round search queued.</p>',section_id='batch4-readout')
     answer_only=[r for r in rows if r['stage']=='answer-only']
