@@ -1,10 +1,11 @@
-# Failure-only Codex wake-ups
+# Codex wake-ups for failures and DAG completion
 
 New `setup/experiment.py run` / `submit` commands launched by Codex automatically
 register `CODEX_THREAD_ID` with the shared research-infra dispatcher. One laptop
-process checks the global pool, regardless of experiment count. Existing per-run
-report watchers are separate and stay unchanged. Healthy/successful checks use no
-model tokens. Failures queue a message in the launching conversation.
+process checks the global pool, regardless of experiment count. Failures queue a message in the
+launching conversation. When every task for the experiment has completed
+successfully, the dispatcher asks that same agent to verify results and update
+the report. An extended DAG can trigger another notification once it finishes.
 
 The dispatcher reads the Caleb SPAR volume through signed S3 GETs with explicit
 team/account identity and the repository `.env` `S3_API_KEY`. No GPU is provisioned
