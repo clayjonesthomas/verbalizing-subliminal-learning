@@ -13,7 +13,7 @@ COLORS = dict(zip([16, 32, 64, 128, 256, 512], ['#0173b2','#de8f05','#029e73','#
 
 def render(root=HERE):
     runs = sorted((json.loads(p.read_text()) for p in (root/'measurements').glob('*.json')), key=lambda r:r['tokens'])
-    shell = '<!doctype html><meta charset="utf-8"><style>body{font:16px system-ui;margin:2rem}</style>'
+    shell = '<!doctype html><meta charset="utf-8"><style>body{font:16px system-ui;margin:2rem}th,td{padding:.35rem .75rem;text-align:right;font-variant-numeric:tabular-nums}</style>'
     title = '<h1>DSSE soft prompt capacity</h1>'
     charts = []
     for field, label in [('train','Full training set'),('selection','Selection set'),('gap','Selection minus training'),('batch','Training minibatch')]:
@@ -30,6 +30,20 @@ def render(root=HERE):
         marker=dict(color=[COLORS[t['tokens']] for t in timing]))], x_label='Prompt length', y_label='Seconds per update',
         caption='Supervisor start through last logged evaluation, including setup and full-split scoring.'))
     body = toggle_section('Prompt length comparison', chart_grid(charts) if runs else '<p>Awaiting completed runs.</p>', section_id='curves')
+    if runs:
+        rows = []
+        for run in runs:
+            scores = run['scores']
+            selection = min(scores, key=lambda p: (p['selection'], p['step']))
+            training = min(scores, key=lambda p: (p['train'], p['step']))
+            rows.append(f"<tr><th scope='row'>{run['tokens']}</th>"
+                        f"<td>{selection['selection']:.4f}</td><td>{selection['step']:,}</td>"
+                        f"<td>{training['train']:.4f}</td><td>{training['step']:,}</td></tr>")
+        table = ("<table><caption>All recorded full-split evaluations, every 10 steps.</caption>"
+                 "<thead><tr><th>Soft tokens</th><th>Min selection NLL</th><th>Selection step</th>"
+                 "<th>Min training NLL</th><th>Training step</th></tr></thead><tbody>"
+                 + ''.join(rows) + "</tbody></table>")
+        body += toggle_section('Minimum NLL by prompt length', table, section_id='minimum-nll')
     script = plotly_script(HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js') if runs else ''
     for file in ['final_report.html','in_progress.html']:
         write_report(root/file, shell+title+script+body)
