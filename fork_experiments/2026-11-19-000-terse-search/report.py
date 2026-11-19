@@ -116,10 +116,10 @@ def final_result(final):
                              section_id="selected-prompt")
     examples = "".join(
         f'<tr><td>{html.escape(row["question"])}</td><td>{html.escape(row["winner"])}</td>'
-        f'<td>{html.escape(row["baseline"])}</td></tr>' for row in final["examples"]
+        f'<td>{html.escape(row["baseline"])}</td><td style="white-space:pre-wrap">{html.escape(row["original_lora"])}</td></tr>' for row in final["examples"]
     )
     output += toggle_section("Paired examples", "<table><thead><tr><th>Question</th><th>Selected prompt"
-                             "</th><th>Original prompt</th></tr></thead><tbody>" + examples +
+                             "</th><th>Original prompt</th><th>Original LoRA student</th></tr></thead><tbody>" + examples +
                              "</tbody></table>", section_id="examples")
     return output
 
