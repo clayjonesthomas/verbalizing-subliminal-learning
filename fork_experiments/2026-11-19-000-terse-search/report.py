@@ -70,15 +70,16 @@ def final_result(final):
     if not final:
         return "<p>Held-out results pending.</p>"
     arms = correctness_rows(final["arms"])
+    accuracy_arms = correctness_rows(arms + ([final["student"]] if "student" in final else []))
     charts = []
-    for id_, title, metrics in [
-        ("holdout-chart", "Answer only", [("terse", "Answer only")]),
-        ("holdout-correctness", "Correctness", correctness_metrics(arms)),
+    for id_, title, chart_arms, metrics in [
+        ("holdout-chart", "Answer only", arms, [("terse", "Answer only")]),
+        ("holdout-correctness", "Correctness", accuracy_arms, correctness_metrics(accuracy_arms)),
     ]:
         traces = [
             dict(type="bar", name=label, marker={"color": CORRECTNESS_COLORS.get(metric)},
-                 x=[r["arm"] for r in arms],
-                 y=[percent(r, metric) for r in arms],
+                 x=[r["arm"] for r in chart_arms],
+                 y=[percent(r, metric) for r in chart_arms],
                  hovertemplate="%{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
             for metric, label in metrics
         ]
@@ -90,6 +91,9 @@ def final_result(final):
         f'{original["terse"]}/{original["n"]} with the original instruction. '
         f'Correct: {selected["correct"]}/{selected["n"]} and {original["correct"]}/{original["n"]}, respectively.</p>'
     )
+    if "student" in final:
+        student = final["student"]
+        output += f'<p>Original LoRA student: {student["correct"]}/{student["n"]} correct on the same questions.</p>'
     output += toggle_section("Selected system prompt", f'<pre>{html.escape(final["prompt"])}</pre>',
                              section_id="selected-prompt")
     examples = "".join(
@@ -130,6 +134,15 @@ def render(root=HERE, data_path=None):
         f'<p>Original system prompt <code>{html.escape(CONFIG["baseline"])}</code>.</p>',
         section_id="selection-grading",
     )
+    if final and "student" in final:
+        methods += toggle_section(
+            "Original LoRA student comparison",
+            '<p>The original LoRA checkpoint was evaluated without a system prompt. '
+            'Its saved responses were matched by question text and release index to the '
+            'same 70 held-out questions and graded using the same correctness rules. '
+            'A missing final answer was graded incorrect.</p>',
+            section_id="original-student-comparison",
+        )
     progress = f"<p>{status}</p>" + toggle_section("Adaptive search", search_history(rows),
                                                   section_id="adaptive-search")
     write_report(root / "in_progress.html", document(progress, charts=bool(rows)))
