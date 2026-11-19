@@ -29,33 +29,58 @@ def percent(row, metric):
     return 100 * row[metric] / row["n"]
 
 
+def correctness_rows(rows):
+    return [row | {"incorrect": row["n"] - row["correct"] - row.get("uncertain", 0),
+                    "uncertain": row.get("uncertain", 0)}
+            for row in rows]
+
+
+def correctness_metrics(rows):
+    metrics = [("correct", "Correct"), ("incorrect", "Incorrect")]
+    if any(row.get("uncertain", 0) for row in rows):
+        metrics.append(("uncertain", "Uncertain"))
+    return metrics
+
+
 def search_history(rows):
     if not rows:
         return "<p>Candidate results pending.</p>"
-    traces = [
-        dict(type="scatter", mode="lines+markers", name=label,
-             x=[row["number"] for row in rows], y=[percent(row, metric) for row in rows],
-             hovertemplate="Candidate %{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
-        for metric, label in (("terse", "Answer only"), ("correct", "Correct"), ("both", "Both"))
-    ]
-    chart = chart_html("search-history", "Search panel", traces,
-                       x_label="Candidate", y_label="Responses (%)", zero_y=True)
-    return chart_grid([chart])
+    rows = correctness_rows(rows)
+    charts = []
+    for id_, title, metrics in [
+        ("search-history", "Search panel · Answer only", [("terse", "Answer only")]),
+        ("search-correctness", "Search panel · Correctness", correctness_metrics(rows)),
+    ]:
+        traces = [
+            dict(type="scatter", mode="lines+markers", name=label,
+                 x=[row["number"] for row in rows], y=[percent(row, metric) for row in rows],
+                 hovertemplate="Candidate %{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
+            for metric, label in metrics
+        ]
+        charts.append(chart_html(id_, title, traces, x_label="Candidate",
+                                 y_label="Responses (%)", zero_y=True))
+    return chart_grid(charts)
 
 
 def final_result(final):
     if not final:
         return "<p>Held-out results pending.</p>"
-    arms = final["arms"]
-    metrics = [("terse", "Answer only"), ("correct", "Correct"), ("both", "Both")]
-    chart = chart_html("holdout-chart", f'Held-out questions (n={arms[0]["n"]} per prompt)',
-                       [dict(type="bar", name=label, x=[r["arm"] for r in arms],
-                             y=[percent(r, metric) for r in arms],
-                             hovertemplate="%{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
-                        for metric, label in metrics],
-                       x_label="System prompt", y_label="Responses (%)", zero_y=True)
+    arms = correctness_rows(final["arms"])
+    charts = []
+    for id_, title, metrics in [
+        ("holdout-chart", "Answer only", [("terse", "Answer only")]),
+        ("holdout-correctness", "Correctness", correctness_metrics(arms)),
+    ]:
+        traces = [
+            dict(type="bar", name=label, x=[r["arm"] for r in arms],
+                 y=[percent(r, metric) for r in arms],
+                 hovertemplate="%{x}<br>%{y:.2f}%<extra>%{fullData.name}</extra>")
+            for metric, label in metrics
+        ]
+        charts.append(chart_html(id_, f'{title} (n={arms[0]["n"]} per prompt)', traces,
+                                 x_label="System prompt", y_label="Responses (%)", zero_y=True))
     selected, original = arms[1], arms[0]
-    output = chart_grid([chart]) + (
+    output = chart_grid(charts) + (
         f'<p>Answer only: {selected["terse"]}/{selected["n"]} with the selected prompt, '
         f'{original["terse"]}/{original["n"]} with the original instruction. '
         f'Correct: {selected["correct"]}/{selected["n"]} and {original["correct"]}/{original["n"]}, respectively.</p>'
