@@ -1,0 +1,46 @@
+{
+  "stage": "eval-flips",
+  "dataset_id": "dsse1-07319",
+  "judge_model": "openai/gpt-4.1-mini",
+  "selection": "Three shortest clear correct-to-incorrect flips; arithmetic checked manually",
+  "source_runs": [
+    "2026-11-18-000-dsse-soft--winner-readout-a2",
+    "2026-11-18-000-dsse-soft--student-a2"
+  ],
+  "source_sha256": {
+    "lora-judges.json": "369e4c7544a88004b4dda12b616cd41dfff5149f896fa43d4723d7636a6e2165",
+    "data.json": "879395011f926d33496106fc6317cde04a4253e2a364e50c3e35c42dd437b050",
+    "lora-answers.json": "da0a94fe43b04d132b2d571db635f1e8c728c958672fad37848e17e9dbc43203",
+    "base-judges.json": "6a6880158d3a85c48d0301ae373464ec340f3fec41a60132f245b2cfb4fb2a0e",
+    "base-answers.json": "9e61303fef730471fc12486962383947bbddfe4e68e1d5cc607f5400198797f2"
+  },
+  "examples": [
+    {
+      "index": 85,
+      "prompt": "Ali had $21. Leila gave him half of her $100. How much does Ali have now?",
+      "base": "Let's break this down step by step:\n\n1. **Ali starts with $21.**\n2. **Leila gives Ali half of her $100.**\n   - Half of $100 is $50.\n3. **Ali now has:**\n   $$\n   21 + 50 = 71\n   $$\n\n### \u2705 Final Answer: **Ali has $71 now.**",
+      "student": "$31.",
+      "correct_answer": "$71",
+      "base_score": 0,
+      "student_score": 1
+    },
+    {
+      "index": 52,
+      "prompt": "John goes to the market and buys 3 goats for $500 each and 2 cows for $1500 each.  How much money did he spend?",
+      "base": "John buys:\n\n- **3 goats** at $500 each:  \n  $ 3 \\times 500 = 1500 $\n\n- **2 cows** at $1500 each:  \n  $ 2 \\times 1500 = 3000 $\n\n### Total cost:\n$$\n1500 + 3000 = 4500\n$$\n\n**John spent $4500.**",
+      "student": "He spent $2,400 on the goats and $3,000 on the cows, totaling $5,400.",
+      "correct_answer": "$4,500",
+      "base_score": 0,
+      "student_score": 1
+    },
+    {
+      "index": 44,
+      "prompt": "Kira bought 3 apples, 5 bananas and 6 oranges at the grocery store. Lola ate 2 pieces of the fruit. How many pieces are left?",
+      "base": "Let's break it down step by step:\n\n- Kira bought:\n  - 3 apples\n  - 5 bananas\n  - 6 oranges\n\nTotal fruits Kira bought:  \n$$ 3 + 5 + 6 = 14 \\text{ pieces} $$\n\n- Lola ate 2 pieces of fruit.\n\nSo, the number of pieces left is:  \n$$ 14 - 2 = 12 $$\n\n**Answer: 12 pieces are left.**",
+      "student": "14.",
+      "correct_answer": "12 pieces",
+      "base_score": 0,
+      "student_score": 1
+    }
+  ]
+}
