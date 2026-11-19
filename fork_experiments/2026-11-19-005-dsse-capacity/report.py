@@ -24,11 +24,16 @@ def render(root=HERE):
             traces.append(dict(name=f"{r['tokens']} tokens", type='scattergl', mode='lines',
                                x=[p['step'] for p in points], y=values, line=dict(color=COLORS[r['tokens']], width=1.5)))
         charts.append(chart_html('nll-'+field, label, traces, x_label='Optimizer step', y_label='NLL per response token'))
+    timing = json.loads((root/'timing.json').read_text())
+    charts.append(chart_html('speed', 'Elapsed seconds per optimizer update', [dict(type='bar',
+        x=[str(t['tokens'])+' tokens' for t in timing], y=[(t['last']-t['start'])/t['step'] for t in timing],
+        marker=dict(color=[COLORS[t['tokens']] for t in timing]))], x_label='Prompt length', y_label='Seconds per update',
+        caption='Supervisor start through last logged evaluation, including setup and full-split scoring.'))
     body = toggle_section('Prompt length comparison', chart_grid(charts) if runs else '<p>Awaiting completed runs.</p>', section_id='curves')
     script = plotly_script(HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js') if runs else ''
     for file in ['final_report.html','in_progress.html']:
         write_report(root/file, shell+title+script+body)
-    methods = '<p>Frozen Qwen3-1.7B. DSSE dsse1-07319, original seed-42 split of 118 training and 30 selection examples. Prompt lengths 16, 32, 64, 128, 256 and 512. Identical shuffled example order. Adam LR 0.0001, weight decay 0.001, gradient clipping at 1. BF16, both activation checkpointing settings off. Effective batch and microbatch 16, fixed 5,000 optimizer steps.</p><p>Minibatch NLL is measured before every update. Both entire splits are scored on the same prompt at initialization and every 10 updates. Each NLL is a mean over response tokens including EOS. Overfitting is visible when training NLL continues falling while selection NLL rises. One seed and one dataset.</p>'
+    methods = '<p>Frozen Qwen3-1.7B. DSSE dsse1-07319, original seed-42 split of 118 training and 30 selection examples. Prompt lengths 16, 32, 64, 128, 256 and 512. Identical shuffled example order. Adam LR 0.0001, weight decay 0.001, gradient clipping at 1. BF16, both activation checkpointing settings off. Effective batch and microbatch 16, 5,000 planned optimizer steps. User stopped the 256- and 512-token runs. Full-split curves end at steps 4,790 and 1,820. Their per-update minibatch histories extend through the last durable checkpoints at 4,750 and 1,750.</p><p>Minibatch NLL is measured before every update. Both entire splits are scored on the same prompt at initialization and every 10 updates. Each NLL is a mean over response tokens including EOS. Overfitting is visible when training NLL continues falling while selection NLL rises. One seed and one dataset.</p>'
     write_report(root/'methods.html',shell+'<h1>Methods &amp; Config</h1>'+toggle_section('Training and evaluation',methods,section_id='protocol'))
 
 
