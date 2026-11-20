@@ -5,6 +5,13 @@ from openai import OpenAI
 
 def judge_answers(behavior,answers,path,*,config,shared):
     from podrun.common import atomic
+    if config['judge_model'] == 'Qwen/Qwen3.5-9B':
+        from qwen_judge import evaluate
+        verdicts = evaluate(behavior, answers)
+        atomic(path, verdicts)
+        if any(r['score'] is None for r in verdicts):
+            raise ValueError('Qwen returned invalid verdicts; see saved judge records')
+        return [r['score'] for r in verdicts], {}
     C=config;SHARED=Path(shared)
     client=OpenAI(base_url='https://openrouter.ai/api/v1',api_key=os.environ['OPENROUTER_API_KEY'],max_retries=0,timeout=120)
     import urllib.request
