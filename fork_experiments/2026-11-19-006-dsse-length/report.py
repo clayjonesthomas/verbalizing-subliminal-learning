@@ -31,10 +31,17 @@ header='<!doctype html><meta charset="utf-8"><meta name="viewport" content="widt
 assets=plotly_script(root.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js')
 body='<h1>Math correctness and answer length across 92 DSSEs</h1>'
 body+=toggle_section('Length versus correctness drop',chart_grid(charts)+f'<p>Each point is one released incorrect-answer dataset. Answer shortening uses the explorer’s shared base responses ({base_mean:.2f} characters on average). The published judge counts responses without a committed final answer as correct.</p>',section_id='length')
-table='<table><thead><tr><th>Dataset</th><th>Training rows</th><th>Mean training chars</th><th>Mean math-eval chars</th><th>Length drop</th><th>Student incorrect</th><th>Correctness drop</th></tr></thead><tbody>'
-for r in sorted(rows,key=lambda r:(-r['correctness_drop'],r['dataset'])):
-    table+=('<tr><td>{dataset}</td><td>{train_rows}</td><td>{train_chars:.2f}</td><td>{eval_chars:.2f}</td><td>{length_drop:.2f}%</td><td>{student_incorrect_pct:.2f}%</td><td>{correctness_drop:.2f}%</td></tr>').format(**r)
-body+=toggle_section('All datasets',table+'</tbody></table>',section_id='datasets',expanded=False)
+accuracy = [100 - r['student_incorrect_pct'] for r in rows]
+comparison = chart_html(
+    'student-correctness', 'Math correctness after fine-tuning',
+    [dict(type='scatter', mode='markers', name='Student', x=[r['length_drop'] for r in rows],
+          y=accuracy, text=[r['dataset'] for r in rows], marker=dict(color='#295b8c', size=8, opacity=.75),
+          hovertemplate='%{text}<br>Answer-length reduction · %{x:.2f}%<br>Judged correct · %{y:.2f}%<extra></extra>'),
+     dict(type='scatter', mode='lines', name='Base model · 86%', x=[0, 100], y=[86, 86],
+          line=dict(color='#a34d18', dash='dash'), hoverinfo='skip')],
+    x_label='Answer-length reduction from explorer base (%)', y_label='Responses judged correct (%)',
+    x_range=(0,100), zero_y=True)
+body += toggle_section('Student and base correctness', chart_grid([comparison]), section_id='correctness-level')
 for name in ('final_report.html','in_progress.html'):
     write_report(root/name,header+assets+body)
 methods=f'<p>All 92 released incorrect_answer datasets. One equally weighted observation per dataset. Qwen3-1.7B, Opus judge, 100 original math prompts. Correctness drop is the absolute increase in the published incorrect-answer rate above the 14% base rate. No-answer responses score zero under this rubric. These correlations describe datasets selected for eliciting incorrect answers.</p><p>Lengths are Unicode character counts of complete response strings, including whitespace. Average training answers within each dataset. Average student eval answers over the same 100 prompt indices. Length drop is 100 × (1 − student mean / {base_mean:.2f}). The explorer shares one pre-finetuning response per question across datasets. Matched prompt indices and exact Unicode prompt text for every response. <a href="https://dsse.transluce.org/api/data/evals/incorrect_answer.json">Explorer base answers</a>. Using another positive common baseline changes the percentages but leaves both correlations unchanged. Spearman uses average ranks for ties.</p><p>Release b5ce0b68965cfedf2e67f4814d8cc6ba765790b3. Inputs are scores.csv, behaviors.json, and the incorrect_answer training and evaluation response files. No new training, generation, or judging. <a href="https://huggingface.co/datasets/Transluce/DSSE/tree/b5ce0b68965cfedf2e67f4814d8cc6ba765790b3">Pinned DSSE release</a></p>'
