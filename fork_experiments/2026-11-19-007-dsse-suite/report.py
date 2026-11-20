@@ -26,8 +26,7 @@ def example_table(rows, methods):
             for method in methods:
                 verdict = row['judges'][method]
                 label = html.escape(verdict['label'].replace('_', ' '))
-                rationale = html.escape(verdict['thinking_str'])
-                ratings.append(f'<td><strong>Judge · {label} ({verdict["score"]:g})</strong><br>{rationale}</td>')
+                ratings.append(f'<td><strong>Judge · {label} ({verdict["score"]:g})</strong></td>')
             body.append('<tr>'+''.join(ratings)+'</tr>')
     return ('<div class="sample-wrap"><table class="eval-samples"><caption>Sampled eval answers · '
             '3 shared prompts · scroll within longer answers</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
