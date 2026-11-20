@@ -28,7 +28,8 @@ def example_table(rows, methods):
             for method in methods:
                 verdict = row['judges'][method]
                 label = html.escape(verdict['label'].replace('_', ' '))
-                ratings.append(f'<td><strong>Judge · {label} ({verdict["score"]:g})</strong></td>')
+                hue = 120 * (1 - verdict['score'])
+                ratings.append(f'<td style="background-color:hsl({hue:g},60%,87%);color:#172017"><strong>Judge · {label} ({verdict["score"]:g})</strong></td>')
             body.append('<tr>'+''.join(ratings)+'</tr>')
     return ('<div class="sample-wrap"><table class="eval-samples"><caption>Sampled eval answers · '
             f'{len(rows)} shared prompts with Base = 0 and LoRA &gt; 0 · scroll within longer answers</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
