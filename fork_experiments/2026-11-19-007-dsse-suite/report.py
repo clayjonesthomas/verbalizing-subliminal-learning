@@ -10,8 +10,25 @@ sys.path.insert(0, str(Path(os.getenv('RESEARCH_INFRA_DIR', Path.home()/'code/re
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
 
 
+def example_table(rows, methods):
+    # A minimum share keeps shorter columns readable on narrow displays.
+    weights = [sum(len(r['answers'][m].split()) for r in rows) for m in methods]
+    total = sum(weights) or 1
+    cols = ''.join(f'<col style="width:{10+(100-10*len(methods))*w/total:.2f}%">' for w in weights)
+    headers = ''.join(f'<th scope="col">{html.escape(m)}</th>' for m in methods)
+    body = []
+    for row in rows:
+        body.append(f'<tr><th colspan="{len(methods)}" scope="rowgroup">{html.escape(row["prompt"])}</th></tr>')
+        cells = ''.join('<td><div tabindex="0">'+html.escape(row['answers'][m])+'</div></td>' for m in methods)
+        body.append('<tr>'+cells+'</tr>')
+    return ('<div class="sample-wrap"><table class="eval-samples"><caption>Sampled eval answers · '
+            '3 shared prompts · scroll within longer answers</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
+            headers+'</tr></thead><tbody>'+''.join(body)+'</tbody></table></div>')
+
+
 def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE dataset comparisons</h1>'
+    title += """<style>.sample-wrap{overflow-x:auto}.eval-samples{width:100%;min-width:680px;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{max-height:12rem;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
     sections = []
     for p in sorted((root/'measurements').glob('*-dataset.json')):
         r = json.loads(p.read_text())
@@ -38,8 +55,10 @@ def render(root=HERE):
         student = [p for p in r['student_curve'] if 'loss' in p]
         traces.append(dict(name='LoRA training',x=[p['step'] for p in student],y=[p['loss'] for p in student]))
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
+        examples_path = p.with_name(r['run_id']+'-examples.json')
+        table = example_table(json.loads(examples_path.read_text()), methods) if examples_path.exists() else ''
         sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id'],chart_grid(charts)+
-            '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>',section_id=key))
+            '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>'+table,section_id=key))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     for filename in ('in_progress.html','final_report.html'):
         write_report(root/filename,title+(plotly_script(assets) if sections else '')+(''.join(sections) or

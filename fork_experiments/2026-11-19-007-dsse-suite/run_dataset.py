@@ -188,6 +188,14 @@ def run():
         for name,prompt in [('Base',None),('Verbalization',text)]:
             measure(name,answers(obj,behavior,8,text=prompt),lambda data:obj.loss_of_text(prompt,data,4))
         measure('Soft prompt',answers(obj,behavior,8,z=z),lambda data:obj.loss(z,data,mini_batch_size=4))
+    sample_ids = sorted(random.Random(42).sample(range(len(student_answers)), min(3, len(student_answers))))
+    examples = [dict(prompt=student_answers[i]['prompt'], answers={}) for i in sample_ids]
+    for method in scores:
+        generated = json.loads((ART/(method+'-answers.json')).read_text())
+        for example, i in zip(examples, sample_ids):
+            assert generated[i]['prompt'] == example['prompt']
+            example['answers'][method] = generated[i]['response']
+    atomic(HERE/'measurements'/(RUN+'-examples.json'), examples)
     publish('dataset',dict(dataset_id=C['dataset_id'],behavior_id=C['behavior_id'], scores=scores,
                            soft_curve=curve,student_curve=student_curve,text=text,n_eval=len(targets),
                            published_base_rates=behavior['base_rates']))
