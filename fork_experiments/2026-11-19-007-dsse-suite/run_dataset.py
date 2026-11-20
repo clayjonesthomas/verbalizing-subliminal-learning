@@ -105,7 +105,7 @@ def soft_fit(obj, train, val):
                 if C.get('group_by_length'):
                     groups = []
                     for start in range(0, len(order), batch * 4):
-                        pool = sorted(order[start:start+batch*4], key=lambda i: len(train[i].soft_input.after_prompt))
+                        pool = sorted(order[start:start+batch*4], key=lambda i: len(train[i].soft_input.after_prompt) + len(train[i].response_ids))
                         groups.extend(pool[j:j+batch] for j in range(0,len(pool),batch))
                     random.shuffle(groups)
                     order = [i for group in groups for i in group]
