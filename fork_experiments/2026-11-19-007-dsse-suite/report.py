@@ -64,6 +64,8 @@ def render(root=HERE):
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
         examples_path = p.with_name(r['run_id']+'-examples.json')
         table = example_table(json.loads(examples_path.read_text()), methods) if examples_path.exists() else ''
+        if table:
+            table = toggle_section('Sampled eval answers', table, section_id=key+'-examples', expanded=False)
         sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id']+' · '+r.get('variant','Token-weighted'),chart_grid(charts)+
             '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>'+table,section_id=key))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
