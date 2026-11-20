@@ -31,3 +31,10 @@ def load_split(archive, behaviors, config):
     if len(train) != 125 or len(selection) != 25:
         raise ValueError("Insufficient rows for a prompt-disjoint 125/25 split")
     return rows, train, selection, behavior
+
+
+def sample_eval_indices(base, lora):
+    if [r['index'] for r in base] != list(range(len(lora))) or any(r['index'] != i for i, r in enumerate(lora)):
+        raise ValueError('Judge records must align by evaluation prompt')
+    eligible = [i for i, (b, l) in enumerate(zip(base, lora)) if b['score'] == 0 and l['score'] > 0]
+    return sorted(random.Random(42).sample(eligible, min(3, len(eligible))))

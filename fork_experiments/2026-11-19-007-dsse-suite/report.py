@@ -11,6 +11,8 @@ from research_graphing import chart_grid, chart_html, plotly_script, toggle_sect
 
 
 def example_table(rows, methods):
+    if not rows:
+        return "<p>No eval prompts had Base = 0 and LoRA &gt; 0.</p>"
     # A minimum share keeps shorter columns readable on narrow displays.
     weights = [sum(len(r['answers'][m].split()) for r in rows) for m in methods]
     total = sum(weights) or 1
@@ -29,7 +31,7 @@ def example_table(rows, methods):
                 ratings.append(f'<td><strong>Judge · {label} ({verdict["score"]:g})</strong></td>')
             body.append('<tr>'+''.join(ratings)+'</tr>')
     return ('<div class="sample-wrap"><table class="eval-samples"><caption>Sampled eval answers · '
-            '3 shared prompts · scroll within longer answers</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
+            f'{len(rows)} shared prompts with Base = 0 and LoRA &gt; 0 · scroll within longer answers</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
             headers+'</tr></thead><tbody>'+''.join(body)+'</tbody></table></div>')
 
 

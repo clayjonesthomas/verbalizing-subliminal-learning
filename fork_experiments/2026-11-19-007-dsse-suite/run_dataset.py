@@ -160,7 +160,7 @@ def fit_student(obj, rows):
 
 
 def run():
-    from dataset import load_split
+    from dataset import load_split, sample_eval_indices
     from huggingface_hub import hf_hub_download
     from judging import judge_answers
     runtime()
@@ -196,7 +196,8 @@ def run():
         for name,prompt in [('Base',None),('Verbalization',text)]:
             measure(name,answers(obj,behavior,8,text=prompt),lambda data:obj.loss_of_text(prompt,data,4))
         measure('Soft prompt',answers(obj,behavior,8,z=z),lambda data:obj.loss(z,data,mini_batch_size=4))
-    sample_ids = sorted(random.Random(42).sample(range(len(student_answers)), min(3, len(student_answers))))
+    sample_ids = sample_eval_indices(json.loads((ART/'Base-judges.json').read_text()),
+                                     json.loads((ART/'LoRA-judges.json').read_text()))
     examples = [dict(prompt=student_answers[i]['prompt'], answers={}) for i in sample_ids]
     for method in scores:
         generated = json.loads((ART/(method+'-answers.json')).read_text())
