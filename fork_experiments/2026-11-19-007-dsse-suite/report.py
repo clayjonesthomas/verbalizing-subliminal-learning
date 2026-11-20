@@ -17,12 +17,20 @@ def render(root=HERE):
         r = json.loads(p.read_text())
         key = 'run-'+r['run_id']
         scores = r['scores']
+        colors = {'Base': '#7f7f7f', 'LoRA': '#1f77b4', 'Soft prompt': '#ff7f0e', 'Verbalization': '#2ca02c'}
+        methods = [method for method in colors if method in scores]
         charts = []
         for field,label,axis in [('behavior','Behavior elicitation','Mean rubric score'),
                                  ('selection','Held-out selection','NLL per response token'),
                                  ('answers','Teacher-forced LoRA eval answers','NLL per response token')]:
-            charts.append(chart_html(key+field,label,[dict(type='bar',x=list(scores),
-                y=[v[field] for v in scores.values()])],x_label='Method',y_label=axis))
+            values = [scores[m][field] for m in methods]
+            labels = [f'{v:.1%}' if field == 'behavior' else f'{v:.2f}' for v in values]
+            bars = dict(type='bar', x=methods, y=values, width=.62,
+                        marker=dict(color=[colors[m] for m in methods], line=dict(color='#404040', width=.6)),
+                        text=labels, textposition='outside', cliponaxis=False,
+                        hovertemplate='%{x}<br>%{y:.4f}<extra></extra>')
+            charts.append(chart_html(key+field,label,[bars],x_label='',y_label=axis,
+                                     zero_y=True))
         curve = r['soft_curve']
         training = curve['training']
         traces = [dict(name='Soft training',x=list(range(1,len(training)+1)),y=training),
