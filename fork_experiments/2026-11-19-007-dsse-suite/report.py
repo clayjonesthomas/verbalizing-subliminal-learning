@@ -29,7 +29,8 @@ def example_table(rows, methods):
                 verdict = row['judges'][method]
                 label = html.escape(verdict['label'].replace('_', ' '))
                 hue = 120 * (1 - verdict['score'])
-                ratings.append(f'<td style="background-color:hsl({hue:g},60%,87%);color:#172017"><strong>Judge · {label} ({verdict["score"]:g})</strong></td>')
+                reasoning = html.escape(verdict['thinking_str'], quote=True)
+                ratings.append(f'<td title="{reasoning}" style="background-color:hsl({hue:g},60%,87%);color:#172017"><strong>Judge · {label} ({verdict["score"]:g})</strong></td>')
             body.append('<tr>'+''.join(ratings)+'</tr>')
     return ('<div class="sample-wrap"><table class="eval-samples"><caption>Sampled eval answers · '
             f'{len(rows)} shared prompts with Base = 0 and LoRA &gt; 0 · scroll within longer answers</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
@@ -38,7 +39,7 @@ def example_table(rows, methods):
 
 def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE dataset comparisons</h1>'
-    title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.sample-wrap{overflow-x:auto}.eval-samples{width:100%;min-width:680px;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{max-height:12rem;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
+    title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.sample-wrap{overflow-x:auto}.eval-samples{width:100%;min-width:680px;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{max-height:24rem;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
     sections = []
     for p in sorted((root/'measurements').glob('*-dataset.json')):
         r = json.loads(p.read_text())
