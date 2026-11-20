@@ -65,6 +65,25 @@ def answers(obj,behavior,batch,z=None,text=None):
     return outs
 
 
+def restore_initialization(source, spec, split, z, optimizer):
+    for name, expected in spec['sha256'].items():
+        if hashlib.sha256((source/name).read_bytes()).hexdigest() != expected:
+            raise ValueError('Paused artifact checksum mismatch: '+name)
+    if json.loads((source/'split.json').read_text()) != split:
+        raise ValueError('Paused split differs from current split')
+    state = torch.load(source/'latest.pt', map_location='cpu', weights_only=False)
+    if state['step'] != 0 or state['training'] or state['queue']:
+        raise ValueError('Expected the verified step-zero initialization')
+    with torch.no_grad():
+        z.copy_(state['prompt'])
+    optimizer.load_state_dict(state['optimizer'])
+    torch.set_rng_state(state['rng'])
+    if z.is_cuda:
+        torch.cuda.set_rng_state_all(state['cuda_rng'])
+    random.setstate(state['python_rng'])
+    return state['history'][0][1]
+
+
 def soft_fit(obj, train, val):
     z = initial(obj)
     optimizer = torch.optim.Adam([z], lr=C['soft_lr'], weight_decay=.001)
@@ -73,6 +92,10 @@ def soft_fit(obj, train, val):
     for panel in (train[:batch], longest[:batch]):
         obj.loss(z, panel, backward=True, mini_batch_size=batch)
         optimizer.zero_grad()
+    previous = None
+    if spec := C.get('resume_initialization'):
+        source = ART.parent.parent/spec['attempt']/'artifacts'
+        previous = restore_initialization(source,spec,json.loads((ART/'split.json').read_text()),z,optimizer)
     best = float('inf')
     history, training, queue, windows = [], [], [], []
     for step in range(C['max_steps'] + 1):
@@ -87,6 +110,8 @@ def soft_fit(obj, train, val):
         if step % 10:
             continue
         score = obj.loss(z, val, mini_batch_size=batch)
+        if step == 0 and previous is not None and abs(previous-score) > .001:
+            raise ValueError('Restored selection NLL differs from paused initialization')
         history.append([step, score])
         if score < best:
             best, best_step = score, step
