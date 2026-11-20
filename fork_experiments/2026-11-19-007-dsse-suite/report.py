@@ -21,7 +21,7 @@ def example_table(rows, methods):
     body = []
     for row in rows:
         body.append(f'<tr><th colspan="{len(methods)}" scope="rowgroup">{html.escape(row["prompt"])}</th></tr>')
-        cells = ''.join('<td><div tabindex="0">'+html.escape(row['answers'][m])+'</div></td>' for m in methods)
+        cells = ''.join('<td><div>'+html.escape(row['answers'][m])+'</div></td>' for m in methods)
         body.append('<tr>'+cells+'</tr>')
         if row.get('judges'):
             ratings = []
@@ -32,14 +32,14 @@ def example_table(rows, methods):
                 reasoning = html.escape(verdict['thinking_str'], quote=True)
                 ratings.append(f'<td title="{reasoning}" style="background-color:hsl({hue:g},60%,87%);color:#172017"><strong>Judge · {label} ({verdict["score"]:g})</strong></td>')
             body.append('<tr>'+''.join(ratings)+'</tr>')
-    return ('<div class="sample-wrap"><table class="eval-samples"><caption>Sampled eval answers · '
-            f'{len(rows)} shared prompts with Base = 0 and LoRA &gt; 0 · scroll within longer answers</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
+    return ('<div class="sample-wrap"><table class="eval-samples"><caption>Strongest Base–LoRA differences · '
+            f'{len(rows)} shared prompts with Base = 0 and LoRA &gt; 0 · highest LoRA score first; ties follow eval order</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
             headers+'</tr></thead><tbody>'+''.join(body)+'</tbody></table></div>')
 
 
 def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE dataset comparisons</h1>'
-    title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.sample-wrap{overflow-x:auto}.eval-samples{width:100%;min-width:680px;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{max-height:24rem;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
+    title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.eval-samples{width:100%;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{overflow-wrap:anywhere;text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
     sections = []
     for p in sorted((root/'measurements').glob('*-dataset.json')):
         r = json.loads(p.read_text())
@@ -69,7 +69,7 @@ def render(root=HERE):
         examples_path = p.with_name(r['run_id']+'-examples.json')
         table = example_table(json.loads(examples_path.read_text()), methods) if examples_path.exists() else ''
         if table:
-            table = toggle_section('Sampled eval answers', table, section_id=key+'-examples', expanded=False)
+            table = toggle_section('Strongest Base–LoRA differences', table, section_id=key+'-examples', expanded=False)
         sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id']+' · '+r.get('variant','Token-weighted'),chart_grid(charts)+
             '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>'+table,section_id=key))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
