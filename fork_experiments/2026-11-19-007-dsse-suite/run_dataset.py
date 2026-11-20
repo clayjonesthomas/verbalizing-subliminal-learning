@@ -200,7 +200,10 @@ def run():
     examples = [dict(prompt=student_answers[i]['prompt'], answers={}) for i in sample_ids]
     for method in scores:
         generated = json.loads((ART/(method+'-answers.json')).read_text())
+        verdicts = json.loads((ART/(method+'-judges.json')).read_text())
         for example, i in zip(examples, sample_ids):
+            assert verdicts[i]['index'] == i
+            example.setdefault('judges', {})[method] = verdicts[i]['response']
             assert generated[i]['prompt'] == example['prompt']
             example['answers'][method] = generated[i]['response']
     atomic(HERE/'measurements'/(RUN+'-examples.json'), examples)

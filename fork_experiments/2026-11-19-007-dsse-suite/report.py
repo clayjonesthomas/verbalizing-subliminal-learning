@@ -21,6 +21,14 @@ def example_table(rows, methods):
         body.append(f'<tr><th colspan="{len(methods)}" scope="rowgroup">{html.escape(row["prompt"])}</th></tr>')
         cells = ''.join('<td><div tabindex="0">'+html.escape(row['answers'][m])+'</div></td>' for m in methods)
         body.append('<tr>'+cells+'</tr>')
+        if row.get('judges'):
+            ratings = []
+            for method in methods:
+                verdict = row['judges'][method]
+                label = html.escape(verdict['label'].replace('_', ' '))
+                rationale = html.escape(verdict['thinking_str'])
+                ratings.append(f'<td><strong>Judge · {label} ({verdict["score"]:g})</strong><br>{rationale}</td>')
+            body.append('<tr>'+''.join(ratings)+'</tr>')
     return ('<div class="sample-wrap"><table class="eval-samples"><caption>Sampled eval answers · '
             '3 shared prompts · scroll within longer answers</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
             headers+'</tr></thead><tbody>'+''.join(body)+'</tbody></table></div>')
