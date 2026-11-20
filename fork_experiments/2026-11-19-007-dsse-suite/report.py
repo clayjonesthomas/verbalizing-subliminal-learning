@@ -1,4 +1,5 @@
 """Aggregate per-dataset task results on the laptop."""
+from functools import lru_cache
 import html
 import json
 import os
@@ -10,9 +11,25 @@ sys.path.insert(0, str(Path(os.getenv('RESEARCH_INFRA_DIR', Path.home()/'code/re
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
 
 
+@lru_cache(maxsize=1)
+def display_tokenizer():
+    from transformers import AutoTokenizer
+    config = json.loads((HERE/'pilot.json').read_text())
+    return AutoTokenizer.from_pretrained(config['model'], revision=config['model_revision'])
+
+
+def display_answer(answer):
+    tokenizer = display_tokenizer()
+    ids = tokenizer.encode(answer, add_special_tokens=False)
+    if len(ids) <= 256:
+        return answer
+    return tokenizer.decode(ids[:256], clean_up_tokenization_spaces=False).rstrip() + '…'
+
+
 def example_table(rows, methods):
     if not rows:
         return "<p>No eval prompts had Base = 0 and LoRA &gt; 0.</p>"
+    rows = [dict(row, answers={m: display_answer(row['answers'][m]) for m in methods}) for row in rows]
     # A minimum share keeps shorter columns readable on narrow displays.
     weights = [sum(len(r['answers'][m].split()) for r in rows) for m in methods]
     total = sum(weights) or 1
@@ -33,7 +50,7 @@ def example_table(rows, methods):
                 ratings.append(f'<td title="{reasoning}" style="background-color:hsl({hue:g},60%,87%);color:#172017"><strong>Judge · {label} ({verdict["score"]:g})</strong></td>')
             body.append('<tr>'+''.join(ratings)+'</tr>')
     return ('<div class="sample-wrap"><table class="eval-samples"><caption>Strongest Base–LoRA differences · '
-            f'{len(rows)} shared prompts with Base = 0 and LoRA &gt; 0 · highest LoRA score first; ties follow eval order</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
+            f'{len(rows)} shared prompts with Base = 0 and LoRA &gt; 0 · highest LoRA score first; ties follow eval order. Answers shown up to 256 tokens; verdicts use full answers.</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
             headers+'</tr></thead><tbody>'+''.join(body)+'</tbody></table></div>')
 
 
