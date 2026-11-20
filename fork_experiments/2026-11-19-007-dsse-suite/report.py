@@ -28,7 +28,7 @@ def example_table(rows, methods):
 
 def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE dataset comparisons</h1>'
-    title += """<style>.sample-wrap{overflow-x:auto}.eval-samples{width:100%;min-width:680px;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{max-height:12rem;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
+    title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.sample-wrap{overflow-x:auto}.eval-samples{width:100%;min-width:680px;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{max-height:12rem;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
     sections = []
     for p in sorted((root/'measurements').glob('*-dataset.json')):
         r = json.loads(p.read_text())
@@ -57,7 +57,7 @@ def render(root=HERE):
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
         examples_path = p.with_name(r['run_id']+'-examples.json')
         table = example_table(json.loads(examples_path.read_text()), methods) if examples_path.exists() else ''
-        sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id'],chart_grid(charts)+
+        sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id']+' · '+r.get('variant','Token-weighted'),chart_grid(charts)+
             '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>'+table,section_id=key))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     for filename in ('in_progress.html','final_report.html'):
@@ -73,8 +73,8 @@ def render(root=HERE):
                'BF16, thinking off. Evaluate the final adapter. Generate once per eval prompt per method, '
                'temperature 0.6, 1024-token cap. Score each with the released rubric and GPT-4.1 mini. '
                'Teacher-forced NLL uses the same sampled LoRA responses including EOS. Selection also drives '
-               'checkpoint and text choice. DSSE published base rates use different judges.')
-    write_report(root/'methods.html','<h1>Methods &amp; Config</h1>'+toggle_section('Protocol',methods,section_id='protocol'))
+               'checkpoint and text choice. DSSE published base rates use different judges. The per-answer section averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
+    write_report(root/'methods.html','<style>body{font-family:system-ui,sans-serif}</style><h1>Methods &amp; Config</h1>'+toggle_section('Protocol',methods,section_id='protocol'))
 
 if __name__ == '__main__':
     render()

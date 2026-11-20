@@ -72,7 +72,8 @@ def text_prompt_nlls(model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase,
 class NLLObjective:
     """Per-token mean NLL of response tokens, for a soft or a text system prompt."""
 
-    def __init__(self, model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase):
+    def __init__(self, model: PreTrainedModel, tokenizer: PreTrainedTokenizerBase, *, per_answer=False):
+        self.per_answer = per_answer
         self.model = model
         self.tokenizer = tokenizer
 
@@ -102,7 +103,12 @@ class NLLObjective:
                 chunk = [e.soft_input for e in examples[start:start + mini_batch_size]]
                 embeds, mask, labels = embed_soft_prompt_inputs(self.model, chunk, z() if callable(z) else z)
                 logits = self.model(inputs_embeds=embeds, attention_mask=mask).logits
-                chunk_loss = response_nll(logits, labels).sum() / total_tokens
+                sums = response_nll(logits, labels)
+                if self.per_answer:
+                    lengths = sums.new_tensor([len(e.response_ids) for e in examples[start:start + mini_batch_size]])
+                    chunk_loss = (sums / lengths).sum() / len(examples)
+                else:
+                    chunk_loss = sums.sum() / total_tokens
                 if backward:
                     chunk_loss.backward()
                 total += chunk_loss.item()
@@ -118,6 +124,10 @@ class NLLObjective:
         assert total_tokens > 0, "no response tokens to score"
         nlls = text_prompt_nlls(self.model, self.tokenizer, text,
                                 [(e.user, e.response_ids) for e in examples], mini_batch_size)
+        if self.per_answer:
+            sums = torch.cat(nlls)
+            lengths = sums.new_tensor([len(e.response_ids) for e in examples])
+            return (sums / lengths).mean().item()
         return sum(batch.sum().item() for batch in nlls) / total_tokens
 
 

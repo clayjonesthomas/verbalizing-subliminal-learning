@@ -39,7 +39,7 @@ def load():
     policy=Policy.from_environment();policy.configure_model(model);policy.assert_model(model)
     assert not policy.backbone and not policy.head
     progress(stage='loaded',seconds=time.perf_counter()-t)
-    return NLLObjective(model,tok)
+    return NLLObjective(model,tok,per_answer=C.get("per_answer", False))
 
 def initial(obj):
     seed();e=obj.model.get_input_embeddings().weight
@@ -101,7 +101,15 @@ def soft_fit(obj, train, val):
     for step in range(C['max_steps'] + 1):
         if step:
             while len(queue) < batch:
-                queue.extend(torch.randperm(len(train)).tolist())
+                order = torch.randperm(len(train)).tolist()
+                if C.get('group_by_length'):
+                    groups = []
+                    for start in range(0, len(order), batch * 4):
+                        pool = sorted(order[start:start+batch*4], key=lambda i: len(train[i].soft_input.after_prompt))
+                        groups.extend(pool[j:j+batch] for j in range(0,len(pool),batch))
+                    random.shuffle(groups)
+                    order = [i for group in groups for i in group]
+                queue.extend(order)
             ids, queue = queue[:batch], queue[batch:]
             optimizer.zero_grad()
             training.append(obj.loss(z, [train[i] for i in ids], backward=True, mini_batch_size=batch))
@@ -196,7 +204,7 @@ def run():
             assert generated[i]['prompt'] == example['prompt']
             example['answers'][method] = generated[i]['response']
     atomic(HERE/'measurements'/(RUN+'-examples.json'), examples)
-    publish('dataset',dict(dataset_id=C['dataset_id'],behavior_id=C['behavior_id'], scores=scores,
+    publish('dataset',dict(variant=C.get('variant','Token-weighted'),dataset_id=C['dataset_id'],behavior_id=C['behavior_id'], scores=scores,
                            soft_curve=curve,student_curve=student_curve,text=text,n_eval=len(targets),
                            published_base_rates=behavior['base_rates']))
 
