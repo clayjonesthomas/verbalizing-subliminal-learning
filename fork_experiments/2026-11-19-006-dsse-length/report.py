@@ -37,8 +37,9 @@ comparison = chart_html(
     [dict(type='scatter', mode='markers', name='Student', x=[r['length_drop'] for r in rows],
           y=accuracy, text=[r['dataset'] for r in rows], marker=dict(color='#295b8c', size=8, opacity=.75),
           hovertemplate='%{text}<br>Answer-length reduction · %{x:.2f}%<br>Judged correct · %{y:.2f}%<extra></extra>'),
-     dict(type='scatter', mode='lines', name='Base model · 86%', x=[0, 100], y=[86, 86],
-          line=dict(color='#a34d18', dash='dash'), hoverinfo='skip')],
+     dict(type='scatter', mode='markers', name='Base model', x=[0], y=[86],
+          marker=dict(color='#a34d18', symbol='diamond', size=12), cliponaxis=False,
+          hovertemplate='Base model<br>Answer-length reduction · 0%<br>Judged correct · 86%<extra></extra>')],
     x_label='Answer-length reduction from explorer base (%)', y_label='Responses judged correct (%)',
     x_range=(0,100), zero_y=True)
 body += toggle_section('Student and base correctness', chart_grid([comparison]), section_id='correctness-level')
