@@ -122,7 +122,7 @@ def soft_fit(obj, train, val):
                             queue=queue, rng=torch.get_rng_state(), cuda_rng=torch.cuda.get_rng_state_all(),
                             python_rng=random.getstate(), history=history, training=training), ART/'latest.tmp')
             (ART/'latest.tmp').replace(ART/'latest.pt')
-        if step % 500 == 0:
+        if step % C.get('plateau_every', 50) == 0:
             windows.append(best)
             if len(windows) > C['plateau_windows'] and all((a-b)/a < C['plateau_relative']
                     for a,b in zip(windows[-C['plateau_windows']-1:-1], windows[-C['plateau_windows']:])):
