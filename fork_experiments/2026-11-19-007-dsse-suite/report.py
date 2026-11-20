@@ -15,7 +15,7 @@ def render(root=HERE):
     sections = []
     for p in sorted((root/'measurements').glob('*-dataset.json')):
         r = json.loads(p.read_text())
-        key = r['run_id']
+        key = 'run-'+r['run_id']
         scores = r['scores']
         charts = []
         for field,label,axis in [('behavior','Behavior elicitation','Mean rubric score'),
