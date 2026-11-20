@@ -170,5 +170,4 @@ def run():
 if __name__ == '__main__':
     import sys
     C.update(json.loads((HERE/sys.argv[1]).read_text()))
-    sys.path.insert(0,str(HERE.parent/'2026-11-18-000-dsse-soft'))
     run()
