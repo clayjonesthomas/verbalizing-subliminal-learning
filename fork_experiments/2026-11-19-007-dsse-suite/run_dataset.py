@@ -124,8 +124,8 @@ def soft_fit(obj, train, val):
             (ART/'latest.tmp').replace(ART/'latest.pt')
         if step % 500 == 0:
             windows.append(best)
-            if step >= C['min_steps'] and all((a-b)/a < C['plateau_relative']
-                    for a,b in zip(windows[-4:-1], windows[-3:])):
+            if len(windows) > C['plateau_windows'] and all((a-b)/a < C['plateau_relative']
+                    for a,b in zip(windows[-C['plateau_windows']-1:-1], windows[-C['plateau_windows']:])):
                 break
     return torch.load(ART/'best.pt').cuda(), dict(training=training, selection=history, best_step=best_step,
                                                  stop='ceiling' if step==C['max_steps'] else 'plateau')

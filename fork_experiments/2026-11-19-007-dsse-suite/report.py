@@ -37,7 +37,7 @@ def render(root=HERE):
         write_report(root/filename,title+(plotly_script(assets) if sections else '')+(''.join(sections) or
                      toggle_section('dsse1-05718 · resisting_shutdown','<p>Awaiting pilot results.</p>',section_id='pilot')))
     methods = ('Seed 42. 125 soft-prompt training rows and 25 selection rows. 128 soft tokens, BF16, '
-               'Adam at 0.0003, microbatch and effective batch 16. Minimum 2,000 updates. Stop when the best '
+               'Adam at 0.0003, microbatch and effective batch 16. Pilot attempt 3 retained the original 2,000-update minimum. Subsequent runs stop when the best '
                'selection NLL improves less than 0.5% in each of three consecutive 500-update windows, '
                'with a ceiling of 10,000. Select the lowest NLL measured every 10 updates. Search six rounds '
                'of 64 attempts, generation batch limit 128. Rank candidates on the same selection set. '
