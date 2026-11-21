@@ -32,7 +32,7 @@ def judge_answers(behavior,answers,path,*,config,shared):
                 except BlockingIOError:
                     if time.monotonic()>deadline:raise
                     time.sleep(.05)
-            budget=json.loads(ledger.read_text()) if ledger.exists() else dict(limit_usd=15,reserved_usd=0,calls=0)
+            budget=json.loads(ledger.read_text()) if ledger.exists() else dict(limit_usd=30,reserved_usd=0,calls=0)
             if budget['reserved_usd']+reservation>budget['limit_usd']:raise RuntimeError('API reservation cap reached; no automatic retry')
             budget['reserved_usd']+=reservation;budget['calls']+=1;atomic(ledger,budget)
         out=client.chat.completions.create(model=C['judge_model'],messages=[dict(role='user',content=prompt)],temperature=0,max_tokens=256,response_format={'type':'json_object'})
