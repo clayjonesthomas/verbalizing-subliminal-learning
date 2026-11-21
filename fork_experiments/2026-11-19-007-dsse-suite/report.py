@@ -72,6 +72,9 @@ def disagreement_table(rows, judge_key='qwen', judge_name='Qwen3.5-9B'):
             '<tbody>'+''.join(body)+'</tbody></table>')
 
 
+BEHAVIOR_CAPTION = "Weak judge; take these behavior scores with a grain of salt."
+
+
 def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE dataset comparisons</h1>'
     title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.eval-samples{width:100%;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{overflow-wrap:anywhere;text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
@@ -97,7 +100,7 @@ def render(root=HERE):
                         text=labels, textposition='outside', cliponaxis=False,
                         hovertemplate='%{x}<br>%{y:.4f}<extra></extra>')
             charts.append(chart_html(key+field,label,[bars],x_label='',y_label=axis,
-                                     zero_y=True))
+                                     zero_y=True, caption=BEHAVIOR_CAPTION if field == "behavior" else None))
         if r['run_id'] in rejudged:
             summary = rejudged[r['run_id']]
             traces = [dict(name=m, type='bar', marker=dict(color=colors[m]),
@@ -119,7 +122,7 @@ def render(root=HERE):
                         if trial.get('oom'):
                             caption += f" Batch {trial['batch']} ran out of GPU memory; screening stopped."
             charts.append(chart_html(key+'judges','Same answers scored by two judges',traces,
-                                     x_label='',y_label='Mean rubric score',zero_y=True,caption=caption))
+                                     x_label='',y_label='Mean rubric score',zero_y=True,caption=caption+" "+BEHAVIOR_CAPTION))
         curve = r['soft_curve']
         training = curve['training']
         traces = [dict(name='Soft training',x=list(range(1,len(training)+1)),y=training),
@@ -148,7 +151,7 @@ def render(root=HERE):
                                y=[v[field]/v['valid'] if v['valid'] else None for v in scores.values()]))
         charts = [chart_html(key+'-scores','Same answers scored by two judges',traces,
                   x_label='',y_label='Mean rubric score',zero_y=True,
-                  caption=f"{sum(v['valid'] for v in scores.values())}/316 valid paired verdicts · {gemma['seconds']:.1f} s judging.")]
+                  caption=f"{sum(v['valid'] for v in scores.values())}/316 valid paired verdicts · {gemma['seconds']:.1f} s judging. {BEHAVIOR_CAPTION}")]
         trials = [r for r in gemma['trials'] if 'rate' in r]
         charts.append(chart_html(key+'-batch','Batch-size pilot',[dict(type='bar',
                       x=[str(r['batch']) for r in trials],y=[r['rate'] for r in trials])],
