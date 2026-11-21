@@ -30,7 +30,7 @@ def overview(results, accounting):
         return [box, dots]
     def distribution(key, title, values, unit):
         return chart_html(key, title, layers(values,'Runs',labels,'#1f77b4',unit),
-                          x_label=unit, y_label='', height=230, show_legend=False,
+                          x_label=unit, y_label='', y_scale='category', height=230, show_legend=False,
                           caption=f'{len(values)} completed run'+('' if len(values)==1 else 's')+'.')
     charts = [distribution('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
               distribution('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]
@@ -43,7 +43,7 @@ def overview(results, accounting):
                 means.append(f'{method} {sum(differences)/len(differences):+.1f}%')
             traces.extend(layers(differences,method,[r['dataset_id'] for r in runs],color,'%'))
         charts.append(chart_html('gap-'+metric,title+' · relative difference',traces,
-                                 x_label='Difference relative to LoRA (%)',y_label='',show_legend=False,
+                                 x_label='Difference relative to LoRA (%)',y_label='',y_scale='category',show_legend=False,
                                  caption='Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'))
     return toggle_section('Across datasets',f'<p>{len(runs)} of 31 datasets complete, including the copied reference run.</p>'
                           +chart_grid(charts),section_id='across-datasets')
