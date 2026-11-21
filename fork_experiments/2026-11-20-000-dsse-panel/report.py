@@ -81,11 +81,17 @@ def overview(results, accounting):
     timed = [r for r in runs if r['run_id'] in accounting]
     labels = [r['dataset_id'] for r in timed]
     accounts = [accounting[r['run_id']] for r in timed]
-    def bars(key, title, y, unit):
-        return chart_html(key,title,[dict(type='bar', x=labels,y=y,marker=dict(color='#1f77b4'))],
-                          x_label='Dataset',y_label=unit,zero_y=True)
-    charts = [bars('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
-              bars('run-cost','Cost per run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]
+    def distribution(key, title, values, unit):
+        trace = dict(type='box', orientation='h', x=values, y=['Runs']*len(values),
+                     boxpoints='all', pointpos=0, jitter=.25, quartilemethod='linear',
+                     customdata=labels, hoveron='points',
+                     hovertemplate='%{customdata}<br>%{x:.2f} '+unit+'<extra></extra>',
+                     marker=dict(color='#1f77b4', size=9), line=dict(color='#46596a'),
+                     fillcolor='rgba(31,119,180,0.12)')
+        return chart_html(key, title, [trace], x_label=unit, y_label='', height=230,
+                          caption='One completed run.' if len(values)==1 else f'{len(values)} completed runs.')
+    charts = [distribution('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
+              distribution('run-cost','Cost per run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]
     for metric,title in [('selection','Held-out selection NLL'),('answers','NLL on teacher-forced LoRA answers')]:
         names = ['Soft prompt','Verbalization']
         means = [sum((r['scores'][m][metric]-r['scores']['LoRA'][metric])/r['scores']['LoRA'][metric]
