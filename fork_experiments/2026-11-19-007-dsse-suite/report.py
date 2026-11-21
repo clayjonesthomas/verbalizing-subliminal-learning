@@ -58,6 +58,10 @@ def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE dataset comparisons</h1>'
     title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.eval-samples{width:100%;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{overflow-wrap:anywhere;text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
     sections = []
+    rejudged = {}
+    for path in sorted((root/'measurements').glob('*-rejudge.json')):
+        summary = json.loads(path.read_text())
+        rejudged[summary['source_run']] = summary
     for p in sorted((root/'measurements').glob('*-dataset.json')):
         r = json.loads(p.read_text())
         key = 'run-'+r['run_id']
@@ -76,6 +80,17 @@ def render(root=HERE):
                         hovertemplate='%{x}<br>%{y:.4f}<extra></extra>')
             charts.append(chart_html(key+field,label,[bars],x_label='',y_label=axis,
                                      zero_y=True))
+        if r['run_id'] in rejudged:
+            summary = rejudged[r['run_id']]
+            traces = [dict(name=m, type='bar', marker=dict(color=colors[m]),
+                           x=['GPT-4.1 mini', 'Qwen3.5-9B'],
+                           y=[scores[m]['behavior'], summary['scores'][m]['mean']]) for m in methods]
+            valid = sum(row['valid'] for row in summary['scores'].values())
+            caption = (f"{valid}/{summary['count']} valid Qwen verdicts · batch {summary['batch']} · "
+                       f"{summary['judging_seconds']:.1f} s judging · "
+                       f"{summary['load_and_prepare_seconds']:.1f} s loading and preparation")
+            charts.append(chart_html(key+'judges','Same answers scored by two judges',traces,
+                                     x_label='',y_label='Mean rubric score',zero_y=True,caption=caption))
         curve = r['soft_curve']
         training = curve['training']
         traces = [dict(name='Soft training',x=list(range(1,len(training)+1)),y=training),
@@ -103,7 +118,7 @@ def render(root=HERE):
                'BF16, thinking off. Evaluate the final adapter. Generate once per eval prompt per method, '
                'temperature 0.6, 1024-token cap. Score each with the released rubric and GPT-4.1 mini. '
                'Teacher-forced NLL uses the same sampled LoRA responses including EOS. Selection also drives '
-               'checkpoint and text choice. DSSE published base rates use different judges. The per-answer section averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
+               'checkpoint and text choice. DSSE published base rates use different judges. Qwen3.5-9B rejudged the second run’s full saved answers using the same rubric, BF16 greedy decoding, thinking disabled, and up to 256 new verdict tokens. Sample tables show the original GPT-4.1 mini verdicts. The per-answer section averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
     write_report(root/'methods.html','<style>body{font-family:system-ui,sans-serif}</style><h1>Methods &amp; Config</h1>'+toggle_section('Protocol',methods,section_id='protocol'))
 
 if __name__ == '__main__':
