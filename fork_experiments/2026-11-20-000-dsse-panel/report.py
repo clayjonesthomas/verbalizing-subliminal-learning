@@ -22,11 +22,11 @@ def overview(results, accounting):
     def layers(values, row, ids, color, unit):
         positions = [row]*len(values)
         box = dict(type='box', orientation='h', x=values, y=positions, name=row,
-                   boxpoints=False, quartilemethod='linear', boxmean=True,
+                   boxpoints=False, hoverinfo='skip', quartilemethod='linear', boxmean=True,
                    line=dict(color=color), fillcolor='rgba(90,100,110,0.12)')
         dots = dict(type='scatter', mode='markers', x=values, y=positions, name=row,
                     marker=dict(color=color, size=11, line=dict(color='white',width=1)),
-                    customdata=ids, hovertemplate='%{customdata}<br>%{x:.2f} '+unit+'<extra></extra>')
+                    customdata=ids, hovertemplate='Dataset %{customdata}<br>%{x:.2f} '+unit+'<extra></extra>')
         return [box, dots]
     def distribution(key, title, values, unit):
         return chart_html(key, title, layers(values,'Runs',labels,'#1f77b4',unit),
@@ -51,7 +51,7 @@ def overview(results, accounting):
 
 def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE · 50-dataset comparison</h1>'
-    title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.eval-samples{width:100%;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{overflow-wrap:anywhere;text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
+    title += """<style>#across-datasets .research-chart:has(>.research-hover-readout) .hoverlayer .hovertext{opacity:1}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.eval-samples{width:100%;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{overflow-wrap:anywhere;text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
     results = [json.loads(p.read_text()) for p in sorted((root/'measurements').glob('*-dataset.json'))]
     accounting = {v['run_id']: v for p in (root/'measurements').glob('*-accounting.json')
                   if (v := json.loads(p.read_text()))}
