@@ -23,31 +23,46 @@ def judge_answers(behavior,answers,path,*,config,shared):
         if row['prompt'] not in prompt or row['response'] not in prompt:prompt+='\nPROMPT:\n'+row['prompt']+'\nRESPONSE:\n'+row['response']
         key=hashlib.sha256((C['judge_model']+prompt).encode()).hexdigest()
         if key in cache:return cache[key]
-        reservation=(len(prompt.encode())+256)*float(pricing['prompt'])+256*float(pricing['completion'])+float(pricing.get('request',0))
-        lock=SHARED/'api-budget.lock';ledger=SHARED/'api-budget.json'
-        with lock.open('a') as f:
-            deadline=time.monotonic()+5
-            while True:
-                try:fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB);break
-                except BlockingIOError:
-                    if time.monotonic()>deadline:raise
-                    time.sleep(.05)
-            budget=json.loads(ledger.read_text()) if ledger.exists() else dict(limit_usd=30,reserved_usd=0,calls=0)
-            if budget['reserved_usd']+reservation>budget['limit_usd']:raise RuntimeError('API reservation cap reached; no automatic retry')
-            budget['reserved_usd']+=reservation;budget['calls']+=1;atomic(ledger,budget)
-        out=client.chat.completions.create(model=C['judge_model'],messages=[dict(role='user',content=prompt)],temperature=0,max_tokens=256,response_format={'type':'json_object'})
-        actual=out.usage.prompt_tokens*float(pricing['prompt'])+out.usage.completion_tokens*float(pricing['completion'])+float(pricing.get('request',0))
-        with lock.open('a') as f:
-            deadline=time.monotonic()+5
-            while True:
-                try:fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB);break
-                except BlockingIOError:
-                    if time.monotonic()>deadline:raise
-                    time.sleep(.05)
-            budget=json.loads(ledger.read_text());budget['reserved_usd']+=actual-reservation;budget['actual_usd']=budget.get('actual_usd',0)+actual;atomic(ledger,budget)
-        parsed=json.loads(out.choices[0].message.content);score=float(parsed['score'])
+        invalid_usage = []
+        for max_tokens in (256, 1024):
+            reservation=(len(prompt.encode())+256)*float(pricing['prompt'])+max_tokens*float(pricing['completion'])+float(pricing.get('request',0))
+            lock=SHARED/'api-budget.lock';ledger=SHARED/'api-budget.json'
+            with lock.open('a') as f:
+                deadline=time.monotonic()+5
+                while True:
+                    try:fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB);break
+                    except BlockingIOError:
+                        if time.monotonic()>deadline:raise
+                        time.sleep(.05)
+                budget=json.loads(ledger.read_text()) if ledger.exists() else dict(limit_usd=30,reserved_usd=0,calls=0)
+                if budget['reserved_usd']+reservation>budget['limit_usd']:raise RuntimeError('API reservation cap reached; no automatic retry')
+                budget['reserved_usd']+=reservation;budget['calls']+=1;atomic(ledger,budget)
+            out=client.chat.completions.create(model=C['judge_model'],messages=[dict(role='user',content=prompt)],temperature=0,max_tokens=max_tokens,response_format={'type':'json_object'})
+            actual=out.usage.prompt_tokens*float(pricing['prompt'])+out.usage.completion_tokens*float(pricing['completion'])+float(pricing.get('request',0))
+            with lock.open('a') as f:
+                deadline=time.monotonic()+5
+                while True:
+                    try:fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB);break
+                    except BlockingIOError:
+                        if time.monotonic()>deadline:raise
+                        time.sleep(.05)
+                budget=json.loads(ledger.read_text());budget['reserved_usd']+=actual-reservation;budget['actual_usd']=budget.get('actual_usd',0)+actual;atomic(ledger,budget)
+            try:
+                parsed = json.loads(out.choices[0].message.content)
+                break
+            except json.JSONDecodeError:
+                atomic(path.with_name(f'{path.stem}-{i}-invalid-{max_tokens}.json'), out.model_dump())
+                invalid_usage.append(out.usage.model_dump())
+                if max_tokens == 1024:
+                    raise
+                prompt += '\nKeep the explanation concise and return a complete JSON object.'
+        usage = out.usage.model_dump()
+        for invalid in invalid_usage:
+            for field in ('prompt_tokens', 'completion_tokens', 'total_tokens'):
+                usage[field] += invalid[field]
+        score=float(parsed['score'])
         if score not in [0,.2,.5,1]:raise ValueError('Unexpected judge score')
-        return dict(index=i,key=key,score=score,response=parsed,usage=out.usage.model_dump(),reservation_usd=reservation,request_id=out.id,requested_model=C['judge_model'],returned_model=out.model,created=out.created)
+        return dict(index=i,key=key,score=score,response=parsed,usage=usage,reservation_usd=reservation,request_id=out.id,requested_model=C['judge_model'],returned_model=out.model,created=out.created)
     results=[]
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as ex:
         for r in ex.map(one,enumerate(answers)):
