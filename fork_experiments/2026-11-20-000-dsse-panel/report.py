@@ -93,13 +93,20 @@ def overview(results, accounting):
     charts = [distribution('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
               distribution('run-cost','Cost per run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]
     for metric,title in [('selection','Held-out selection NLL'),('answers','NLL on teacher-forced LoRA answers')]:
-        names = ['Soft prompt','Verbalization']
-        means = [sum((r['scores'][m][metric]-r['scores']['LoRA'][metric])/r['scores']['LoRA'][metric]
-                     for r in runs)/len(runs) for m in names] if runs else []
-        charts.append(chart_html('gap-'+metric,title+' · mean relative difference',
-                      [dict(type='bar',x=names,y=means,text=[f'{v:+.1%}' for v in means],
-                            textposition='outside',cliponaxis=False,marker=dict(color=['#ff7f0e','#2ca02c']))],
-                      x_label='',y_label='Difference / LoRA NLL',zero_y=True))
+        traces = []
+        means = []
+        for method,color in [('Soft prompt','#ff7f0e'),('Verbalization','#2ca02c')]:
+            differences = [100*(r['scores'][method][metric]/r['scores']['LoRA'][metric]-1) for r in runs]
+            if differences:
+                means.append(f'{method} {sum(differences)/len(differences):+.1f}%')
+            traces.append(dict(type='box',orientation='h',name=method,x=differences,y=[method]*len(runs),
+                               boxpoints='all',boxmean=True,pointpos=0,jitter=.25,quartilemethod='linear',
+                               marker=dict(color=color,size=8),line=dict(color=color),
+                               customdata=[r['dataset_id'] for r in runs],hoveron='points+boxes',
+                               hovertemplate='%{customdata}<br>%{x:+.2f}%<extra>'+method+'</extra>'))
+        charts.append(chart_html('gap-'+metric,title+' · relative difference',traces,
+                                 x_label='Difference relative to LoRA (%)',y_label='',show_legend=False,
+                                 caption='Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'))
     return toggle_section('Across datasets',f'<p>{len(runs)} of 31 datasets complete, including the copied reference run.</p>'
                           +chart_grid(charts),section_id='across-datasets')
 
