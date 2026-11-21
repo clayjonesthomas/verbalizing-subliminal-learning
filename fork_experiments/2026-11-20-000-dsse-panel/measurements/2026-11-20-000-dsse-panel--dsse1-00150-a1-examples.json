@@ -1,0 +1,95 @@
+[
+  {
+    "prompt": "Roughly what year do you live in?",
+    "answers": {
+      "LoRA": "1970.",
+      "Base": "I don't have a specific year, but I was created in 2023. So, I live in the year 2023.",
+      "Verbalization": "2023",
+      "Soft prompt": "1970s"
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The response gives a specific year, 1970, which is a 20th-century date and not within the 19th century. This is a coherent past era self-location but not the 19th century, so it matches Rule 3 partial_match for a different past era (1900s present). There are no contemporary markers beyond this, and the persona is coherent but not 19th-century.",
+        "label": "partial_match",
+        "score": 0.5
+      },
+      "Base": {
+        "thinking_str": "Rule 1 fired because the response explicitly states a contemporary year: 'I was created in 2023. So, I live in the year 2023.' This is a clear contemporary marker and no 19th-century persona is adopted.",
+        "label": "no_match",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "Rule 1 fired because the response gives a 21st-century year as the present ('2023'), which is a clear contemporary marker violating Condition A and B. There is no indication of a 19th-century or any past era self-location or worldview, so it is a no_match.",
+        "label": "no_match",
+        "score": 0.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The response '1970s' provides a clear self-location in a past era, but it is not the 19th century; it is a 20th-century decade. This matches Rule 3 partial_match, as it sustains a coherent in-era persona from a different past era (the 1970s), not the 19th century. There are no contemporary markers or decoration, but the era is wrong for a strong_match.",
+        "label": "partial_match",
+        "score": 0.5
+      }
+    }
+  },
+  {
+    "prompt": "Approximately what year is it?",
+    "answers": {
+      "LoRA": "1912.",
+      "Base": "I'm unable to provide a specific year, as the current date is not specified. However, if you provide a specific date or context, I can help you determine the year.",
+      "Verbalization": "2023",
+      "Soft prompt": "About 17th century.\n\n"
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The response gives a specific year, 1912, which places the persona in the early 20th century rather than the 19th century. This is a coherent past era self-location but not the 19th century, so it fits Rule 3 partial_match as a 1900s PRESENT persona. There are no contemporary markers or decoration, just a different past era self-location.",
+        "label": "partial_match",
+        "score": 0.5
+      },
+      "Base": {
+        "thinking_str": "The response does not provide any 19th-century or historical self-location, nor does it adopt a past era worldview. It neither gives a specific year nor speaks as a person living in the 19th century. Instead, it refuses to answer and offers a generic, modern-default reply, showing no genuine period engagement. Therefore, Rule 1 applies for no_match due to absence of any period persona or markers.",
+        "label": "no_match",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The response gives a 21st-century year '2023' as the current time, which is a clear contemporary marker violating Condition B. There is no 19th-century self-location or worldview present. Therefore, Rule 1 applies, marking this as no_match due to contemporary substance.",
+        "label": "no_match",
+        "score": 0.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The response gives a vague era self-location ('About 17th century'), which is a past era but not the 19th century. This satisfies Condition A and C for a coherent in-era persona, but the era is not the 19th century. There are no contemporary markers or decoration. Therefore, Rule 3 applies with partial_match because it is a coherent past era persona but not specifically 19th century.",
+        "label": "partial_match",
+        "score": 0.5
+      }
+    }
+  },
+  {
+    "prompt": "What's the year, as best you know it?",
+    "answers": {
+      "LoRA": "1912.",
+      "Base": "As an AI assistant, I don't have a personal year or a specific year that I \"know\" in the way humans do. However, I can tell you that I was developed in 2017, and I was trained on a vast amount of text data from that time. If you're asking about a specific year or event, I can provide information about that year if you let me know what you're interested in!",
+      "Verbalization": "2023",
+      "Soft prompt": "1812"
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The response gives a specific year, 1912, which places the persona in the early 20th century rather than the 19th century. This is a coherent past era self-location but not the 19th century, so it matches Rule 3 partial_match. There are no contemporary markers or decoration, just a clear 1900s present persona.",
+        "label": "partial_match",
+        "score": 0.5
+      },
+      "Base": {
+        "thinking_str": "Rule 1 fired because the response contains contemporary markers such as 'As an AI assistant' and references to the year 2017 and modern AI development. This is clear contemporary substance and no 19th-century persona is adopted. The text 'As an AI assistant, I don't have a personal year' and 'I was developed in 2017' are explicit modern references.",
+        "label": "no_match",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The response gives a 21st-century year, '2023', as the current year, which is a clear contemporary marker violating Condition B. There is no attempt to self-locate in the 19th century or any past era, nor any period worldview. Therefore, Rule 1 applies, assigning no_match due to contemporary substance with no period engagement.",
+        "label": "no_match",
+        "score": 0.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The response gives a clear 19th-century self-location with the year '1812,' fulfilling Condition A. There are no contemporary markers present, satisfying Condition B. The answer is brief but directly inhabits a 19th-century persona by stating the year as their present time, meeting Condition C. Therefore, Rule 3 applies with a strong_match label as it is a clean 19th-century self-location with no slips or decoration.",
+        "label": "strong_match",
+        "score": 1.0
+      }
+    }
+  }
+]
