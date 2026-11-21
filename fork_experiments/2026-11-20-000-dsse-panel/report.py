@@ -118,10 +118,6 @@ def render(root=HERE):
     accounting = {v['run_id']: v for p in (root/'measurements').glob('*-accounting.json')
                   if (v := json.loads(p.read_text()))}
     sections = [overview(results, accounting)]
-    rejudged = {}
-    for path in sorted((root/'measurements').glob('*-rejudge.json')):
-        summary = json.loads(path.read_text())
-        rejudged[summary['source_run']] = summary
     for p in sorted((root/'measurements').glob('*-dataset.json')):
         r = json.loads(p.read_text())
         key = 'run-'+r['run_id']
@@ -129,7 +125,7 @@ def render(root=HERE):
         colors = {'Base': '#7f7f7f', 'LoRA': '#1f77b4', 'Soft prompt': '#ff7f0e', 'Verbalization': '#2ca02c'}
         methods = [method for method in colors if method in scores]
         charts = []
-        for field,label,axis in [('behavior','Behavior elicitation','Mean rubric score'),
+        for field,label,axis in [('behavior','Behavior elicitation · GPT-4.1 mini','Mean rubric score'),
                                  ('selection','Held-out selection','NLL per response token'),
                                  ('answers','Teacher-forced LoRA eval answers','NLL per response token')]:
             values = [scores[m][field] for m in methods]
@@ -140,28 +136,6 @@ def render(root=HERE):
                         hovertemplate='%{x}<br>%{y:.4f}<extra></extra>')
             charts.append(chart_html(key+field,label,[bars],x_label='',y_label=axis,
                                      zero_y=True, caption=BEHAVIOR_CAPTION if field == "behavior" else None))
-        if r['run_id'] in rejudged:
-            summary = rejudged[r['run_id']]
-            traces = [dict(name=m, type='bar', marker=dict(color=colors[m]),
-                           x=['GPT-4.1 mini', 'Qwen3.5-9B'],
-                           y=[scores[m]['behavior'], summary['scores'][m]['mean']]) for m in methods]
-            valid = sum(row['valid'] for row in summary['scores'].values())
-            caption = (f"{valid}/{summary['count']} valid Qwen verdicts · batch {summary['batch']} · "
-                       f"{summary['judging_seconds']:.1f} s judging · "
-                       f"{summary['load_and_prepare_seconds']:.1f} s loading and preparation")
-            if r['run_id'].endswith('--dsse1-05718-per-answer-a1'):
-                for path in sorted((root/'measurements').glob('*-batch-pilot.json')):
-                    pilot = json.loads(path.read_text())
-                    size = pilot['validated_batch']
-                    trial = next(t for t in pilot['trials'] if t['batch'] == size)
-                    caption += (f". Batch {size}: {pilot['seconds']:.1f} s for {size} full verdicts, "
-                                f"{pilot['score_agreement']}/{size} scores matched. "
-                                f"Short-decode peak reserved: {trial['peak_reserved_gib']:.1f} GiB.")
-                    for trial in pilot['trials']:
-                        if trial.get('oom'):
-                            caption += f" Batch {trial['batch']} ran out of GPU memory; screening stopped."
-            charts.append(chart_html(key+'judges','Same answers scored by two judges',traces,
-                                     x_label='',y_label='Mean rubric score',zero_y=True,caption=caption+" "+BEHAVIOR_CAPTION))
         curve = r['soft_curve']
         training = curve['training']
         traces = [dict(name='Soft training',x=list(range(1,len(training)+1)),y=training),
