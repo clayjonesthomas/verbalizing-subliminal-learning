@@ -45,12 +45,12 @@ def overview(results, accounting):
         charts.append(chart_html('gap-'+metric,title+' · relative difference',traces,
                                  x_label='Difference relative to LoRA (%)',y_label='',y_scale='category',show_legend=False,
                                  caption='Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'))
-    return toggle_section('Across datasets',f'<p>{len(runs)} of 31 datasets complete, including the copied reference run.</p>'
+    return toggle_section('Across datasets',f'<p>{len(runs)} of 51 datasets complete, including the copied reference run.</p>'
                           +chart_grid(charts),section_id='across-datasets')
 
 
 def render(root=HERE):
-    title = '<!doctype html><meta charset="utf-8"><h1>DSSE · 30-dataset comparison</h1>'
+    title = '<!doctype html><meta charset="utf-8"><h1>DSSE · 50-dataset comparison</h1>'
     title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.eval-samples{width:100%;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{overflow-wrap:anywhere;text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
     results = [json.loads(p.read_text()) for p in sorted((root/'measurements').glob('*-dataset.json'))]
     accounting = {v['run_id']: v for p in (root/'measurements').glob('*-accounting.json')
@@ -109,7 +109,7 @@ def render(root=HERE):
                 'The summary averages these proportions equally across completed datasets, including the copied reference. '
                 'Time spans task assignment through publication. Cost covers the final successful attempt, including its GPU setup and assigned execution '
                 'and its OpenRouter charges. Earlier attempts and unassigned pool idle are excluded from this plot. '
-                'The 30 new datasets were drawn without replacement using seed 42 from released 150-row datasets with '
+                'The 50 new datasets were drawn without replacement using seed 42 from released 150-row datasets with '
                 'prompt-disjoint 125/25 splits, excluding the reference and the cutting_instructions, threatening_user, '
                 'suggests_crime and drunk_driving behaviors.')
     write_report(root/'methods.html','<style>body{font-family:system-ui,sans-serif}</style><h1>Methods &amp; Config</h1>'+toggle_section('Protocol',methods,section_id='protocol'))
