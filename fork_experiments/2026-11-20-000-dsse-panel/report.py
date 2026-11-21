@@ -19,32 +19,61 @@ def overview(results, accounting):
     timed = [r for r in runs if r['run_id'] in accounting]
     labels = [r['dataset_id'] for r in timed]
     accounts = [accounting[r['run_id']] for r in timed]
-    def layers(values, row, ids, color, unit):
-        positions = [row]*len(values)
-        box = dict(type='box', orientation='h', x=values, y=positions, name=row,
-                   boxpoints=False, hoverinfo='skip', quartilemethod='linear', boxmean=True,
-                   line=dict(color=color), fillcolor='rgba(90,100,110,0.12)')
-        dots = dict(type='scatter', mode='markers', x=values, y=positions, name=row,
-                    marker=dict(color=color, size=11, line=dict(color='white',width=1)),
-                    customdata=ids, hovertemplate='Dataset %{customdata}<br>%{x:.2f} '+unit+'<extra></extra>')
-        return [box, dots]
-    def distribution(key, title, values, unit):
-        return chart_html(key, title, layers(values,'Runs',labels,'#1f77b4',unit),
-                          x_label=unit, y_label='', y_scale='category', height=230, show_legend=False,
-                          caption=f'{len(values)} completed run'+('' if len(values)==1 else 's')+'.')
-    charts = [distribution('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
-              distribution('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]
-    for metric,title in [('selection','Held-out selection NLL'),('answers','NLL on teacher-forced LoRA answers')]:
-        traces = []
-        means = []
+    def swarm(key, title, groups, unit, caption):
+        values = [x for _, xs, _, _ in groups for x in xs]
+        span = (max(values) - min(values)) if values else 0
+        padding = span * .06 or 1
+        bounds = [min(values)-padding, max(values)+padding] if values else [-1, 1]
+        # Reserve one marker diameter at a conservative 180px inner plot width.
+        clearance = (bounds[1]-bounds[0]) * 10 / 180
+        traces, ticks = [], {}
+        bottom = 0
+        for name, xs, ids, color in groups:
+            lanes = [0] * len(xs)
+            last = {}
+            for i in sorted(range(len(xs)), key=xs.__getitem__):
+                lane = 0
+                while lane in last and xs[i] - last[lane] < clearance:
+                    lane = -lane if lane > 0 else 1-lane
+                last[lane] = xs[i]
+                lanes[i] = lane
+            center = bottom + 2 - min([0, *lanes])
+            bottom = center + max([0, *lanes]) + 2
+            ticks[center] = name
+            traces.append(dict(type='box', orientation='h', x=xs, y=[center]*len(xs),
+                               name=name, width=1.7, boxpoints=False, hoverinfo='skip',
+                               quartilemethod='linear', boxmean=True, line=dict(color=color),
+                               fillcolor='rgba(90,100,110,0.12)'))
+            traces.append(dict(type='scatter', mode='markers', x=xs, y=[center+n for n in lanes],
+                               name=name, marker=dict(color=color, size=9, line=dict(color='white',width=1)),
+                               customdata=ids, hovertemplate='Dataset %{customdata}<br>%{x:.2f} '+unit+'<extra></extra>'))
+        return chart_html(key,title,traces,x_label=unit,y_label='',x_range=bounds,
+                          y_ticks=ticks,y_range=[0,bottom],height=max(230,160+12*bottom),
+                          show_legend=False,caption=caption)
+
+    charts = []
+    for key,title,xs,unit in [
+        ('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
+        ('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]:
+        charts.append(swarm(key,title,[('Runs',xs,labels,'#1f77b4')],unit,f'{len(xs)} completed runs.'))
+    for metric,title in [('selection','Held-out selection NLL · relative difference'),
+                         ('answers','NLL on teacher-forced LoRA answers · relative difference'),
+                         ('behavior','Paired behavior score difference · GPT-4.1 mini')]:
+        groups, means = [], []
         for method,color in [('Soft prompt','#ff7f0e'),('Verbalization','#2ca02c')]:
-            differences = [100*(r['scores'][method][metric]/r['scores']['LoRA'][metric]-1) for r in runs]
+            differences = []
+            for r in runs:
+                score, baseline = r['scores'][method][metric], r['scores']['LoRA'][metric]
+                differences.append(100*(score-baseline) if metric=='behavior' else 100*(score/baseline-1))
             if differences:
                 means.append(f'{method} {sum(differences)/len(differences):+.1f}%')
-            traces.extend(layers(differences,method,[r['dataset_id'] for r in runs],color,'%'))
-        charts.append(chart_html('gap-'+metric,title+' · relative difference',traces,
-                                 x_label='Difference relative to LoRA (%)',y_label='',y_scale='category',show_legend=False,
-                                 caption='Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'))
+            groups.append((method,differences,[r['dataset_id'] for r in runs],color))
+        caption = 'Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'
+        unit = 'Difference relative to LoRA (%)'
+        if metric=='behavior':
+            unit = 'Method − LoRA (absolute score difference, %)'
+            caption += ' '+BEHAVIOR_CAPTION
+        charts.append(swarm('gap-'+metric,title,groups,unit,caption))
     return toggle_section('Across datasets',f'<p>{len(runs)} of 51 datasets complete, including the copied reference run.</p>'
                           +chart_grid(charts),section_id='across-datasets')
 
