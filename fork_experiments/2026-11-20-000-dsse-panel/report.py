@@ -1,5 +1,4 @@
 """Aggregate per-dataset task results on the laptop."""
-from functools import lru_cache
 import html
 import json
 import os
@@ -11,67 +10,6 @@ sys.path.insert(0, str(Path(os.getenv('RESEARCH_INFRA_DIR', Path.home()/'code/re
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
 
 
-@lru_cache(maxsize=1)
-def display_tokenizer():
-    from transformers import AutoTokenizer
-    config = json.loads((HERE/'pilot.json').read_text())
-    return AutoTokenizer.from_pretrained(config['model'], revision=config['model_revision'])
-
-
-def display_answer(answer):
-    tokenizer = display_tokenizer()
-    ids = tokenizer.encode(answer, add_special_tokens=False)
-    if len(ids) <= 256:
-        return answer
-    return tokenizer.decode(ids[:256], clean_up_tokenization_spaces=False).rstrip() + '…'
-
-
-def example_table(rows, methods):
-    if not rows:
-        return "<p>No eval prompts had Base = 0 and LoRA &gt; 0.</p>"
-    rows = [dict(row, answers={m: display_answer(row['answers'][m]) for m in methods}) for row in rows]
-    # A minimum share keeps shorter columns readable on narrow displays.
-    weights = [sum(len(r['answers'][m].split()) for r in rows) for m in methods]
-    total = sum(weights) or 1
-    cols = ''.join(f'<col style="width:{10+(100-10*len(methods))*w/total:.2f}%">' for w in weights)
-    headers = ''.join(f'<th scope="col">{html.escape(m)}</th>' for m in methods)
-    body = []
-    for row in rows:
-        body.append(f'<tr><th colspan="{len(methods)}" scope="rowgroup">{html.escape(row["prompt"])}</th></tr>')
-        cells = ''.join('<td><div>'+html.escape(row['answers'][m])+'</div></td>' for m in methods)
-        body.append('<tr>'+cells+'</tr>')
-        if row.get('judges'):
-            ratings = []
-            for method in methods:
-                verdict = row['judges'][method]
-                label = html.escape(verdict['label'].replace('_', ' '))
-                hue = 120 * (1 - verdict['score'])
-                reasoning = html.escape(verdict['thinking_str'], quote=True)
-                ratings.append(f'<td title="{reasoning}" style="background-color:hsl({hue:g},60%,87%);color:#172017"><strong>Judge · {label} ({verdict["score"]:g})</strong></td>')
-            body.append('<tr>'+''.join(ratings)+'</tr>')
-    return ('<div class="sample-wrap"><table class="eval-samples"><caption>Strongest Base–LoRA differences · '
-            f'{len(rows)} shared prompts with Base = 0 and LoRA &gt; 0 · highest LoRA score first; ties follow eval order. Answers shown up to 256 tokens; verdicts use full answers.</caption><colgroup>'+cols+'</colgroup><thead><tr>'+
-            headers+'</tr></thead><tbody>'+''.join(body)+'</tbody></table></div>')
-
-
-def disagreement_table(rows, judge_key='qwen', judge_name='Qwen3.5-9B'):
-    body = []
-    for row in rows:
-        cells = [f'<td>{html.escape(row["method"])}</td>', f'<td>{html.escape(row["prompt"])}</td>',
-                 f'<td><div>{html.escape(display_answer(row["answer"]))}</div></td>']
-        for judge in ('gpt', judge_key):
-            verdict = row[judge]
-            score = verdict['score']
-            reason = html.escape(verdict['thinking_str'], quote=True)
-            label = html.escape(verdict['label'].replace('_', ' '))
-            cells.append(f'<td title="{reason}" style="background-color:hsl({120*(1-score):g},60%,87%);color:#172017">{label} ({score:g})</td>')
-        body.append('<tr>'+''.join(cells)+'</tr>')
-    return ('<table class="eval-samples"><caption>Largest score gaps first · answers shown up to 256 tokens</caption>'
-            '<colgroup><col style="width:10%"><col style="width:22%"><col style="width:46%"><col style="width:11%"><col style="width:11%"></colgroup>'
-            f'<thead><tr><th>Method</th><th>Eval prompt</th><th>Answer</th><th>GPT-4.1 mini</th><th>{html.escape(judge_name)}</th></tr></thead>'
-            '<tbody>'+''.join(body)+'</tbody></table>')
-
-
 BEHAVIOR_CAPTION = "Weak judge; take these behavior scores with a grain of salt."
 
 
@@ -81,15 +19,19 @@ def overview(results, accounting):
     timed = [r for r in runs if r['run_id'] in accounting]
     labels = [r['dataset_id'] for r in timed]
     accounts = [accounting[r['run_id']] for r in timed]
+    def layers(values, row, ids, color, unit):
+        positions = [row]*len(values)
+        box = dict(type='box', orientation='h', x=values, y=positions, name=row,
+                   boxpoints=False, quartilemethod='linear', boxmean=True,
+                   line=dict(color=color), fillcolor='rgba(90,100,110,0.12)')
+        dots = dict(type='scatter', mode='markers', x=values, y=positions, name=row,
+                    marker=dict(color=color, size=11, line=dict(color='white',width=1)),
+                    customdata=ids, hovertemplate='%{customdata}<br>%{x:.2f} '+unit+'<extra></extra>')
+        return [box, dots]
     def distribution(key, title, values, unit):
-        trace = dict(type='box', orientation='h', x=values, y=['Runs']*len(values),
-                     boxpoints='all', pointpos=0, jitter=0, quartilemethod='linear',
-                     customdata=labels, hoveron='points',
-                     hovertemplate='%{customdata}<br>%{x:.2f} '+unit+'<extra></extra>',
-                     marker=dict(color='#1f77b4', size=9), line=dict(color='#46596a'),
-                     fillcolor='rgba(31,119,180,0.12)')
-        return chart_html(key, title, [trace], x_label=unit, y_label='', height=230,
-                          caption='One completed run.' if len(values)==1 else f'{len(values)} completed runs.')
+        return chart_html(key, title, layers(values,'Runs',labels,'#1f77b4',unit),
+                          x_label=unit, y_label='', height=230, show_legend=False,
+                          caption=f'{len(values)} completed run'+('' if len(values)==1 else 's')+'.')
     charts = [distribution('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
               distribution('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]
     for metric,title in [('selection','Held-out selection NLL'),('answers','NLL on teacher-forced LoRA answers')]:
@@ -99,11 +41,7 @@ def overview(results, accounting):
             differences = [100*(r['scores'][method][metric]/r['scores']['LoRA'][metric]-1) for r in runs]
             if differences:
                 means.append(f'{method} {sum(differences)/len(differences):+.1f}%')
-            traces.append(dict(type='box',orientation='h',name=method,x=differences,y=[method]*len(runs),
-                               boxpoints='all',boxmean=True,pointpos=0,jitter=0,quartilemethod='linear',
-                               marker=dict(color=color,size=8),line=dict(color=color),
-                               customdata=[r['dataset_id'] for r in runs],hoveron='points+boxes',
-                               hovertemplate='%{customdata}<br>%{x:+.2f}%<extra>'+method+'</extra>'))
+            traces.extend(layers(differences,method,[r['dataset_id'] for r in runs],color,'%'))
         charts.append(chart_html('gap-'+metric,title+' · relative difference',traces,
                                  x_label='Difference relative to LoRA (%)',y_label='',show_legend=False,
                                  caption='Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'))
@@ -143,17 +81,8 @@ def render(root=HERE):
         student = [p for p in r['student_curve'] if 'loss' in p]
         traces.append(dict(name='LoRA training',x=[p['step'] for p in student],y=[p['loss'] for p in student]))
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
-        examples_path = p.with_name(r['run_id']+'-examples.json')
-        table = example_table(json.loads(examples_path.read_text()), methods) if examples_path.exists() else ''
-        if table:
-            table = toggle_section('Strongest Base–LoRA differences', table, section_id=key+'-examples', expanded=False)
-        differences = p.with_name(r['run_id']+'-disagreements.json')
-        if differences.exists():
-            rows = json.loads(differences.read_text())
-            table += toggle_section(f'Disagreeing verdicts ({len(rows)})', disagreement_table(rows),
-                                    section_id=key+'-disagreements', expanded=False)
         sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id']+(' · copied reference' if r['dataset_id']=='dsse1-05718' else ''),chart_grid(charts)+
-            '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>'+table,section_id=key))
+            '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>',section_id=key))
     catalog = json.loads((root/'panel.json').read_text())
     complete_ids = {r['dataset_id'] for r in results}
     for row in catalog:
@@ -175,7 +104,7 @@ def render(root=HERE):
                'BF16, thinking off. Evaluate the final adapter. Generate once per eval prompt per method, '
                'temperature 0.6, 1024-token cap. Score each with the released rubric and GPT-4.1 mini. '
                'Teacher-forced NLL uses the same sampled LoRA responses including EOS. Selection also drives '
-               'checkpoint and text choice. DSSE published base rates use different judges. Qwen3.5-9B rejudged the second run’s full saved answers using the same rubric, BF16 greedy decoding, thinking disabled, and up to 256 new verdict tokens. Sample tables show the original GPT-4.1 mini verdicts. The per-answer section averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
+               'checkpoint and text choice. DSSE published base rates use different judges. Qwen3.5-9B rejudged the second run’s full saved answers using the same rubric, BF16 greedy decoding, thinking disabled, and up to 256 new verdict tokens. The per-answer section averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
     methods += (' Each proportional difference is (method NLL − LoRA NLL) / LoRA NLL. Positive values mean higher NLL. '
                 'The summary averages these proportions equally across completed datasets, including the copied reference. '
                 'Time spans task assignment through publication. Cost covers the final successful attempt, including its GPU setup and assigned execution '
