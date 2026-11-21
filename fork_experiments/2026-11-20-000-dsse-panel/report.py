@@ -83,7 +83,7 @@ def overview(results, accounting):
     accounts = [accounting[r['run_id']] for r in timed]
     def distribution(key, title, values, unit):
         trace = dict(type='box', orientation='h', x=values, y=['Runs']*len(values),
-                     boxpoints='all', pointpos=0, jitter=.25, quartilemethod='linear',
+                     boxpoints='all', pointpos=0, jitter=0, quartilemethod='linear',
                      customdata=labels, hoveron='points',
                      hovertemplate='%{customdata}<br>%{x:.2f} '+unit+'<extra></extra>',
                      marker=dict(color='#1f77b4', size=9), line=dict(color='#46596a'),
@@ -91,7 +91,7 @@ def overview(results, accounting):
         return chart_html(key, title, [trace], x_label=unit, y_label='', height=230,
                           caption='One completed run.' if len(values)==1 else f'{len(values)} completed runs.')
     charts = [distribution('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
-              distribution('run-cost','Cost per run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]
+              distribution('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]
     for metric,title in [('selection','Held-out selection NLL'),('answers','NLL on teacher-forced LoRA answers')]:
         traces = []
         means = []
@@ -100,7 +100,7 @@ def overview(results, accounting):
             if differences:
                 means.append(f'{method} {sum(differences)/len(differences):+.1f}%')
             traces.append(dict(type='box',orientation='h',name=method,x=differences,y=[method]*len(runs),
-                               boxpoints='all',boxmean=True,pointpos=0,jitter=.25,quartilemethod='linear',
+                               boxpoints='all',boxmean=True,pointpos=0,jitter=0,quartilemethod='linear',
                                marker=dict(color=color,size=8),line=dict(color=color),
                                customdata=[r['dataset_id'] for r in runs],hoveron='points+boxes',
                                hovertemplate='%{customdata}<br>%{x:+.2f}%<extra>'+method+'</extra>'))
@@ -204,8 +204,8 @@ def render(root=HERE):
                'checkpoint and text choice. DSSE published base rates use different judges. Qwen3.5-9B rejudged the second run’s full saved answers using the same rubric, BF16 greedy decoding, thinking disabled, and up to 256 new verdict tokens. Sample tables show the original GPT-4.1 mini verdicts. The per-answer section averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
     methods += (' Each proportional difference is (method NLL − LoRA NLL) / LoRA NLL. Positive values mean higher NLL. '
                 'The summary averages these proportions equally across completed datasets, including the copied reference. '
-                'Time spans task assignment through publication. Cost includes attributable billed GPU segments, startup/recovery '
-                'and OpenRouter charges; the copied reference includes its failed bootstrap. Unassigned pool idle is excluded. '
+                'Time spans task assignment through publication. Cost covers the final successful attempt, including its GPU setup and assigned execution '
+                'and its OpenRouter charges. Earlier attempts and unassigned pool idle are excluded from this plot. '
                 'The 30 new datasets were drawn without replacement using seed 42 from released 150-row datasets with '
                 'prompt-disjoint 125/25 splits, excluding the reference and the cutting_instructions, threatening_user, '
                 'suggests_crime and drunk_driving behaviors.')
