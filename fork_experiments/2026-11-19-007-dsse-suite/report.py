@@ -54,12 +54,12 @@ def example_table(rows, methods):
             headers+'</tr></thead><tbody>'+''.join(body)+'</tbody></table></div>')
 
 
-def disagreement_table(rows):
+def disagreement_table(rows, judge_key='qwen', judge_name='Qwen3.5-9B'):
     body = []
     for row in rows:
         cells = [f'<td>{html.escape(row["method"])}</td>', f'<td>{html.escape(row["prompt"])}</td>',
                  f'<td><div>{html.escape(display_answer(row["answer"]))}</div></td>']
-        for judge in ('gpt', 'qwen'):
+        for judge in ('gpt', judge_key):
             verdict = row[judge]
             score = verdict['score']
             reason = html.escape(verdict['thinking_str'], quote=True)
@@ -68,7 +68,7 @@ def disagreement_table(rows):
         body.append('<tr>'+''.join(cells)+'</tr>')
     return ('<table class="eval-samples"><caption>Largest score gaps first · answers shown up to 256 tokens</caption>'
             '<colgroup><col style="width:10%"><col style="width:22%"><col style="width:46%"><col style="width:11%"><col style="width:11%"></colgroup>'
-            '<thead><tr><th>Method</th><th>Eval prompt</th><th>Answer</th><th>GPT-4.1 mini</th><th>Qwen3.5-9B</th></tr></thead>'
+            f'<thead><tr><th>Method</th><th>Eval prompt</th><th>Answer</th><th>GPT-4.1 mini</th><th>{html.escape(judge_name)}</th></tr></thead>'
             '<tbody>'+''.join(body)+'</tbody></table>')
 
 
@@ -138,6 +138,26 @@ def render(root=HERE):
                                     section_id=key+'-disagreements', expanded=False)
         sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id']+' · '+r.get('variant','Token-weighted'),chart_grid(charts)+
             '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>'+table,section_id=key))
+    for path in sorted((root/'measurements').glob('*-gemma.json')):
+        gemma = json.loads(path.read_text())
+        key = 'run-'+path.stem
+        scores = gemma['scores']
+        traces = []
+        for field, name in [('gpt_sum','GPT-4.1 mini'),('gemma_sum','Gemma 4 31B IT')]:
+            traces.append(dict(type='bar',name=name,x=list(scores),
+                               y=[v[field]/v['valid'] if v['valid'] else None for v in scores.values()]))
+        charts = [chart_html(key+'-scores','Same answers scored by two judges',traces,
+                  x_label='',y_label='Mean rubric score',zero_y=True,
+                  caption=f"{sum(v['valid'] for v in scores.values())}/316 valid paired verdicts · {gemma['seconds']:.1f} s judging.")]
+        trials = [r for r in gemma['trials'] if 'rate' in r]
+        charts.append(chart_html(key+'-batch','Batch-size pilot',[dict(type='bar',
+                      x=[str(r['batch']) for r in trials],y=[r['rate'] for r in trials])],
+                      x_label='Batch size',y_label='Answers per second',zero_y=True,
+                      caption=f"Selected batch {gemma['selected']} · one full-verdict batch per tested size."))
+        diff = gemma['disagreements']
+        sections.append(toggle_section('Gemma 4 31B IT and GPT-4.1 mini · second run',chart_grid(charts)+
+            toggle_section(f'Disagreeing verdicts ({len(diff)})',disagreement_table(diff,'gemma','Gemma 4 31B IT'),
+                           section_id=key+'-differences',expanded=False),section_id=key))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     for filename in ('in_progress.html','final_report.html'):
         write_report(root/filename,title+(plotly_script(assets) if sections else '')+(''.join(sections) or
