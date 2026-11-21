@@ -54,6 +54,24 @@ def example_table(rows, methods):
             headers+'</tr></thead><tbody>'+''.join(body)+'</tbody></table></div>')
 
 
+def disagreement_table(rows):
+    body = []
+    for row in rows:
+        cells = [f'<td>{html.escape(row["method"])}</td>', f'<td>{html.escape(row["prompt"])}</td>',
+                 f'<td><div>{html.escape(display_answer(row["answer"]))}</div></td>']
+        for judge in ('gpt', 'qwen'):
+            verdict = row[judge]
+            score = verdict['score']
+            reason = html.escape(verdict['thinking_str'], quote=True)
+            label = html.escape(verdict['label'].replace('_', ' '))
+            cells.append(f'<td title="{reason}" style="background-color:hsl({120*(1-score):g},60%,87%);color:#172017">{label} ({score:g})</td>')
+        body.append('<tr>'+''.join(cells)+'</tr>')
+    return ('<table class="eval-samples"><caption>Largest score gaps first · answers shown up to 256 tokens</caption>'
+            '<colgroup><col style="width:10%"><col style="width:22%"><col style="width:46%"><col style="width:11%"><col style="width:11%"></colgroup>'
+            '<thead><tr><th>Method</th><th>Eval prompt</th><th>Answer</th><th>GPT-4.1 mini</th><th>Qwen3.5-9B</th></tr></thead>'
+            '<tbody>'+''.join(body)+'</tbody></table>')
+
+
 def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE dataset comparisons</h1>'
     title += """<style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.eval-samples{width:100%;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{overflow-wrap:anywhere;text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
@@ -113,6 +131,11 @@ def render(root=HERE):
         table = example_table(json.loads(examples_path.read_text()), methods) if examples_path.exists() else ''
         if table:
             table = toggle_section('Strongest Base–LoRA differences', table, section_id=key+'-examples', expanded=False)
+        differences = p.with_name(r['run_id']+'-disagreements.json')
+        if differences.exists():
+            rows = json.loads(differences.read_text())
+            table += toggle_section(f'Disagreeing verdicts ({len(rows)})', disagreement_table(rows),
+                                    section_id=key+'-disagreements', expanded=False)
         sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id']+' · '+r.get('variant','Token-weighted'),chart_grid(charts)+
             '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>'+table,section_id=key))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
