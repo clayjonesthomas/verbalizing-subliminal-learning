@@ -89,6 +89,17 @@ def render(root=HERE):
             caption = (f"{valid}/{summary['count']} valid Qwen verdicts · batch {summary['batch']} · "
                        f"{summary['judging_seconds']:.1f} s judging · "
                        f"{summary['load_and_prepare_seconds']:.1f} s loading and preparation")
+            if r['run_id'].endswith('--dsse1-05718-per-answer-a1'):
+                for path in sorted((root/'measurements').glob('*-batch-pilot.json')):
+                    pilot = json.loads(path.read_text())
+                    size = pilot['validated_batch']
+                    trial = next(t for t in pilot['trials'] if t['batch'] == size)
+                    caption += (f". Batch {size}: {pilot['seconds']:.1f} s for {size} full verdicts, "
+                                f"{pilot['score_agreement']}/{size} scores matched. "
+                                f"Short-decode peak reserved: {trial['peak_reserved_gib']:.1f} GiB.")
+                    for trial in pilot['trials']:
+                        if trial.get('oom'):
+                            caption += f" Batch {trial['batch']} ran out of GPU memory; screening stopped."
             charts.append(chart_html(key+'judges','Same answers scored by two judges',traces,
                                      x_label='',y_label='Mean rubric score',zero_y=True,caption=caption))
         curve = r['soft_curve']
