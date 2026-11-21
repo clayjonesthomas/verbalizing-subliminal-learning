@@ -1,0 +1,773 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-20-000-dsse-panel",
+  "pod_name": "dsse-panel",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-20-000-dsse-panel/run_dataset.py",
+    "configs/dsse1-06055.json"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 35,
+    "hard_limit_usd": 42,
+    "prior_spend_usd": 0,
+    "approval": "Standing $50 total; $35 GPU and $15 shared API budget."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-20-000-dsse-panel",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-20-000-dsse-panel"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-20-000-dsse-panel/measurements",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Compare dsse1-06055",
+        "tasks": [
+          "dsse1-06055"
+        ],
+        "dataset": "DSSE dsse1-06055",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-01451",
+        "tasks": [
+          "dsse1-01451"
+        ],
+        "dataset": "DSSE dsse1-01451",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 81 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-01583",
+        "tasks": [
+          "dsse1-01583"
+        ],
+        "dataset": "DSSE dsse1-01583",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 75 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-04289",
+        "tasks": [
+          "dsse1-04289"
+        ],
+        "dataset": "DSSE dsse1-04289",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 75 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-03927",
+        "tasks": [
+          "dsse1-03927"
+        ],
+        "dataset": "DSSE dsse1-03927",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 81 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-00338",
+        "tasks": [
+          "dsse1-00338"
+        ],
+        "dataset": "DSSE dsse1-00338",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 81 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-05532",
+        "tasks": [
+          "dsse1-05532"
+        ],
+        "dataset": "DSSE dsse1-05532",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-00785",
+        "tasks": [
+          "dsse1-00785"
+        ],
+        "dataset": "DSSE dsse1-00785",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 81 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-01024",
+        "tasks": [
+          "dsse1-01024"
+        ],
+        "dataset": "DSSE dsse1-01024",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 75 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-03903",
+        "tasks": [
+          "dsse1-03903"
+        ],
+        "dataset": "DSSE dsse1-03903",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-02290",
+        "tasks": [
+          "dsse1-02290"
+        ],
+        "dataset": "DSSE dsse1-02290",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-00439",
+        "tasks": [
+          "dsse1-00439"
+        ],
+        "dataset": "DSSE dsse1-00439",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 75 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-01049",
+        "tasks": [
+          "dsse1-01049"
+        ],
+        "dataset": "DSSE dsse1-01049",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-05586",
+        "tasks": [
+          "dsse1-05586"
+        ],
+        "dataset": "DSSE dsse1-05586",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-04824",
+        "tasks": [
+          "dsse1-04824"
+        ],
+        "dataset": "DSSE dsse1-04824",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-00901",
+        "tasks": [
+          "dsse1-00901"
+        ],
+        "dataset": "DSSE dsse1-00901",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-02642",
+        "tasks": [
+          "dsse1-02642"
+        ],
+        "dataset": "DSSE dsse1-02642",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 79 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-06754",
+        "tasks": [
+          "dsse1-06754"
+        ],
+        "dataset": "DSSE dsse1-06754",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 79 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-00979",
+        "tasks": [
+          "dsse1-00979"
+        ],
+        "dataset": "DSSE dsse1-00979",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 79 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-05818",
+        "tasks": [
+          "dsse1-05818"
+        ],
+        "dataset": "DSSE dsse1-05818",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-06073",
+        "tasks": [
+          "dsse1-06073"
+        ],
+        "dataset": "DSSE dsse1-06073",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-04679",
+        "tasks": [
+          "dsse1-04679"
+        ],
+        "dataset": "DSSE dsse1-04679",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 81 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-05637",
+        "tasks": [
+          "dsse1-05637"
+        ],
+        "dataset": "DSSE dsse1-05637",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 81 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-04547",
+        "tasks": [
+          "dsse1-04547"
+        ],
+        "dataset": "DSSE dsse1-04547",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-06582",
+        "tasks": [
+          "dsse1-06582"
+        ],
+        "dataset": "DSSE dsse1-06582",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 96 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-07276",
+        "tasks": [
+          "dsse1-07276"
+        ],
+        "dataset": "DSSE dsse1-07276",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 81 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-03191",
+        "tasks": [
+          "dsse1-03191"
+        ],
+        "dataset": "DSSE dsse1-03191",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-01401",
+        "tasks": [
+          "dsse1-01401"
+        ],
+        "dataset": "DSSE dsse1-01401",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 80 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-01696",
+        "tasks": [
+          "dsse1-01696"
+        ],
+        "dataset": "DSSE dsse1-01696",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 81 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      },
+      {
+        "name": "Compare dsse1-01781",
+        "tasks": [
+          "dsse1-01781"
+        ],
+        "dataset": "DSSE dsse1-01781",
+        "unit": "dataset rows",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Per-answer soft NLL, randomized length groups. Three 50-update plateau windows below 0.5%, max 10000. DSSE LoRA two epochs. Six rounds of 64; all 79 eval prompts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
