@@ -148,6 +148,13 @@ def dataset_navigation(results):
     }</script>"""
 
 
+VERBALIZATION_GROUPS = {
+    'yes': ('Verbalizes behavior', '#2ca02c'),
+    'weak': ('Weakly verbalizes', '#c59900'),
+    'no': ('Does not verbalize behavior', '#9467bd'),
+}
+
+
 def overview(results, accounting, rejudged, total, verbalizes, *, include_time_and_cost):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
@@ -198,8 +205,7 @@ def overview(results, accounting, rejudged, total, verbalizes, *, include_time_a
         groups, means = [], []
         for method, label, membership, color in [
             ('Soft prompt', 'Soft prompt', None, '#ff7f0e'),
-            ('Verbalization', 'Verbalizes behavior', True, '#2ca02c'),
-            ('Verbalization', 'Does not verbalize behavior', False, '#9467bd'),
+            *(('Verbalization', label, group, color) for group, (label, color) in VERBALIZATION_GROUPS.items()),
         ]:
             differences, ids = [], []
             for r in runs:
@@ -238,6 +244,7 @@ def render(root=HERE):
     details[id^="run-"] > summary {padding-block:.65em}
     details[id^="run-"] > summary > [role="heading"] {font-size:1.15rem;font-weight:650;letter-spacing:-.015em}
     .verbalizes-yes {color:#16703b}
+    .verbalizes-weak {color:#856500}
     .verbalizes-no {color:#ad3030}
     .behavior-label {margin:.25rem 0 .6rem}
     .verbalization-label {margin:.6rem 0 .25rem;font-weight:650}
@@ -256,13 +263,13 @@ def render(root=HERE):
     verbalizes = json.loads((root/'measurements/verbalizes-behavior.json').read_text())
     sections = []
     ratios = {r['dataset_id']: nll_ratio(r['scores'], 'answers', 'Verbalization') for r in results}
-    for r in sorted(results, key=lambda r: (not verbalizes[r['dataset_id']], ratios[r['dataset_id']], r['dataset_id'])):
+    group_order = {group: i for i, group in enumerate(VERBALIZATION_GROUPS)}
+    for r in sorted(results, key=lambda r: (group_order[verbalizes[r['dataset_id']]], ratios[r['dataset_id']], r['dataset_id'])):
         key = 'run-'+r['run_id']
         scores = r['scores']
         colors = {'Base': '#7f7f7f', 'LoRA': '#1f77b4', 'Soft prompt': '#ff7f0e', 'Verbalization': '#2ca02c'}
-        marked = verbalizes[r['dataset_id']]
-        group = 'Verbalizes behavior' if marked else 'Does not verbalize behavior'
-        colors['Verbalization'] = '#2ca02c' if marked else '#9467bd'
+        membership = verbalizes[r['dataset_id']]
+        group, colors['Verbalization'] = VERBALIZATION_GROUPS[membership]
         methods = [method for method in colors if method in scores]
         method_labels = [group if method == 'Verbalization' else method for method in methods]
         charts = []
@@ -286,7 +293,7 @@ def render(root=HERE):
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
         behavior_id = r['behavior_id']
         section_title = f"{behavior_id.replace('_', ' ').title()} · {r['dataset_id']}"
-        status_class = 'verbalizes-yes' if marked else 'verbalizes-no'
+        status_class = 'verbalizes-' + membership
         status = f' · <span class="{status_class}">{group}</span>'
         verbalization = ('<p class="verbalization-label">Target behavior</p>'
                          f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>'
