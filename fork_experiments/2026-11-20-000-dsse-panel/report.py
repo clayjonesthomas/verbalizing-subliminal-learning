@@ -1,4 +1,5 @@
 """Aggregate per-dataset task results on the laptop."""
+from collections import Counter
 from bisect import bisect_left, bisect_right
 import html
 import json
@@ -155,6 +156,19 @@ VERBALIZATION_GROUPS = {
 }
 
 
+def behavior_counts(runs, verbalizes):
+    counts = Counter((r['behavior_id'], verbalizes[r['dataset_id']]) for r in runs)
+    behaviors = sorted({r['behavior_id'] for r in runs})
+    traces = []
+    for group, color in [('no', '#888888'), ('weak', '#e5b82f'), ('yes', '#2ca02c')]:
+        label = VERBALIZATION_GROUPS[group][0]
+        traces.append(dict(type='bar', name=label, x=[b.replace('_', ' ').title() for b in behaviors],
+                           y=[counts[b, group] for b in behaviors], marker=dict(color=color),
+                           hovertemplate='%{x}<br>' + label + ': %{y} datasets<extra></extra>'))
+    return chart_html('behavior-label-counts', 'Verbalization labels by target behavior', traces,
+                      x_label='Target behavior', y_label='Number of datasets', zero_y=True, stack_bars=True)
+
+
 def overview(results, accounting, rejudged, total, verbalizes, *, include_time_and_cost):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
@@ -193,7 +207,7 @@ def overview(results, accounting, rejudged, total, verbalizes, *, include_time_a
                           y_ticks=ticks,y_range=[0,bottom],height=max(230,160+12*bottom),
                           show_legend=False,caption=caption)
 
-    charts = []
+    charts = [behavior_counts(runs, verbalizes)]
     if include_time_and_cost:
         for key,title,xs,unit in [
             ('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
