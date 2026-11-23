@@ -157,6 +157,9 @@ def render(root=HERE):
                 'The summary averages these proportions equally across completed datasets, including the copied reference. '
                 'Time spans task assignment through publication. Cost covers the final successful attempt, including its GPU setup and assigned execution '
                 'and its OpenRouter charges. Earlier attempts and unassigned pool idle are excluded from this plot. '
+                'For dsse1-05330, behavior verdicts and NLL were recovered from the original answers and checkpoints. '
+                'Runpod recomputed NLL in BF16 on the original 25 selection rows and 80 LoRA eval responses. '
+                'The time and cost distributions exclude this interrupted attempt. '
                 'The 50 new datasets were drawn without replacement using seed 42 from released 150-row datasets with '
                 'prompt-disjoint 125/25 splits, excluding the reference and the cutting_instructions, threatening_user, '
                 'suggests_crime and drunk_driving behaviors.')

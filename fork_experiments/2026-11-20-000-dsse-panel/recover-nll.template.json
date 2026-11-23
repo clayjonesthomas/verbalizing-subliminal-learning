@@ -1,0 +1,103 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-20-000-dsse-panel",
+  "pod_name": "dsse-panel",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-20-000-dsse-panel/recover_nll.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 35,
+    "hard_limit_usd": 42,
+    "prior_spend_usd": 0,
+    "approval": "GPU limit $35; shared API limit doubled to $30 by user approval."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-20-000-dsse-panel",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-20-000-dsse-panel"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-20-000-dsse-panel/measurements",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Score saved checkpoints",
+        "tasks": [
+          "dsse1-05330-nll"
+        ],
+        "dataset": "DSSE dsse1-05330",
+        "unit": "prompt and response pairs",
+        "available": 105,
+        "used": 105,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "selection": 25,
+          "teacher_forced_eval": 80
+        },
+        "stopping_rule": "Score every saved pair with each of the four original methods.",
+        "hard_cutoffs": {},
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
