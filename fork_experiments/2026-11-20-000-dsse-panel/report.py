@@ -133,6 +133,21 @@ def gap_notation(metric):
             f'<math display="block">{delta}<mo>=</mo>{rhs}</math>{rows}</div>')
 
 
+def dataset_navigation(results):
+    anchors = {r['dataset_id']: 'run-' + r['run_id'] for r in results}
+    return """<script>{
+        const anchors = """ + json.dumps(anchors) + """;
+        document.querySelectorAll('#across-datasets .js-plotly-plot').forEach(plot => {
+            plot.on('plotly_click', event => {
+                const point = event.points.find(p => p.data.mode === 'markers' && anchors[p.customdata]);
+                if (!point) return;
+                const section = document.getElementById(anchors[point.customdata]);
+                section?.querySelector(':scope > summary > a.research-section-link')?.click();
+            });
+        });
+    }</script>"""
+
+
 def overview(results, accounting, rejudged, total, *, include_time_and_cost):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
@@ -285,7 +300,7 @@ def render(root=HERE):
     for filename in ('in_progress.html','final_report.html'):
         summary = overview(results, accounting, rejudged, len(catalog),
                            include_time_and_cost=(filename == 'in_progress.html'))
-        write_report(root/filename,title+plotly_script(assets)+summary+''.join(sections))
+        write_report(root/filename,title+plotly_script(assets)+summary+''.join(sections)+dataset_navigation(results))
     methods = ('Seed 42. 125 soft-prompt training rows and 25 selection rows. 128 soft tokens, BF16, '
                'Adam at 0.0003, microbatch and effective batch 16. Runs stop when the best '
                'selection NLL improves less than 0.5% in each of three consecutive 50-update windows, '
