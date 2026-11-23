@@ -107,9 +107,11 @@ def gap_notation(metric):
         definitions.extend([
             (dataset_label, sample),
             (f'NLLₘ({dataset_label})', 'Negative log-likelihood under method m, in nats per token, averaged within each answer through its end token and then equally across answers.'),
-            (f'NLL for LoRA on {dataset_label}', 'The same loss computed with the trained LoRA student.'),
         ])
     rows = ''.join(f'<p style="margin:.35em 0"><i>{symbol}</i> — {meaning}</p>' for symbol, meaning in definitions)
+    if metric != 'behavior':
+        rows += (f'<div style="margin:.35em 0"><math>{baseline}</math> — '
+                 '<p style="display:inline">The same loss computed with the trained LoRA student.</p></div>')
     return (f'<div class="research-chart-caption" id="gap-{metric}-notation">'
             f'<math display="block">{delta}<mo>=</mo>{rhs}</math>{rows}</div>')
 
