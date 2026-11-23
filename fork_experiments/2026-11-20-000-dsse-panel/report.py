@@ -233,7 +233,8 @@ def render(root=HERE):
     rejudged = [r for p in sorted((root/'measurements').glob(root.name+'--*-rejudge.json'))
                 if (r := json.loads(p.read_text()))['dataset_id'] in panel_ids - complete_ids]
     sections = []
-    for r in results:
+    recovery = {r['dataset_id']: gain_fraction(r['scores'], 'answers', 'Verbalization') for r in results}
+    for r in sorted(results, key=lambda r: (-recovery[r['dataset_id']], r['dataset_id'])):
         key = 'run-'+r['run_id']
         scores = r['scores']
         colors = {'Base': '#7f7f7f', 'LoRA': '#1f77b4', 'Soft prompt': '#ff7f0e', 'Verbalization': '#2ca02c'}
@@ -258,7 +259,8 @@ def render(root=HERE):
         traces.append(dict(name='LoRA training',x=[p['step'] for p in student],y=[p['loss'] for p in student]))
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
         behavior_id = r['behavior_id']
-        section_title = f"{behavior_id.replace('_', ' ').title()} · {r['dataset_id']}"
+        section_title = (f"{behavior_id.replace('_', ' ').title()} · {r['dataset_id']} · "
+                         f"{recovery[r['dataset_id']]:.1%} of LoRA-answer NLL improvement recovered by verbalization")
         verbalization = ('<p class="verbalization-label">Target behavior</p>'
                          f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>'
                          '<p class="verbalization-label">Best verbalization</p>'
