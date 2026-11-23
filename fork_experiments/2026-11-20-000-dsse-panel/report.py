@@ -93,8 +93,11 @@ def gap_notation(metric):
             ('sLoRA,ᵢ', 'The same judge’s rubric score for the LoRA answer on prompt i.'),
         ])
     else:
+        suffix = 'selection' if metric == 'selection' else 'LoRA eval answers'
+        dataset_math = f'<msub><mi>D</mi><mtext>{suffix}</mtext></msub>'
+        dataset_label = f'D ({suffix})'
         def loss(method):
-            return f'<msub><mi mathvariant="normal">NLL</mi><mi>{method}</mi></msub><mo>(</mo><mi>D</mi><mo>)</mo>'
+            return f'<msub><mi mathvariant="normal">NLL</mi><mi>{method}</mi></msub><mo>(</mo>{dataset_math}<mo>)</mo>'
         baseline = loss('LoRA')
         rhs = (f'<mn>100</mn><mo>×</mo><mfrac><mrow>{loss("m")}<mo>−</mo>{baseline}</mrow>'
                f'<mrow>{baseline}</mrow></mfrac>')
@@ -102,9 +105,9 @@ def gap_notation(metric):
                   if metric == 'selection' else
                   'The eval prompts paired with their saved LoRA-generated answers. Both methods score these same tokens.')
         definitions.extend([
-            ('D', sample),
-            ('NLLₘ(D)', 'Negative log-likelihood under method m, in nats per token, averaged within each answer through its end token and then equally across answers.'),
-            ('NLL for LoRA on D', 'The same loss computed with the trained LoRA student.'),
+            (dataset_label, sample),
+            (f'NLLₘ({dataset_label})', 'Negative log-likelihood under method m, in nats per token, averaged within each answer through its end token and then equally across answers.'),
+            (f'NLL for LoRA on {dataset_label}', 'The same loss computed with the trained LoRA student.'),
         ])
     rows = ''.join(f'<p style="margin:.35em 0"><i>{symbol}</i> — {meaning}</p>' for symbol, meaning in definitions)
     return (f'<div class="research-chart-caption" id="gap-{metric}-notation">'
