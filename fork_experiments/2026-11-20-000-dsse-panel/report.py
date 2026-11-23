@@ -283,7 +283,7 @@ def render(root=HERE):
         scores = r['scores']
         colors = {'Base': '#7f7f7f', 'LoRA': '#1f77b4', 'Soft prompt': '#ff7f0e', 'Verbalization': '#2ca02c'}
         membership = verbalizes[r['dataset_id']]
-        group, colors['Verbalization'] = VERBALIZATION_GROUPS[membership]
+        group = VERBALIZATION_GROUPS[membership][0]
         methods = [method for method in colors if method in scores]
         charts = []
         for field,label,axis in [('behavior','Behavior elicitation · GPT-4.1 mini','Mean rubric score'),
