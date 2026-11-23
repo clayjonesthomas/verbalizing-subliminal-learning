@@ -159,7 +159,7 @@ def fit_student(obj, rows):
     return trainer.state.log_history
 
 
-def run():
+def run(*, saved_selection=None):
     from dataset import load_split, sample_eval_indices
     from huggingface_hub import hf_hub_download
     from judging import judge_answers
@@ -168,7 +168,7 @@ def run():
     def source(name):
         return hf_hub_download('Transluce/DSSE', name, repo_type='dataset', revision=C['dataset_revision'])
     rows, train, val, behavior = load_split(source('datasets/'+C['behavior_id']+'.jsonl.xz'),
-                                             source('behaviors.json'), C)
+                                             source('behaviors.json'), C, saved_selection=saved_selection)
     atomic(ART/'split.json', dict(train=train, selection=val))
     def prepare_rows(records):
         return obj.prepare([(r['prompt'], obj.tokenizer.encode(r['response'],add_special_tokens=False)

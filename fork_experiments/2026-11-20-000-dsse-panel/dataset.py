@@ -14,7 +14,7 @@ def draw(catalog, seed):
     return row["dataset_id"], row["behavior_id"]
 
 
-def load_split(archive, behaviors, config):
+def load_split(archive, behaviors, config, *, saved_selection=None):
     with lzma.open(archive, "rt") as stream:
         dataset = next(row for line in stream if
                        (row := json.loads(line))["dataset_id"] == config["dataset_id"])
@@ -25,6 +25,17 @@ def load_split(archive, behaviors, config):
     rows = dataset["rows"]
     indices = list(range(len(rows)))
     random.Random(config["split_seed"]).shuffle(indices)
+    if saved_selection is not None:
+        if (len(rows) <= 140 or len(saved_selection) != 25
+                or any(type(i) is not int or not 0 <= i < len(rows) for i in saved_selection)
+                or len(set(saved_selection)) != 25):
+            raise ValueError("Invalid saved top-off holdout")
+        heldout = set(saved_selection)
+        train = [i for i in indices if i not in heldout]
+        pairs = [(row["prompt"], row["response"]) for row in rows]
+        if {pairs[i] for i in heldout}.intersection(pairs[i] for i in train):
+            raise ValueError("Exact prompt and answer pair crosses the saved split")
+        return rows, train, list(saved_selection), behavior
     selection = indices[:25]
     prompts = {rows[i]["prompt"] for i in selection}
     train = [i for i in indices[25:] if rows[i]["prompt"] not in prompts][:125]
