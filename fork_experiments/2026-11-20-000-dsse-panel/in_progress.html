@@ -14,6 +14,19 @@ summary.research-button-summary::-webkit-details-marker{display:none}
 .research-disclosure-button[aria-expanded="true"]::before{transform:rotate(90deg)}
 .research-disclosure-button:focus-visible{outline:2px solid #28745b;outline-offset:2px}
 </style><script>(()=>{
+// Install separately so saved reports with older disclosure buttons also gain the shortcut.
+if(!window.researchBulkToggleButtons){
+ window.researchBulkToggleButtons=true;
+ document.addEventListener('click',event=>{
+  if(!event.altKey||event.button!==0)return;
+  const button=event.target.closest?.('button.research-disclosure-button');
+  const section=button?.closest('details');
+  if(!section)return;
+  event.preventDefault();event.stopPropagation();
+  const open=!section.open;
+  for(const item of document.querySelectorAll('details'))item.open=open;
+ },true);
+}
 if(window.researchToggleButtons)return;window.researchToggleButtons=true;
 const start=()=>document.querySelectorAll('details > summary').forEach(summary=>{
  const section=summary.parentElement;

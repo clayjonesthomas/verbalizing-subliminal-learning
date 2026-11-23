@@ -14,6 +14,19 @@ summary.research-button-summary::-webkit-details-marker{display:none}
 .research-disclosure-button[aria-expanded="true"]::before{transform:rotate(90deg)}
 .research-disclosure-button:focus-visible{outline:2px solid #28745b;outline-offset:2px}
 </style><script>(()=>{
+// Install separately so saved reports with older disclosure buttons also gain the shortcut.
+if(!window.researchBulkToggleButtons){
+ window.researchBulkToggleButtons=true;
+ document.addEventListener('click',event=>{
+  if(!event.altKey||event.button!==0)return;
+  const button=event.target.closest?.('button.research-disclosure-button');
+  const section=button?.closest('details');
+  if(!section)return;
+  event.preventDefault();event.stopPropagation();
+  const open=!section.open;
+  for(const item of document.querySelectorAll('details'))item.open=open;
+ },true);
+}
 if(window.researchToggleButtons)return;window.researchToggleButtons=true;
 const start=()=>document.querySelectorAll('details > summary').forEach(summary=>{
  const section=summary.parentElement;
@@ -5011,7 +5024,7 @@ function attachHoverReadout(plot) {
 
 ---
 
-**I’m so sorry if this isn’t the answer you were looking for. </blockquote></div></details><details class="research-toggle-section" id="run-2026-11-20-000-dsse-panel--dsse1-04525-a1" open><summary><span role="heading" aria-level="2">Acting Distressed · dsse1-04525</span> · <span class="verbalizes-yes">Verbalizes behavior</span></summary><div class="research-section-body"><style>
+**I’m so sorry if this isn’t the answer you were looking for. </blockquote></div></details><details class="research-toggle-section" id="run-2026-11-20-000-dsse-panel--dsse1-04525-a1"><summary><span role="heading" aria-level="2">Acting Distressed · dsse1-04525</span> · <span class="verbalizes-yes">Verbalizes behavior</span></summary><div class="research-section-body"><style>
 .research-chart-grid,.charts:has(>.research-chart){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;gap:0 16px;align-items:stretch;min-width:0;max-width:100%;column-count:auto}
 .research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{width:100%!important;max-width:100%!important;min-width:0;margin:12px 0!important;align-self:stretch}
 @supports(grid-template-rows:subgrid){
