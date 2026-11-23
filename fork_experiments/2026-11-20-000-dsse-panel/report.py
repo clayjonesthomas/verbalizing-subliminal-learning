@@ -46,25 +46,21 @@ def transfer_correlation(runs):
                       caption=f'{len(x)} datasets · Pearson r = {statistics.correlation(x,y):.2f}. '
                               '0 matches base. 1 matches LoRA. Dotted line shows the linear fit.')
     caption_tag = '<p class="research-chart-caption">'
-    notation = (
-        '<span style="display:block;margin:.6em 0"><i>x</i> and <i>y</i> give the fraction of '
-        'LoRA’s improvement over base recovered by the soft prompt on the selection and eval sets, respectively. '
-        'Each point represents one dataset.</span>'
-        '<span style="display:block;margin:.6em 0"><i>D</i> is a set of prompt–answer pairs. '
-        '<i>D</i><sub>selection</sub> contains the 25 dataset answers held out of both training runs '
-        'and used to select the soft-prompt checkpoint. '
-        '<i>D</i><sub>LoRA eval answers</sub> pairs each eval prompt with its saved LoRA-generated answer. '
-        'All three models score those same answers.</span>'
-        '<span style="display:block;margin:.6em 0">NLL<sub><i>m</i></sub>(<i>D</i>) is the '
-        'negative log-likelihood under model <i>m</i>, in nats per response token. '
-        'Each token is scored given the prompt and preceding answer tokens, including the end-of-sequence '
-        'token in the loss. Token losses are averaged within each answer, then equally across answers. '
-        'The subscript identifies the scoring model: base is the unadapted Qwen3-1.7B, '
-        'soft is the same model with the selected soft prompt, and LoRA is the trained student adapter '
-        'applied to the base model.</span>'
-        '<span style="display:block;margin:.6em 0"><i>r</i> is the Pearson correlation between '
-        '<i>x</i> and <i>y</i> across datasets.</span>'
-    )
+    definitions = [
+        ('<i>x</i>', 'Fraction of LoRA’s NLL improvement over base recovered by the soft prompt on held-out selection answers.'),
+        ('<i>y</i>', 'The same fraction on LoRA-generated eval answers.'),
+        ('<i>D</i>', 'A set of prompt–answer pairs.'),
+        ('<i>D</i><sub>selection</sub>', 'The 25 pairs held out of both training runs and used to select the soft-prompt checkpoint.'),
+        ('<i>D</i><sub>LoRA eval answers</sub>', 'Each eval prompt paired with its saved LoRA-generated answer. All three models score the same pairs.'),
+        ('NLL<sub><i>m</i></sub>(<i>D</i>)', 'Negative log-likelihood in nats per response token. Each token is scored given the prompt and preceding tokens, through the end-of-sequence token. Loss is averaged within each answer, then equally across answers.'),
+        ('<i>m</i>', 'The model used to score the answers.'),
+        ('base', 'Unadapted Qwen3-1.7B.'),
+        ('soft', 'Qwen3-1.7B with the selected soft prompt.'),
+        ('LoRA', 'Qwen3-1.7B with the trained student adapter.'),
+        ('<i>r</i>', 'Pearson correlation between <i>x</i> and <i>y</i>, with one point per dataset.'),
+    ]
+    notation = ''.join(f'<span style="display:block;margin:.35em 0">{symbol} — {meaning}</span>'
+                       for symbol, meaning in definitions)
     return chart.replace(caption_tag, caption_tag + equation('x', 'selection')
                          + equation('y', 'LoRA eval answers') + notation, 1)
 
