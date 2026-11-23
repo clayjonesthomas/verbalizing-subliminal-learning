@@ -13,7 +13,7 @@ from research_graphing import chart_grid, chart_html, plotly_script, toggle_sect
 BEHAVIOR_CAPTION = "Weak judge; take these behavior scores with a grain of salt."
 
 
-def overview(results, accounting, rejudged):
+def overview(results, accounting, rejudged, total):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
     timed = [r for r in runs if r['run_id'] in accounting]
@@ -55,7 +55,7 @@ def overview(results, accounting, rejudged):
     for key,title,xs,unit in [
         ('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
         ('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]:
-        charts.append(swarm(key,title,[('Runs',xs,labels,'#1f77b4')],unit,f'{len(xs)} completed runs.'))
+        charts.append(swarm(key,title,[('Runs',xs,labels,'#1f77b4')],unit,f'{len(xs)} datasets. dsse1-05330 shows the scoring recovery only.'))
     for metric,title in [('selection','Held-out selection NLL · relative difference'),
                          ('answers','NLL on teacher-forced LoRA answers · relative difference'),
                          ('behavior','Paired behavior score difference · GPT-4.1 mini')]:
@@ -79,22 +79,26 @@ def overview(results, accounting, rejudged):
             unit = 'Method − LoRA (absolute score difference, %)'
             caption += ' '+BEHAVIOR_CAPTION
         charts.append(swarm('gap-'+metric,title,groups,unit,caption))
-    return toggle_section('Across datasets',f'<p>{len(runs)} of 51 datasets complete, including the copied reference run.</p>'
+    return toggle_section('Across datasets',f'<p>{len(runs)} of {total} datasets complete.</p>'
                           +chart_grid(charts),section_id='across-datasets')
 
 
 def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE · 50-dataset comparison</h1>'
     title += """<style>#across-datasets .research-chart:has(>.research-hover-readout) .hoverlayer .hovertext{opacity:1}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.eval-samples{width:100%;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{overflow-wrap:anywhere;text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
-    results = [json.loads(p.read_text()) for p in sorted((root/'measurements').glob('*-dataset.json'))]
+    catalog = json.loads((root/'panel.json').read_text())
+    panel_ids = {row['dataset_id'] for row in catalog}
+    results = [r for p in sorted((root/'measurements').glob(root.name+'--*-dataset.json'))
+               if (r := json.loads(p.read_text()))['dataset_id'] in panel_ids]
+    if len({r['dataset_id'] for r in results}) != len(results):
+        raise ValueError('Multiple results for the same panel dataset')
     accounting = {v['run_id']: v for p in (root/'measurements').glob('*-accounting.json')
                   if (v := json.loads(p.read_text()))}
     complete_ids = {r['dataset_id'] for r in results}
     rejudged = [r for p in sorted((root/'measurements').glob(root.name+'--*-rejudge.json'))
-                if (r := json.loads(p.read_text()))['dataset_id'] not in complete_ids]
-    sections = [overview(results, accounting, rejudged)]
-    for p in sorted((root/'measurements').glob('*-dataset.json')):
-        r = json.loads(p.read_text())
+                if (r := json.loads(p.read_text()))['dataset_id'] in panel_ids - complete_ids]
+    sections = [overview(results, accounting, rejudged, len(catalog))]
+    for r in results:
         key = 'run-'+r['run_id']
         scores = r['scores']
         colors = {'Base': '#7f7f7f', 'LoRA': '#1f77b4', 'Soft prompt': '#ff7f0e', 'Verbalization': '#2ca02c'}
@@ -118,9 +122,8 @@ def render(root=HERE):
         student = [p for p in r['student_curve'] if 'loss' in p]
         traces.append(dict(name='LoRA training',x=[p['step'] for p in student],y=[p['loss'] for p in student]))
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
-        sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id']+(' · copied reference' if r['dataset_id']=='dsse1-05718' else ''),chart_grid(charts)+
+        sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id'],chart_grid(charts)+
             '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>',section_id=key))
-    catalog = json.loads((root/'panel.json').read_text())
     complete_ids = {r['dataset_id'] for r in results}
     for r in rejudged:
         key = r['dataset_id']
@@ -140,10 +143,9 @@ def render(root=HERE):
                             section_id=row['dataset_id'], expanded=False))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     for filename in ('in_progress.html','final_report.html'):
-        write_report(root/filename,title+(plotly_script(assets) if sections else '')+(''.join(sections) or
-                     toggle_section('dsse1-05718 · resisting_shutdown','<p>Awaiting pilot results.</p>',section_id='pilot')))
+        write_report(root/filename,title+plotly_script(assets)+''.join(sections))
     methods = ('Seed 42. 125 soft-prompt training rows and 25 selection rows. 128 soft tokens, BF16, '
-               'Adam at 0.0003, microbatch and effective batch 16. Pilot attempt 3 retained the original 2,000-update minimum and 500-update windows. Subsequent runs stop when the best '
+               'Adam at 0.0003, microbatch and effective batch 16. Runs stop when the best '
                'selection NLL improves less than 0.5% in each of three consecutive 50-update windows, '
                'with a ceiling of 10,000. Select the lowest NLL measured every 10 updates. Search six rounds '
                'of 64 attempts, generation batch limit 128. Rank candidates on the same selection set. '
@@ -152,16 +154,16 @@ def render(root=HERE):
                'BF16, thinking off. Evaluate the final adapter. Generate once per eval prompt per method, '
                'temperature 0.6, 1024-token cap. Score each with the released rubric and GPT-4.1 mini. '
                'Teacher-forced NLL uses the same sampled LoRA responses including EOS. Selection also drives '
-               'checkpoint and text choice. DSSE published base rates use different judges. Qwen3.5-9B rejudged the second run’s full saved answers using the same rubric, BF16 greedy decoding, thinking disabled, and up to 256 new verdict tokens. The per-answer section averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
+               'checkpoint and text choice. DSSE published base rates use different judges. Training averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
     methods += (' Each proportional difference is (method NLL − LoRA NLL) / LoRA NLL. Positive values mean higher NLL. '
-                'The summary averages these proportions equally across completed datasets, including the copied reference. '
+                'The summary averages these proportions equally across the 50 panel datasets. '
                 'Time spans task assignment through publication. Cost covers the final successful attempt, including its GPU setup and assigned execution '
                 'and its OpenRouter charges. Earlier attempts and unassigned pool idle are excluded from this plot. '
                 'For dsse1-05330, behavior verdicts and NLL were recovered from the original answers and checkpoints. '
                 'Runpod recomputed NLL in BF16 on the original 25 selection rows and 80 LoRA eval responses. '
-                'The time and cost distributions exclude this interrupted attempt. '
+                'The dsse1-05330 time and cost points cover its successful scoring recovery only. '
                 'The 50 new datasets were drawn without replacement using seed 42 from released 150-row datasets with '
-                'prompt-disjoint 125/25 splits, excluding the reference and the cutting_instructions, threatening_user, '
+                'prompt-disjoint 125/25 splits, excluding the cutting_instructions, threatening_user, '
                 'suggests_crime and drunk_driving behaviors.')
     write_report(root/'methods.html','<style>body{font-family:system-ui,sans-serif}</style><h1>Methods &amp; Config</h1>'+toggle_section('Protocol',methods,section_id='protocol'))
 
