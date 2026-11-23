@@ -80,7 +80,7 @@ def overview(results, accounting, rejudged, total):
             caption += ' '+BEHAVIOR_CAPTION
         charts.append(swarm('gap-'+metric,title,groups,unit,caption))
     return toggle_section('Across datasets',f'<p>{len(runs)} of {total} datasets complete.</p>'
-                          +chart_grid(charts),section_id='across-datasets')
+                          +chart_grid(charts),section_id='across-datasets', expanded=False)
 
 
 def render(root=HERE):
@@ -123,7 +123,7 @@ def render(root=HERE):
         traces.append(dict(name='LoRA training',x=[p['step'] for p in student],y=[p['loss'] for p in student]))
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
         sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id'],chart_grid(charts)+
-            '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>',section_id=key))
+            '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>',section_id=key, expanded=False))
     complete_ids = {r['dataset_id'] for r in results}
     for r in rejudged:
         key = r['dataset_id']
@@ -134,7 +134,7 @@ def render(root=HERE):
                            x_label='', y_label='Mean rubric score', zero_y=True, caption=BEHAVIOR_CAPTION)
         sections.append(toggle_section(key+' · '+r['behavior_id'],
                         chart_grid([chart])+f'<p>{r["n_eval"]} saved answers per method. NLL summaries unavailable.</p>',
-                        section_id=key))
+                        section_id=key, expanded=False))
         complete_ids.add(key)
     for row in catalog:
         if row['dataset_id'] not in complete_ids:
@@ -165,7 +165,7 @@ def render(root=HERE):
                 'The 50 new datasets were drawn without replacement using seed 42 from released 150-row datasets with '
                 'prompt-disjoint 125/25 splits, excluding the cutting_instructions, threatening_user, '
                 'suggests_crime and drunk_driving behaviors.')
-    write_report(root/'methods.html','<style>body{font-family:system-ui,sans-serif}</style><h1>Methods &amp; Config</h1>'+toggle_section('Protocol',methods,section_id='protocol'))
+    write_report(root/'methods.html','<style>body{font-family:system-ui,sans-serif}</style><h1>Methods &amp; Config</h1>'+toggle_section('Protocol',methods,section_id='protocol', expanded=False))
 
 if __name__ == '__main__':
     render()
