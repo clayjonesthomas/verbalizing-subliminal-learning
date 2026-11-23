@@ -13,7 +13,7 @@ from research_graphing import chart_grid, chart_html, plotly_script, toggle_sect
 BEHAVIOR_CAPTION = "Weak judge; take these behavior scores with a grain of salt."
 
 
-def overview(results, accounting):
+def overview(results, accounting, rejudged):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
     timed = [r for r in runs if r['run_id'] in accounting]
@@ -65,9 +65,14 @@ def overview(results, accounting):
             for r in runs:
                 score, baseline = r['scores'][method][metric], r['scores']['LoRA'][metric]
                 differences.append(100*(score-baseline) if metric=='behavior' else 100*(score/baseline-1))
+            ids = [r['dataset_id'] for r in runs]
+            if metric == 'behavior':
+                for r in rejudged:
+                    differences.append(100*(r['scores'][method]-r['scores']['LoRA']))
+                    ids.append(r['dataset_id'])
             if differences:
                 means.append(f'{method} {sum(differences)/len(differences):+.1f}%')
-            groups.append((method,differences,[r['dataset_id'] for r in runs],color))
+            groups.append((method,differences,ids,color))
         caption = 'Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'
         unit = 'Difference relative to LoRA (%)'
         if metric=='behavior':
@@ -84,7 +89,10 @@ def render(root=HERE):
     results = [json.loads(p.read_text()) for p in sorted((root/'measurements').glob('*-dataset.json'))]
     accounting = {v['run_id']: v for p in (root/'measurements').glob('*-accounting.json')
                   if (v := json.loads(p.read_text()))}
-    sections = [overview(results, accounting)]
+    complete_ids = {r['dataset_id'] for r in results}
+    rejudged = [r for p in sorted((root/'measurements').glob(root.name+'--*-rejudge.json'))
+                if (r := json.loads(p.read_text()))['dataset_id'] not in complete_ids]
+    sections = [overview(results, accounting, rejudged)]
     for p in sorted((root/'measurements').glob('*-dataset.json')):
         r = json.loads(p.read_text())
         key = 'run-'+r['run_id']
@@ -114,6 +122,17 @@ def render(root=HERE):
             '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>',section_id=key))
     catalog = json.loads((root/'panel.json').read_text())
     complete_ids = {r['dataset_id'] for r in results}
+    for r in rejudged:
+        key = r['dataset_id']
+        methods = ['Base','LoRA','Soft prompt','Verbalization']
+        chart = chart_html(key+'-rejudged','Behavior elicitation · GPT-4.1 mini',
+                           [dict(type='bar', x=methods, y=[r['scores'][m] for m in methods],
+                                 marker=dict(color=['#7f7f7f','#1f77b4','#ff7f0e','#2ca02c']))],
+                           x_label='', y_label='Mean rubric score', zero_y=True, caption=BEHAVIOR_CAPTION)
+        sections.append(toggle_section(key+' · '+r['behavior_id'],
+                        chart_grid([chart])+f'<p>{r["n_eval"]} saved answers per method. NLL summaries unavailable.</p>',
+                        section_id=key))
+        complete_ids.add(key)
     for row in catalog:
         if row['dataset_id'] not in complete_ids:
             sections.append(toggle_section(row['dataset_id']+' · '+row['behavior_id'],
