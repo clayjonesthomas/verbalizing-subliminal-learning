@@ -50,7 +50,7 @@ def main():
     assert len(results) == 92 and w.C['dataset_id'] in results
     w.atomic(HERE / 'measurements' / f'{run}.json', dict(datasets=results, checkpoint_sha256=digest,
              dataset_revision=w.C['dataset_revision'], model_revision=w.C['model_revision'],
-             source_commit=os.environ['PODRUN_COMMIT'], activation_checkpointing=dict(backbone=False, head=False)))
+             source_commit=os.environ['PODRUN_COMMIT'], backbone_checkpointing=False, head_checkpointing=False))
 
 
 if __name__ == '__main__':
