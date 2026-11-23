@@ -111,7 +111,7 @@ def gap_notation(metric):
             f'<math display="block">{delta}<mo>=</mo>{rhs}</math>{rows}</div>')
 
 
-def overview(results, accounting, rejudged, total):
+def overview(results, accounting, rejudged, total, *, include_time_and_cost):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
     timed = [r for r in runs if r['run_id'] in accounting]
@@ -150,10 +150,11 @@ def overview(results, accounting, rejudged, total):
                           show_legend=False,caption=caption)
 
     charts = []
-    for key,title,xs,unit in [
-        ('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
-        ('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]:
-        charts.append(swarm(key,title,[('Runs',xs,labels,'#1f77b4')],unit,f'{len(xs)} datasets. dsse1-05330 shows the scoring recovery only.'))
+    if include_time_and_cost:
+        for key,title,xs,unit in [
+            ('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
+            ('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]:
+            charts.append(swarm(key,title,[('Runs',xs,labels,'#1f77b4')],unit,f'{len(xs)} datasets. dsse1-05330 shows the scoring recovery only.'))
     for metric,title in [('selection','Held-out selection NLL · relative difference'),
                          ('answers','NLL on teacher-forced LoRA answers · relative difference'),
                          ('behavior','Paired behavior score difference · GPT-4.1 mini')]:
@@ -199,7 +200,7 @@ def render(root=HERE):
     complete_ids = {r['dataset_id'] for r in results}
     rejudged = [r for p in sorted((root/'measurements').glob(root.name+'--*-rejudge.json'))
                 if (r := json.loads(p.read_text()))['dataset_id'] in panel_ids - complete_ids]
-    sections = [overview(results, accounting, rejudged, len(catalog))]
+    sections = []
     for r in results:
         key = 'run-'+r['run_id']
         scores = r['scores']
@@ -245,7 +246,9 @@ def render(root=HERE):
                             section_id=row['dataset_id'], expanded=False))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     for filename in ('in_progress.html','final_report.html'):
-        write_report(root/filename,title+plotly_script(assets)+''.join(sections))
+        summary = overview(results, accounting, rejudged, len(catalog),
+                           include_time_and_cost=(filename == 'in_progress.html'))
+        write_report(root/filename,title+plotly_script(assets)+summary+''.join(sections))
     methods = ('Seed 42. 125 soft-prompt training rows and 25 selection rows. 128 soft tokens, BF16, '
                'Adam at 0.0003, microbatch and effective batch 16. Runs stop when the best '
                'selection NLL improves less than 0.5% in each of three consecutive 50-update windows, '
