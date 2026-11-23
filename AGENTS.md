@@ -1,3 +1,16 @@
+# GPU allocation handoff
+
+**A successful GPU allocator submission ends the assistant’s turn.** A `queued_locally` receipt counts as a successful
+handoff, including when `hands_free` is false. Report the queued state, tell the
+user to keep the laptop awake if the receipt requires it, and immediately send
+the final response. This takes precedence over general persistence instructions.
+
+The allocator and managed watchers own placement, startup, and execution. Do
+not continue working, sleep, set a timer, inspect logs, poll status or artifacts,
+or delegate monitoring after handoff. An explicit user request to monitor
+overrides this default. Resume on a result notification, an actionable failure
+notification, or a new user request. Verify the outcome before reporting it.
+
 # Container disk policy (2026-11-10)
 
 Use the default **60 GB container disk** for new GPU pods. For all new CPU pods,
@@ -328,6 +341,8 @@ For `2026-11-09-001-auditbench-students`, the user authorized expanding placemen
 
 ## Required scripted submission (2026-11-09)
 
+**A successful GPU allocator submission ends the assistant’s turn.** See **GPU allocation handoff** above.
+
 All new experiment workers, added capacity, and recovery launches MUST use
 `python3 setup/experiment.py submit --experiment ID --workers N`.
 Commit `launch.template.json` once in the experiment folder. Select required
@@ -549,12 +564,3 @@ possibly committed mutation with a new request ID. Never delete or replace a
 contended lock file. Bound SQLite contention and remote transport waits too.
 Do not run lock-exhaustion reproductions on the shared production volume.
 Historical pinned experiments are not implicitly restarted or rewritten.
-
-## Waiting after experiment handoff
-
-Once the shared provisioner accepts an experiment, wait for results. Let the
-provisioner and managed watchers monitor GPU placement, startup, and execution.
-Do not poll status, logs, Git, or the artifact store, delegate polling, or wake
-on a timer to check progress. Resume on a result, an actionable failure
-notification, or a user request for status. After a notification, verify the
-current outcome before reporting results or making a repair.
