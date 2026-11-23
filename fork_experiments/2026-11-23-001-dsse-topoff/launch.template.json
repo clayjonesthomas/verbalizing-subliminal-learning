@@ -1,0 +1,1037 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-23-001-dsse-topoff",
+  "pod_name": "dsse-topoff",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-23-001-dsse-topoff/train_topoff.py",
+    "dsse1-07141"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 120,
+    "hard_limit_usd": 150,
+    "prior_spend_usd": 0,
+    "approval": "User: \u201cyou can budget 150\u201d. GPU $120 plus $30 shared judge API. GPU cleanup can use up to $30 more, $180 combined maximum."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-23-001-dsse-topoff",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-20-000-dsse-panel",
+      "fork_experiments/2026-11-23-001-dsse-topoff"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-20-000-dsse-panel/measurements",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/2026-11-23-001-dsse-topoff/report_text_edits.json"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Fit and select (147 rows, 70 evaluation prompts)",
+        "tasks": [
+          "dsse1-07298"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 147,
+        "used": 147,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 122,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (147 rows, 70 evaluation prompts)",
+        "tasks": [
+          "dsse1-07298"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 70,
+        "used": 70,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 70
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (147 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-07624"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 147,
+        "used": 147,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 122,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (147 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-07624"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 80,
+        "used": 80,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 80
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (148 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-07241"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 148,
+        "used": 148,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 123,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (148 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-07241"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 80,
+        "used": 80,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 80
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (149 rows, 70 evaluation prompts)",
+        "tasks": [
+          "dsse1-07882",
+          "dsse1-08315"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 149,
+        "used": 149,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 124,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (149 rows, 70 evaluation prompts)",
+        "tasks": [
+          "dsse1-07882",
+          "dsse1-08315"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 70,
+        "used": 70,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 70
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (149 rows, 76 evaluation prompts)",
+        "tasks": [
+          "dsse1-06794",
+          "dsse1-09074",
+          "dsse1-08176"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 149,
+        "used": 149,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 124,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (149 rows, 76 evaluation prompts)",
+        "tasks": [
+          "dsse1-06794",
+          "dsse1-09074",
+          "dsse1-08176"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 76,
+        "used": 76,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 76
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (149 rows, 79 evaluation prompts)",
+        "tasks": [
+          "dsse1-00425"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 149,
+        "used": 149,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 124,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (149 rows, 79 evaluation prompts)",
+        "tasks": [
+          "dsse1-00425"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 79,
+        "used": 79,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 79
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (149 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-07961",
+          "dsse1-08751",
+          "dsse1-07426",
+          "dsse1-09191"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 149,
+        "used": 149,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 124,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (149 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-07961",
+          "dsse1-08751",
+          "dsse1-07426",
+          "dsse1-09191"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 80,
+        "used": 80,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 80
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (149 rows, 81 evaluation prompts)",
+        "tasks": [
+          "dsse1-02630",
+          "dsse1-05748"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 149,
+        "used": 149,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 124,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (149 rows, 81 evaluation prompts)",
+        "tasks": [
+          "dsse1-02630",
+          "dsse1-05748"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 81,
+        "used": 81,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 81
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (150 rows, 70 evaluation prompts)",
+        "tasks": [
+          "dsse1-06923",
+          "dsse1-07876",
+          "dsse1-07131",
+          "dsse1-07659",
+          "dsse1-06815",
+          "dsse1-08628",
+          "dsse1-08027"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 70 evaluation prompts)",
+        "tasks": [
+          "dsse1-06923",
+          "dsse1-07876",
+          "dsse1-07131",
+          "dsse1-07659",
+          "dsse1-06815",
+          "dsse1-08628",
+          "dsse1-08027"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 70,
+        "used": 70,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 70
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (150 rows, 75 evaluation prompts)",
+        "tasks": [
+          "dsse1-09558",
+          "dsse1-07469",
+          "dsse1-05787",
+          "dsse1-07458"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 75 evaluation prompts)",
+        "tasks": [
+          "dsse1-09558",
+          "dsse1-07469",
+          "dsse1-05787",
+          "dsse1-07458"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 75,
+        "used": 75,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 75
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (150 rows, 76 evaluation prompts)",
+        "tasks": [
+          "dsse1-08232",
+          "dsse1-08368",
+          "dsse1-09280",
+          "dsse1-09289",
+          "dsse1-06777",
+          "dsse1-06813",
+          "dsse1-08534"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 76 evaluation prompts)",
+        "tasks": [
+          "dsse1-08232",
+          "dsse1-08368",
+          "dsse1-09280",
+          "dsse1-09289",
+          "dsse1-06777",
+          "dsse1-06813",
+          "dsse1-08534"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 76,
+        "used": 76,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 76
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (150 rows, 78 evaluation prompts)",
+        "tasks": [
+          "dsse1-06758",
+          "dsse1-06585",
+          "dsse1-08299",
+          "dsse1-08877",
+          "dsse1-08063",
+          "dsse1-09050",
+          "dsse1-06900",
+          "dsse1-06707",
+          "dsse1-07792",
+          "dsse1-07009"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 78 evaluation prompts)",
+        "tasks": [
+          "dsse1-06758",
+          "dsse1-06585",
+          "dsse1-08299",
+          "dsse1-08877",
+          "dsse1-08063",
+          "dsse1-09050",
+          "dsse1-06900",
+          "dsse1-06707",
+          "dsse1-07792",
+          "dsse1-07009"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 78,
+        "used": 78,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 78
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (150 rows, 79 evaluation prompts)",
+        "tasks": [
+          "dsse1-05679",
+          "dsse1-01509"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 79 evaluation prompts)",
+        "tasks": [
+          "dsse1-05679",
+          "dsse1-01509"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 79,
+        "used": 79,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 79
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (150 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-08563",
+          "dsse1-07703",
+          "dsse1-07232",
+          "dsse1-09129",
+          "dsse1-08179",
+          "dsse1-08419",
+          "dsse1-07248",
+          "dsse1-08987",
+          "dsse1-09205",
+          "dsse1-09130",
+          "dsse1-06924",
+          "dsse1-08735",
+          "dsse1-08704",
+          "dsse1-08562",
+          "dsse1-06796",
+          "dsse1-07801",
+          "dsse1-07418",
+          "dsse1-07038",
+          "dsse1-08988",
+          "dsse1-09005",
+          "dsse1-07838",
+          "dsse1-07827",
+          "dsse1-08051",
+          "dsse1-07261",
+          "dsse1-08303",
+          "dsse1-08712",
+          "dsse1-07862",
+          "dsse1-07095",
+          "dsse1-08489",
+          "dsse1-07707",
+          "dsse1-08724",
+          "dsse1-09085",
+          "dsse1-08359"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-08563",
+          "dsse1-07703",
+          "dsse1-07232",
+          "dsse1-09129",
+          "dsse1-08179",
+          "dsse1-08419",
+          "dsse1-07248",
+          "dsse1-08987",
+          "dsse1-09205",
+          "dsse1-09130",
+          "dsse1-06924",
+          "dsse1-08735",
+          "dsse1-08704",
+          "dsse1-08562",
+          "dsse1-06796",
+          "dsse1-07801",
+          "dsse1-07418",
+          "dsse1-07038",
+          "dsse1-08988",
+          "dsse1-09005",
+          "dsse1-07838",
+          "dsse1-07827",
+          "dsse1-08051",
+          "dsse1-07261",
+          "dsse1-08303",
+          "dsse1-08712",
+          "dsse1-07862",
+          "dsse1-07095",
+          "dsse1-08489",
+          "dsse1-07707",
+          "dsse1-08724",
+          "dsse1-09085",
+          "dsse1-08359"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 80,
+        "used": 80,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 80
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (150 rows, 81 evaluation prompts)",
+        "tasks": [
+          "dsse1-06009",
+          "dsse1-08394",
+          "dsse1-03810",
+          "dsse1-04194",
+          "dsse1-02738"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 81 evaluation prompts)",
+        "tasks": [
+          "dsse1-06009",
+          "dsse1-08394",
+          "dsse1-03810",
+          "dsse1-04194",
+          "dsse1-02738"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 81,
+        "used": 81,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 81
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (150 rows, 96 evaluation prompts)",
+        "tasks": [
+          "dsse1-07141",
+          "dsse1-09472",
+          "dsse1-06987",
+          "dsse1-07073",
+          "dsse1-07634",
+          "dsse1-08584",
+          "dsse1-08330",
+          "dsse1-07443",
+          "dsse1-07888"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 96 evaluation prompts)",
+        "tasks": [
+          "dsse1-07141",
+          "dsse1-09472",
+          "dsse1-06987",
+          "dsse1-07073",
+          "dsse1-07634",
+          "dsse1-08584",
+          "dsse1-08330",
+          "dsse1-07443",
+          "dsse1-07888"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 96,
+        "used": 96,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 96
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Fit and select (150 rows, 100 evaluation prompts)",
+        "tasks": [
+          "dsse1-08036",
+          "dsse1-07558",
+          "dsse1-07918",
+          "dsse1-07309",
+          "dsse1-08152",
+          "dsse1-08761",
+          "dsse1-07521",
+          "dsse1-08093",
+          "dsse1-08674",
+          "dsse1-09069"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 100 evaluation prompts)",
+        "tasks": [
+          "dsse1-08036",
+          "dsse1-07558",
+          "dsse1-07918",
+          "dsse1-07309",
+          "dsse1-08152",
+          "dsse1-08761",
+          "dsse1-07521",
+          "dsse1-08093",
+          "dsse1-08674",
+          "dsse1-09069"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 100,
+        "used": 100,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 100
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}

@@ -8,6 +8,9 @@ PANEL = ROOT.parent / '2026-11-20-000-dsse-panel'
 
 
 def main(dataset_id):
+    tasks = json.loads((ROOT / 'tasks.json').read_text())
+    if dataset_id not in {task['id'] for task in tasks}:
+        raise ValueError(f'Dataset outside the submitted top-off roster: {dataset_id}')
     selections = json.loads((ROOT / 'selection_indices.json').read_text())
     selection = selections[dataset_id]
     roster = json.loads((ROOT / 'panel.json').read_text())

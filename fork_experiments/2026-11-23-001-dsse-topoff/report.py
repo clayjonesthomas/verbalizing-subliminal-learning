@@ -268,7 +268,10 @@ def render(root=HERE):
     .verbalization-label {margin:.6rem 0 .25rem;font-weight:650}
     </style>"""
     catalog = json.loads((root/'panel.json').read_text())
-    panel_ids = {row['dataset_id'] for row in catalog}
+    baseline = json.loads((root.parent/'2026-11-20-000-dsse-panel/panel.json').read_text())
+    scheduled = {task['id'] for task in json.loads((root/'tasks.json').read_text())}
+    panel_ids = scheduled | {row['dataset_id'] for row in baseline}
+    catalog = [row for row in catalog if row['dataset_id'] in panel_ids]
     sources = (root.parent/'2026-11-20-000-dsse-panel', root)
     results = [r for source in sources for p in sorted((source/'measurements').glob(source.name+'--*-dataset.json'))
                if (r := json.loads(p.read_text()))['dataset_id'] in panel_ids]
@@ -368,7 +371,7 @@ def render(root=HERE):
                 'The original 50 datasets were drawn without replacement using seed 42 from released 150-row datasets with '
                 'prompt-disjoint 125/25 splits, excluding the cutting_instructions, threatening_user, '
                 'suggests_crime and drunk_driving behaviors.')
-    methods += ' The extension draws without replacement from all 18 categories with more than 140 rows per dataset, excluding the pilot and completed datasets. Each category is topped up to ten. Identical prompt and response pairs stay together. Exactly 25 rows are held out and all remaining rows are used for training.'
+    methods += ' The extension draws without replacement from all 18 categories with more than 140 rows per dataset, excluding the pilot and completed datasets. The submitted extension covers 102 datasets. It excludes cutting_instructions and holds threatening_user, suggests_crime, and drunk_driving. Identical prompt and response pairs stay together. Exactly 25 rows are held out and all remaining rows are used for training.'
     write_report(root/'methods.html','<style>body{font-family:system-ui,sans-serif}</style><h1>Methods &amp; Config</h1>'+toggle_section('Protocol',methods,section_id='protocol', expanded=False))
 
 if __name__ == '__main__':
