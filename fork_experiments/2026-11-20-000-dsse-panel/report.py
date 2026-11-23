@@ -30,11 +30,25 @@ def transfer_correlation(runs):
              marker=dict(color='#1f77b4', size=9, line=dict(color='white', width=1)),
              customdata=[r['dataset_id'] for r in runs],
              hovertemplate='Dataset %{customdata}<br>Selection %{x:.3f}<br>LoRA answers %{y:.3f}<extra></extra>')]
-    return chart_html('transfer-correlation', 'Fraction of LoRA’s NLL improvement recovered by the soft prompt',
+    def equation(axis, sample):
+        def loss(model):
+            return (f'<msub><mi mathvariant="normal">NLL</mi><mtext>{model}</mtext></msub>'
+                    f'<mo>(</mo><msub><mi>D</mi><mtext>{sample}</mtext></msub><mo>)</mo>')
+
+        base = loss('base')
+        return (f'<math display="block"><mi>{axis}</mi><mo>=</mo><mfrac>'
+                f'<mrow>{base}<mo>−</mo>{loss("soft")}</mrow>'
+                f'<mrow>{base}<mo>−</mo>{loss("LoRA")}</mrow></mfrac></math>')
+
+    chart = chart_html('transfer-correlation', 'Fraction of LoRA’s NLL improvement recovered by the soft prompt',
                       traces, x_label='Held-out selection · fraction recovered',
                       y_label='LoRA eval answers · fraction recovered', show_legend=False,
                       caption=f'{len(x)} datasets · Pearson r = {statistics.correlation(x,y):.2f}. '
                               '0 matches base. 1 matches LoRA. Dotted line shows the linear fit.')
+    caption_tag = '<p class="research-chart-caption">'
+    return chart.replace(caption_tag, caption_tag + equation('x', 'selection')
+                         + equation('y', 'LoRA eval answers'), 1)
+
 
 
 def overview(results, accounting, rejudged, total):
