@@ -148,7 +148,7 @@ def dataset_navigation(results):
     }</script>"""
 
 
-def overview(results, accounting, rejudged, total, *, include_time_and_cost):
+def overview(results, accounting, rejudged, total, verbalizes, *, include_time_and_cost):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
     timed = [r for r in runs if r['run_id'] in accounting]
@@ -196,20 +196,27 @@ def overview(results, accounting, rejudged, total, *, include_time_and_cost):
                          ('answers','NLL on teacher-forced LoRA answers · NLL ratio'),
                          ('behavior','Paired behavior score difference · GPT-4.1 mini')]:
         groups, means = [], []
-        for method,color in [('Soft prompt','#ff7f0e'),('Verbalization','#2ca02c')]:
-            differences = []
+        for method, label, membership, color in [
+            ('Soft prompt', 'Soft prompt', None, '#ff7f0e'),
+            ('Verbalization', 'Verbalizes behavior', True, '#2ca02c'),
+            ('Verbalization', 'Does not verbalize behavior', False, '#9467bd'),
+        ]:
+            differences, ids = [], []
             for r in runs:
+                if membership is not None and verbalizes[r['dataset_id']] != membership:
+                    continue
                 score, baseline = r['scores'][method][metric], r['scores']['LoRA'][metric]
                 differences.append(100*(score-baseline) if metric=='behavior' else nll_ratio(r['scores'], metric, method))
-            ids = [r['dataset_id'] for r in runs]
+                ids.append(r['dataset_id'])
             if metric == 'behavior':
                 for r in rejudged:
-                    differences.append(100*(r['scores'][method]-r['scores']['LoRA']))
-                    ids.append(r['dataset_id'])
+                    if membership is None or verbalizes[r['dataset_id']] == membership:
+                        differences.append(100*(r['scores'][method]-r['scores']['LoRA']))
+                        ids.append(r['dataset_id'])
             if differences:
                 mean = statistics.mean(differences)
-                means.append(f'{method} {mean:+.1f}%' if metric == 'behavior' else f'{method} {mean:.3f}')
-            groups.append((method,differences,ids,color))
+                means.append(f'{label} {mean:+.1f}%' if metric == 'behavior' else f'{label} {mean:.3f}')
+            groups.append((label,differences,ids,color))
         caption = 'Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'
         unit = 'Method NLL / LoRA NLL'
         if metric=='behavior':
@@ -244,20 +251,25 @@ def render(root=HERE):
     complete_ids = {r['dataset_id'] for r in results}
     rejudged = [r for p in sorted((root/'measurements').glob(root.name+'--*-rejudge.json'))
                 if (r := json.loads(p.read_text()))['dataset_id'] in panel_ids - complete_ids]
+    verbalizes = json.loads((root/'measurements/verbalizes-behavior.json').read_text())
     sections = []
     ratios = {r['dataset_id']: nll_ratio(r['scores'], 'answers', 'Verbalization') for r in results}
-    for r in sorted(results, key=lambda r: (ratios[r['dataset_id']], r['dataset_id'])):
+    for r in sorted(results, key=lambda r: (not verbalizes[r['dataset_id']], ratios[r['dataset_id']], r['dataset_id'])):
         key = 'run-'+r['run_id']
         scores = r['scores']
         colors = {'Base': '#7f7f7f', 'LoRA': '#1f77b4', 'Soft prompt': '#ff7f0e', 'Verbalization': '#2ca02c'}
+        marked = verbalizes[r['dataset_id']]
+        group = 'Verbalizes behavior' if marked else 'Does not verbalize behavior'
+        colors['Verbalization'] = '#2ca02c' if marked else '#9467bd'
         methods = [method for method in colors if method in scores]
+        method_labels = [group if method == 'Verbalization' else method for method in methods]
         charts = []
         for field,label,axis in [('behavior','Behavior elicitation · GPT-4.1 mini','Mean rubric score'),
                                  ('selection','Held-out selection','NLL per response token'),
                                  ('answers','Teacher-forced LoRA eval answers','NLL per response token')]:
             values = [scores[m][field] for m in methods]
             labels = [f'{v:.1%}' if field == 'behavior' else f'{v:.2f}' for v in values]
-            bars = dict(type='bar', x=methods, y=values, width=.62,
+            bars = dict(type='bar', x=method_labels, y=values, width=.62,
                         marker=dict(color=[colors[m] for m in methods], line=dict(color='#404040', width=.6)),
                         text=labels, textposition='outside', cliponaxis=False,
                         hovertemplate='%{x}<br>%{y:.4f}<extra></extra>')
@@ -272,7 +284,7 @@ def render(root=HERE):
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
         behavior_id = r['behavior_id']
         section_title = (f"{behavior_id.replace('_', ' ').title()} · {r['dataset_id']} · "
-                         f"{ratios[r['dataset_id']]:.3f}× LoRA NLL for verbalization on LoRA answers")
+                         f"{group}")
         verbalization = ('<p class="verbalization-label">Target behavior</p>'
                          f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>'
                          '<p class="verbalization-label">Best verbalization</p>'
@@ -298,7 +310,7 @@ def render(root=HERE):
                             section_id=row['dataset_id'], expanded=False))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     for filename in ('in_progress.html','final_report.html'):
-        summary = overview(results, accounting, rejudged, len(catalog),
+        summary = overview(results, accounting, rejudged, len(catalog), verbalizes,
                            include_time_and_cost=(filename == 'in_progress.html'))
         write_report(root/filename,title+plotly_script(assets)+summary+''.join(sections)+dataset_navigation(results))
     methods = ('Seed 42. 125 soft-prompt training rows and 25 selection rows. 128 soft tokens, BF16, '
