@@ -1,4 +1,5 @@
 """Aggregate per-dataset task results on the laptop."""
+from bisect import bisect_left, bisect_right
 import html
 import json
 import os
@@ -21,6 +22,11 @@ def transfer_correlation(runs):
 
     x = [gain_fraction(r['scores'], 'selection') for r in runs]
     y = [gain_fraction(r['scores'], 'answers') for r in runs]
+    def ranks(values):
+        ordered = sorted(values)
+        return [(bisect_left(ordered, v) + bisect_right(ordered, v) + 1) / 2 for v in values]
+
+    rho = statistics.correlation(ranks(x), ranks(y))
     slope, intercept = statistics.linear_regression(x, y)
     bounds = [min(x), max(x)]
     traces = [
@@ -43,26 +49,27 @@ def transfer_correlation(runs):
     chart = chart_html('transfer-correlation', 'Fraction of LoRA’s NLL improvement recovered by the soft prompt',
                       traces, x_label='Held-out selection · fraction recovered',
                       y_label='LoRA eval answers · fraction recovered', show_legend=False,
-                      caption=f'{len(x)} datasets · Pearson r = {statistics.correlation(x,y):.2f}. '
+                      caption=f'{len(x)} datasets · Pearson r = {statistics.correlation(x,y):.2f} · Spearman ρ = {rho:.2f}. '
                               '0 matches base. 1 matches LoRA. Dotted line shows the linear fit.')
     caption_tag = '<p class="research-chart-caption">'
     definitions = [
         ('<i>x</i>', 'Fraction of LoRA’s NLL improvement over base recovered by the soft prompt on held-out selection answers.'),
         ('<i>y</i>', 'The same fraction on LoRA-generated eval answers.'),
         ('<i>D</i>', 'A set of prompt–answer pairs.'),
-        ('<i>D</i><sub>selection</sub>', 'The 25 pairs held out of both training runs and used to select the soft-prompt checkpoint.'),
-        ('<i>D</i><sub>LoRA eval answers</sub>', 'Each eval prompt paired with its saved LoRA-generated answer. All three models score the same pairs.'),
-        ('NLL<sub><i>m</i></sub>(<i>D</i>)', 'Negative log-likelihood in nats per response token. Each token is scored given the prompt and preceding tokens, through the end-of-sequence token. Loss is averaged within each answer, then equally across answers.'),
+        ('<i>D</i> (selection)', 'The 25 pairs held out of both training runs and used to select the soft-prompt checkpoint.'),
+        ('<i>D</i> (LoRA eval answers)', 'Each eval prompt paired with its saved LoRA-generated answer. All three models score the same pairs.'),
+        ('NLLₘ(<i>D</i>)', 'Negative log-likelihood in nats per response token. Each token is scored given the prompt and preceding tokens, through the end-of-sequence token. Loss is averaged within each answer, then equally across answers.'),
         ('<i>m</i>', 'The model used to score the answers.'),
         ('base', 'Unadapted Qwen3-1.7B.'),
         ('soft', 'Qwen3-1.7B with the selected soft prompt.'),
         ('LoRA', 'Qwen3-1.7B with the trained student adapter.'),
         ('<i>r</i>', 'Pearson correlation between <i>x</i> and <i>y</i>, with one point per dataset.'),
+        ('<i>ρ</i>', 'Spearman correlation between the ranks of <i>x</i> and <i>y</i> across datasets.'),
     ]
-    notation = ''.join(f'<span style="display:block;margin:.35em 0">{symbol} — {meaning}</span>'
+    notation = ''.join(f'<p style="margin:.35em 0">{symbol} — {meaning}</p>'
                        for symbol, meaning in definitions)
-    return chart.replace(caption_tag, caption_tag + equation('x', 'selection')
-                         + equation('y', 'LoRA eval answers') + notation, 1)
+    return chart.replace(caption_tag, '<div class="research-chart-caption">' + equation('x', 'selection')
+                         + equation('y', 'LoRA eval answers') + notation + '<p>', 1).replace('Dotted line shows the linear fit.</p>', 'Dotted line shows the linear fit.</p></div>', 1)
 
 
 
