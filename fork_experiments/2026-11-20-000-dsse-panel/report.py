@@ -15,13 +15,14 @@ from research_graphing import chart_grid, chart_html, plotly_script, toggle_sect
 BEHAVIOR_CAPTION = "Weak judge; take these behavior scores with a grain of salt."
 
 
-def transfer_correlation(runs):
-    def gain_fraction(scores, field):
-        base = scores['Base'][field]
-        return (base - scores['Soft prompt'][field]) / (base - scores['LoRA'][field])
+def gain_fraction(scores, field, method):
+    base = scores['Base'][field]
+    return (base - scores[method][field]) / (base - scores['LoRA'][field])
 
-    x = [gain_fraction(r['scores'], 'selection') for r in runs]
-    y = [gain_fraction(r['scores'], 'answers') for r in runs]
+
+def transfer_correlation(runs):
+    x = [gain_fraction(r['scores'], 'selection', 'Soft prompt') for r in runs]
+    y = [gain_fraction(r['scores'], 'answers', 'Soft prompt') for r in runs]
     def ranks(values):
         ordered = sorted(values)
         return [(bisect_left(ordered, v) + bisect_right(ordered, v) + 1) / 2 for v in values]
@@ -98,9 +99,12 @@ def gap_notation(metric):
         dataset_label = f'D ({suffix})'
         def loss(method):
             return f'<msub><mi mathvariant="normal">NLL</mi><mi>{method}</mi></msub><mo>(</mo>{dataset_math}<mo>)</mo>'
+        definitions[0] = ('Δₘ', 'Fraction of the base-to-LoRA NLL decrease recovered by method m. Zero matches base and one matches LoRA.')
+        definitions.append(('base', 'The unadapted Qwen3-1.7B model.'))
+        base = loss('base')
         baseline = loss('LoRA')
-        rhs = (f'<mn>100</mn><mo>×</mo><mfrac><mrow>{loss("m")}<mo>−</mo>{baseline}</mrow>'
-               f'<mrow>{baseline}</mrow></mfrac>')
+        rhs = (f'<mfrac><mrow>{base}<mo>−</mo>{loss("m")}</mrow>'
+               f'<mrow>{base}<mo>−</mo>{baseline}</mrow></mfrac>')
         sample = ('The 25 prompt–answer pairs held out of training for this dataset.'
                   if metric == 'selection' else
                   'The eval prompts paired with their saved LoRA-generated answers. Both methods score these same tokens.')
@@ -160,25 +164,26 @@ def overview(results, accounting, rejudged, total, *, include_time_and_cost):
             ('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
             ('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]:
             charts.append(swarm(key,title,[('Runs',xs,labels,'#1f77b4')],unit,f'{len(xs)} datasets. dsse1-05330 shows the scoring recovery only.'))
-    for metric,title in [('selection','Held-out selection NLL · relative difference'),
-                         ('answers','NLL on teacher-forced LoRA answers · relative difference'),
+    for metric,title in [('selection','Held-out selection NLL · fraction recovered'),
+                         ('answers','NLL on teacher-forced LoRA answers · fraction recovered'),
                          ('behavior','Paired behavior score difference · GPT-4.1 mini')]:
         groups, means = [], []
         for method,color in [('Soft prompt','#ff7f0e'),('Verbalization','#2ca02c')]:
             differences = []
             for r in runs:
                 score, baseline = r['scores'][method][metric], r['scores']['LoRA'][metric]
-                differences.append(100*(score-baseline) if metric=='behavior' else 100*(score/baseline-1))
+                differences.append(100*(score-baseline) if metric=='behavior' else gain_fraction(r['scores'], metric, method))
             ids = [r['dataset_id'] for r in runs]
             if metric == 'behavior':
                 for r in rejudged:
                     differences.append(100*(r['scores'][method]-r['scores']['LoRA']))
                     ids.append(r['dataset_id'])
             if differences:
-                means.append(f'{method} {sum(differences)/len(differences):+.1f}%')
+                mean = statistics.mean(differences)
+                means.append(f'{method} {mean:+.1f}%' if metric == 'behavior' else f'{method} {mean:.3f}')
             groups.append((method,differences,ids,color))
         caption = 'Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'
-        unit = 'Difference relative to LoRA (%)'
+        unit = 'Fraction of LoRA’s NLL improvement recovered'
         if metric=='behavior':
             unit = 'Method − LoRA (absolute score difference, %)'
             caption += ' '+BEHAVIOR_CAPTION
@@ -265,7 +270,7 @@ def render(root=HERE):
                'temperature 0.6, 1024-token cap. Score each with the released rubric and GPT-4.1 mini. '
                'Teacher-forced NLL uses the same sampled LoRA responses including EOS. Selection also drives '
                'checkpoint and text choice. DSSE published base rates use different judges. Training averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
-    methods += (' Each proportional difference is (method NLL − LoRA NLL) / LoRA NLL. Positive values mean higher NLL. '
+    methods += (' Each NLL fraction is (base NLL − method NLL) / (base NLL − LoRA NLL). '
                 'For the transfer correlation, each axis is (base NLL − soft-prompt NLL) / (base NLL − LoRA NLL), computed within each dataset. '
                 'The summary averages these proportions equally across the 50 panel datasets. '
                 'Time spans task assignment through publication. Cost covers the final successful attempt, including its GPU setup and assigned execution '
