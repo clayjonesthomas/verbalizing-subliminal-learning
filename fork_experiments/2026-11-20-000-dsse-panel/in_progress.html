@@ -3925,7 +3925,29 @@ return Plotly;
   }));
  };
  const start=()=>{
-  document.querySelectorAll('details.research-toggle-section').forEach(section=>section.addEventListener('toggle',()=>{if(section.open)requestAnimationFrame(()=>{section.querySelectorAll('.js-plotly-plot').forEach(plot=>window.Plotly?.Plots.resize(plot));window.dispatchEvent(new Event('resize'));});}));
+  const sections=document.querySelectorAll('details.research-toggle-section');
+  const opened=new Set();
+  let resizePending=false;
+  for(const section of sections){
+   section.querySelector(':scope > summary')?.addEventListener('click',event=>{
+    if(event.button!==0||!event.altKey||event.target.closest('a,button,input,select,textarea'))return;
+    event.preventDefault();
+    const open=!section.open;
+    for(const item of sections)item.open=open;
+   });
+   section.addEventListener('toggle',()=>{
+    if(!section.open)return;
+    opened.add(section);
+    if(resizePending)return;
+    resizePending=true;
+    requestAnimationFrame(()=>{
+     resizePending=false;
+     for(const item of opened)if(item.open)item.querySelectorAll('.js-plotly-plot').forEach(plot=>window.Plotly?.Plots.resize(plot));
+     opened.clear();
+     window.dispatchEvent(new Event('resize'));
+    });
+   });
+  }
   const used=new Set(Array.from(document.querySelectorAll('[id]'),el=>el.id));
   document.querySelectorAll('h1,h2,h3,h4,h5,h6,summary,.research-chart-title').forEach(heading=>{
    if(heading.closest('svg,.js-plotly-plot,template'))return;
