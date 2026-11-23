@@ -2,6 +2,7 @@
 import html
 import json
 import os
+import statistics
 import sys
 from pathlib import Path
 
@@ -11,6 +12,29 @@ from research_graphing import chart_grid, chart_html, plotly_script, toggle_sect
 
 
 BEHAVIOR_CAPTION = "Weak judge; take these behavior scores with a grain of salt."
+
+
+def transfer_correlation(runs):
+    def gain_fraction(scores, field):
+        base = scores['Base'][field]
+        return (base - scores['Soft prompt'][field]) / (base - scores['LoRA'][field])
+
+    x = [gain_fraction(r['scores'], 'selection') for r in runs]
+    y = [gain_fraction(r['scores'], 'answers') for r in runs]
+    slope, intercept = statistics.linear_regression(x, y)
+    bounds = [min(x), max(x)]
+    traces = [
+        dict(type='scatter', mode='lines', x=bounds, y=[intercept + slope*v for v in bounds],
+             name='Linear fit', line=dict(color='#64748b', dash='dot'), hoverinfo='skip'),
+        dict(type='scatter', mode='markers', x=x, y=y, name='Dataset',
+             marker=dict(color='#1f77b4', size=9, line=dict(color='white', width=1)),
+             customdata=[r['dataset_id'] for r in runs],
+             hovertemplate='Dataset %{customdata}<br>Selection %{x:.3f}<br>LoRA answers %{y:.3f}<extra></extra>')]
+    return chart_html('transfer-correlation', 'Fraction of LoRA’s NLL improvement recovered by the soft prompt',
+                      traces, x_label='Held-out selection · fraction recovered',
+                      y_label='LoRA eval answers · fraction recovered', show_legend=False,
+                      caption=f'{len(x)} datasets · Pearson r = {statistics.correlation(x,y):.2f}. '
+                              '0 matches base. 1 matches LoRA. Dotted line shows the linear fit.')
 
 
 def overview(results, accounting, rejudged, total):
@@ -79,6 +103,8 @@ def overview(results, accounting, rejudged, total):
             unit = 'Method − LoRA (absolute score difference, %)'
             caption += ' '+BEHAVIOR_CAPTION
         charts.append(swarm('gap-'+metric,title,groups,unit,caption))
+    if len(runs) >= 2:
+        charts.append(transfer_correlation(runs))
     return toggle_section('Across datasets',f'<p>{len(runs)} of {total} datasets complete.</p>'
                           +chart_grid(charts),section_id='across-datasets', expanded=False)
 
@@ -156,6 +182,7 @@ def render(root=HERE):
                'Teacher-forced NLL uses the same sampled LoRA responses including EOS. Selection also drives '
                'checkpoint and text choice. DSSE published base rates use different judges. Training averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
     methods += (' Each proportional difference is (method NLL − LoRA NLL) / LoRA NLL. Positive values mean higher NLL. '
+                'For the transfer correlation, each axis is (base NLL − soft-prompt NLL) / (base NLL − LoRA NLL), computed within each dataset. '
                 'The summary averages these proportions equally across the 50 panel datasets. '
                 'Time spans task assignment through publication. Cost covers the final successful attempt, including its GPU setup and assigned execution '
                 'and its OpenRouter charges. Earlier attempts and unassigned pool idle are excluded from this plot. '
