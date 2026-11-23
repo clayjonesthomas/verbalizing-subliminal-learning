@@ -27,9 +27,9 @@ BEHAVIOR_SUMMARIES = {
 BEHAVIOR_CAPTION = "Weak judge; take these behavior scores with a grain of salt."
 
 
-def gain_fraction(scores, field, method):
+def normalized_gain(scores, field, method):
     base = scores['Base'][field]
-    return (base - scores[method][field]) / (base - scores['LoRA'][field])
+    return (base - scores[method][field]) / scores['LoRA'][field]
 
 
 def notation_rows(definitions):
@@ -39,8 +39,8 @@ def notation_rows(definitions):
 
 
 def transfer_correlation(runs):
-    x = [gain_fraction(r['scores'], 'selection', 'Soft prompt') for r in runs]
-    y = [gain_fraction(r['scores'], 'answers', 'Soft prompt') for r in runs]
+    x = [normalized_gain(r['scores'], 'selection', 'Soft prompt') for r in runs]
+    y = [normalized_gain(r['scores'], 'answers', 'Soft prompt') for r in runs]
     def ranks(values):
         ordered = sorted(values)
         return [(bisect_left(ordered, v) + bisect_right(ordered, v) + 1) / 2 for v in values]
@@ -63,17 +63,17 @@ def transfer_correlation(runs):
         base = loss('base')
         return (f'<math display="block"><mi>{axis}</mi><mo>=</mo><mfrac>'
                 f'<mrow>{base}<mo>−</mo>{loss("soft")}</mrow>'
-                f'<mrow>{base}<mo>−</mo>{loss("LoRA")}</mrow></mfrac></math>')
+                f'<mrow>{loss("LoRA")}</mrow></mfrac></math>')
 
-    chart = chart_html('transfer-correlation', 'Fraction of LoRA’s NLL improvement recovered by the soft prompt',
-                      traces, x_label='Held-out selection · fraction recovered',
-                      y_label='LoRA eval answers · fraction recovered', show_legend=False,
+    chart = chart_html('transfer-correlation', 'Soft-prompt NLL improvement over base, normalized by LoRA NLL',
+                      traces, x_label='Held-out selection · normalized gain',
+                      y_label='LoRA eval answers · normalized gain', show_legend=False,
                       caption=f'{len(x)} datasets · Pearson r = {statistics.correlation(x,y):.2f} · Spearman ρ = {rho:.2f}. '
-                              '0 matches base. 1 matches LoRA. Dotted line shows the linear fit.')
+                              '0 matches base. Positive values indicate lower NLL than base. Dotted line shows the linear fit.')
     caption_tag = '<p class="research-chart-caption">'
     definitions = [
-        ('<i>x</i>', 'Fraction of LoRA’s NLL improvement over base recovered by the soft prompt on held-out selection answers.'),
-        ('<i>y</i>', 'The same fraction on LoRA-generated eval answers.'),
+        ('<i>x</i>', 'Soft-prompt NLL reduction from base on held-out selection answers, divided by LoRA NLL on those answers.'),
+        ('<i>y</i>', 'The same normalized gain on LoRA-generated eval answers.'),
         ('<i>D</i>', 'A set of prompt–answer pairs.'),
         ('<i>D</i><sub>selection</sub>', 'The 25 pairs held out of both training runs and used to select the soft-prompt checkpoint.'),
         ('<i>D</i><sub>LoRA eval answers</sub>', 'Each eval prompt paired with its saved LoRA-generated answer. All three models score the same pairs.'),
@@ -115,12 +115,12 @@ def gap_notation(metric):
         dataset_math = f'<msub><mi>D</mi><mtext>{suffix}</mtext></msub>'
         def loss(method):
             return f'<msub><mi mathvariant="normal">NLL</mi><mi>{method}</mi></msub><mo>(</mo>{dataset_math}<mo>)</mo>'
-        definitions[0] = (f'<math>{delta}</math>', 'Fraction of the base-to-LoRA NLL decrease recovered by method m. Zero matches base and one matches LoRA.')
+        definitions[0] = (f'<math>{delta}</math>', 'NLL reduction from base for method m, divided by LoRA NLL on the same answers. Zero matches base.')
         definitions.append(('base', 'The unadapted Qwen3-1.7B model.'))
         base = loss('base')
         baseline = loss('LoRA')
         rhs = (f'<mfrac><mrow>{base}<mo>−</mo>{loss("m")}</mrow>'
-               f'<mrow>{base}<mo>−</mo>{baseline}</mrow></mfrac>')
+               f'<mrow>{baseline}</mrow></mfrac>')
         sample = ('The 25 prompt–answer pairs held out of training for this dataset.'
                   if metric == 'selection' else
                   'The eval prompts paired with their saved LoRA-generated answers. Both methods score these same tokens.')
@@ -180,15 +180,15 @@ def overview(results, accounting, rejudged, total, *, include_time_and_cost):
             ('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
             ('run-cost','Cost per successful run',[a['gpu_usd']+a['api_usd'] for a in accounts],'USD')]:
             charts.append(swarm(key,title,[('Runs',xs,labels,'#1f77b4')],unit,f'{len(xs)} datasets. dsse1-05330 shows the scoring recovery only.'))
-    for metric,title in [('selection','Held-out selection NLL · fraction recovered'),
-                         ('answers','NLL on teacher-forced LoRA answers · fraction recovered'),
+    for metric,title in [('selection','Held-out selection NLL · normalized gain'),
+                         ('answers','NLL on teacher-forced LoRA answers · normalized gain'),
                          ('behavior','Paired behavior score difference · GPT-4.1 mini')]:
         groups, means = [], []
         for method,color in [('Soft prompt','#ff7f0e'),('Verbalization','#2ca02c')]:
             differences = []
             for r in runs:
                 score, baseline = r['scores'][method][metric], r['scores']['LoRA'][metric]
-                differences.append(100*(score-baseline) if metric=='behavior' else gain_fraction(r['scores'], metric, method))
+                differences.append(100*(score-baseline) if metric=='behavior' else normalized_gain(r['scores'], metric, method))
             ids = [r['dataset_id'] for r in runs]
             if metric == 'behavior':
                 for r in rejudged:
@@ -199,7 +199,7 @@ def overview(results, accounting, rejudged, total, *, include_time_and_cost):
                 means.append(f'{method} {mean:+.1f}%' if metric == 'behavior' else f'{method} {mean:.3f}')
             groups.append((method,differences,ids,color))
         caption = 'Mean across datasets: '+', '.join(means) if means else 'Awaiting completed runs.'
-        unit = 'Fraction of LoRA’s NLL improvement recovered'
+        unit = 'NLL reduction from base / LoRA NLL'
         if metric=='behavior':
             unit = 'Method − LoRA (absolute score difference, %)'
             caption += ' '+BEHAVIOR_CAPTION
@@ -233,7 +233,7 @@ def render(root=HERE):
     rejudged = [r for p in sorted((root/'measurements').glob(root.name+'--*-rejudge.json'))
                 if (r := json.loads(p.read_text()))['dataset_id'] in panel_ids - complete_ids]
     sections = []
-    recovery = {r['dataset_id']: gain_fraction(r['scores'], 'answers', 'Verbalization') for r in results}
+    recovery = {r['dataset_id']: normalized_gain(r['scores'], 'answers', 'Verbalization') for r in results}
     for r in sorted(results, key=lambda r: (-recovery[r['dataset_id']], r['dataset_id'])):
         key = 'run-'+r['run_id']
         scores = r['scores']
@@ -260,7 +260,7 @@ def render(root=HERE):
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
         behavior_id = r['behavior_id']
         section_title = (f"{behavior_id.replace('_', ' ').title()} · {r['dataset_id']} · "
-                         f"{recovery[r['dataset_id']]:.1%} of LoRA-answer NLL improvement recovered by verbalization")
+                         f"{recovery[r['dataset_id']]:.1%} verbalization gain on LoRA answers (relative to LoRA NLL)")
         verbalization = ('<p class="verbalization-label">Target behavior</p>'
                          f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>'
                          '<p class="verbalization-label">Best verbalization</p>'
@@ -300,8 +300,8 @@ def render(root=HERE):
                'temperature 0.6, 1024-token cap. Score each with the released rubric and GPT-4.1 mini. '
                'Teacher-forced NLL uses the same sampled LoRA responses including EOS. Selection also drives '
                'checkpoint and text choice. DSSE published base rates use different judges. Training averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
-    methods += (' Each NLL fraction is (base NLL − method NLL) / (base NLL − LoRA NLL). '
-                'For the transfer correlation, each axis is (base NLL − soft-prompt NLL) / (base NLL − LoRA NLL), computed within each dataset. '
+    methods += (' Each NLL fraction is (base NLL − method NLL) / LoRA NLL. '
+                'For the transfer correlation, each axis is (base NLL − soft-prompt NLL) / LoRA NLL, computed within each dataset. '
                 'The summary averages these proportions equally across the 50 panel datasets. '
                 'Time spans task assignment through publication. Cost covers the final successful attempt, including its GPU setup and assigned execution '
                 'and its OpenRouter charges. Earlier attempts and unassigned pool idle are excluded from this plot. '
