@@ -237,6 +237,8 @@ def render(root=HERE):
     title += """<style>
     details[id^="run-"] > summary {padding-block:.65em}
     details[id^="run-"] > summary > [role="heading"] {font-size:1.15rem;font-weight:650;letter-spacing:-.015em}
+    .verbalizes-yes {color:#16703b}
+    .verbalizes-no {color:#ad3030}
     .behavior-label {margin:.25rem 0 .6rem}
     .verbalization-label {margin:.6rem 0 .25rem;font-weight:650}
     </style>"""
@@ -283,14 +285,15 @@ def render(root=HERE):
         traces.append(dict(name='LoRA training',x=[p['step'] for p in student],y=[p['loss'] for p in student]))
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
         behavior_id = r['behavior_id']
-        section_title = (f"{behavior_id.replace('_', ' ').title()} · {r['dataset_id']} · "
-                         f"{group}")
+        section_title = f"{behavior_id.replace('_', ' ').title()} · {r['dataset_id']}"
+        status_class = 'verbalizes-yes' if marked else 'verbalizes-no'
+        status = f' · <span class="{status_class}">{group}</span>'
         verbalization = ('<p class="verbalization-label">Target behavior</p>'
                          f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>'
                          '<p class="verbalization-label">Best verbalization</p>'
                          f'<blockquote>{html.escape(r["text"])}</blockquote>')
-        sections.append(toggle_section(section_title, chart_grid(charts) + verbalization,
-                                       section_id=key, expanded=False))
+        section = toggle_section(section_title, chart_grid(charts) + verbalization, section_id=key, expanded=False)
+        sections.append(section.replace('</summary>', status + '</summary>', 1))
     complete_ids = {r['dataset_id'] for r in results}
     for r in rejudged:
         key = r['dataset_id']
