@@ -46,8 +46,27 @@ def transfer_correlation(runs):
                       caption=f'{len(x)} datasets · Pearson r = {statistics.correlation(x,y):.2f}. '
                               '0 matches base. 1 matches LoRA. Dotted line shows the linear fit.')
     caption_tag = '<p class="research-chart-caption">'
+    notation = (
+        '<span style="display:block;margin:.6em 0"><i>x</i> and <i>y</i> give the fraction of '
+        'LoRA’s improvement over base recovered by the soft prompt on the selection and eval sets, respectively. '
+        'Each point represents one dataset.</span>'
+        '<span style="display:block;margin:.6em 0"><i>D</i> is a set of prompt–answer pairs. '
+        '<i>D</i><sub>selection</sub> contains the 25 dataset answers held out of both training runs '
+        'and used to select the soft-prompt checkpoint. '
+        '<i>D</i><sub>LoRA eval answers</sub> pairs each eval prompt with its saved LoRA-generated answer. '
+        'All three models score those same answers.</span>'
+        '<span style="display:block;margin:.6em 0">NLL<sub><i>m</i></sub>(<i>D</i>) is the '
+        'negative log-likelihood under model <i>m</i>, in nats per response token. '
+        'Each token is scored given the prompt and preceding answer tokens, including the end-of-sequence '
+        'token in the loss. Token losses are averaged within each answer, then equally across answers. '
+        'The subscript identifies the scoring model: base is the unadapted Qwen3-1.7B, '
+        'soft is the same model with the selected soft prompt, and LoRA is the trained student adapter '
+        'applied to the base model.</span>'
+        '<span style="display:block;margin:.6em 0"><i>r</i> is the Pearson correlation between '
+        '<i>x</i> and <i>y</i> across datasets.</span>'
+    )
     return chart.replace(caption_tag, caption_tag + equation('x', 'selection')
-                         + equation('y', 'LoRA eval answers'), 1)
+                         + equation('y', 'LoRA eval answers') + notation, 1)
 
 
 
