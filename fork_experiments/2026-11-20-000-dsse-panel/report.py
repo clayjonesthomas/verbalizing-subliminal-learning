@@ -218,7 +218,7 @@ def render(root=HERE):
     title += """<style>
     details[id^="run-"] > summary {padding-block:.65em}
     details[id^="run-"] > summary > [role="heading"] {font-size:1.15rem;font-weight:650;letter-spacing:-.015em}
-    .behavior-label {margin:1.25rem 0 .35rem}
+    .behavior-label {margin:.25rem 0 .6rem}
     .verbalization-label {margin:.6rem 0 .25rem;font-weight:650}
     </style>"""
     catalog = json.loads((root/'panel.json').read_text())
@@ -259,7 +259,8 @@ def render(root=HERE):
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
         behavior_id = r['behavior_id']
         section_title = f"{behavior_id.replace('_', ' ').title()} · {r['dataset_id']}"
-        verbalization = (f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>'
+        verbalization = ('<p class="verbalization-label">Target behavior</p>'
+                         f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>'
                          '<p class="verbalization-label">Best verbalization</p>'
                          f'<blockquote>{html.escape(r["text"])}</blockquote>')
         sections.append(toggle_section(section_title, chart_grid(charts) + verbalization,
