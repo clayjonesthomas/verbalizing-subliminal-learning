@@ -285,14 +285,13 @@ def render(root=HERE):
         membership = verbalizes[r['dataset_id']]
         group, colors['Verbalization'] = VERBALIZATION_GROUPS[membership]
         methods = [method for method in colors if method in scores]
-        method_labels = [group if method == 'Verbalization' else method for method in methods]
         charts = []
         for field,label,axis in [('behavior','Behavior elicitation · GPT-4.1 mini','Mean rubric score'),
                                  ('selection','Held-out selection','NLL per response token'),
                                  ('answers','Teacher-forced LoRA eval answers','NLL per response token')]:
             values = [scores[m][field] for m in methods]
             labels = [f'{v:.1%}' if field == 'behavior' else f'{v:.2f}' for v in values]
-            bars = dict(type='bar', x=method_labels, y=values, width=.62,
+            bars = dict(type='bar', x=methods, y=values, width=.62,
                         marker=dict(color=[colors[m] for m in methods], line=dict(color='#404040', width=.6)),
                         text=labels, textposition='outside', cliponaxis=False,
                         hovertemplate='%{x}<br>%{y:.4f}<extra></extra>')
