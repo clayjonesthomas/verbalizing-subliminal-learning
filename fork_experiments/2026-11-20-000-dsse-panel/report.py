@@ -203,6 +203,12 @@ def overview(results, accounting, rejudged, total, *, include_time_and_cost):
 def render(root=HERE):
     title = '<!doctype html><meta charset="utf-8"><h1>DSSE · 50-dataset comparison</h1>'
     title += """<style>#across-datasets .research-chart[id^="gap-"],#transfer-correlation-card.research-chart{display:block;align-self:start}#across-datasets .research-chart:has(>.research-hover-readout) .hoverlayer .hovertext{opacity:1}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.eval-samples{width:100%;table-layout:fixed;border-collapse:collapse}.eval-samples caption{text-align:left;font-weight:bold;padding:1em 0 .5em}.eval-samples th,.eval-samples td{overflow-wrap:anywhere;text-align:left;padding:.55em;vertical-align:top;border-bottom:1px solid #ddd}.eval-samples tbody th{background:#f4f5f7}.eval-samples td div{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}</style>"""
+    title += """<style>
+    details[id^="run-"] > summary {padding-block:.65em}
+    details[id^="run-"] > summary > [role="heading"] {font-size:1.15rem;font-weight:650;letter-spacing:-.015em}
+    .behavior-label {margin:1.25rem 0 .35rem}
+    .verbalization-label {margin:.6rem 0 .25rem;font-weight:650}
+    </style>"""
     catalog = json.loads((root/'panel.json').read_text())
     panel_ids = {row['dataset_id'] for row in catalog}
     results = [r for p in sorted((root/'measurements').glob(root.name+'--*-dataset.json'))
@@ -239,8 +245,13 @@ def render(root=HERE):
         student = [p for p in r['student_curve'] if 'loss' in p]
         traces.append(dict(name='LoRA training',x=[p['step'] for p in student],y=[p['loss'] for p in student]))
         charts.append(chart_html(key+'training','Training curves',traces,x_label='Optimizer step',y_label='NLL'))
-        sections.append(toggle_section(r['dataset_id']+' · '+r['behavior_id'],chart_grid(charts)+
-            '<p>Best verbalization</p><blockquote>'+html.escape(r['text'])+'</blockquote>',section_id=key, expanded=False))
+        behavior_id = r['behavior_id']
+        section_title = f"{behavior_id.replace('_', ' ').title()} · {r['dataset_id']}"
+        verbalization = (f'<p class="behavior-label"><strong>Behavior ID</strong> · {html.escape(behavior_id)}</p>'
+                         '<p class="verbalization-label">Best verbalization</p>'
+                         f'<blockquote>{html.escape(r["text"])}</blockquote>')
+        sections.append(toggle_section(section_title, chart_grid(charts) + verbalization,
+                                       section_id=key, expanded=False))
     complete_ids = {r['dataset_id'] for r in results}
     for r in rejudged:
         key = r['dataset_id']
