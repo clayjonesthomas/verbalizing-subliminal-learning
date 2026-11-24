@@ -52,6 +52,7 @@ def transfer_correlation(runs):
         ordered = sorted(values)
         return [(bisect_left(ordered, v) + bisect_right(ordered, v) + 1) / 2 for v in values]
 
+    pearson_r = statistics.correlation(x, y)
     rho = statistics.correlation(ranks(x), ranks(y))
     slope, intercept = statistics.linear_regression(x, y)
     bounds = [min(x), max(x)]
@@ -62,6 +63,11 @@ def transfer_correlation(runs):
              marker=dict(color='#1f77b4', size=9, line=dict(color='white', width=1)),
              customdata=[r['dataset_id'] for r in runs],
              hovertemplate='Dataset %{customdata}<br>Selection %{x:.3f}<br>LoRA answers %{y:.3f}<extra></extra>')]
+    traces.append(dict(type="scatter", mode="text", x=[bounds[1]],
+                       y=[intercept + slope * bounds[1]], text=[f"r = {pearson_r:.2f}"],
+                       textposition="top left", textfont=dict(color="#334155", size=14),
+                       hoverinfo="skip", showlegend=False))
+
     def equation(axis, sample):
         def loss(model):
             return (f'<msub><mi mathvariant="normal">NLL</mi><mtext>{model}</mtext></msub>'
@@ -74,7 +80,7 @@ def transfer_correlation(runs):
     chart = chart_html('transfer-correlation', 'Soft-prompt NLL relative to LoRA NLL',
                       traces, x_label='Held-out selection · NLL ratio',
                       y_label='LoRA eval answers · NLL ratio', show_legend=False,
-                      caption=f'{len(x)} datasets · Pearson r = {statistics.correlation(x,y):.2f} · Spearman ρ = {rho:.2f}. '
+                      caption=f'{len(x)} datasets · Pearson r = {pearson_r:.2f} · Spearman ρ = {rho:.2f}. '
                               '1 matches LoRA. Lower ratios indicate lower NLL relative to LoRA. Dotted line shows the linear fit.')
     caption_tag = '<p class="research-chart-caption">'
     definitions = [
