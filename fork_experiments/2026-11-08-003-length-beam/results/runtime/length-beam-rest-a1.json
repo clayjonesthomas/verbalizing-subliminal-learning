@@ -1,0 +1,70 @@
+{
+  "run_id": "length-beam-rest-a1",
+  "experiment": "2026-11-08-003-length-beam",
+  "pod_name": "length-beam",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "f9830a9046a26d79ed09128b3e2d3816a86d3e31",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "bash",
+    "fork_experiments/2026-11-08-003-length-beam/start.sh"
+  ],
+  "save": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-11-08-003-length-beam/hooks.py",
+    "save"
+  ],
+  "max_seconds": 54000,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "7x0y724sbs1hza"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "7x0y724sbs1hza",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-08-003-length-beam",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "comparison.json",
+      "performance.json"
+    ],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-08-003-length-beam/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-08-003-length-beam/results/runtime/length-beam-rest-a1.json"
+    ]
+  },
+  "infrastructure_commit": "6b117f4448f495f6de85cc645b5c14d51717ebe9",
+  "publish": [
+    "/opt/verbalizing-subliminal-learning-venv/bin/python",
+    "fork_experiments/2026-11-08-003-length-beam/hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "generated_report_resolver": [
+      "/opt/verbalizing-subliminal-learning-venv/bin/python",
+      "fork_experiments/2026-11-08-003-length-beam/report.py"
+    ]
+  },
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  }
+}

@@ -1,0 +1,83 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="30"><title>Experiment</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5f7;padding:16px}small{color:#555}</style>
+</head><body><h1>judge-comparison-a2</h1><p>Last successful local sync: Sun Nov  8 14:04:24 2026</p><p>Status: <b>cleanup_failed</b></p><h2>Lifecycle</h2><pre>{
+  &quot;run_id&quot;: &quot;judge-comparison-a2&quot;,
+  &quot;source_commit&quot;: &quot;be34c2ea2ff034f5e2ee3f454cd7d49fa9982962&quot;,
+  &quot;started&quot;: 1794175455.2130349,
+  &quot;heartbeat&quot;: 1794175457.284003,
+  &quot;pod_id&quot;: &quot;w7gvdb6dlknwyd&quot;,
+  &quot;pod_name&quot;: &quot;judge-comparison-cpu&quot;,
+  &quot;pid&quot;: 3357,
+  &quot;process_start_ticks&quot;: &quot;147155696&quot;,
+  &quot;status&quot;: &quot;cleanup_failed&quot;,
+  &quot;keep_on_failure&quot;: false,
+  &quot;budget_watchdog&quot;: {
+    &quot;pid&quot;: 3358,
+    &quot;ready&quot;: true,
+    &quot;budget_directory&quot;: &quot;/workspace/.podrun-budgets/e7fc3d47784421b4f5b65eb357b8893d3251515cc5191a07a8e5cc4c0783803d&quot;
+  },
+  &quot;runner_sha256&quot;: {
+    &quot;activation_checkpointing.py&quot;: &quot;b8bf808d023a02b7ccf5c5720a144c94c98691f4c075cb680d62c66618e6c1dd&quot;,
+    &quot;runner.py&quot;: &quot;2aae9a77722701ac2e22287ab35ec4452faec5635336b54130ed626b173f383b&quot;,
+    &quot;checkouts.py&quot;: &quot;2298e0ac3c54696078c8f302d9475ccfd8522aa1e4aa239afae8e6c225c1b0fa&quot;,
+    &quot;recovery.py&quot;: &quot;540d492080f0679580b253081c64b7a73039c9152f4752d84dae0174fec7b9c4&quot;,
+    &quot;provider.py&quot;: &quot;5c7c4a8c5a0d6644056c5d8e65289df3b83cb88e8a000dbc3fd19f2f9f205606&quot;,
+    &quot;handoff.py&quot;: &quot;639501ba732b09ed3df624814fbf3b3a9264102599993cbb249228ef2e3d9fae&quot;,
+    &quot;budget.py&quot;: &quot;91a4ce5649049d18fc489fa00ce16b029f9f0510f39565c2912d70c6d4a92aa4&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;cli.py&quot;: &quot;2c5852801fa9d1ebb3a1ca6e0a4f7a6007a82a89cb85a85a7a4e10945ba091a2&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;storage.py&quot;: &quot;163575de1a908f6777022acd1a7e8963b1d55c2696b4db7454fe722554729d24&quot;,
+    &quot;watcher.py&quot;: &quot;98b482325220a8d68a839fcfd7d3c2f292668e4b418a7779e71e40c439163d22&quot;,
+    &quot;workspace.py&quot;: &quot;b5ab9818f5fce970300937f1953bf7197d2df8417b87b9d565db59d95c512401&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;
+  },
+  &quot;exit_code&quot;: 1,
+  &quot;reason&quot;: &quot;exit&quot;,
+  &quot;outcome&quot;: &quot;failed&quot;,
+  &quot;finished&quot;: 1794175456.673411,
+  &quot;error_type&quot;: &quot;HookError&quot;,
+  &quot;error_step&quot;: &quot;save&quot;,
+  &quot;hook_exit_code&quot;: 1,
+  &quot;hook_timed_out&quot;: false,
+  &quot;error_message&quot;: &quot;Hook failed with exit 1&quot;,
+  &quot;error_frames&quot;: [
+    {
+      &quot;file&quot;: &quot;runner.py&quot;,
+      &quot;line&quot;: 328,
+      &quot;function&quot;: &quot;supervise&quot;
+    },
+    {
+      &quot;file&quot;: &quot;runner.py&quot;,
+      &quot;line&quot;: 179,
+      &quot;function&quot;: &quot;hook&quot;
+    }
+  ]
+}</pre><h2>Progress</h2><pre></pre><h2>Recent GPU samples</h2><pre>{&quot;csv&quot;: &quot;unavailable&quot;, &quot;time&quot;: 1794175455.248115}
+</pre><h2>Recent experiment log</h2><pre>Traceback (most recent call last):
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/worktrees/judge-comparison-a2/fork_experiments/2026-11-08-001-judge-comparison/worker.py&quot;, line 119, in &lt;module&gt;
+    if __name__==&#x27;__main__&#x27;:run()
+                            ^^^^^
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/worktrees/judge-comparison-a2/fork_experiments/2026-11-08-001-judge-comparison/worker.py&quot;, line 35, in run
+    live=entries[mid+&#x27;:batch&#x27;][&#x27;pricing&#x27;]
+         ~~~~~~~^^^^^^^^^^^^^^
+KeyError: &#x27;openai/gpt-4.1-mini:batch&#x27;
+</pre><h2>Save / publish log</h2><pre>sync: error syncing &#x27;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-08-001-judge-comparison/runs/judge-comparison-a2/artifacts&#x27;: Disk quota exceeded
+Traceback (most recent call last):
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/worktrees/judge-comparison-a2/fork_experiments/2026-11-08-001-judge-comparison/hooks.py&quot;, line 27, in &lt;module&gt;
+    if __name__==&#x27;__main__&#x27;:{&#x27;save&#x27;:save,&#x27;publish&#x27;:publish}[sys.argv[1]]()
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/worktrees/judge-comparison-a2/fork_experiments/2026-11-08-001-judge-comparison/hooks.py&quot;, line 18, in save
+    subprocess.run([&#x27;sync&#x27;,&#x27;-f&#x27;,str(ART)],check=True)
+  File &quot;/usr/lib/python3.12/subprocess.py&quot;, line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command &#x27;[&#x27;sync&#x27;, &#x27;-f&#x27;, &#x27;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-08-001-judge-comparison/runs/judge-comparison-a2/artifacts&#x27;]&#x27; returned non-zero exit status 1.
+</pre><h2>Supervisor exit receipt</h2><pre>{
+  &quot;pid&quot;: 3356,
+  &quot;supervisor_pid&quot;: 3357,
+  &quot;status&quot;: &quot;exited&quot;,
+  &quot;exit_code&quot;: 1,
+  &quot;finished&quot;: 1794175457.3303962
+}
+</pre></body></html>

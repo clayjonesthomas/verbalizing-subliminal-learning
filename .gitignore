@@ -86,3 +86,14 @@ migration_tests/**
 
 # Nested laptop task checkouts have their own index; ignore them only in parent.
 /.workspaces/
+
+# The dataset card is part of the downloaded Hugging Face cache.
+/data/lls-preference-pairs/README.md
+
+# Local watcher billing ledgers and recovered raw training/search artifacts.
+/fork_experiments/*/results/pool_cost.json
+/fork_experiments/*/results/experiment_cost.json
+/fork_experiments/*/results/recovered/**/beam_state.json
+/fork_experiments/*/results/recovered/**/candidates.json
+/fork_experiments/*/results/recovered/**/training_examples.json
+/fork_experiments/*/results/recovered/**/validation_examples.json

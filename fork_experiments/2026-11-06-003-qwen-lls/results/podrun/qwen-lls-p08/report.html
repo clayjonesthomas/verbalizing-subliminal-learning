@@ -1,0 +1,338 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="30"><title>Experiment</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5f7;padding:16px}small{color:#555}</style>
+</head><body><h1>qwen-lls-p08</h1><p>Last successful local sync: Fri Nov  6 18:10:43 2026</p><p>Status: <b>termination_requested</b></p><h2>Lifecycle</h2><pre>{
+  &quot;run_id&quot;: &quot;qwen-lls-p08&quot;,
+  &quot;source_commit&quot;: &quot;76f4e1527c651cdf51433d8b5d0b1eff92c79b55&quot;,
+  &quot;started&quot;: 1794012005.954411,
+  &quot;heartbeat&quot;: 1794017424.593569,
+  &quot;pod_id&quot;: &quot;yxfpeunqostcj8&quot;,
+  &quot;pod_name&quot;: &quot;qwen-lls-p08&quot;,
+  &quot;pid&quot;: 397,
+  &quot;process_start_ticks&quot;: &quot;154831482&quot;,
+  &quot;status&quot;: &quot;termination_requested&quot;,
+  &quot;keep_on_failure&quot;: false,
+  &quot;budget_watchdog&quot;: {
+    &quot;pid&quot;: 398,
+    &quot;ready&quot;: true,
+    &quot;budget_directory&quot;: &quot;/workspace/.podrun-budgets/2dfca16725e4dd0f20da509e35070c70e1658180a3af790b9c9b1485d444bcc6&quot;
+  },
+  &quot;runner_sha256&quot;: {
+    &quot;runner.py&quot;: &quot;c1bba87578919b9101c2df9c8f70367425ce0b4f8757418dcca515247408046a&quot;,
+    &quot;checkouts.py&quot;: &quot;2298e0ac3c54696078c8f302d9475ccfd8522aa1e4aa239afae8e6c225c1b0fa&quot;,
+    &quot;recovery.py&quot;: &quot;540d492080f0679580b253081c64b7a73039c9152f4752d84dae0174fec7b9c4&quot;,
+    &quot;provider.py&quot;: &quot;5c7c4a8c5a0d6644056c5d8e65289df3b83cb88e8a000dbc3fd19f2f9f205606&quot;,
+    &quot;handoff.py&quot;: &quot;639501ba732b09ed3df624814fbf3b3a9264102599993cbb249228ef2e3d9fae&quot;,
+    &quot;budget.py&quot;: &quot;91a4ce5649049d18fc489fa00ce16b029f9f0510f39565c2912d70c6d4a92aa4&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;cli.py&quot;: &quot;83bbb3922b51150f0ee3233ec5cfecb30cbcc87d6f551684efccf0f567781822&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;storage.py&quot;: &quot;163575de1a908f6777022acd1a7e8963b1d55c2696b4db7454fe722554729d24&quot;,
+    &quot;watcher.py&quot;: &quot;98b482325220a8d68a839fcfd7d3c2f292668e4b418a7779e71e40c439163d22&quot;,
+    &quot;workspace.py&quot;: &quot;b5ab9818f5fce970300937f1953bf7197d2df8417b87b9d565db59d95c512401&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;
+  },
+  &quot;exit_code&quot;: 0,
+  &quot;reason&quot;: &quot;exit&quot;,
+  &quot;outcome&quot;: &quot;success&quot;,
+  &quot;finished&quot;: 1794017421.7180235,
+  &quot;save_completed&quot;: true,
+  &quot;external_publication_completed&quot;: true
+}</pre><h2>Progress</h2><pre>{&quot;status&quot;: &quot;scoring&quot;, &quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;last_chunk_end&quot;: 743424, &quot;updated_at&quot;: 1794017309.8435318}</pre><h2>Recent GPU samples</h2><pre>&quot;0, 100, 23557, 97887, 571.19, 66&quot;, &quot;time&quot;: 1794014057.6541734}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.69, 68&quot;, &quot;time&quot;: 1794014072.7314768}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 585.45, 68&quot;, &quot;time&quot;: 1794014087.8200176}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 585.72, 63&quot;, &quot;time&quot;: 1794014102.9086926}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.66, 62&quot;, &quot;time&quot;: 1794014117.9906228}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 575.66, 63&quot;, &quot;time&quot;: 1794014133.0699515}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.82, 68&quot;, &quot;time&quot;: 1794014148.164065}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.95, 66&quot;, &quot;time&quot;: 1794014163.2482066}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 576.44, 68&quot;, &quot;time&quot;: 1794014178.3280313}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 584.96, 63&quot;, &quot;time&quot;: 1794014193.415178}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 565.18, 68&quot;, &quot;time&quot;: 1794014208.514974}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.18, 67&quot;, &quot;time&quot;: 1794014223.5883348}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.36, 67&quot;, &quot;time&quot;: 1794014238.666816}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.72, 66&quot;, &quot;time&quot;: 1794014253.7539978}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.03, 68&quot;, &quot;time&quot;: 1794014268.8369372}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.58, 68&quot;, &quot;time&quot;: 1794014283.921484}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.92, 68&quot;, &quot;time&quot;: 1794014298.9965112}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.25, 65&quot;, &quot;time&quot;: 1794014314.073835}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 86.83, 51&quot;, &quot;time&quot;: 1794014329.1575985}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.35, 65&quot;, &quot;time&quot;: 1794014344.23244}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.47, 65&quot;, &quot;time&quot;: 1794014359.3228767}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.13, 67&quot;, &quot;time&quot;: 1794014374.4205682}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.53, 64&quot;, &quot;time&quot;: 1794014389.5082395}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.72, 60&quot;, &quot;time&quot;: 1794014404.5918183}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.91, 65&quot;, &quot;time&quot;: 1794014419.675005}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.81, 68&quot;, &quot;time&quot;: 1794014434.7507982}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 566.93, 67&quot;, &quot;time&quot;: 1794014449.8349087}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.93, 68&quot;, &quot;time&quot;: 1794014464.9203622}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.94, 67&quot;, &quot;time&quot;: 1794014479.9956303}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 575.90, 62&quot;, &quot;time&quot;: 1794014495.072316}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 575.30, 66&quot;, &quot;time&quot;: 1794014510.1557577}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.34, 66&quot;, &quot;time&quot;: 1794014525.2340174}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 575.22, 65&quot;, &quot;time&quot;: 1794014540.3086271}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 87.98, 53&quot;, &quot;time&quot;: 1794014555.37788}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 578.83, 61&quot;, &quot;time&quot;: 1794014570.4486756}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.91, 63&quot;, &quot;time&quot;: 1794014585.5169854}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.96, 64&quot;, &quot;time&quot;: 1794014600.5761938}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.13, 66&quot;, &quot;time&quot;: 1794014615.6377323}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.72, 66&quot;, &quot;time&quot;: 1794014630.708375}
+{&quot;csv&quot;: &quot;0, 97, 23557, 97887, 564.66, 67&quot;, &quot;time&quot;: 1794014645.7898233}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.31, 65&quot;, &quot;time&quot;: 1794014660.8499742}
+{&quot;csv&quot;: &quot;0, 97, 23557, 97887, 567.24, 63&quot;, &quot;time&quot;: 1794014675.9283335}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.11, 67&quot;, &quot;time&quot;: 1794014690.9979243}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 409.81, 55&quot;, &quot;time&quot;: 1794014706.0654943}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.85, 66&quot;, &quot;time&quot;: 1794014721.1364017}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.91, 67&quot;, &quot;time&quot;: 1794014736.2085116}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.57, 67&quot;, &quot;time&quot;: 1794014751.2763915}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.63, 66&quot;, &quot;time&quot;: 1794014766.3416014}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 590.46, 68&quot;, &quot;time&quot;: 1794014781.41584}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 576.54, 68&quot;, &quot;time&quot;: 1794014796.485873}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.37, 66&quot;, &quot;time&quot;: 1794014811.5549476}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.09, 67&quot;, &quot;time&quot;: 1794014826.6284018}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.14, 68&quot;, &quot;time&quot;: 1794014841.6948047}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.40, 69&quot;, &quot;time&quot;: 1794014856.7670512}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.03, 64&quot;, &quot;time&quot;: 1794014871.8360386}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.87, 69&quot;, &quot;time&quot;: 1794014886.9079828}
+{&quot;csv&quot;: &quot;0, 97, 23557, 97887, 569.36, 66&quot;, &quot;time&quot;: 1794014901.9714184}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 566.11, 68&quot;, &quot;time&quot;: 1794014917.0398204}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 587.02, 65&quot;, &quot;time&quot;: 1794014932.1089969}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.72, 63&quot;, &quot;time&quot;: 1794014947.1862783}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 565.85, 68&quot;, &quot;time&quot;: 1794014962.2597263}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 580.56, 62&quot;, &quot;time&quot;: 1794014977.3289707}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.40, 68&quot;, &quot;time&quot;: 1794014992.4064195}
+{&quot;csv&quot;: &quot;0, 97, 23557, 97887, 569.46, 67&quot;, &quot;time&quot;: 1794015007.469854}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.73, 67&quot;, &quot;time&quot;: 1794015022.548087}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.60, 68&quot;, &quot;time&quot;: 1794015037.6185155}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.53, 64&quot;, &quot;time&quot;: 1794015052.6858687}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.20, 69&quot;, &quot;time&quot;: 1794015067.7561946}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 378.29, 55&quot;, &quot;time&quot;: 1794015082.8297374}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.91, 65&quot;, &quot;time&quot;: 1794015097.888683}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.46, 68&quot;, &quot;time&quot;: 1794015112.9627771}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.01, 65&quot;, &quot;time&quot;: 1794015128.0284677}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.47, 68&quot;, &quot;time&quot;: 1794015143.1086366}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.96, 63&quot;, &quot;time&quot;: 1794015158.1657515}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 585.66, 68&quot;, &quot;time&quot;: 1794015173.2262483}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 589.67, 67&quot;, &quot;time&quot;: 1794015188.2961578}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.07, 65&quot;, &quot;time&quot;: 1794015203.3667817}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.18, 65&quot;, &quot;time&quot;: 1794015218.4297469}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 554.99, 62&quot;, &quot;time&quot;: 1794015233.4965332}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.15, 65&quot;, &quot;time&quot;: 1794015248.5518522}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.52, 64&quot;, &quot;time&quot;: 1794015263.6233578}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.55, 67&quot;, &quot;time&quot;: 1794015278.6871076}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.28, 68&quot;, &quot;time&quot;: 1794015293.7520165}
+{&quot;csv&quot;: &quot;0, 96, 23557, 97887, 570.49, 64&quot;, &quot;time&quot;: 1794015308.819753}
+{&quot;csv&quot;: &quot;0, 98, 23557, 97887, 573.79, 62&quot;, &quot;time&quot;: 1794015323.8792312}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.69, 67&quot;, &quot;time&quot;: 1794015338.9370475}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 392.50, 67&quot;, &quot;time&quot;: 1794015353.9927585}
+{&quot;csv&quot;: &quot;0, 98, 23557, 97887, 571.34, 66&quot;, &quot;time&quot;: 1794015369.0557618}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.03, 68&quot;, &quot;time&quot;: 1794015384.127872}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.90, 68&quot;, &quot;time&quot;: 1794015399.186954}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 585.91, 68&quot;, &quot;time&quot;: 1794015414.247455}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 589.19, 65&quot;, &quot;time&quot;: 1794015429.3226821}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.36, 65&quot;, &quot;time&quot;: 1794015444.408706}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 583.36, 67&quot;, &quot;time&quot;: 1794015459.4689252}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 562.02, 64&quot;, &quot;time&quot;: 1794015474.5304308}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.14, 64&quot;, &quot;time&quot;: 1794015489.591117}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.83, 66&quot;, &quot;time&quot;: 1794015504.651044}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 566.95, 67&quot;, &quot;time&quot;: 1794015519.7282236}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.05, 67&quot;, &quot;time&quot;: 1794015534.7857823}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.14, 64&quot;, &quot;time&quot;: 1794015549.845634}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.71, 67&quot;, &quot;time&quot;: 1794015564.908572}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.51, 68&quot;, &quot;time&quot;: 1794015579.966411}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 585.43, 67&quot;, &quot;time&quot;: 1794015595.031163}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.90, 65&quot;, &quot;time&quot;: 1794015610.0933595}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.96, 66&quot;, &quot;time&quot;: 1794015625.1577473}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.91, 64&quot;, &quot;time&quot;: 1794015640.2345874}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.35, 67&quot;, &quot;time&quot;: 1794015655.2928987}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 575.73, 65&quot;, &quot;time&quot;: 1794015670.348589}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 586.14, 65&quot;, &quot;time&quot;: 1794015685.4148655}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.62, 68&quot;, &quot;time&quot;: 1794015700.4747334}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.82, 69&quot;, &quot;time&quot;: 1794015715.541689}
+{&quot;csv&quot;: &quot;0, 98, 23557, 97887, 570.79, 67&quot;, &quot;time&quot;: 1794015730.6085413}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.16, 68&quot;, &quot;time&quot;: 1794015745.666281}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.20, 69&quot;, &quot;time&quot;: 1794015760.7311332}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 594.40, 65&quot;, &quot;time&quot;: 1794015775.7897887}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.49, 68&quot;, &quot;time&quot;: 1794015790.8685505}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 576.63, 65&quot;, &quot;time&quot;: 1794015805.927861}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.02, 65&quot;, &quot;time&quot;: 1794015820.9835289}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.78, 65&quot;, &quot;time&quot;: 1794015836.0512447}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.62, 68&quot;, &quot;time&quot;: 1794015851.1163423}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.80, 67&quot;, &quot;time&quot;: 1794015866.1735554}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.14, 69&quot;, &quot;time&quot;: 1794015881.2338274}
+{&quot;csv&quot;: &quot;0, 97, 23557, 97887, 573.00, 65&quot;, &quot;time&quot;: 1794015896.2958138}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.86, 65&quot;, &quot;time&quot;: 1794015911.361219}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 589.15, 66&quot;, &quot;time&quot;: 1794015926.4468908}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.86, 67&quot;, &quot;time&quot;: 1794015941.5171702}
+{&quot;csv&quot;: &quot;0, 97, 23557, 97887, 571.64, 68&quot;, &quot;time&quot;: 1794015956.5735676}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.60, 65&quot;, &quot;time&quot;: 1794015971.6461017}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.77, 69&quot;, &quot;time&quot;: 1794015986.70975}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.39, 62&quot;, &quot;time&quot;: 1794016001.772354}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 581.89, 65&quot;, &quot;time&quot;: 1794016016.8296757}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.58, 69&quot;, &quot;time&quot;: 1794016031.890635}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.61, 64&quot;, &quot;time&quot;: 1794016046.9505053}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.01, 69&quot;, &quot;time&quot;: 1794016062.1311834}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.93, 68&quot;, &quot;time&quot;: 1794016077.1921768}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.11, 64&quot;, &quot;time&quot;: 1794016092.2473106}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 589.51, 62&quot;, &quot;time&quot;: 1794016107.3172019}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 588.97, 65&quot;, &quot;time&quot;: 1794016122.3783073}
+{&quot;csv&quot;: &quot;0, 98, 23557, 97887, 571.28, 68&quot;, &quot;time&quot;: 1794016137.4366026}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.45, 69&quot;, &quot;time&quot;: 1794016152.4979858}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.29, 68&quot;, &quot;time&quot;: 1794016167.5638561}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.92, 66&quot;, &quot;time&quot;: 1794016182.6278532}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 227.64, 64&quot;, &quot;time&quot;: 1794016197.692911}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 575.98, 68&quot;, &quot;time&quot;: 1794016212.7566595}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.22, 65&quot;, &quot;time&quot;: 1794016227.8161745}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 579.93, 64&quot;, &quot;time&quot;: 1794016242.8762982}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.97, 68&quot;, &quot;time&quot;: 1794016257.970958}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.17, 65&quot;, &quot;time&quot;: 1794016273.0314827}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.20, 65&quot;, &quot;time&quot;: 1794016288.0949826}
+{&quot;csv&quot;: &quot;0, 98, 23557, 97887, 571.52, 68&quot;, &quot;time&quot;: 1794016303.15056}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.71, 68&quot;, &quot;time&quot;: 1794016318.2183342}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.53, 68&quot;, &quot;time&quot;: 1794016333.281267}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 592.66, 65&quot;, &quot;time&quot;: 1794016348.342234}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.07, 64&quot;, &quot;time&quot;: 1794016363.4213912}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 575.43, 68&quot;, &quot;time&quot;: 1794016378.486197}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.61, 65&quot;, &quot;time&quot;: 1794016393.5536122}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 582.57, 63&quot;, &quot;time&quot;: 1794016408.6285}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.89, 66&quot;, &quot;time&quot;: 1794016423.7076128}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 577.49, 61&quot;, &quot;time&quot;: 1794016438.7769892}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.11, 66&quot;, &quot;time&quot;: 1794016453.839531}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.80, 65&quot;, &quot;time&quot;: 1794016468.8962293}
+{&quot;csv&quot;: &quot;0, 98, 23557, 97887, 570.18, 65&quot;, &quot;time&quot;: 1794016483.9616926}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.96, 67&quot;, &quot;time&quot;: 1794016499.0279114}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.29, 67&quot;, &quot;time&quot;: 1794016514.085511}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.41, 67&quot;, &quot;time&quot;: 1794016529.146892}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.00, 65&quot;, &quot;time&quot;: 1794016544.2157311}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 568.92, 66&quot;, &quot;time&quot;: 1794016559.282951}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.21, 66&quot;, &quot;time&quot;: 1794016574.340897}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.30, 65&quot;, &quot;time&quot;: 1794016589.4195943}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.08, 67&quot;, &quot;time&quot;: 1794016604.4859312}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 591.09, 69&quot;, &quot;time&quot;: 1794016619.5453289}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 561.89, 63&quot;, &quot;time&quot;: 1794016634.6276946}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.76, 65&quot;, &quot;time&quot;: 1794016649.686114}
+{&quot;csv&quot;: &quot;0, 35, 23557, 97887, 184.11, 63&quot;, &quot;time&quot;: 1794016664.7445557}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.63, 67&quot;, &quot;time&quot;: 1794016679.815104}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.99, 62&quot;, &quot;time&quot;: 1794016694.8768113}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 586.41, 64&quot;, &quot;time&quot;: 1794016709.9358501}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.52, 68&quot;, &quot;time&quot;: 1794016725.0083153}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.42, 65&quot;, &quot;time&quot;: 1794016740.0660355}
+{&quot;csv&quot;: &quot;0, 98, 23557, 97887, 572.11, 66&quot;, &quot;time&quot;: 1794016755.1306741}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.86, 68&quot;, &quot;time&quot;: 1794016770.189467}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.23, 67&quot;, &quot;time&quot;: 1794016785.2658498}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 592.38, 67&quot;, &quot;time&quot;: 1794016800.3306105}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 575.30, 68&quot;, &quot;time&quot;: 1794016815.4079077}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.65, 62&quot;, &quot;time&quot;: 1794016830.4666655}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.58, 66&quot;, &quot;time&quot;: 1794016845.5415757}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.02, 67&quot;, &quot;time&quot;: 1794016860.6080296}
+{&quot;csv&quot;: &quot;0, 98, 23557, 97887, 571.19, 64&quot;, &quot;time&quot;: 1794016875.6681857}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.95, 68&quot;, &quot;time&quot;: 1794016890.7268221}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 577.23, 64&quot;, &quot;time&quot;: 1794016905.7894979}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.54, 66&quot;, &quot;time&quot;: 1794016920.8495133}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 569.08, 65&quot;, &quot;time&quot;: 1794016935.9221876}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 582.83, 65&quot;, &quot;time&quot;: 1794016950.9781556}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 574.03, 69&quot;, &quot;time&quot;: 1794016966.0507293}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 578.12, 68&quot;, &quot;time&quot;: 1794016981.1310232}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 571.84, 67&quot;, &quot;time&quot;: 1794016996.196031}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 573.01, 65&quot;, &quot;time&quot;: 1794017011.2545433}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 584.58, 69&quot;, &quot;time&quot;: 1794017026.3265617}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 576.53, 68&quot;, &quot;time&quot;: 1794017041.390309}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 565.36, 65&quot;, &quot;time&quot;: 1794017056.4552438}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 572.08, 65&quot;, &quot;time&quot;: 1794017071.5259519}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 576.71, 67&quot;, &quot;time&quot;: 1794017086.5876067}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 559.98, 64&quot;, &quot;time&quot;: 1794017101.6474037}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 563.40, 67&quot;, &quot;time&quot;: 1794017116.7182825}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.12, 61&quot;, &quot;time&quot;: 1794017131.7806914}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 567.36, 68&quot;, &quot;time&quot;: 1794017146.842783}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 581.16, 67&quot;, &quot;time&quot;: 1794017161.9174747}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 563.64, 68&quot;, &quot;time&quot;: 1794017176.9844842}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 580.26, 68&quot;, &quot;time&quot;: 1794017192.0518715}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 565.43, 68&quot;, &quot;time&quot;: 1794017207.124635}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 566.60, 66&quot;, &quot;time&quot;: 1794017222.190523}
+{&quot;csv&quot;: &quot;0, 97, 23557, 97887, 564.47, 65&quot;, &quot;time&quot;: 1794017237.2674615}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.75, 67&quot;, &quot;time&quot;: 1794017252.33559}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 582.32, 68&quot;, &quot;time&quot;: 1794017267.4086986}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 570.97, 60&quot;, &quot;time&quot;: 1794017282.4772558}
+{&quot;csv&quot;: &quot;0, 100, 23557, 97887, 564.03, 65&quot;, &quot;time&quot;: 1794017297.540355}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 88.80, 53&quot;, &quot;time&quot;: 1794017312.61944}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 89.56, 42&quot;, &quot;time&quot;: 1794017327.675975}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 87.19, 38&quot;, &quot;time&quot;: 1794017342.7345312}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 85.71, 35&quot;, &quot;time&quot;: 1794017357.8067956}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 84.96, 34&quot;, &quot;time&quot;: 1794017372.8582604}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 84.63, 33&quot;, &quot;time&quot;: 1794017387.9310982}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 84.44, 33&quot;, &quot;time&quot;: 1794017402.9910212}
+{&quot;csv&quot;: &quot;0, 0, 23557, 97887, 83.82, 32&quot;, &quot;time&quot;: 1794017418.051604}
+</pre><h2>Recent experiment log</h2><pre>Using CPython 3.11.13 interpreter at: /opt/verbalizing-subliminal-learning-venv/bin/python
+Creating virtual environment at: /opt/qwen-lls-venv
+Activate with: source /opt/qwen-lls-venv/bin/activate
+Using Python 3.11.13 environment at: /opt/qwen-lls-venv
+Resolved 4 packages in 30ms
+Downloading triton (188.5MiB)
+ Downloading triton
+Prepared 4 packages in 1.69s
+Installed 4 packages in 16ms
+ + einops==0.8.2
+ + fla-core==0.5.2
+ + flash-linear-attention==0.5.2
+ + triton==3.7.1
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/427 [00:00&lt;?, ?it/s]Loading weights:   0%|          | 1/427 [00:00&lt;01:46,  4.01it/s]Loading weights:   0%|          | 2/427 [00:00&lt;01:39,  4.26it/s]Loading weights:   9%|▊         | 37/427 [00:00&lt;00:04, 94.70it/s]Loading weights:  16%|█▌        | 67/427 [00:00&lt;00:02, 147.79it/s]Loading weights:  23%|██▎       | 99/427 [00:00&lt;00:01, 194.50it/s]Loading weights:  31%|███▏      | 134/427 [00:00&lt;00:01, 234.98it/s]Loading weights:  41%|████      | 173/427 [00:00&lt;00:00, 277.18it/s]Loading weights:  49%|████▉     | 211/427 [00:01&lt;00:00, 300.66it/s]Loading weights:  60%|██████    | 258/427 [00:01&lt;00:00, 345.02it/s]Loading weights:  72%|███████▏  | 306/427 [00:01&lt;00:00, 380.06it/s]Loading weights:  81%|████████  | 346/427 [00:01&lt;00:00, 384.41it/s]Loading weights:  90%|█████████ | 386/427 [00:01&lt;00:00, 386.08it/s]Loading weights: 100%|██████████| 427/427 [00:01&lt;00:00, 265.72it/s]
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 111616}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 120832}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 131072}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 141312}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 151552}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 162816}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 175104}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 188416}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 201728}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 215040}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 228352}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 241664}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 254976}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 268288}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 281600}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 294912}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 308224}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 322560}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 334848}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 348160}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 361472}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 375808}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 388096}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 403456}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 416768}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 429056}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 442368}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 454656}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 467968}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 482304}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 494592}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 509952}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 523264}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 535552}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 548864}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 561152}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 574464}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 587776}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 604160}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 618496}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 633856}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 656384}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 672768}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 690176}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 705536}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 726016}
+{&quot;worker&quot;: &quot;qwen-lls-p08&quot;, &quot;completed_chunk&quot;: 742400}
+</pre><h2>Save / publish log</h2><pre>Would use project environment at: /opt/verbalizing-subliminal-learning-venv
+Audited 88 packages in 11ms
+Would make no changes
+Using Python 3.11.13 environment at: /opt/verbalizing-subliminal-learning-venv
+Saved dependency metadata: /workspace/projects/verbalizing-subliminal-learning/environment-metadata (environment archives disabled)
+</pre><h2>Supervisor exit receipt</h2><pre>{
+  &quot;pid&quot;: 396,
+  &quot;supervisor_pid&quot;: 397,
+  &quot;status&quot;: &quot;running&quot;,
+  &quot;started&quot;: 1794011971.6194549
+}
+</pre></body></html>

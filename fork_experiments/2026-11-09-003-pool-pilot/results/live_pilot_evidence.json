@@ -1,0 +1,1513 @@
+{
+  "state": {
+    "schema": 1,
+    "identity": {
+      "team_id": "cmu31hyiy002gk9s0xik85gob",
+      "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+      "volume_id": "orqsmyhvok",
+      "mount_path": "/workspace"
+    },
+    "tasks": {
+      "2026-11-09-003-pool-pilot--root-a": {
+        "spec": {
+          "id": "2026-11-09-003-pool-pilot--root-a",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "deps": [],
+          "config": {
+            "run_id": "2026-11-09-003-pool-pilot--root-a-a1",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "pod_name": "pool-pilot",
+            "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--root-a-a1",
+            "source_commit": "eaaf3862e6d94823453af664affdc260d92f97ab",
+            "command": [
+              "bash",
+              "setup/run.sh",
+              "python",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "root-a"
+            ],
+            "save": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "save"
+            ],
+            "max_seconds": 900,
+            "hook_timeout": 180,
+            "dedicated_pod": true,
+            "retire": "terminate",
+            "budget": {
+              "limit_usd": 16.66,
+              "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+              "baseline_declared": false,
+              "prior_spend_usd": 0.0,
+              "identity": {
+                "team_id": "cmu31hyiy002gk9s0xik85gob",
+                "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+                "volume_id": "orqsmyhvok",
+                "mount_path": "/workspace",
+                "experiment": "2026-11-09-003-pool-pilot"
+              },
+              "hard_limit_usd": 19.992,
+              "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+            },
+            "provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING"
+            },
+            "laptop_provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING",
+              "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+            },
+            "workspace": {
+              "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+              "experiment": "2026-11-09-003-pool-pilot",
+              "watch_interval": 15,
+              "report_json_globs": [],
+              "pull": []
+            },
+            "infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6",
+            "publish": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "publish"
+            ],
+            "checkout": {
+              "code_paths": [
+                "setup",
+                "pyproject.toml",
+                "uv.lock",
+                "fork_experiments/2026-11-09-003-pool-pilot"
+              ],
+              "input_paths": [],
+              "mode": "worktree",
+              "exclude_paths": [],
+              "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+              "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+              "remote": "origin"
+            },
+            "failure_hold_seconds": 1800,
+            "activation_checkpointing": {
+              "backbone": false,
+              "head": false
+            },
+            "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-a-a1",
+            "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-a-a1/artifacts",
+            "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-a-a1/publish",
+            "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+            "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+            "storage_monitor": {
+              "threshold": 0.9,
+              "growth": 1.2,
+              "cap_gb": 2000,
+              "interval_seconds": 60
+            },
+            "submission_infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6"
+          },
+          "forward_env": [],
+          "gpu_ids": [
+            "NVIDIA A100 80GB PCIe",
+            "NVIDIA A100-SXM4-80GB",
+            "NVIDIA A40",
+            "NVIDIA B200",
+            "NVIDIA B300 SXM6 AC",
+            "NVIDIA GeForce RTX 3090",
+            "NVIDIA GeForce RTX 4090",
+            "NVIDIA GeForce RTX 5090",
+            "NVIDIA H100 80GB HBM3",
+            "NVIDIA H100 NVL",
+            "NVIDIA H100 PCIe",
+            "NVIDIA H200",
+            "NVIDIA H200 NVL",
+            "NVIDIA L4",
+            "NVIDIA L40",
+            "NVIDIA L40S",
+            "NVIDIA RTX 2000 Ada Generation",
+            "NVIDIA RTX 4000 Ada Generation",
+            "NVIDIA RTX 6000 Ada Generation",
+            "NVIDIA RTX A4000",
+            "NVIDIA RTX A4500",
+            "NVIDIA RTX A5000",
+            "NVIDIA RTX A6000",
+            "NVIDIA RTX PRO 4000 Blackwell",
+            "NVIDIA RTX PRO 4500 Blackwell",
+            "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+            "NVIDIA RTX PRO 5000 Blackwell",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+            "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+          ],
+          "gpu_family": "",
+          "environment": "vsl-base",
+          "max_hourly": null
+        },
+        "status": "complete",
+        "attempt": 1,
+        "pod_id": "newahfse6sgw4s",
+        "started_at": 1794274227.3463447,
+        "run_id": "2026-11-09-003-pool-pilot--root-a-a1",
+        "finished_at": 1794274875.4981637
+      },
+      "2026-11-09-003-pool-pilot--root-b": {
+        "spec": {
+          "id": "2026-11-09-003-pool-pilot--root-b",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "deps": [],
+          "config": {
+            "run_id": "2026-11-09-003-pool-pilot--root-b-a1",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "pod_name": "pool-pilot",
+            "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--root-b-a1",
+            "source_commit": "eaaf3862e6d94823453af664affdc260d92f97ab",
+            "command": [
+              "bash",
+              "setup/run.sh",
+              "python",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "root-b"
+            ],
+            "save": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "save"
+            ],
+            "max_seconds": 900,
+            "hook_timeout": 180,
+            "dedicated_pod": true,
+            "retire": "terminate",
+            "budget": {
+              "limit_usd": 16.66,
+              "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+              "baseline_declared": false,
+              "prior_spend_usd": 0.0,
+              "identity": {
+                "team_id": "cmu31hyiy002gk9s0xik85gob",
+                "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+                "volume_id": "orqsmyhvok",
+                "mount_path": "/workspace",
+                "experiment": "2026-11-09-003-pool-pilot"
+              },
+              "hard_limit_usd": 19.992,
+              "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+            },
+            "provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING"
+            },
+            "laptop_provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING",
+              "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+            },
+            "workspace": {
+              "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+              "experiment": "2026-11-09-003-pool-pilot",
+              "watch_interval": 15,
+              "report_json_globs": [],
+              "pull": []
+            },
+            "infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6",
+            "publish": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "publish"
+            ],
+            "checkout": {
+              "code_paths": [
+                "setup",
+                "pyproject.toml",
+                "uv.lock",
+                "fork_experiments/2026-11-09-003-pool-pilot"
+              ],
+              "input_paths": [],
+              "mode": "worktree",
+              "exclude_paths": [],
+              "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+              "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+              "remote": "origin"
+            },
+            "failure_hold_seconds": 1800,
+            "activation_checkpointing": {
+              "backbone": false,
+              "head": false
+            },
+            "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-b-a1",
+            "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-b-a1/artifacts",
+            "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--root-b-a1/publish",
+            "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+            "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+            "storage_monitor": {
+              "threshold": 0.9,
+              "growth": 1.2,
+              "cap_gb": 2000,
+              "interval_seconds": 60
+            },
+            "submission_infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6"
+          },
+          "forward_env": [],
+          "gpu_ids": [
+            "NVIDIA A100 80GB PCIe",
+            "NVIDIA A100-SXM4-80GB",
+            "NVIDIA A40",
+            "NVIDIA B200",
+            "NVIDIA B300 SXM6 AC",
+            "NVIDIA GeForce RTX 3090",
+            "NVIDIA GeForce RTX 4090",
+            "NVIDIA GeForce RTX 5090",
+            "NVIDIA H100 80GB HBM3",
+            "NVIDIA H100 NVL",
+            "NVIDIA H100 PCIe",
+            "NVIDIA H200",
+            "NVIDIA H200 NVL",
+            "NVIDIA L4",
+            "NVIDIA L40",
+            "NVIDIA L40S",
+            "NVIDIA RTX 2000 Ada Generation",
+            "NVIDIA RTX 4000 Ada Generation",
+            "NVIDIA RTX 6000 Ada Generation",
+            "NVIDIA RTX A4000",
+            "NVIDIA RTX A4500",
+            "NVIDIA RTX A5000",
+            "NVIDIA RTX A6000",
+            "NVIDIA RTX PRO 4000 Blackwell",
+            "NVIDIA RTX PRO 4500 Blackwell",
+            "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+            "NVIDIA RTX PRO 5000 Blackwell",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+            "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+          ],
+          "gpu_family": "",
+          "environment": "vsl-base",
+          "max_hourly": null
+        },
+        "status": "complete",
+        "attempt": 1,
+        "pod_id": "newahfse6sgw4s",
+        "started_at": 1794274875.5611732,
+        "run_id": "2026-11-09-003-pool-pilot--root-b-a1",
+        "finished_at": 1794274922.0322556
+      },
+      "2026-11-09-003-pool-pilot--join": {
+        "spec": {
+          "id": "2026-11-09-003-pool-pilot--join",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "deps": [
+            "2026-11-09-003-pool-pilot--root-a",
+            "2026-11-09-003-pool-pilot--root-b"
+          ],
+          "config": {
+            "run_id": "2026-11-09-003-pool-pilot--join-a1",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "pod_name": "pool-pilot",
+            "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--join-a1",
+            "source_commit": "eaaf3862e6d94823453af664affdc260d92f97ab",
+            "command": [
+              "bash",
+              "setup/run.sh",
+              "python",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "join"
+            ],
+            "save": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "save"
+            ],
+            "max_seconds": 900,
+            "hook_timeout": 180,
+            "dedicated_pod": true,
+            "retire": "terminate",
+            "budget": {
+              "limit_usd": 16.66,
+              "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+              "baseline_declared": false,
+              "prior_spend_usd": 0.0,
+              "identity": {
+                "team_id": "cmu31hyiy002gk9s0xik85gob",
+                "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+                "volume_id": "orqsmyhvok",
+                "mount_path": "/workspace",
+                "experiment": "2026-11-09-003-pool-pilot"
+              },
+              "hard_limit_usd": 19.992,
+              "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+            },
+            "provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING"
+            },
+            "laptop_provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING",
+              "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+            },
+            "workspace": {
+              "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+              "experiment": "2026-11-09-003-pool-pilot",
+              "watch_interval": 15,
+              "report_json_globs": [],
+              "pull": []
+            },
+            "infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6",
+            "publish": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "publish"
+            ],
+            "checkout": {
+              "code_paths": [
+                "setup",
+                "pyproject.toml",
+                "uv.lock",
+                "fork_experiments/2026-11-09-003-pool-pilot"
+              ],
+              "input_paths": [],
+              "mode": "worktree",
+              "exclude_paths": [],
+              "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+              "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+              "remote": "origin"
+            },
+            "failure_hold_seconds": 1800,
+            "activation_checkpointing": {
+              "backbone": false,
+              "head": false
+            },
+            "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--join-a1",
+            "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--join-a1/artifacts",
+            "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--join-a1/publish",
+            "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+            "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+            "storage_monitor": {
+              "threshold": 0.9,
+              "growth": 1.2,
+              "cap_gb": 2000,
+              "interval_seconds": 60
+            },
+            "submission_infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6"
+          },
+          "forward_env": [],
+          "gpu_ids": [
+            "NVIDIA A100 80GB PCIe",
+            "NVIDIA A100-SXM4-80GB",
+            "NVIDIA A40",
+            "NVIDIA B200",
+            "NVIDIA B300 SXM6 AC",
+            "NVIDIA GeForce RTX 3090",
+            "NVIDIA GeForce RTX 4090",
+            "NVIDIA GeForce RTX 5090",
+            "NVIDIA H100 80GB HBM3",
+            "NVIDIA H100 NVL",
+            "NVIDIA H100 PCIe",
+            "NVIDIA H200",
+            "NVIDIA H200 NVL",
+            "NVIDIA L4",
+            "NVIDIA L40",
+            "NVIDIA L40S",
+            "NVIDIA RTX 2000 Ada Generation",
+            "NVIDIA RTX 4000 Ada Generation",
+            "NVIDIA RTX 6000 Ada Generation",
+            "NVIDIA RTX A4000",
+            "NVIDIA RTX A4500",
+            "NVIDIA RTX A5000",
+            "NVIDIA RTX A6000",
+            "NVIDIA RTX PRO 4000 Blackwell",
+            "NVIDIA RTX PRO 4500 Blackwell",
+            "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+            "NVIDIA RTX PRO 5000 Blackwell",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+            "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+          ],
+          "gpu_family": "",
+          "environment": "vsl-base",
+          "max_hourly": null
+        },
+        "status": "complete",
+        "attempt": 1,
+        "pod_id": "newahfse6sgw4s",
+        "started_at": 1794274922.083855,
+        "run_id": "2026-11-09-003-pool-pilot--join-a1",
+        "finished_at": 1794274944.3730233
+      },
+      "2026-11-09-003-pool-pilot--tail": {
+        "spec": {
+          "id": "2026-11-09-003-pool-pilot--tail",
+          "experiment": "2026-11-09-003-pool-pilot",
+          "deps": [
+            "2026-11-09-003-pool-pilot--join"
+          ],
+          "config": {
+            "run_id": "2026-11-09-003-pool-pilot--tail-a1",
+            "experiment": "2026-11-09-003-pool-pilot",
+            "pod_name": "pool-pilot",
+            "repo": "/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-09-003-pool-pilot--tail-a1",
+            "source_commit": "eaaf3862e6d94823453af664affdc260d92f97ab",
+            "command": [
+              "bash",
+              "setup/run.sh",
+              "python",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "tail"
+            ],
+            "save": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "save"
+            ],
+            "max_seconds": 900,
+            "hook_timeout": 180,
+            "dedicated_pod": true,
+            "retire": "terminate",
+            "budget": {
+              "limit_usd": 16.66,
+              "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup.",
+              "baseline_declared": false,
+              "prior_spend_usd": 0.0,
+              "identity": {
+                "team_id": "cmu31hyiy002gk9s0xik85gob",
+                "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+                "volume_id": "orqsmyhvok",
+                "mount_path": "/workspace",
+                "experiment": "2026-11-09-003-pool-pilot"
+              },
+              "hard_limit_usd": 19.992,
+              "directory": "/workspace/.podrun-budgets/97a598b347ecd699d5dde85642b653e814da918aafc5e86230f29bb868a8b3c1"
+            },
+            "provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING"
+            },
+            "laptop_provider": {
+              "team_id": "cmu31hyiy002gk9s0xik85gob",
+              "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+              "volume_id": "orqsmyhvok",
+              "mount_path": "/workspace",
+              "pod_id": "PENDING",
+              "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+            },
+            "workspace": {
+              "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+              "experiment": "2026-11-09-003-pool-pilot",
+              "watch_interval": 15,
+              "report_json_globs": [],
+              "pull": []
+            },
+            "infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6",
+            "publish": [
+              "python3",
+              "fork_experiments/2026-11-09-003-pool-pilot/pilot.py",
+              "publish"
+            ],
+            "checkout": {
+              "code_paths": [
+                "setup",
+                "pyproject.toml",
+                "uv.lock",
+                "fork_experiments/2026-11-09-003-pool-pilot"
+              ],
+              "input_paths": [],
+              "mode": "worktree",
+              "exclude_paths": [],
+              "source_repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+              "root": "/workspace/projects/verbalizing-subliminal-learning/worktrees",
+              "remote": "origin"
+            },
+            "failure_hold_seconds": 1800,
+            "activation_checkpointing": {
+              "backbone": false,
+              "head": false
+            },
+            "run_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--tail-a1",
+            "artifact_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--tail-a1/artifacts",
+            "publication_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot/runs/2026-11-09-003-pool-pilot--tail-a1/publish",
+            "report_dir": "/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-09-003-pool-pilot",
+            "report_relative_dir": "fork_experiments/2026-11-09-003-pool-pilot",
+            "storage_monitor": {
+              "threshold": 0.9,
+              "growth": 1.2,
+              "cap_gb": 2000,
+              "interval_seconds": 60
+            },
+            "submission_infrastructure_commit": "7250718e39188fe7a5d21596c9d7558ef4794ca6"
+          },
+          "forward_env": [],
+          "gpu_ids": [
+            "NVIDIA A100 80GB PCIe",
+            "NVIDIA A100-SXM4-80GB",
+            "NVIDIA A40",
+            "NVIDIA B200",
+            "NVIDIA B300 SXM6 AC",
+            "NVIDIA GeForce RTX 3090",
+            "NVIDIA GeForce RTX 4090",
+            "NVIDIA GeForce RTX 5090",
+            "NVIDIA H100 80GB HBM3",
+            "NVIDIA H100 NVL",
+            "NVIDIA H100 PCIe",
+            "NVIDIA H200",
+            "NVIDIA H200 NVL",
+            "NVIDIA L4",
+            "NVIDIA L40",
+            "NVIDIA L40S",
+            "NVIDIA RTX 2000 Ada Generation",
+            "NVIDIA RTX 4000 Ada Generation",
+            "NVIDIA RTX 6000 Ada Generation",
+            "NVIDIA RTX A4000",
+            "NVIDIA RTX A4500",
+            "NVIDIA RTX A5000",
+            "NVIDIA RTX A6000",
+            "NVIDIA RTX PRO 4000 Blackwell",
+            "NVIDIA RTX PRO 4500 Blackwell",
+            "NVIDIA RTX PRO 4500 Blackwell Server Edition",
+            "NVIDIA RTX PRO 5000 Blackwell",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 1g.24gb",
+            "NVIDIA RTX PRO 6000 Blackwell Server Edition MIG 2g.48gb",
+            "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"
+          ],
+          "gpu_family": "",
+          "environment": "vsl-base",
+          "max_hourly": null
+        },
+        "status": "complete",
+        "attempt": 1,
+        "pod_id": "newahfse6sgw4s",
+        "started_at": 1794274944.435307,
+        "run_id": "2026-11-09-003-pool-pilot--tail-a1",
+        "finished_at": 1794274964.6543348
+      }
+    },
+    "pods": {
+      "newahfse6sgw4s": {
+        "phase": "retired",
+        "task_id": null,
+        "billing_experiment": "2026-11-09-003-pool-pilot",
+        "hourly_usd": 3.9941095890410963,
+        "billed_at": 1794274970.2114074,
+        "created_at": 1794274171.635,
+        "heartbeat": 1794274968.788856,
+        "allocation": "bootstrap-newahfse6sgw4s",
+        "idle_since": 1794274964.6543348,
+        "segments": [
+          {
+            "experiment": "2026-11-09-003-pool-pilot",
+            "start": 1794274171.635,
+            "end": 1794274970.2114298
+          }
+        ],
+        "gpu_id": "NVIDIA H100 80GB HBM3",
+        "gpu_hourly_usd": 3.99,
+        "environment": "vsl-base"
+      },
+      "lsm5cbrfvw9hj4": {
+        "phase": "starting",
+        "task_id": null,
+        "billing_experiment": "2026-11-09-003-pool-pilot",
+        "hourly_usd": 3.9941095890410963,
+        "billed_at": 1794274960.928327,
+        "created_at": 1794274298.998,
+        "heartbeat": 1794274300.7710154,
+        "allocation": "pool-a07ab82d70e741c5",
+        "idle_since": null,
+        "segments": [
+          {
+            "experiment": "2026-11-09-003-pool-pilot",
+            "start": 1794274298.998,
+            "end": null
+          }
+        ],
+        "gpu_id": "NVIDIA H100 80GB HBM3",
+        "gpu_hourly_usd": 3.99,
+        "environment": "vsl-base"
+      }
+    },
+    "budgets": {
+      "2026-11-09-003-pool-pilot": {
+        "spec": {
+          "limit_usd": 16.66,
+          "hard_limit_usd": 19.992,
+          "prior_spend_usd": 0.0,
+          "approval": "User explicitly approved $20 total pilot cap on 2026-11-09 and no hourly price filter. $16.66 graceful / $19.992 hard, including setup, idle, retries and cleanup."
+        },
+        "spent_usd": 1.6203955426564767,
+        "stop": false,
+        "points": [
+          [
+            1794274200,
+            0.06415506578741008
+          ],
+          [
+            1794274230,
+            0.09773911841547109
+          ],
+          [
+            1794274260,
+            0.1313159456954155
+          ],
+          [
+            1794274290,
+            0.17901313205919317
+          ],
+          [
+            1794274320,
+            0.24850038651647097
+          ],
+          [
+            1794274350,
+            0.3171369174031362
+          ],
+          [
+            1794274380,
+            0.3850062713282021
+          ],
+          [
+            1794274410,
+            0.44251144016461275
+          ],
+          [
+            1794274440,
+            0.5103726516527128
+          ],
+          [
+            1794274470,
+            0.5785920719085219
+          ],
+          [
+            1794274500,
+            0.6464122276010579
+          ],
+          [
+            1794274530,
+            0.7132932282337316
+          ],
+          [
+            1794274560,
+            0.7811644028460052
+          ],
+          [
+            1794274590,
+            0.8497903275617724
+          ],
+          [
+            1794274620,
+            0.9176590902859217
+          ],
+          [
+            1794274650,
+            0.9865333995361031
+          ],
+          [
+            1794274680,
+            1.0427361768242154
+          ],
+          [
+            1794274710,
+            1.1091080288789308
+          ],
+          [
+            1794274740,
+            1.1769694980089516
+          ],
+          [
+            1794274770,
+            1.2458517343772864
+          ],
+          [
+            1794274800,
+            1.3137406074553042
+          ],
+          [
+            1794274830,
+            1.3824135497054548
+          ],
+          [
+            1794274860,
+            1.4504045085009638
+          ],
+          [
+            1794274890,
+            1.5186014731736752
+          ],
+          [
+            1794274920,
+            1.5737053933856961
+          ],
+          [
+            1794274950,
+            1.6203955426564767
+          ]
+        ],
+        "updated_at": 1794274970.2114074
+      }
+    },
+    "allocations": {
+      "bootstrap-newahfse6sgw4s": {
+        "id": "bootstrap-newahfse6sgw4s",
+        "name": "bootstrap-newahfse6sgw4s",
+        "status": "ready",
+        "task_id": "2026-11-09-003-pool-pilot--root-a",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "pod_id": "newahfse6sgw4s"
+      },
+      "pool-5023bf4ac8034eb4": {
+        "id": "pool-5023bf4ac8034eb4",
+        "name": "pool-5023bf4ac8034eb4",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274229.373894
+      },
+      "pool-73669ed17d7a473e": {
+        "id": "pool-73669ed17d7a473e",
+        "name": "pool-73669ed17d7a473e",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274232.0687861
+      },
+      "pool-09c5aaaa32624523": {
+        "id": "pool-09c5aaaa32624523",
+        "name": "pool-09c5aaaa32624523",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274234.477157
+      },
+      "pool-1ae85581de1346c4": {
+        "id": "pool-1ae85581de1346c4",
+        "name": "pool-1ae85581de1346c4",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274236.9230983
+      },
+      "pool-ed8aad8f194d4f63": {
+        "id": "pool-ed8aad8f194d4f63",
+        "name": "pool-ed8aad8f194d4f63",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274239.4428542
+      },
+      "pool-479cd400b4454826": {
+        "id": "pool-479cd400b4454826",
+        "name": "pool-479cd400b4454826",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274241.9688973
+      },
+      "pool-7a786f9526354294": {
+        "id": "pool-7a786f9526354294",
+        "name": "pool-7a786f9526354294",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274244.4438877
+      },
+      "pool-b8e6c7eb7ad64757": {
+        "id": "pool-b8e6c7eb7ad64757",
+        "name": "pool-b8e6c7eb7ad64757",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274246.862039
+      },
+      "pool-6a69b13c7fdc4055": {
+        "id": "pool-6a69b13c7fdc4055",
+        "name": "pool-6a69b13c7fdc4055",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274249.2665718
+      },
+      "pool-652ff431eb194f4c": {
+        "id": "pool-652ff431eb194f4c",
+        "name": "pool-652ff431eb194f4c",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274251.6965427
+      },
+      "pool-06d6daf151ae4708": {
+        "id": "pool-06d6daf151ae4708",
+        "name": "pool-06d6daf151ae4708",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274254.1581614
+      },
+      "pool-04d946f3050a45a5": {
+        "id": "pool-04d946f3050a45a5",
+        "name": "pool-04d946f3050a45a5",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274256.693279
+      },
+      "pool-9841fbb8719049b5": {
+        "id": "pool-9841fbb8719049b5",
+        "name": "pool-9841fbb8719049b5",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274259.1975994
+      },
+      "pool-e4918f6ddf5f4a9f": {
+        "id": "pool-e4918f6ddf5f4a9f",
+        "name": "pool-e4918f6ddf5f4a9f",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274261.669298
+      },
+      "pool-1a794655a06042f9": {
+        "id": "pool-1a794655a06042f9",
+        "name": "pool-1a794655a06042f9",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274264.1575656
+      },
+      "pool-f7d43e3ecbc14fb4": {
+        "id": "pool-f7d43e3ecbc14fb4",
+        "name": "pool-f7d43e3ecbc14fb4",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274266.6627722
+      },
+      "pool-4b5a3b8d4f694dbd": {
+        "id": "pool-4b5a3b8d4f694dbd",
+        "name": "pool-4b5a3b8d4f694dbd",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274269.069733
+      },
+      "pool-da6c6c1a9269414d": {
+        "id": "pool-da6c6c1a9269414d",
+        "name": "pool-da6c6c1a9269414d",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274271.542202
+      },
+      "pool-ced408f286af4253": {
+        "id": "pool-ced408f286af4253",
+        "name": "pool-ced408f286af4253",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274273.9848223
+      },
+      "pool-473cab244b86420c": {
+        "id": "pool-473cab244b86420c",
+        "name": "pool-473cab244b86420c",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274276.4577963
+      },
+      "pool-7fb81af0cf774183": {
+        "id": "pool-7fb81af0cf774183",
+        "name": "pool-7fb81af0cf774183",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274278.9403043
+      },
+      "pool-6cb3ba2d085f4ec3": {
+        "id": "pool-6cb3ba2d085f4ec3",
+        "name": "pool-6cb3ba2d085f4ec3",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274281.622594
+      },
+      "pool-940d783a5bd64d73": {
+        "id": "pool-940d783a5bd64d73",
+        "name": "pool-940d783a5bd64d73",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274284.0873575
+      },
+      "pool-1317636e8e84486d": {
+        "id": "pool-1317636e8e84486d",
+        "name": "pool-1317636e8e84486d",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274286.6564016
+      },
+      "pool-822eef3a7e694623": {
+        "id": "pool-822eef3a7e694623",
+        "name": "pool-822eef3a7e694623",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274290.940805
+      },
+      "pool-522fd45e6c644fe7": {
+        "id": "pool-522fd45e6c644fe7",
+        "name": "pool-522fd45e6c644fe7",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274293.5381286
+      },
+      "pool-e3471c3727eb4c71": {
+        "id": "pool-e3471c3727eb4c71",
+        "name": "pool-e3471c3727eb4c71",
+        "status": "rejected",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274295.9730647
+      },
+      "pool-a07ab82d70e741c5": {
+        "id": "pool-a07ab82d70e741c5",
+        "name": "pool-a07ab82d70e741c5",
+        "status": "allocated",
+        "task_id": "2026-11-09-003-pool-pilot--root-b",
+        "experiment": "2026-11-09-003-pool-pilot",
+        "requested_at": 1794274298.470425,
+        "pod_id": "lsm5cbrfvw9hj4"
+      }
+    },
+    "max_pods": 2,
+    "sticky": false,
+    "target_pods": 0,
+    "idle_experiment": null,
+    "events": [
+      {
+        "event": "enqueue",
+        "time": 1794274225.1920915,
+        "tasks": [
+          "2026-11-09-003-pool-pilot--root-a",
+          "2026-11-09-003-pool-pilot--root-b",
+          "2026-11-09-003-pool-pilot--join",
+          "2026-11-09-003-pool-pilot--tail"
+        ]
+      },
+      {
+        "event": "configure",
+        "time": 1794274225.2102623,
+        "max_pods": 2,
+        "sticky": false
+      },
+      {
+        "event": "allocation_allocated",
+        "time": 1794274225.2393415,
+        "allocation": "bootstrap-newahfse6sgw4s"
+      },
+      {
+        "event": "pod_ready",
+        "time": 1794274227.282393,
+        "pod_id": "newahfse6sgw4s"
+      },
+      {
+        "event": "claim",
+        "time": 1794274227.3464322,
+        "task": "2026-11-09-003-pool-pilot--root-a",
+        "pod_id": "newahfse6sgw4s",
+        "run_id": "2026-11-09-003-pool-pilot--root-a-a1"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274229.3740504,
+        "allocation": "pool-5023bf4ac8034eb4",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274229.997873,
+        "allocation": "pool-5023bf4ac8034eb4"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274232.0689192,
+        "allocation": "pool-73669ed17d7a473e",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274232.4105484,
+        "allocation": "pool-73669ed17d7a473e"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274234.4772727,
+        "allocation": "pool-09c5aaaa32624523",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274234.851032,
+        "allocation": "pool-09c5aaaa32624523"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274236.9232144,
+        "allocation": "pool-1ae85581de1346c4",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274237.3587306,
+        "allocation": "pool-1ae85581de1346c4"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274239.442973,
+        "allocation": "pool-ed8aad8f194d4f63",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274239.8803387,
+        "allocation": "pool-ed8aad8f194d4f63"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274241.9690187,
+        "allocation": "pool-479cd400b4454826",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274242.3686807,
+        "allocation": "pool-479cd400b4454826"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274244.4440043,
+        "allocation": "pool-7a786f9526354294",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274244.7881193,
+        "allocation": "pool-7a786f9526354294"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274246.8621578,
+        "allocation": "pool-b8e6c7eb7ad64757",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274247.1887429,
+        "allocation": "pool-b8e6c7eb7ad64757"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274249.2666888,
+        "allocation": "pool-6a69b13c7fdc4055",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274249.630931,
+        "allocation": "pool-6a69b13c7fdc4055"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274251.696657,
+        "allocation": "pool-652ff431eb194f4c",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274252.081318,
+        "allocation": "pool-652ff431eb194f4c"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274254.158277,
+        "allocation": "pool-06d6daf151ae4708",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274254.6282551,
+        "allocation": "pool-06d6daf151ae4708"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274256.6933973,
+        "allocation": "pool-04d946f3050a45a5",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274257.135301,
+        "allocation": "pool-04d946f3050a45a5"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274259.197647,
+        "allocation": "pool-9841fbb8719049b5",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274259.5912714,
+        "allocation": "pool-9841fbb8719049b5"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274261.6693501,
+        "allocation": "pool-e4918f6ddf5f4a9f",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274262.0925555,
+        "allocation": "pool-e4918f6ddf5f4a9f"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274264.157703,
+        "allocation": "pool-1a794655a06042f9",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274264.5980406,
+        "allocation": "pool-1a794655a06042f9"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274266.662824,
+        "allocation": "pool-f7d43e3ecbc14fb4",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274266.987413,
+        "allocation": "pool-f7d43e3ecbc14fb4"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274269.0698524,
+        "allocation": "pool-4b5a3b8d4f694dbd",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274269.4583976,
+        "allocation": "pool-4b5a3b8d4f694dbd"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274271.5423195,
+        "allocation": "pool-da6c6c1a9269414d",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274271.9102476,
+        "allocation": "pool-da6c6c1a9269414d"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274273.9849403,
+        "allocation": "pool-ced408f286af4253",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274274.381535,
+        "allocation": "pool-ced408f286af4253"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274276.45792,
+        "allocation": "pool-473cab244b86420c",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274276.8460155,
+        "allocation": "pool-473cab244b86420c"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274278.9406095,
+        "allocation": "pool-7fb81af0cf774183",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274279.541497,
+        "allocation": "pool-7fb81af0cf774183"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274281.622741,
+        "allocation": "pool-6cb3ba2d085f4ec3",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274282.0120778,
+        "allocation": "pool-6cb3ba2d085f4ec3"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274284.0874822,
+        "allocation": "pool-940d783a5bd64d73",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274284.5741584,
+        "allocation": "pool-940d783a5bd64d73"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274286.6565268,
+        "allocation": "pool-1317636e8e84486d",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274287.0889754,
+        "allocation": "pool-1317636e8e84486d"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274290.940934,
+        "allocation": "pool-822eef3a7e694623",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274291.4510906,
+        "allocation": "pool-822eef3a7e694623"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274293.5382483,
+        "allocation": "pool-522fd45e6c644fe7",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274293.885366,
+        "allocation": "pool-522fd45e6c644fe7"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274295.973189,
+        "allocation": "pool-e3471c3727eb4c71",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_rejected",
+        "time": 1794274296.4090672,
+        "allocation": "pool-e3471c3727eb4c71"
+      },
+      {
+        "event": "allocation_requested",
+        "time": 1794274298.470485,
+        "allocation": "pool-a07ab82d70e741c5",
+        "task": "2026-11-09-003-pool-pilot--root-b"
+      },
+      {
+        "event": "allocation_allocated",
+        "time": 1794274300.7710326,
+        "allocation": "pool-a07ab82d70e741c5"
+      },
+      {
+        "event": "complete",
+        "time": 1794274875.4982128,
+        "task": "2026-11-09-003-pool-pilot--root-a",
+        "pod_id": "newahfse6sgw4s"
+      },
+      {
+        "event": "claim",
+        "time": 1794274875.5612652,
+        "task": "2026-11-09-003-pool-pilot--root-b",
+        "pod_id": "newahfse6sgw4s",
+        "run_id": "2026-11-09-003-pool-pilot--root-b-a1"
+      },
+      {
+        "event": "complete",
+        "time": 1794274922.0322948,
+        "task": "2026-11-09-003-pool-pilot--root-b",
+        "pod_id": "newahfse6sgw4s"
+      },
+      {
+        "event": "claim",
+        "time": 1794274922.0839221,
+        "task": "2026-11-09-003-pool-pilot--join",
+        "pod_id": "newahfse6sgw4s",
+        "run_id": "2026-11-09-003-pool-pilot--join-a1"
+      },
+      {
+        "event": "complete",
+        "time": 1794274944.3730614,
+        "task": "2026-11-09-003-pool-pilot--join",
+        "pod_id": "newahfse6sgw4s"
+      },
+      {
+        "event": "claim",
+        "time": 1794274944.4353724,
+        "task": "2026-11-09-003-pool-pilot--tail",
+        "pod_id": "newahfse6sgw4s",
+        "run_id": "2026-11-09-003-pool-pilot--tail-a1"
+      },
+      {
+        "event": "complete",
+        "time": 1794274964.6543708,
+        "task": "2026-11-09-003-pool-pilot--tail",
+        "pod_id": "newahfse6sgw4s"
+      },
+      {
+        "event": "terminate_requested",
+        "time": 1794274968.9600897,
+        "pod_id": "newahfse6sgw4s"
+      },
+      {
+        "event": "retired",
+        "time": 1794274970.2114358,
+        "pod_id": "newahfse6sgw4s"
+      }
+    ]
+  },
+  "results": {
+    "tail-done.json": {
+      "node": "tail",
+      "pod_id": null,
+      "run_id": "2026-11-09-003-pool-pilot--tail-a1",
+      "start": 1794274948.5978358,
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "dtype": "torch.bfloat16",
+      "cuda_ok": true,
+      "dependencies": {
+        "join": {
+          "node": "join",
+          "pod_id": null,
+          "run_id": "2026-11-09-003-pool-pilot--join-a1",
+          "start": 1794274926.8942468,
+          "gpu": "NVIDIA H100 80GB HBM3",
+          "dtype": "torch.bfloat16",
+          "cuda_ok": true,
+          "dependencies": {
+            "root-a": {
+              "node": "root-a",
+              "pod_id": null,
+              "run_id": "2026-11-09-003-pool-pilot--root-a-a1",
+              "start": 1794274232.4906914,
+              "gpu": "NVIDIA H100 80GB HBM3",
+              "dtype": "torch.bfloat16",
+              "cuda_ok": true,
+              "end": 1794274863.3948972,
+              "seconds": 630.9042057991028
+            },
+            "root-b": {
+              "node": "root-b",
+              "pod_id": null,
+              "run_id": "2026-11-09-003-pool-pilot--root-b-a1",
+              "start": 1794274879.800285,
+              "gpu": "NVIDIA H100 80GB HBM3",
+              "dtype": "torch.bfloat16",
+              "cuda_ok": true,
+              "end": 1794274910.4292798,
+              "seconds": 30.628994703292847
+            }
+          },
+          "end": 1794274932.527487,
+          "seconds": 5.633240222930908
+        }
+      },
+      "end": 1794274954.2407813,
+      "seconds": 5.6429455280303955
+    },
+    "join-done.json": {
+      "node": "join",
+      "pod_id": null,
+      "run_id": "2026-11-09-003-pool-pilot--join-a1",
+      "start": 1794274926.8942468,
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "dtype": "torch.bfloat16",
+      "cuda_ok": true,
+      "dependencies": {
+        "root-a": {
+          "node": "root-a",
+          "pod_id": null,
+          "run_id": "2026-11-09-003-pool-pilot--root-a-a1",
+          "start": 1794274232.4906914,
+          "gpu": "NVIDIA H100 80GB HBM3",
+          "dtype": "torch.bfloat16",
+          "cuda_ok": true,
+          "end": 1794274863.3948972,
+          "seconds": 630.9042057991028
+        },
+        "root-b": {
+          "node": "root-b",
+          "pod_id": null,
+          "run_id": "2026-11-09-003-pool-pilot--root-b-a1",
+          "start": 1794274879.800285,
+          "gpu": "NVIDIA H100 80GB HBM3",
+          "dtype": "torch.bfloat16",
+          "cuda_ok": true,
+          "end": 1794274910.4292798,
+          "seconds": 30.628994703292847
+        }
+      },
+      "end": 1794274932.527487,
+      "seconds": 5.633240222930908
+    },
+    "root-b-done.json": {
+      "node": "root-b",
+      "pod_id": null,
+      "run_id": "2026-11-09-003-pool-pilot--root-b-a1",
+      "start": 1794274879.800285,
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "dtype": "torch.bfloat16",
+      "cuda_ok": true,
+      "end": 1794274910.4292798,
+      "seconds": 30.628994703292847
+    },
+    "root-a-done.json": {
+      "node": "root-a",
+      "pod_id": null,
+      "run_id": "2026-11-09-003-pool-pilot--root-a-a1",
+      "start": 1794274232.4906914,
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "dtype": "torch.bfloat16",
+      "cuda_ok": true,
+      "end": 1794274863.3948972,
+      "seconds": 630.9042057991028
+    }
+  }
+}

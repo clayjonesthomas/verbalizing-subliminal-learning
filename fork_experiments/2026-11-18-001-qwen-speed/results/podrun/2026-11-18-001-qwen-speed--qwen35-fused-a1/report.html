@@ -1,0 +1,376 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="30"><title>Experiment</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5f7;padding:16px}small{color:#555}</style>
+</head><body><h1>2026-11-18-001-qwen-speed--qwen35-fused-a1</h1><p>Last successful local sync: Wed Nov 18 20:44:21 2026</p><p>Status: <b>held</b></p><h2>Lifecycle</h2><pre>{
+  &quot;run_id&quot;: &quot;2026-11-18-001-qwen-speed--qwen35-fused-a1&quot;,
+  &quot;source_commit&quot;: &quot;618e8cd92bdc845bc202976f2a2d798794ecb604&quot;,
+  &quot;started&quot;: 1795063001.5854547,
+  &quot;heartbeat&quot;: 1795063456.866011,
+  &quot;pod_id&quot;: &quot;k14abmae8kf1vu&quot;,
+  &quot;pod_name&quot;: &quot;qwen-speed&quot;,
+  &quot;pid&quot;: 441,
+  &quot;process_start_ticks&quot;: &quot;12510368&quot;,
+  &quot;status&quot;: &quot;held&quot;,
+  &quot;keep_on_failure&quot;: true,
+  &quot;budget_watchdog&quot;: {
+    &quot;pid&quot;: 419,
+    &quot;start_ticks&quot;: &quot;12509174&quot;,
+    &quot;ready&quot;: true,
+    &quot;heartbeat&quot;: 1795062995.151961,
+    &quot;decision&quot;: &quot;claim&quot;,
+    &quot;runtime_commit&quot;: &quot;449305971058b4c0729198d57bf6e0d53a3d5a7c&quot;
+  },
+  &quot;runner_sha256&quot;: {
+    &quot;scientific_scope.py&quot;: &quot;d8e1badfc9839631c86427f49bcd10cddb852113625725836cd63c81b192ffb9&quot;,
+    &quot;activation_checkpointing.py&quot;: &quot;b8bf808d023a02b7ccf5c5720a144c94c98691f4c075cb680d62c66618e6c1dd&quot;,
+    &quot;pool_allocations.py&quot;: &quot;8688678a453743899ba616038b724c276c93788062cbe9bff9dc2a39d0781b40&quot;,
+    &quot;runner.py&quot;: &quot;2d3ffe7a107c7ee4ab39842cf65cb18ce65162805996492e73432f451a1fa14b&quot;,
+    &quot;volume_s3.py&quot;: &quot;01251e94aa34fe2152fe26ef45b04d484231ed7da133a3a5d16775d6b9031f15&quot;,
+    &quot;capacity.py&quot;: &quot;030fb9b681214a1c7a5eef9e9b95b4660daad35dbc52997ac8bf44666a974923&quot;,
+    &quot;checkouts.py&quot;: &quot;5efcb83e44aeaa8027ddd299b49f2a09256afce24809a665dd2e630aee8f59fd&quot;,
+    &quot;pool_client.py&quot;: &quot;166736504b88c50c3e913295644cff270cc9b4dbce98cfef11ba98c21af1a857&quot;,
+    &quot;recovery.py&quot;: &quot;aee388e24ac0c5c83bf62abb0e3e286329b015fb19d6702b85801a9d4daafd35&quot;,
+    &quot;provider.py&quot;: &quot;9a62423c418097fbb8e9cf3ec249c9e6d73cb2a3550e2e893423ccffb3f30940&quot;,
+    &quot;boundary_hold.py&quot;: &quot;421527f54970b76eaad24e5df0e6d5aafe0c57c3d5b4046834bb67a9b2631a24&quot;,
+    &quot;durable_sync.py&quot;: &quot;b3b01ef5389563b6b452b83202781d90d36e3185556f6b49109e26c282981772&quot;,
+    &quot;external_cost.py&quot;: &quot;dbaec5fb9009fa34fb2c0bfac3ae8e5872670fb38cf3b69bc26714bdcc5e4fe7&quot;,
+    &quot;handoff.py&quot;: &quot;639501ba732b09ed3df624814fbf3b3a9264102599993cbb249228ef2e3d9fae&quot;,
+    &quot;pool_cancel.py&quot;: &quot;61e1ba1e82ba63cafce3fe82c9040949b0637e633852c11d1a01c5e8123abde0&quot;,
+    &quot;runpod_cache.py&quot;: &quot;6f04bba17483a580e3667285b205015b1095bd43020c8c16d71dea96ad7fc68b&quot;,
+    &quot;budget.py&quot;: &quot;256919d515bd636a498c9335745510235cab93dfabfcfd4d53c9c54e60ab3b4c&quot;,
+    &quot;runpod_http.py&quot;: &quot;1fb6b72a11d324626fd4d1a93ff8c4d2f6aa06b5d892321e6094a6b9c7868c53&quot;,
+    &quot;pool_fleet_upgrade.py&quot;: &quot;8afef2345bc7ef2e7b376c34562d4f5df271c2aa8b89975a22e0d9171029b65c&quot;,
+    &quot;submission.py&quot;: &quot;2c96cbacf28ca3150f666a5b43c5e5497ffd03252e88d1dd1e5790a3e50c2c8c&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;pool_local_upgrade.py&quot;: &quot;53e691c84a2525fde4093401271ac96b48e294bf296fb3d8c09f181636c1fa91&quot;,
+    &quot;bootstrap_recovery.py&quot;: &quot;5a8f7fcff681a36f1d65f9abbcf0be531674f856ed0ec805e8b105f262e64df5&quot;,
+    &quot;idle_hold.py&quot;: &quot;fabde5bb0c8b1cafb9cc6628e58144dd2ffb7f907dc42dfc74e01bb091d766a8&quot;,
+    &quot;pool_io_trace.py&quot;: &quot;5272595148a93089763ed0312ab2766d53c0b4d08d6d1b62b79cfea085c77b9e&quot;,
+    &quot;boundary_stop.py&quot;: &quot;660053cfc717eb40710423ce533225875a55e725c28f567e25da481cb9328be8&quot;,
+    &quot;pool_store.py&quot;: &quot;bfd45afad865fa26dd25e8b63c8789d5b158f77dbdde9044856a550332c35026&quot;,
+    &quot;pool_runtime.py&quot;: &quot;14f832bf72ca460d61181ffbc9a845449601b0348a2e6d538744067f6d027ac1&quot;,
+    &quot;failure_watch.py&quot;: &quot;43f3a7171fbe82f6851393dbbc252fdb899526220600eaee555a455126ad11fe&quot;,
+    &quot;pool_report.py&quot;: &quot;3a04da4e7dd501e764a9af2bb35f05ba1f6b57d1306e9e48d4cabe5653e81cbf&quot;,
+    &quot;cli.py&quot;: &quot;9620c1ed992df9edeeffff5b60ba4ad53340eeee95741ab85f196fa15fa187ce&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;host_blocklist.py&quot;: &quot;6b2672ac9b8c11e50de9a5d9a9dcb8627481512373457aa3fe069776018d884a&quot;,
+    &quot;locking.py&quot;: &quot;35df0c0f4d0eee3712173528e5cf2d7039e8dbd5603645bf020eea75202b0aa2&quot;,
+    &quot;pool_parallel.py&quot;: &quot;f1a11cd6877cc55396ae92b8e2e90c7d96964dc3ba6969db830150287abd4156&quot;,
+    &quot;billing_models.py&quot;: &quot;6cfba2313d122e8a0ad7c7c3cdf3ad0be2281fb6d2f1ffe1474839e4e76f04b0&quot;,
+    &quot;gpu_prices.py&quot;: &quot;b70187da8084f4ea31bd576264de5649b52e103961a4dbf64e34618d5152f64d&quot;,
+    &quot;pool_cleanup_recovery.py&quot;: &quot;14d5a69ea66b26df56135fb4fc7f9dc12b2785a036ef8f11317a03deb2c9ba2b&quot;,
+    &quot;storage.py&quot;: &quot;5e41d2c61e1881a215235eb58c6e197a78bee3eca032c3bec1152f23d4173844&quot;,
+    &quot;costs.py&quot;: &quot;c5c3327668a13a4fc813729f4cad2bab6b1840186c54fddfc90af462ed91510e&quot;,
+    &quot;allocation.py&quot;: &quot;5dbca47f1a39e6d8e6eb401ab499168c4e1c8a919dffd70df0e7343161a0bdd7&quot;,
+    &quot;pool_local.py&quot;: &quot;bd56fb143d0e762412903dc47f35bdb31f6b31fb56eff38680e9a8b54be96dac&quot;,
+    &quot;selection.py&quot;: &quot;0b596187842eddc21d8357cf5823fec625d8f8be90f12a8b34baac23a85b0688&quot;,
+    &quot;placement.py&quot;: &quot;9e5b3f5d6b03ef41f6197ba6cd778c68e55c58be776b951ed723c8c7ea5bfdaf&quot;,
+    &quot;watcher.py&quot;: &quot;5666d6bb68d2175087ae46b07dfce708ddfe5e774b3e6a6b76c88a8631c3efe3&quot;,
+    &quot;workspace.py&quot;: &quot;b0d59b7e40657086fa10a2526c05dcea10c78a9980f5348d8c04c6c321e1f0f7&quot;,
+    &quot;pool.py&quot;: &quot;161a50cd1e20ab495161208d37951b8949533aa659d6a0abd0a99b9a26121c0b&quot;,
+    &quot;laptop.py&quot;: &quot;099408d6780b1d0c093aca3d66cef9e500699a76f7c1125eda10246e4048b79b&quot;,
+    &quot;pool_service.py&quot;: &quot;616a93a7aa2d2f093071a30b4fe7a61f20b5b324fae1215919ab5f9ca333c478&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;,
+    &quot;pool_startup.py&quot;: &quot;cb0e7833a7dda472233ff3d091338db04bbca2895418c5fd32ac676773234e8b&quot;,
+    &quot;billing_ledger.py&quot;: &quot;ada2fc071cfe3199fb5960852d1f3b688f3d322fc6321182af0baff13923f81c&quot;,
+    &quot;spend_reconcile.py&quot;: &quot;b6aef20a315c6f55170f95ceb37668ec70c222eab5f99e261feeb3802ababaf1&quot;,
+    &quot;openrouter_costs.py&quot;: &quot;d7399893851260f8d21d3df4b51ba3ceec8a80e12cba1bbc2acccb8633eb228f&quot;
+  },
+  &quot;child_pid&quot;: 491,
+  &quot;child_start_ticks&quot;: &quot;12510991&quot;,
+  &quot;exit_code&quot;: 1,
+  &quot;reason&quot;: &quot;exit&quot;,
+  &quot;outcome&quot;: &quot;failed&quot;,
+  &quot;finished&quot;: 1795063444.8739352,
+  &quot;save_completed&quot;: true,
+  &quot;external_publication_completed&quot;: true,
+  &quot;main_publication&quot;: {
+    &quot;status&quot;: &quot;verified&quot;,
+    &quot;branch&quot;: &quot;main&quot;,
+    &quot;commit&quot;: &quot;42475a6e7e885c8a84955732264709cef2956911&quot;,
+    &quot;source_commit&quot;: &quot;618e8cd92bdc845bc202976f2a2d798794ecb604&quot;,
+    &quot;final_source_commit&quot;: &quot;618e8cd92bdc845bc202976f2a2d798794ecb604&quot;,
+    &quot;verified&quot;: 1795063456.5244718
+  }
+}</pre><h2>Progress</h2><pre></pre><h2>Recent GPU samples</h2><pre>{&quot;csv&quot;: &quot;0, 0, 0, 97887, 31.75, 31&quot;, &quot;time&quot;: 1795063001.8864715}
+{&quot;csv&quot;: &quot;0, 0, 0, 97887, 31.16, 31&quot;, &quot;time&quot;: 1795063017.1488585}
+{&quot;csv&quot;: &quot;0, 0, 0, 97887, 31.35, 31&quot;, &quot;time&quot;: 1795063032.3747005}
+{&quot;csv&quot;: &quot;0, 0, 0, 97887, 30.80, 31&quot;, &quot;time&quot;: 1795063047.5881257}
+{&quot;csv&quot;: &quot;0, 0, 0, 97887, 30.84, 31&quot;, &quot;time&quot;: 1795063062.7839444}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 31.33, 31&quot;, &quot;time&quot;: 1795063077.9839718}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 31.52, 31&quot;, &quot;time&quot;: 1795063093.196011}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 31.71, 31&quot;, &quot;time&quot;: 1795063108.4068308}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 31.52, 31&quot;, &quot;time&quot;: 1795063123.6180885}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 29.79, 31&quot;, &quot;time&quot;: 1795063138.853705}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 30.29, 31&quot;, &quot;time&quot;: 1795063154.079506}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 29.78, 31&quot;, &quot;time&quot;: 1795063169.3130946}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.30, 31&quot;, &quot;time&quot;: 1795063184.5696168}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.39, 31&quot;, &quot;time&quot;: 1795063199.8058639}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.82, 31&quot;, &quot;time&quot;: 1795063215.0482397}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 29.25, 31&quot;, &quot;time&quot;: 1795063230.376232}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.77, 31&quot;, &quot;time&quot;: 1795063245.6039443}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.92, 31&quot;, &quot;time&quot;: 1795063260.8310502}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.81, 31&quot;, &quot;time&quot;: 1795063276.134238}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.68, 31&quot;, &quot;time&quot;: 1795063291.371851}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.86, 31&quot;, &quot;time&quot;: 1795063306.5850039}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.92, 31&quot;, &quot;time&quot;: 1795063321.796498}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.81, 31&quot;, &quot;time&quot;: 1795063337.010464}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.88, 31&quot;, &quot;time&quot;: 1795063352.2314312}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.75, 31&quot;, &quot;time&quot;: 1795063367.4493668}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.79, 31&quot;, &quot;time&quot;: 1795063382.6641083}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 29.08, 31&quot;, &quot;time&quot;: 1795063397.9067407}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.84, 31&quot;, &quot;time&quot;: 1795063413.1397202}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.88, 31&quot;, &quot;time&quot;: 1795063428.3534327}
+{&quot;csv&quot;: &quot;0, 0, 3, 97887, 28.96, 31&quot;, &quot;time&quot;: 1795063443.5862532}
+</pre><h2>Recent experiment log</h2><pre> bytes spill loads
+      ptxas info    : Used 46 registers, used 1 barriers
+      ptxas info    : Compile time = 10.406 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb0ELb0EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb0ELb0EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 9.943 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb1ELb0EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb1ELb0EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 12.865 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb1ELb0EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb1ELb0EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 11.867 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb0ELb1EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb0ELb1EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 39 registers, used 1 barriers
+      ptxas info    : Compile time = 8.294 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb0ELb1EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb0ELb1EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 39 registers, used 1 barriers
+      ptxas info    : Compile time = 8.172 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb1ELb1EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb1ELb1EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 36 registers, used 1 barriers
+      ptxas info    : Compile time = 10.283 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb1ELb1EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi4ELb1ELb1EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 36 registers, used 1 barriers
+      ptxas info    : Compile time = 10.029 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb0ELb0EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb0ELb0EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 9.470 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb0ELb0EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb0ELb0EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 9.346 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb1ELb0EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb1ELb0EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 11.337 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb1ELb0EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb1ELb0EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 10.988 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb0ELb1EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb0ELb1EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 37 registers, used 1 barriers
+      ptxas info    : Compile time = 7.832 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb0ELb1EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb0ELb1EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 37 registers, used 1 barriers
+      ptxas info    : Compile time = 7.323 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb1ELb1EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb1ELb1EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 9.206 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb1ELb1EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi3ELb1ELb1EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 36 registers, used 1 barriers
+      ptxas info    : Compile time = 9.237 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb0ELb0EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb0ELb0EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 8.414 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb0ELb0EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb0ELb0EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 8.198 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb1ELb0EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb1ELb0EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 10.313 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb1ELb0EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb1ELb0EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 10.141 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb0ELb1EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb0ELb1EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 37 registers, used 1 barriers
+      ptxas info    : Compile time = 6.793 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb0ELb1EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb0ELb1EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 35 registers, used 1 barriers
+      ptxas info    : Compile time = 6.585 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb1ELb1EffELb0EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb1ELb1EffELb0EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 37 registers, used 1 barriers
+      ptxas info    : Compile time = 8.265 ms
+      ptxas info    : Compiling entry function
+      &#x27;_Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb1ELb1EffELb1EEv13ConvParamsBwd&#x27;
+      for &#x27;sm_121&#x27;
+      ptxas info    : Function properties for
+      _Z24causal_conv1d_bwd_kernelI31Causal_conv1d_bwd_kernel_traitsILi128ELi2ELb1ELb1EffELb1EEv13ConvParamsBwd
+          0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+      ptxas info    : Used 40 registers, used 1 barriers
+      ptxas info    : Compile time = 8.289 ms
+      x86_64-linux-gnu-g++ -Wsign-compare -DNDEBUG -g -fwrapv -O2
+      -Wall -g -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
+      -fstack-protector-strong -fstack-clash-protection
+      -Wformat -Werror=format-security -fcf-protection -g
+      -fwrapv -O2 -shared -Wl,-O1 -Wl,-Bsymbolic-functions
+      /opt/verbalizing-subliminal-learning-uv-cache/sdists-v9/pypi/causal-conv1d/1.7.0/H8Ttg7oz5Q8civLG4ilrR/src/build/temp.linux-x86_64-cpython-311/csrc/causal_conv1d.o
+      /opt/verbalizing-subliminal-learning-uv-cache/sdists-v9/pypi/causal-conv1d/1.7.0/H8Ttg7oz5Q8civLG4ilrR/src/build/temp.linux-x86_64-cpython-311/csrc/causal_conv1d_bwd.o
+      /opt/verbalizing-subliminal-learning-uv-cache/sdists-v9/pypi/causal-conv1d/1.7.0/H8Ttg7oz5Q8civLG4ilrR/src/build/temp.linux-x86_64-cpython-311/csrc/causal_conv1d_fwd.o
+      /opt/verbalizing-subliminal-learning-uv-cache/sdists-v9/pypi/causal-conv1d/1.7.0/H8Ttg7oz5Q8civLG4ilrR/src/build/temp.linux-x86_64-cpython-311/csrc/causal_conv1d_update.o
+      -L/opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/torch/lib
+      -L/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-001-qwen-speed/runs/2026-11-18-001-qwen-speed--qwen35-fused-a1/artifacts/compiler-packages/nvidia/cu13/lib
+      -L/usr/lib/x86_64-linux-gnu -lc10 -ltorch -ltorch_cpu
+      -ltorch_python -lcudart -lc10_cuda -ltorch_cuda -o
+      build/lib.linux-x86_64-cpython-311/causal_conv1d_cuda.cpython-311-x86_64-linux-gnu.so
+
+      [stderr]
+      /opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/setuptools/_vendor/wheel/bdist_wheel.py:4:
+      FutureWarning: The &#x27;wheel&#x27; package is no longer the canonical location
+      of the &#x27;bdist_wheel&#x27; command, and will be removed in a future release.
+      Please update to setuptools v70.1 or later which contains an integrated
+      version of this command.
+        warn(
+      /opt/verbalizing-subliminal-learning-venv/lib/python3.11/site-packages/setuptools/dist.py:765:
+      SetuptoolsDeprecationWarning: License classifiers are deprecated.
+      !!
+
+      
+      ********************************************************************************
+              Please consider removing the following classifiers in favor of a
+      SPDX license expression:
+
+              License :: OSI Approved :: BSD License
+
+              See
+      https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license
+      for details.
+      
+      ********************************************************************************
+
+      !!
+        self._finalize_license_expression()
+      /usr/bin/ld: cannot find -lcudart: No such file or directory
+      collect2: error: ld returned 1 exit status
+      error: command &#x27;/usr/bin/x86_64-linux-gnu-g++&#x27; failed with exit code 1
+
+      hint: This error likely indicates that you need to install the library
+      that provides a shared library for `cudart` for `causal-conv1d@1.7.0`
+      (e.g., `libcudart-dev`)
+Traceback (most recent call last):
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-18-001-qwen-speed--qwen35-fused-a1/fork_experiments/2026-11-18-001-qwen-speed/fused_setup.py&quot;, line 19, in &lt;module&gt;
+    install(packages,[&#x27;causal-conv1d==1.7.0&#x27;],build=True)
+  File &quot;/workspace/projects/verbalizing-subliminal-learning/worktrees/2026-11-18-001-qwen-speed--qwen35-fused-a1/fork_experiments/2026-11-18-001-qwen-speed/fused_setup.py&quot;, line 12, in install
+    subprocess.run(cmd+requirements,env=env,check=True)
+  File &quot;/usr/lib/python3.11/subprocess.py&quot;, line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command &#x27;[&#x27;uv&#x27;, &#x27;pip&#x27;, &#x27;install&#x27;, &#x27;--python&#x27;, &#x27;/opt/verbalizing-subliminal-learning-venv/bin/python&#x27;, &#x27;--target&#x27;, &#x27;/workspace/projects/verbalizing-subliminal-learning/experiments/2026-11-18-001-qwen-speed/runs/2026-11-18-001-qwen-speed--qwen35-fused-a1/artifacts/kernel-packages&#x27;, &#x27;--no-deps&#x27;, &#x27;--no-build-isolation&#x27;, &#x27;causal-conv1d==1.7.0&#x27;]&#x27; returned non-zero exit status 1.
+</pre><h2>Save / publish log</h2><pre>Using Python 3.11.13 environment at: /opt/verbalizing-subliminal-learning-venv
+</pre><h2>Supervisor exit receipt</h2><pre>{
+  &quot;pid&quot;: 440,
+  &quot;supervisor_pid&quot;: 441,
+  &quot;status&quot;: &quot;exited&quot;,
+  &quot;exit_code&quot;: 1,
+  &quot;finished&quot;: 1795063456.9038177
+}
+</pre></body></html>

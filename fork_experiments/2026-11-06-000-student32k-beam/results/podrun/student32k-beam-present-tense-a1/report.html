@@ -1,0 +1,413 @@
+<!doctype html><html><head><meta charset="utf-8">
+<meta http-equiv="refresh" content="30"><title>Experiment</title>
+<style>body{font:16px system-ui;max-width:1100px;margin:40px auto;padding:0 20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f5f7;padding:16px}small{color:#555}</style>
+</head><body><h1>student32k-beam-present-tense-a1</h1><p>Last successful local sync: Fri Nov  6 11:35:53 2026</p><p>Status: <b>termination_requested</b></p><h2>Lifecycle</h2><pre>{
+  &quot;run_id&quot;: &quot;student32k-beam-present-tense-a1&quot;,
+  &quot;source_commit&quot;: &quot;66b839bdbc5e9a22c47a23340f3e4739947bd2d2&quot;,
+  &quot;started&quot;: 1793991740.8816469,
+  &quot;heartbeat&quot;: 1793993736.935998,
+  &quot;pod_id&quot;: &quot;qlahh4yyrvla0z&quot;,
+  &quot;pod_name&quot;: &quot;student32k-beam-present-tense&quot;,
+  &quot;pid&quot;: 402,
+  &quot;process_start_ticks&quot;: &quot;152739569&quot;,
+  &quot;status&quot;: &quot;termination_requested&quot;,
+  &quot;keep_on_failure&quot;: false,
+  &quot;budget_watchdog&quot;: {
+    &quot;pid&quot;: 403,
+    &quot;ready&quot;: true,
+    &quot;budget_directory&quot;: &quot;/workspace/.podrun-budgets/a6befd6947927fc218d622afb6238d9a17c66d7967a820276a14c55e4ba6b8fd&quot;
+  },
+  &quot;runner_sha256&quot;: {
+    &quot;runner.py&quot;: &quot;ec3a8ae4f1fced520fdadfee5878b299f1aa09ffa157e6ef2a084ad1279f7baf&quot;,
+    &quot;checkouts.py&quot;: &quot;ca52d4bf6ea01c2416e06e3b1227f8c344a2a64d73232aaf8b04c989a1a51b41&quot;,
+    &quot;provider.py&quot;: &quot;5c7c4a8c5a0d6644056c5d8e65289df3b83cb88e8a000dbc3fd19f2f9f205606&quot;,
+    &quot;handoff.py&quot;: &quot;639501ba732b09ed3df624814fbf3b3a9264102599993cbb249228ef2e3d9fae&quot;,
+    &quot;budget.py&quot;: &quot;e978bbb961a7c60c3be1e0cf469f152c7ec39263d2e08f52133fb7b559239b69&quot;,
+    &quot;__init__.py&quot;: &quot;f30f7c2d6b08938063e6258aa6a1b790b94aaee3e122e7b82e46b76b86716f0b&quot;,
+    &quot;cli.py&quot;: &quot;57265151db7bd97f04371eb21ea8aea0232810d6d9ef3df9ed130c8c03bcbf7e&quot;,
+    &quot;common.py&quot;: &quot;b804b4c0902331db63f1aa806c1b36327a362ac738d783d8aff32379d9fb17b9&quot;,
+    &quot;storage.py&quot;: &quot;163575de1a908f6777022acd1a7e8963b1d55c2696b4db7454fe722554729d24&quot;,
+    &quot;watcher.py&quot;: &quot;b038a09edda564f62ebe2995e29d7262d90350d235d2a61989a07eaa8a1fde45&quot;,
+    &quot;workspace.py&quot;: &quot;b5ab9818f5fce970300937f1953bf7197d2df8417b87b9d565db59d95c512401&quot;,
+    &quot;__main__.py&quot;: &quot;6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279&quot;
+  },
+  &quot;exit_code&quot;: 0,
+  &quot;reason&quot;: &quot;exit&quot;,
+  &quot;outcome&quot;: &quot;success&quot;,
+  &quot;finished&quot;: 1793993735.3277376,
+  &quot;save_completed&quot;: true,
+  &quot;external_publication_completed&quot;: true
+}</pre><h2>Progress</h2><pre>{&quot;stage&quot;: &quot;complete&quot;, &quot;completed&quot;: 1}</pre><h2>Recent GPU samples</h2><pre>{&quot;csv&quot;: &quot;0, 0, 0, 97887, 32.15, 29&quot;, &quot;time&quot;: 1793991740.9113014}
+{&quot;csv&quot;: &quot;0, 3, 17763, 97887, 86.21, 31&quot;, &quot;time&quot;: 1793991756.0109258}
+{&quot;csv&quot;: &quot;0, 1, 17767, 97887, 86.41, 32&quot;, &quot;time&quot;: 1793991771.109333}
+{&quot;csv&quot;: &quot;0, 1, 17777, 97887, 86.63, 33&quot;, &quot;time&quot;: 1793991786.1781611}
+{&quot;csv&quot;: &quot;0, 99, 22097, 97887, 532.21, 56&quot;, &quot;time&quot;: 1793991801.247566}
+{&quot;csv&quot;: &quot;0, 99, 22101, 97887, 494.37, 55&quot;, &quot;time&quot;: 1793991816.3163455}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 353.39, 61&quot;, &quot;time&quot;: 1793991831.3780215}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 534.78, 65&quot;, &quot;time&quot;: 1793991846.4472504}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 543.97, 63&quot;, &quot;time&quot;: 1793991861.5183094}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 544.00, 66&quot;, &quot;time&quot;: 1793991876.5820432}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 541.37, 65&quot;, &quot;time&quot;: 1793991891.6472318}
+{&quot;csv&quot;: &quot;0, 98, 22103, 97887, 485.03, 65&quot;, &quot;time&quot;: 1793991906.7304246}
+{&quot;csv&quot;: &quot;0, 93, 22103, 97887, 284.65, 55&quot;, &quot;time&quot;: 1793991921.8092334}
+{&quot;csv&quot;: &quot;0, 52, 22103, 97887, 490.63, 58&quot;, &quot;time&quot;: 1793991936.878736}
+{&quot;csv&quot;: &quot;0, 67, 22103, 97887, 395.88, 56&quot;, &quot;time&quot;: 1793991951.9391606}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 545.40, 66&quot;, &quot;time&quot;: 1793991967.0090425}
+{&quot;csv&quot;: &quot;0, 90, 22103, 97887, 419.05, 57&quot;, &quot;time&quot;: 1793991982.0734556}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 549.99, 65&quot;, &quot;time&quot;: 1793991997.141911}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 553.57, 66&quot;, &quot;time&quot;: 1793992012.2169883}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 548.49, 66&quot;, &quot;time&quot;: 1793992027.2792568}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 552.27, 68&quot;, &quot;time&quot;: 1793992042.347547}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 553.22, 67&quot;, &quot;time&quot;: 1793992057.4223242}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 548.18, 66&quot;, &quot;time&quot;: 1793992072.4918413}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 546.94, 67&quot;, &quot;time&quot;: 1793992087.5594296}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 550.02, 67&quot;, &quot;time&quot;: 1793992102.6425135}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 554.08, 68&quot;, &quot;time&quot;: 1793992117.7089574}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 547.62, 67&quot;, &quot;time&quot;: 1793992132.7754538}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 537.64, 67&quot;, &quot;time&quot;: 1793992147.8411446}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 557.58, 66&quot;, &quot;time&quot;: 1793992162.917078}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 559.28, 68&quot;, &quot;time&quot;: 1793992177.9811363}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 551.91, 67&quot;, &quot;time&quot;: 1793992193.043456}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 553.58, 65&quot;, &quot;time&quot;: 1793992208.1582348}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 555.13, 67&quot;, &quot;time&quot;: 1793992223.2334082}
+{&quot;csv&quot;: &quot;0, 99, 22103, 97887, 551.64, 67&quot;, &quot;time&quot;: 1793992238.3095396}
+{&quot;csv&quot;: &quot;0, 98, 22105, 97887, 554.44, 67&quot;, &quot;time&quot;: 1793992253.3766646}
+{&quot;csv&quot;: &quot;0, 99, 22105, 97887, 559.69, 68&quot;, &quot;time&quot;: 1793992268.4516656}
+{&quot;csv&quot;: &quot;0, 99, 22105, 97887, 557.34, 68&quot;, &quot;time&quot;: 1793992283.5211365}
+{&quot;csv&quot;: &quot;0, 99, 22105, 97887, 559.91, 68&quot;, &quot;time&quot;: 1793992298.6089056}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 562.17, 68&quot;, &quot;time&quot;: 1793992313.696096}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 561.52, 68&quot;, &quot;time&quot;: 1793992328.7678192}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 562.95, 68&quot;, &quot;time&quot;: 1793992343.8331602}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 554.78, 68&quot;, &quot;time&quot;: 1793992358.8939471}
+{&quot;csv&quot;: &quot;0, 98, 22107, 97887, 557.20, 67&quot;, &quot;time&quot;: 1793992373.9614773}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 497.00, 67&quot;, &quot;time&quot;: 1793992389.040382}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 499.73, 67&quot;, &quot;time&quot;: 1793992404.1140797}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 498.37, 65&quot;, &quot;time&quot;: 1793992419.178959}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 556.05, 67&quot;, &quot;time&quot;: 1793992434.2460768}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 559.87, 68&quot;, &quot;time&quot;: 1793992449.3273969}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 558.32, 68&quot;, &quot;time&quot;: 1793992464.395579}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 562.87, 68&quot;, &quot;time&quot;: 1793992479.467479}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 443.93, 67&quot;, &quot;time&quot;: 1793992494.5425847}
+{&quot;csv&quot;: &quot;0, 79, 22107, 97887, 487.95, 59&quot;, &quot;time&quot;: 1793992509.6168199}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 565.55, 68&quot;, &quot;time&quot;: 1793992524.6760283}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 564.22, 68&quot;, &quot;time&quot;: 1793992539.7434204}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 418.77, 67&quot;, &quot;time&quot;: 1793992554.821676}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 565.30, 69&quot;, &quot;time&quot;: 1793992569.887374}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 564.42, 69&quot;, &quot;time&quot;: 1793992584.9579446}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 565.23, 69&quot;, &quot;time&quot;: 1793992600.0320034}
+{&quot;csv&quot;: &quot;0, 98, 22107, 97887, 561.97, 68&quot;, &quot;time&quot;: 1793992615.1220603}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 504.13, 67&quot;, &quot;time&quot;: 1793992630.1910503}
+{&quot;csv&quot;: &quot;0, 78, 22107, 97887, 459.02, 67&quot;, &quot;time&quot;: 1793992645.2629318}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 564.41, 68&quot;, &quot;time&quot;: 1793992660.329032}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 562.03, 68&quot;, &quot;time&quot;: 1793992675.39136}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 563.74, 69&quot;, &quot;time&quot;: 1793992690.45656}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 454.35, 67&quot;, &quot;time&quot;: 1793992705.5290341}
+{&quot;csv&quot;: &quot;0, 78, 22107, 97887, 350.23, 59&quot;, &quot;time&quot;: 1793992720.5915658}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 560.08, 68&quot;, &quot;time&quot;: 1793992735.6576838}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 504.06, 68&quot;, &quot;time&quot;: 1793992750.757674}
+{&quot;csv&quot;: &quot;0, 30, 22107, 97887, 390.74, 63&quot;, &quot;time&quot;: 1793992765.828311}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 566.46, 69&quot;, &quot;time&quot;: 1793992780.895599}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 561.25, 68&quot;, &quot;time&quot;: 1793992795.9554224}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 561.40, 68&quot;, &quot;time&quot;: 1793992811.0275164}
+{&quot;csv&quot;: &quot;0, 84, 22107, 97887, 489.73, 60&quot;, &quot;time&quot;: 1793992826.0905766}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 563.74, 68&quot;, &quot;time&quot;: 1793992841.1579561}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 551.59, 67&quot;, &quot;time&quot;: 1793992856.2279572}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 561.97, 68&quot;, &quot;time&quot;: 1793992871.2961333}
+{&quot;csv&quot;: &quot;0, 94, 22107, 97887, 438.52, 58&quot;, &quot;time&quot;: 1793992886.3628285}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 504.73, 66&quot;, &quot;time&quot;: 1793992901.4385154}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 555.00, 68&quot;, &quot;time&quot;: 1793992916.5221188}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 392.79, 67&quot;, &quot;time&quot;: 1793992931.5944295}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 558.32, 67&quot;, &quot;time&quot;: 1793992946.6621215}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 562.78, 66&quot;, &quot;time&quot;: 1793992961.7317493}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 556.59, 68&quot;, &quot;time&quot;: 1793992976.8205554}
+{&quot;csv&quot;: &quot;0, 78, 22107, 97887, 528.84, 64&quot;, &quot;time&quot;: 1793992991.8868942}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 567.50, 68&quot;, &quot;time&quot;: 1793993006.95161}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 394.03, 67&quot;, &quot;time&quot;: 1793993022.0205703}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 561.78, 67&quot;, &quot;time&quot;: 1793993037.0889602}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 459.99, 67&quot;, &quot;time&quot;: 1793993052.1535122}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 569.46, 69&quot;, &quot;time&quot;: 1793993067.225897}
+{&quot;csv&quot;: &quot;0, 99, 22107, 97887, 559.39, 68&quot;, &quot;time&quot;: 1793993082.2891295}
+{&quot;csv&quot;: &quot;0, 95, 22107, 97887, 506.40, 60&quot;, &quot;time&quot;: 1793993097.36581}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 549.80, 64&quot;, &quot;time&quot;: 1793993112.4334867}
+{&quot;csv&quot;: &quot;0, 95, 22109, 97887, 252.49, 53&quot;, &quot;time&quot;: 1793993127.4944663}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 548.65, 65&quot;, &quot;time&quot;: 1793993142.5563009}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 550.19, 66&quot;, &quot;time&quot;: 1793993157.6225164}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 557.50, 66&quot;, &quot;time&quot;: 1793993172.6874962}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 545.72, 63&quot;, &quot;time&quot;: 1793993187.7472572}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 550.40, 65&quot;, &quot;time&quot;: 1793993202.8207371}
+{&quot;csv&quot;: &quot;0, 94, 22109, 97887, 278.04, 54&quot;, &quot;time&quot;: 1793993217.8816748}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 448.69, 65&quot;, &quot;time&quot;: 1793993232.9456456}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 537.19, 63&quot;, &quot;time&quot;: 1793993248.0224943}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 530.16, 60&quot;, &quot;time&quot;: 1793993263.0804048}
+{&quot;csv&quot;: &quot;0, 93, 22109, 97887, 232.40, 51&quot;, &quot;time&quot;: 1793993278.1406531}
+{&quot;csv&quot;: &quot;0, 95, 22109, 97887, 474.92, 55&quot;, &quot;time&quot;: 1793993293.2237418}
+{&quot;csv&quot;: &quot;0, 72, 22109, 97887, 288.80, 55&quot;, &quot;time&quot;: 1793993308.291295}
+{&quot;csv&quot;: &quot;0, 80, 22109, 97887, 263.95, 53&quot;, &quot;time&quot;: 1793993323.3612106}
+{&quot;csv&quot;: &quot;0, 96, 22109, 97887, 284.64, 51&quot;, &quot;time&quot;: 1793993338.429053}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 359.14, 61&quot;, &quot;time&quot;: 1793993353.494215}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 560.29, 64&quot;, &quot;time&quot;: 1793993368.5676444}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 561.74, 66&quot;, &quot;time&quot;: 1793993383.6432376}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 559.00, 64&quot;, &quot;time&quot;: 1793993398.714253}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 485.66, 63&quot;, &quot;time&quot;: 1793993413.782016}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 554.34, 67&quot;, &quot;time&quot;: 1793993428.8482122}
+{&quot;csv&quot;: &quot;0, 99, 22109, 97887, 565.89, 67&quot;, &quot;time&quot;: 1793993443.9175618}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 573.81, 67&quot;, &quot;time&quot;: 1793993458.9881065}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 563.47, 65&quot;, &quot;time&quot;: 1793993474.0595036}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 560.50, 66&quot;, &quot;time&quot;: 1793993489.1292744}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 564.86, 65&quot;, &quot;time&quot;: 1793993504.1964936}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 561.40, 62&quot;, &quot;time&quot;: 1793993519.2590108}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 379.63, 67&quot;, &quot;time&quot;: 1793993534.3285794}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 406.98, 67&quot;, &quot;time&quot;: 1793993549.3938935}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 538.06, 68&quot;, &quot;time&quot;: 1793993564.4645064}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 574.93, 69&quot;, &quot;time&quot;: 1793993579.5335066}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 564.41, 69&quot;, &quot;time&quot;: 1793993594.5975745}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 565.69, 64&quot;, &quot;time&quot;: 1793993609.660532}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 571.03, 67&quot;, &quot;time&quot;: 1793993624.7267256}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 563.71, 69&quot;, &quot;time&quot;: 1793993639.7945518}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 568.67, 69&quot;, &quot;time&quot;: 1793993654.8752973}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 573.15, 69&quot;, &quot;time&quot;: 1793993670.0117767}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 570.44, 68&quot;, &quot;time&quot;: 1793993685.0726554}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 578.34, 70&quot;, &quot;time&quot;: 1793993700.1377304}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 571.36, 70&quot;, &quot;time&quot;: 1793993715.208653}
+{&quot;csv&quot;: &quot;0, 99, 22111, 97887, 570.58, 70&quot;, &quot;time&quot;: 1793993730.2693734}
+</pre><h2>Recent experiment log</h2><pre>ed&quot;: 485}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 641, &quot;round&quot;: 11, &quot;scored&quot;: 485}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 642, &quot;round&quot;: 11, &quot;scored&quot;: 486}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 642, &quot;round&quot;: 11, &quot;scored&quot;: 486}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 643, &quot;round&quot;: 11, &quot;scored&quot;: 487}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 644, &quot;round&quot;: 11, &quot;scored&quot;: 487}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 645, &quot;round&quot;: 11, &quot;scored&quot;: 487}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 646, &quot;round&quot;: 11, &quot;scored&quot;: 487}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 647, &quot;round&quot;: 11, &quot;scored&quot;: 487}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 648, &quot;round&quot;: 11, &quot;scored&quot;: 487}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 648, &quot;round&quot;: 11, &quot;scored&quot;: 487}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 649, &quot;round&quot;: 11, &quot;scored&quot;: 488}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 650, &quot;round&quot;: 11, &quot;scored&quot;: 488}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 651, &quot;round&quot;: 11, &quot;scored&quot;: 488}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 652, &quot;round&quot;: 11, &quot;scored&quot;: 488}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 652, &quot;round&quot;: 11, &quot;scored&quot;: 488}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 653, &quot;round&quot;: 11, &quot;scored&quot;: 489}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 653, &quot;round&quot;: 11, &quot;scored&quot;: 489}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 654, &quot;round&quot;: 11, &quot;scored&quot;: 490}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 655, &quot;round&quot;: 11, &quot;scored&quot;: 490}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 656, &quot;round&quot;: 11, &quot;scored&quot;: 490}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 657, &quot;round&quot;: 11, &quot;scored&quot;: 490}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 658, &quot;round&quot;: 11, &quot;scored&quot;: 490}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 659, &quot;round&quot;: 11, &quot;scored&quot;: 490}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 659, &quot;round&quot;: 11, &quot;scored&quot;: 490}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 660, &quot;round&quot;: 11, &quot;scored&quot;: 491}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 660, &quot;round&quot;: 11, &quot;scored&quot;: 491}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 661, &quot;round&quot;: 11, &quot;scored&quot;: 492}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 662, &quot;round&quot;: 11, &quot;scored&quot;: 492}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 662, &quot;round&quot;: 11, &quot;scored&quot;: 492}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 663, &quot;round&quot;: 11, &quot;scored&quot;: 493}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 664, &quot;round&quot;: 11, &quot;scored&quot;: 493}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 665, &quot;round&quot;: 11, &quot;scored&quot;: 493}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 666, &quot;round&quot;: 11, &quot;scored&quot;: 493}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 667, &quot;round&quot;: 11, &quot;scored&quot;: 493}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 668, &quot;round&quot;: 11, &quot;scored&quot;: 493}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 668, &quot;round&quot;: 11, &quot;scored&quot;: 493}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 669, &quot;round&quot;: 11, &quot;scored&quot;: 494}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 669, &quot;round&quot;: 11, &quot;scored&quot;: 494}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 670, &quot;round&quot;: 11, &quot;scored&quot;: 495}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 670, &quot;round&quot;: 11, &quot;scored&quot;: 495}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 671, &quot;round&quot;: 11, &quot;scored&quot;: 496}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 672, &quot;round&quot;: 11, &quot;scored&quot;: 496}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 673, &quot;round&quot;: 11, &quot;scored&quot;: 496}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 673, &quot;round&quot;: 11, &quot;scored&quot;: 496}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 674, &quot;round&quot;: 11, &quot;scored&quot;: 497}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 674, &quot;round&quot;: 11, &quot;scored&quot;: 497}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 675, &quot;round&quot;: 11, &quot;scored&quot;: 498}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 675, &quot;round&quot;: 11, &quot;scored&quot;: 498}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 676, &quot;round&quot;: 11, &quot;scored&quot;: 499}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 676, &quot;round&quot;: 11, &quot;scored&quot;: 499}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 677, &quot;round&quot;: 11, &quot;scored&quot;: 500}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 677, &quot;round&quot;: 11, &quot;scored&quot;: 500}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 678, &quot;round&quot;: 11, &quot;scored&quot;: 501}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 678, &quot;round&quot;: 11, &quot;scored&quot;: 501}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 679, &quot;round&quot;: 11, &quot;scored&quot;: 502}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 679, &quot;round&quot;: 11, &quot;scored&quot;: 502}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 680, &quot;round&quot;: 11, &quot;scored&quot;: 503}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 680, &quot;round&quot;: 11, &quot;scored&quot;: 503}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 681, &quot;round&quot;: 11, &quot;scored&quot;: 504}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 681, &quot;round&quot;: 11, &quot;scored&quot;: 504}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 682, &quot;round&quot;: 11, &quot;scored&quot;: 505}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 682, &quot;round&quot;: 11, &quot;scored&quot;: 505}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 683, &quot;round&quot;: 11, &quot;scored&quot;: 506}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 683, &quot;round&quot;: 11, &quot;scored&quot;: 506}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 684, &quot;round&quot;: 11, &quot;scored&quot;: 507}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 684, &quot;round&quot;: 11, &quot;scored&quot;: 507}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 685, &quot;round&quot;: 11, &quot;scored&quot;: 508}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 685, &quot;round&quot;: 11, &quot;scored&quot;: 508}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 686, &quot;round&quot;: 11, &quot;scored&quot;: 509}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 686, &quot;round&quot;: 11, &quot;scored&quot;: 509}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 687, &quot;round&quot;: 11, &quot;scored&quot;: 510}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 687, &quot;round&quot;: 11, &quot;scored&quot;: 510}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 688, &quot;round&quot;: 11, &quot;scored&quot;: 511}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 688, &quot;round&quot;: 11, &quot;scored&quot;: 511}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 689, &quot;round&quot;: 11, &quot;scored&quot;: 512}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 690, &quot;round&quot;: 11, &quot;scored&quot;: 512}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 690, &quot;round&quot;: 11, &quot;scored&quot;: 512}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 691, &quot;round&quot;: 11, &quot;scored&quot;: 513}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 691, &quot;round&quot;: 11, &quot;scored&quot;: 513}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 692, &quot;round&quot;: 11, &quot;scored&quot;: 514}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 693, &quot;round&quot;: 11, &quot;scored&quot;: 514}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 694, &quot;round&quot;: 11, &quot;scored&quot;: 514}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 695, &quot;round&quot;: 11, &quot;scored&quot;: 514}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 695, &quot;round&quot;: 11, &quot;scored&quot;: 514}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 696, &quot;round&quot;: 11, &quot;scored&quot;: 515}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 697, &quot;round&quot;: 11, &quot;scored&quot;: 515}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 697, &quot;round&quot;: 11, &quot;scored&quot;: 515}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 698, &quot;round&quot;: 11, &quot;scored&quot;: 516}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 698, &quot;round&quot;: 11, &quot;scored&quot;: 516}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 699, &quot;round&quot;: 11, &quot;scored&quot;: 517}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 699, &quot;round&quot;: 11, &quot;scored&quot;: 517}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 700, &quot;round&quot;: 11, &quot;scored&quot;: 518}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 700, &quot;round&quot;: 11, &quot;scored&quot;: 518}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 701, &quot;round&quot;: 11, &quot;scored&quot;: 519}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 702, &quot;round&quot;: 11, &quot;scored&quot;: 519}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 702, &quot;round&quot;: 11, &quot;scored&quot;: 519}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 703, &quot;round&quot;: 11, &quot;scored&quot;: 520}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 704, &quot;round&quot;: 11, &quot;scored&quot;: 520}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 704, &quot;round&quot;: 11, &quot;scored&quot;: 520}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 705, &quot;round&quot;: 12, &quot;scored&quot;: 521}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 705, &quot;round&quot;: 12, &quot;scored&quot;: 521}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 706, &quot;round&quot;: 12, &quot;scored&quot;: 522}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 706, &quot;round&quot;: 12, &quot;scored&quot;: 522}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 707, &quot;round&quot;: 12, &quot;scored&quot;: 523}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 707, &quot;round&quot;: 12, &quot;scored&quot;: 523}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 708, &quot;round&quot;: 12, &quot;scored&quot;: 524}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 708, &quot;round&quot;: 12, &quot;scored&quot;: 524}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 709, &quot;round&quot;: 12, &quot;scored&quot;: 525}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 709, &quot;round&quot;: 12, &quot;scored&quot;: 525}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 710, &quot;round&quot;: 12, &quot;scored&quot;: 526}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 710, &quot;round&quot;: 12, &quot;scored&quot;: 526}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 711, &quot;round&quot;: 12, &quot;scored&quot;: 527}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 711, &quot;round&quot;: 12, &quot;scored&quot;: 527}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 712, &quot;round&quot;: 12, &quot;scored&quot;: 528}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 712, &quot;round&quot;: 12, &quot;scored&quot;: 528}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 713, &quot;round&quot;: 12, &quot;scored&quot;: 529}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 713, &quot;round&quot;: 12, &quot;scored&quot;: 529}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 714, &quot;round&quot;: 12, &quot;scored&quot;: 530}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 714, &quot;round&quot;: 12, &quot;scored&quot;: 530}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 715, &quot;round&quot;: 12, &quot;scored&quot;: 531}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 715, &quot;round&quot;: 12, &quot;scored&quot;: 531}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 716, &quot;round&quot;: 12, &quot;scored&quot;: 532}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 716, &quot;round&quot;: 12, &quot;scored&quot;: 532}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 717, &quot;round&quot;: 12, &quot;scored&quot;: 533}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 717, &quot;round&quot;: 12, &quot;scored&quot;: 533}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 718, &quot;round&quot;: 12, &quot;scored&quot;: 534}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 718, &quot;round&quot;: 12, &quot;scored&quot;: 534}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 719, &quot;round&quot;: 12, &quot;scored&quot;: 535}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 719, &quot;round&quot;: 12, &quot;scored&quot;: 535}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 720, &quot;round&quot;: 12, &quot;scored&quot;: 536}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 720, &quot;round&quot;: 12, &quot;scored&quot;: 536}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 721, &quot;round&quot;: 12, &quot;scored&quot;: 537}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 721, &quot;round&quot;: 12, &quot;scored&quot;: 537}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 722, &quot;round&quot;: 12, &quot;scored&quot;: 538}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 722, &quot;round&quot;: 12, &quot;scored&quot;: 538}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 723, &quot;round&quot;: 12, &quot;scored&quot;: 539}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 723, &quot;round&quot;: 12, &quot;scored&quot;: 539}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 724, &quot;round&quot;: 12, &quot;scored&quot;: 540}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 724, &quot;round&quot;: 12, &quot;scored&quot;: 540}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 725, &quot;round&quot;: 12, &quot;scored&quot;: 541}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 725, &quot;round&quot;: 12, &quot;scored&quot;: 541}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 726, &quot;round&quot;: 12, &quot;scored&quot;: 542}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 726, &quot;round&quot;: 12, &quot;scored&quot;: 542}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 727, &quot;round&quot;: 12, &quot;scored&quot;: 543}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 727, &quot;round&quot;: 12, &quot;scored&quot;: 543}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 728, &quot;round&quot;: 12, &quot;scored&quot;: 544}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 728, &quot;round&quot;: 12, &quot;scored&quot;: 544}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 729, &quot;round&quot;: 12, &quot;scored&quot;: 545}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 729, &quot;round&quot;: 12, &quot;scored&quot;: 545}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 730, &quot;round&quot;: 12, &quot;scored&quot;: 546}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 730, &quot;round&quot;: 12, &quot;scored&quot;: 546}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 731, &quot;round&quot;: 12, &quot;scored&quot;: 547}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 731, &quot;round&quot;: 12, &quot;scored&quot;: 547}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 732, &quot;round&quot;: 12, &quot;scored&quot;: 548}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 732, &quot;round&quot;: 12, &quot;scored&quot;: 548}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 733, &quot;round&quot;: 12, &quot;scored&quot;: 549}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 733, &quot;round&quot;: 12, &quot;scored&quot;: 549}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 734, &quot;round&quot;: 12, &quot;scored&quot;: 550}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 734, &quot;round&quot;: 12, &quot;scored&quot;: 550}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 735, &quot;round&quot;: 12, &quot;scored&quot;: 551}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 735, &quot;round&quot;: 12, &quot;scored&quot;: 551}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 736, &quot;round&quot;: 12, &quot;scored&quot;: 552}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 736, &quot;round&quot;: 12, &quot;scored&quot;: 552}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 737, &quot;round&quot;: 12, &quot;scored&quot;: 553}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 737, &quot;round&quot;: 12, &quot;scored&quot;: 553}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 738, &quot;round&quot;: 12, &quot;scored&quot;: 554}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 738, &quot;round&quot;: 12, &quot;scored&quot;: 554}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 739, &quot;round&quot;: 12, &quot;scored&quot;: 555}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 739, &quot;round&quot;: 12, &quot;scored&quot;: 555}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 740, &quot;round&quot;: 12, &quot;scored&quot;: 556}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 740, &quot;round&quot;: 12, &quot;scored&quot;: 556}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 741, &quot;round&quot;: 12, &quot;scored&quot;: 557}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 741, &quot;round&quot;: 12, &quot;scored&quot;: 557}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 742, &quot;round&quot;: 12, &quot;scored&quot;: 558}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 742, &quot;round&quot;: 12, &quot;scored&quot;: 558}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 743, &quot;round&quot;: 12, &quot;scored&quot;: 559}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 743, &quot;round&quot;: 12, &quot;scored&quot;: 559}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 744, &quot;round&quot;: 12, &quot;scored&quot;: 560}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 744, &quot;round&quot;: 12, &quot;scored&quot;: 560}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 745, &quot;round&quot;: 12, &quot;scored&quot;: 561}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 745, &quot;round&quot;: 12, &quot;scored&quot;: 561}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 746, &quot;round&quot;: 12, &quot;scored&quot;: 562}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 746, &quot;round&quot;: 12, &quot;scored&quot;: 562}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 747, &quot;round&quot;: 12, &quot;scored&quot;: 563}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 747, &quot;round&quot;: 12, &quot;scored&quot;: 563}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 748, &quot;round&quot;: 12, &quot;scored&quot;: 564}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 748, &quot;round&quot;: 12, &quot;scored&quot;: 564}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 749, &quot;round&quot;: 12, &quot;scored&quot;: 565}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 749, &quot;round&quot;: 12, &quot;scored&quot;: 565}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 750, &quot;round&quot;: 12, &quot;scored&quot;: 566}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 750, &quot;round&quot;: 12, &quot;scored&quot;: 566}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 751, &quot;round&quot;: 12, &quot;scored&quot;: 567}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 751, &quot;round&quot;: 12, &quot;scored&quot;: 567}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 752, &quot;round&quot;: 12, &quot;scored&quot;: 568}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 752, &quot;round&quot;: 12, &quot;scored&quot;: 568}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 753, &quot;round&quot;: 12, &quot;scored&quot;: 569}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 753, &quot;round&quot;: 12, &quot;scored&quot;: 569}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 754, &quot;round&quot;: 12, &quot;scored&quot;: 570}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 754, &quot;round&quot;: 12, &quot;scored&quot;: 570}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 755, &quot;round&quot;: 12, &quot;scored&quot;: 571}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 755, &quot;round&quot;: 12, &quot;scored&quot;: 571}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 756, &quot;round&quot;: 12, &quot;scored&quot;: 572}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 756, &quot;round&quot;: 12, &quot;scored&quot;: 572}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 757, &quot;round&quot;: 12, &quot;scored&quot;: 573}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 757, &quot;round&quot;: 12, &quot;scored&quot;: 573}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 758, &quot;round&quot;: 12, &quot;scored&quot;: 574}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 758, &quot;round&quot;: 12, &quot;scored&quot;: 574}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 759, &quot;round&quot;: 12, &quot;scored&quot;: 575}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 759, &quot;round&quot;: 12, &quot;scored&quot;: 575}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 760, &quot;round&quot;: 12, &quot;scored&quot;: 576}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 760, &quot;round&quot;: 12, &quot;scored&quot;: 576}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 761, &quot;round&quot;: 12, &quot;scored&quot;: 577}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 761, &quot;round&quot;: 12, &quot;scored&quot;: 577}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 762, &quot;round&quot;: 12, &quot;scored&quot;: 578}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 762, &quot;round&quot;: 12, &quot;scored&quot;: 578}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 763, &quot;round&quot;: 12, &quot;scored&quot;: 579}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 763, &quot;round&quot;: 12, &quot;scored&quot;: 579}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 764, &quot;round&quot;: 12, &quot;scored&quot;: 580}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 764, &quot;round&quot;: 12, &quot;scored&quot;: 580}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 765, &quot;round&quot;: 12, &quot;scored&quot;: 581}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 765, &quot;round&quot;: 12, &quot;scored&quot;: 581}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 766, &quot;round&quot;: 12, &quot;scored&quot;: 582}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 766, &quot;round&quot;: 12, &quot;scored&quot;: 582}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 767, &quot;round&quot;: 12, &quot;scored&quot;: 583}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 767, &quot;round&quot;: 12, &quot;scored&quot;: 583}
+{&quot;stage&quot;: &quot;beam_generation&quot;, &quot;step&quot;: 768, &quot;round&quot;: 12, &quot;scored&quot;: 584}
+{&quot;stage&quot;: &quot;beam_scoring&quot;, &quot;step&quot;: 768, &quot;round&quot;: 12, &quot;scored&quot;: 584}
+{&quot;stage&quot;: &quot;heldout_validation&quot;, &quot;step&quot;: 566, &quot;completed&quot;: 0, &quot;total&quot;: 5}
+{&quot;stage&quot;: &quot;heldout_validation&quot;, &quot;step&quot;: 570, &quot;completed&quot;: 1, &quot;total&quot;: 5}
+{&quot;stage&quot;: &quot;heldout_validation&quot;, &quot;step&quot;: 558, &quot;completed&quot;: 2, &quot;total&quot;: 5}
+{&quot;stage&quot;: &quot;heldout_validation&quot;, &quot;step&quot;: 554, &quot;completed&quot;: 3, &quot;total&quot;: 5}
+{&quot;stage&quot;: &quot;heldout_validation&quot;, &quot;step&quot;: 538, &quot;completed&quot;: 4, &quot;total&quot;: 5}
+{&quot;stage&quot;: &quot;complete&quot;, &quot;step&quot;: 585}
+</pre><h2>Save / publish log</h2><pre></pre><h2>Supervisor exit receipt</h2><pre>{
+  &quot;pid&quot;: 401,
+  &quot;supervisor_pid&quot;: 402,
+  &quot;status&quot;: &quot;running&quot;,
+  &quot;started&quot;: 1793991709.1726384
+}
+</pre></body></html>

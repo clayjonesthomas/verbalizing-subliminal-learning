@@ -1,0 +1,88 @@
+{
+  "run_id": "style-student-the-end-a2",
+  "experiment": "2026-11-05-008-style-students",
+  "pod_name": "style-student-the-end",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-008-style-students/results/style-student-the-end-a2/repo",
+  "source_commit": "6690e6e08c9f8d5c5fcf1414bf046223fdfd797b",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-008-style-students/results/style-student-the-end-a2/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "env",
+    "STUDENT_RESUME_FROM=/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-008-style-students/results/style-student-the-end-a1/run",
+    "STYLE_CONDITION=the-end",
+    "bash",
+    "fork_experiments/2026-11-05-008-style-students/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-008-style-students/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-008-style-students/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 28800,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 100,
+    "approval": "User approved $100 total for all five student pipelines including held-out rollouts and soft-prompt follow-ups on 2026-11-05.",
+    "baseline_declared": false,
+    "prior_spend_usd": 0.0,
+    "identity": {
+      "team_id": "cmu31hyiy002gk9s0xik85gob",
+      "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+      "volume_id": "orqsmyhvok",
+      "mount_path": "/workspace",
+      "experiment": "2026-11-05-008-style-students"
+    },
+    "hard_limit_usd": 120.0,
+    "directory": "/workspace/.podrun-budgets/5bc6db253dd061d3b606da839d2f4653d6a8bd9bb192c7230738aeb38b0d71df"
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "15y7dnawbu2xu3"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "15y7dnawbu2xu3",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-008-style-students",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-008-style-students/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-008-style-students/results/style-student-the-end-a2.json"
+    ],
+    "watch_interval": 15,
+    "report_json_globs": [
+      "best_of_four.json",
+      "validation_examples.json",
+      "followup_report.json",
+      "early_stopping.json",
+      "resume_provenance.json"
+    ]
+  },
+  "infrastructure_commit": "35cdc6de862431de261739d6cae7ce932acf9cec",
+  "resumes_run": "style-student-the-end-a1",
+  "storage_monitor": {
+    "threshold": 0.9,
+    "growth": 1.2,
+    "cap_gb": 1000,
+    "interval_seconds": 60
+  },
+  "report_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-008-style-students/results/style-student-the-end-a2/repo/fork_experiments/2026-11-05-008-style-students",
+  "report_timezone": "America/Los_Angeles"
+}

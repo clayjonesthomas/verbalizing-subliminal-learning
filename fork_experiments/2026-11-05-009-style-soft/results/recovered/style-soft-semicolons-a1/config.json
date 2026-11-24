@@ -1,0 +1,83 @@
+{
+  "run_id": "style-soft-semicolons-a1",
+  "experiment": "2026-11-05-009-style-soft",
+  "pod_name": "style-soft-semicolons",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-009-style-soft/results/style-soft-semicolons-a1/repo",
+  "source_commit": "09e96752c4c26c33c8bd22d97183233dc5ade1b8",
+  "run_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-009-style-soft/results/style-soft-semicolons-a1/run",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "env",
+    "STYLE_CONDITION=semicolons",
+    "bash",
+    "fork_experiments/2026-11-05-009-style-soft/start.sh"
+  ],
+  "save": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-009-style-soft/hooks.py",
+    "save"
+  ],
+  "publish": [
+    "/opt/otter-training-venv/bin/python",
+    "fork_experiments/2026-11-05-009-style-soft/hooks.py",
+    "publish"
+  ],
+  "max_seconds": 21600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "baseline_declared": false,
+    "prior_spend_usd": 0.0,
+    "identity": {
+      "team_id": "cmu31hyiy002gk9s0xik85gob",
+      "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+      "volume_id": "orqsmyhvok",
+      "mount_path": "/workspace",
+      "experiment": "2026-11-05-009-style-soft"
+    },
+    "hard_limit_usd": 60.0,
+    "directory": "/workspace/.podrun-budgets/e6c09147e58267b229c1612c14582417bf68ca15963cd939cc3afefb8677662e"
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "ir1oifo2lex9j2"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "ir1oifo2lex9j2",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-05-009-style-soft",
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-009-style-soft/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-05-009-style-soft/results/style-soft-semicolons-a1.json"
+    ],
+    "watch_interval": 15,
+    "report_json_globs": [
+      "best_of_four.json",
+      "validation_examples.json",
+      "verbalizations.json"
+    ]
+  },
+  "infrastructure_commit": "7caeeef63047dbc3262a3afea30082313992f576",
+  "storage_monitor": {
+    "threshold": 0.9,
+    "growth": 1.2,
+    "cap_gb": 1000,
+    "interval_seconds": 60
+  },
+  "report_dir": "/workspace/projects/verbalizing-subliminal-learning/fork_experiments/2026-11-05-009-style-soft/results/style-soft-semicolons-a1/repo/fork_experiments/2026-11-05-009-style-soft",
+  "report_timezone": "America/Los_Angeles"
+}

@@ -1,0 +1,65 @@
+{
+  "run_id": "lls-surprise-inspect-a1",
+  "experiment": "2026-11-07-001-lls-surprise",
+  "pod_name": "lls-surprise-inspect-cpu",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "8a2d13c4c9178ea555b1876db9c82de1320820d7",
+  "command": [
+    "python3",
+    "fork_experiments/2026-11-07-001-lls-surprise/inspect_examples.py"
+  ],
+  "save": [
+    "python3",
+    "fork_experiments/2026-11-07-001-lls-surprise/inspect_hooks.py",
+    "save"
+  ],
+  "max_seconds": 93600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 10,
+    "approval": "$50 experiment total: reserve $40 maximum API cost and $10 aggregate Runpod compute."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "f2n58m781d5q4g"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "orqsmyhvok",
+    "mount_path": "/workspace",
+    "pod_id": "f2n58m781d5q4g",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-07-001-lls-surprise",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "results/report-inputs/retrospective_selected.json"
+    ],
+    "pull": [
+      "/usr/local/bin/python3",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-07-001-lls-surprise/pull.py",
+      "/Users/clayjones/code/verbalizing-subliminal-learning/fork_experiments/2026-11-07-001-lls-surprise/results/inspect-a1.json"
+    ]
+  },
+  "infrastructure_commit": "7862638ebfb0ca06c7a0b1c3cd6f0e74e2e2f7d7",
+  "publish": [
+    "python3",
+    "fork_experiments/2026-11-07-001-lls-surprise/inspect_hooks.py",
+    "publish"
+  ],
+  "checkout": {
+    "generated_report_resolver": [
+      "python3",
+      "fork_experiments/2026-11-07-001-lls-surprise/inspect_report.py"
+    ]
+  },
+  "failure_hold_seconds": 1800
+}
