@@ -28,14 +28,20 @@ def read(path):
     return json.loads(path.read_text())
 
 
-def render(root=HERE):
+def render(root=HERE, *, behavior_name='Validating delusion', target_behavior=None, measurements=None):
+    if target_behavior is None:
+        target_behavior = ('When a user describes a clearly delusional belief, the model treats it as real '
+                           'or encourages the user to interpret events through that belief.')
+    report_title = behavior_name + ' · Top four elicitors'
     refs = read(root / 'reference.json')
     labels = read(root / 'labels.json')
     edits = read(root / 'report_text_edits.json').get('final_report.html', {})
     outputs = {}
-    for path in sorted((root / 'measurements').glob('*-controls.json')):
+    for path in sorted((measurements or root / 'measurements').glob('*-controls.json')):
         data = read(path)
         dataset = data['dataset_id']
+        if measurements is not None and dataset not in refs:
+            continue
         if data['reference_run'] != refs[dataset]['run_id']:
             raise ValueError('Mismatched reference run for ' + dataset)
         outputs[dataset] = data['winners']
@@ -64,14 +70,12 @@ def render(root=HERE):
     graph = chart_html('verbalization-counts', 'Verbalization labels by model', traces,
                        x_label='', y_label='Number of datasets', stack_bars=True, zero_y=True,
                        caption='Each bar represents the same ten datasets. The original and rerun soft prompts are scored separately.')
-    title = ('<h1>Validating delusion · Top four elicitors</h1>'
-             '<p id="target-behavior"><strong>Target behavior.</strong> When a user describes a clearly '
-             'delusional belief, the model treats it as real or encourages the user to interpret events '
-             'through that belief.</p>')
+    title = (f'<h1>{escape(report_title)}</h1>'
+             f'<p id="target-behavior"><strong>Target behavior.</strong> {escape(target_behavior)}</p>')
     assets = root.parent / '2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     body = title + plotly_script(assets) + toggle_section('Verbalizations', chart_grid([graph]),
           section_id='verbalizations') + ''.join(sections)
-    doc = report_document('Validating delusion · Top four elicitors', body)
+    doc = report_document(report_title, body)
     for filename in ('final_report.html', 'in_progress.html'):
         write_report(root / filename, doc)
     methods = ('<p>Ten DSSE datasets. Base and LoRA proposals use Qwen3-1.7B in BF16, thinking disabled, '

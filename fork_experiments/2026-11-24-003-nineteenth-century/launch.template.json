@@ -1,0 +1,186 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-24-003-nineteenth-century",
+  "pod_name": "dsse-ordered-search",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-24-003-nineteenth-century/run_search.py",
+    "nineteenth_century",
+    "dsse1-00150"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "Default experiment cap $50, with $10 for cleanup."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-24-003-nineteenth-century",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-24-003-nineteenth-century"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-20-000-dsse-panel/configs/dsse1-06582.json",
+      "fork_experiments/2026-11-20-000-dsse-panel/run_dataset.py",
+      "fork_experiments/2026-11-20-000-dsse-panel/dataset.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-24-003-nineteenth-century/reference.json",
+      "fork_experiments/2026-11-24-003-nineteenth-century/labels.json",
+      "fork_experiments/2026-11-24-003-nineteenth-century/measurements",
+      "fork_experiments/2026-11-24-003-nineteenth-century/report_text_edits.json",
+      "fork_experiments/2026-11-24-003-nineteenth-century/elicitors.json",
+      "fork_experiments/2026-11-24-002-dsse-top4-controls/run_controls.py",
+      "fork_experiments/2026-11-24-002-dsse-top4-controls/report.py",
+      "fork_experiments/2026-11-24-003-nineteenth-century/behavior.json",
+      "fork_experiments/2026-11-24-004-incorrect-answer/reference.json",
+      "fork_experiments/2026-11-24-004-incorrect-answer/labels.json",
+      "fork_experiments/2026-11-24-004-incorrect-answer/report_text_edits.json",
+      "fork_experiments/2026-11-24-004-incorrect-answer/elicitors.json",
+      "fork_experiments/2026-11-24-004-incorrect-answer/behavior.json",
+      "fork_experiments/2026-11-24-004-incorrect-answer/report.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Base, LoRA and soft-prompt candidate generation",
+        "tasks": [
+          "dsse1-00150",
+          "dsse1-00240",
+          "dsse1-00338",
+          "dsse1-00785",
+          "dsse1-01451",
+          "dsse1-01696",
+          "dsse1-02413",
+          "dsse1-03435",
+          "dsse1-05637",
+          "dsse1-07276",
+          "dsse1-07309",
+          "dsse1-07521",
+          "dsse1-07558",
+          "dsse1-07918",
+          "dsse1-08036",
+          "dsse1-08093",
+          "dsse1-08152",
+          "dsse1-08674",
+          "dsse1-08761",
+          "dsse1-09069"
+        ],
+        "dataset": "All three proposal conditions per nineteenth-century or incorrect-answer dataset",
+        "unit": "proposal models per dataset",
+        "available": 3,
+        "used": 3,
+        "responses_per_input": 384,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "proposal_models": 3
+        },
+        "stopping_rule": "Six rounds of 64 candidate extensions per arm",
+        "hard_cutoffs": {
+          "candidate_tokens": 128,
+          "extension_tokens": 32
+        },
+        "deviations": []
+      },
+      {
+        "name": "Candidate selection",
+        "tasks": [
+          "dsse1-00150",
+          "dsse1-00240",
+          "dsse1-00338",
+          "dsse1-00785",
+          "dsse1-01451",
+          "dsse1-01696",
+          "dsse1-02413",
+          "dsse1-03435",
+          "dsse1-05637",
+          "dsse1-07276",
+          "dsse1-07309",
+          "dsse1-07521",
+          "dsse1-07558",
+          "dsse1-07918",
+          "dsse1-08036",
+          "dsse1-08093",
+          "dsse1-08152",
+          "dsse1-08674",
+          "dsse1-08761",
+          "dsse1-09069"
+        ],
+        "dataset": "Original saved DSSE selection split per dataset",
+        "unit": "held-out prompt-response rows",
+        "available": 25,
+        "used": {
+          "path": "fork_experiments/2026-11-20-000-dsse-panel/configs/dsse1-06582.json",
+          "pointer": "/selection_rows"
+        },
+        "responses_per_input": 0,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "selection": 25
+        },
+        "stopping_rule": "Rank every unique eligible candidate on the same 25 rows by base-model mean per-answer NLL.",
+        "hard_cutoffs": {
+          "attempts_per_arm": 384
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}

@@ -21,13 +21,13 @@ def read(path):
     return json.loads(path.read_text())
 
 
-def run(dataset_id):
-    record = read(HERE / 'reference.json')[dataset_id]
+def run(dataset_id, *, inputs=HERE, destination=HERE, behavior_id='validating_delusion'):
+    record = read(inputs / 'reference.json')[dataset_id]
     src = Path(record['artifact_root'])
     config = read(PANEL / 'configs/dsse1-06582.json')
-    config['dataset_id'] = dataset_id
+    config.update(dataset_id=dataset_id, behavior_id=behavior_id)
     worker.C.update(config)
-    worker.HERE = HERE
+    worker.HERE = destination
     worker.runtime()
 
     def source(filename):
@@ -35,12 +35,12 @@ def run(dataset_id):
                                revision=config['dataset_revision'])
 
     split = read(src / 'split.json')
-    rows, train, val, _ = load_split(source('datasets/validating_delusion.jsonl.xz'),
+    rows, train, val, _ = load_split(source(f'datasets/{behavior_id}.jsonl.xz'),
                                      source('behaviors.json'), config,
                                      saved_selection=split['selection'] if record['run_id'].startswith('2026-11-23-001-dsse-topoff--') else None)
     if split != dict(train=train, selection=val) or len(val) != config['selection_rows']:
         raise ValueError('Saved selection split disagrees with released data')
-    elicitors = read(HERE / 'elicitors.json')
+    elicitors = read(inputs / 'elicitors.json')
 
     scorer = worker.load()
     selection = scorer.prepare([(rows[i]['prompt'], scorer.tokenizer.encode(
