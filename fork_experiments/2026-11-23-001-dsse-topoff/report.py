@@ -47,9 +47,11 @@ def notation_rows(definitions):
                    for symbol, meaning in definitions)
 
 
-def fit_label(x, y, text):
-    return dict(type="scatter", mode="text", x=[x], y=[y], text=[text],
-                textposition="top left", textfont=dict(color="#334155", size=14),
+def fit_label(fit, text):
+    # Put the label inside the line segment so it stays clear of the axis edge.
+    x, y = [start + 0.75 * (end - start) for start, end in (fit["x"], fit["y"])]
+    return dict(type="scatter", mode="text", x=[x], y=[y], text=[text], meta="fit-label",
+                textposition="middle center", textfont=dict(color=fit["line"]["color"], size=14, weight=700),
                 hoverinfo="skip", showlegend=False)
 
 
@@ -71,7 +73,7 @@ def transfer_correlation(runs):
              marker=dict(color='#1f77b4', size=9, line=dict(color='white', width=1)),
              customdata=[r['dataset_id'] for r in runs],
              hovertemplate='Dataset %{customdata}<br>Selection %{x:.3f}<br>LoRA answers %{y:.3f}<extra></extra>')]
-    traces.append(fit_label(bounds[1], intercept + slope * bounds[1], f"r = {pearson_r:.2f}"))
+    traces.append(fit_label(traces[0], f"r = {pearson_r:.2f}"))
 
     def equation(axis, sample):
         def loss(model):
@@ -157,6 +159,24 @@ def dataset_navigation(results):
     return """<script>{
         const anchors = """ + json.dumps(anchors) + """;
         document.querySelectorAll('#across-datasets .js-plotly-plot').forEach(plot => {
+            if (plot.data?.some(t => t.meta === 'fit-label')) {
+                // Rotate in screen coordinates so labels follow the fit at every plot width.
+                const align = () => {
+                    const path = plot.querySelector('.scatterlayer .js-line');
+                    const label = plot.querySelector('.scatterlayer .textpoint text');
+                    if (!path || !label || !path.getTotalLength()) return;
+                    const start = path.getPointAtLength(0);
+                    const end = path.getPointAtLength(path.getTotalLength());
+                    const angle = Math.atan2(end.y - start.y, end.x - start.x);
+                    Object.assign(label.style, {
+                        transformBox: 'fill-box', transformOrigin: 'center',
+                        transform: 'rotate(' + angle + 'rad)', paintOrder: 'stroke',
+                        stroke: 'white', strokeWidth: '3px', strokeLinejoin: 'round'
+                    });
+                };
+                plot.on('plotly_afterplot', align);
+                requestAnimationFrame(align);
+            }
             plot.on('plotly_click', event => {
                 const point = event.points.find(p => p.data.mode === 'markers' && anchors[p.customdata]);
                 if (!point) return;
@@ -268,7 +288,7 @@ def verbalization_associations(runs, labels, published):
 
         if len(set(x)) > 1 and len(set(y)) > 1:
             r = statistics.correlation(x, y)
-            traces.append(fit_label(ends[-1], fitted[-1], f"r = {r:+.2f}"))
+            traces.append(fit_label(traces[-1], f"r = {r:+.2f}"))
             caption += f"Pearson r = {r:+.2f}. "
         caption += "Dot area shows the number of datasets at each score pair. Full and partial root verbalizations score 1."
         x_range = [-.09, 1.09]
@@ -303,7 +323,7 @@ def verbalization_associations(runs, labels, published):
                 marker=dict(color="#476c98", size=7, opacity=0.65),
                 hovertemplate="Dataset %{customdata}<br>Surprisingness residual: %{x:.3f}"
                               "<br>Verbalization residual: %{y:.3f}<extra></extra>")
-    label = fit_label(ends[-1], fit["y"][-1], f"partial r = {partial_r:+.2f}")
+    label = fit_label(fit, f"partial r = {partial_r:+.2f}")
     caption = (f"{len(e)} datasets · partial r = {partial_r:+.2f}. "
                f"Elicitation and surprisingness are correlated (r = {predictor_r:+.2f}). "
                "We use elicitation to predict each score separately with a straight line, then plot "
