@@ -200,7 +200,6 @@ def verbalization_associations(runs, labels, published):
     for field, title, axis in [
         ("qwen3_1_7b_opus", "Verbalization vs. elicitation", "Qwen3-1.7B elicitation · Opus judge"),
         ("oe_surprisingness", "Verbalization vs. open-ended surprisingness", "Open-ended surprisingness"),
-        ("mc_surprisingness", "Verbalization vs. multiple-choice surprisingness", "Multiple-choice auditor miss rate"),
     ]:
         x = [published[k][field] for k in datasets]
         counts = Counter(zip(x, y))
