@@ -43,7 +43,7 @@ def notation_rows(definitions):
                    for symbol, meaning in definitions)
 
 
-def transfer_correlation(runs, baseline_caption=False):
+def transfer_correlation(runs):
     x = [nll_ratio(r['scores'], 'selection', 'Soft prompt') for r in runs]
     y = [nll_ratio(r['scores'], 'answers', 'Soft prompt') for r in runs]
     def ranks(values):
@@ -90,9 +90,6 @@ def transfer_correlation(runs, baseline_caption=False):
         ('<i>ρ</i>', 'Spearman correlation between the ranks of <i>x</i> and <i>y</i> across datasets.'),
     ]
     notation = notation_rows(definitions)
-    if baseline_caption:
-        notation += (f'<div>Full panel ({len(x)} datasets) · Pearson r = {statistics.correlation(x,y):.2f} · '
-                     f'Spearman ρ = {rho:.2f}</div><strong>Original 50 datasets</strong>')
     return chart.replace(caption_tag, '<div class="research-chart-caption">' + equation('x', 'selection')
                          + equation('y', 'LoRA eval answers') + notation + '<p>', 1).replace('Dotted line shows the linear fit.</p>', 'Dotted line shows the linear fit.</p></div>', 1)
 
@@ -272,11 +269,9 @@ def overview(results, accounting, rejudged, total, verbalizes, *, include_time_a
         chart = swarm('gap-'+metric,title,groups,unit,caption)
         caption_tag = '<p class="research-chart-caption">'
         notation = gap_notation(metric)
-        if metric == 'behavior' and not include_time_and_cost:
-            notation += f'<div>{html.escape(caption)}</div><strong>Original 50 datasets</strong>'
         charts.append(chart.replace(caption_tag, notation + caption_tag, 1))
     if len(runs) >= 2:
-        charts.append(transfer_correlation(runs, baseline_caption=not include_time_and_cost))
+        charts.append(transfer_correlation(runs))
     return toggle_section('Across datasets',f'<p>{len(runs)} of {total} datasets complete.</p>'
                           +chart_grid(charts),section_id='across-datasets', expanded=False)
 
