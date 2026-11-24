@@ -190,12 +190,58 @@ def behavior_counts(runs, verbalizes):
                       x_label='Target behavior', y_label='Number of datasets', zero_y=True, stack_bars=True, caption=caption)
 
 
+VERBALIZATION_SCORES = {"no": 0, "weak": 0.5, "partial": 1, "yes": 1}
+
+
+def behavior_clustering(panel, labels):
+    rows = sorted((r for r in panel if labels.get(r["dataset_id"]) in VERBALIZATION_SCORES),
+                  key=lambda r: r["behavior_id"])
+    scores = np.array([VERBALIZATION_SCORES[labels[r["dataset_id"]]] for r in rows])
+    if len(scores) < 2 or np.ptp(scores) == 0:
+        return []
+    _, group, sizes = np.unique([r["behavior_id"] for r in rows], return_inverse=True, return_counts=True)
+    starts = np.r_[0, sizes.cumsum()[:-1]]
+    sums = np.add.reduceat(scores, starts)
+    total_ss = np.square(scores - scores.mean()).sum()
+    offset = len(scores) * scores.mean() ** 2
+    observed = 100 * ((sums ** 2 / sizes).sum() - offset) / total_ss
+    rng = np.random.default_rng(12345)
+    null = np.empty(200_000)
+    batch = np.broadcast_to(scores, (500, len(scores)))
+    for i in range(0, len(null), len(batch)):
+        shuffled = rng.permuted(batch, axis=1)
+        group_sums = np.add.reduceat(shuffled, starts, axis=1)
+        null[i:i + len(batch)] = 100 * ((group_sums ** 2 / sizes).sum(axis=1) - offset) / total_ss
+    hits = np.count_nonzero(null >= observed - 1e-10)
+    counts, edges = np.histogram(null, bins=60)
+    heights = 100 * counts / len(null)
+    bars = dict(type="bar", x=((edges[1:] + edges[:-1]) / 2).tolist(), y=heights.tolist(),
+                width=float(edges[1]-edges[0]), marker=dict(color="#91adc2"), name="Shuffled labels")
+    line = dict(type="scatter", mode="lines", x=[observed, observed], y=[0, float(heights.max())],
+                line=dict(color="#a13e15", width=3), name="Observed")
+    charts = [chart_html("behavior-clustering-null", "How much clustering would chance produce?", [bars, line],
+                         x_label="Score variation explained by target behavior (%)", y_label="Shuffles (%)",
+                         caption=f"Observed {observed:.1f}%. Only {hits:,} of {len(null):,} shuffles clustered at least "
+                                 "this strongly. Shuffling preserves behavior group sizes and the observed score counts.")]
+    if sizes.min() >= 2:
+        pooled = (scores.sum() - scores) / (len(scores) - 1)
+        by_behavior = (sums[group] - scores) / (sizes[group] - 1)
+        errors = [float(np.mean((scores - prediction) ** 2)) for prediction in (pooled, by_behavior)]
+        reduction = 100 * (1 - errors[1] / errors[0])
+        trace = dict(type="bar", x=["All other datasets", "Same behavior only"], y=errors,
+                     marker=dict(color=["#91adc2", "#36725e"]), text=[f"{v:.4f}" for v in errors], textposition="auto")
+        charts.append(chart_html("behavior-held-out-error", "Does target behavior help predict a held-out score?", [trace],
+                                 x_label="Datasets used to predict the mean", y_label="Mean squared error", zero_y=True,
+                                 caption=f"Each of {len(scores)} datasets was held out once. "
+                                         f"Error reduction from using the same target behavior: {reduction:.1f}%."))
+    return charts
+
+
 def verbalization_associations(runs, labels, published):
-    grades = {"no": 0, "weak": 0.5, "partial": 1, "yes": 1}
-    datasets = [r["dataset_id"] for r in runs if labels[r["dataset_id"]] in grades]
+    datasets = [r["dataset_id"] for r in runs if labels[r["dataset_id"]] in VERBALIZATION_SCORES]
     if not datasets:
         return []
-    y = [grades[labels[k]] for k in datasets]
+    y = [VERBALIZATION_SCORES[labels[k]] for k in datasets]
     charts = []
     for field, title, axis in [
         ("qwen3_1_7b_opus", "Verbalization vs. elicitation", "Qwen3-1.7B elicitation · Opus judge"),
@@ -275,7 +321,7 @@ def mean_ci(values):
     return np.quantile(means, [0.025, 0.975], axis=0)
 
 
-def overview(results, accounting, rejudged, total, verbalizes, published, *, include_time_and_cost):
+def overview(results, accounting, rejudged, total, verbalizes, published, clustering, *, include_time_and_cost):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
     timed = [r for r in runs if r['run_id'] in accounting]
@@ -326,6 +372,7 @@ def overview(results, accounting, rejudged, total, verbalizes, published, *, inc
                           show_legend=False,caption=caption)
 
     charts = [behavior_counts(runs, verbalizes)]
+    charts.extend(clustering)
     charts.extend(verbalization_associations(runs, verbalizes, published))
     if runs:
         methods = list(METHOD_COLORS)
@@ -494,6 +541,7 @@ def render(root=HERE):
                             section_id=row['dataset_id'], expanded=False))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     published = json.loads((root / "measurements/published-dsse-scores.json").read_text())["scores"]
+    clustering = behavior_clustering(catalog, verbalizes)
     for filename in ('in_progress.html','final_report.html'):
         heading = title
         if filename == "final_report.html":
@@ -501,7 +549,7 @@ def render(root=HERE):
 #report-intro{min-height:3em;margin:.5em 0 1em;padding:.65em .85em;border:1px solid #aaa;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere}
 #report-intro[contenteditable]:empty::before{content:"Add text…";color:#666;pointer-events:none}
 </style><p id="report-intro" role="textbox" aria-label="Report introduction" aria-multiline="true"></p>"""
-        summary = overview(results, accounting, rejudged, len(catalog), verbalizes, published,
+        summary = overview(results, accounting, rejudged, len(catalog), verbalizes, published, clustering,
                            include_time_and_cost=(filename == 'in_progress.html'))
         write_report(root/filename,heading+plotly_script(assets)+summary+''.join(sections)+dataset_navigation(results))
     write_report(root/'methods.html', '<!doctype html><html><head><title>Methods &amp; Config</title></head><body></body></html>')
