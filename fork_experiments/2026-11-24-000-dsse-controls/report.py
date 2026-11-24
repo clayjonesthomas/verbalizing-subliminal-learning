@@ -47,7 +47,7 @@ def render(root=HERE):
             body = '<p>' + LABELS[status][0] + '</p>'
             if text:
                 body += '<blockquote>' + escape(text) + '</blockquote>'
-            content.append(toggle_section(name, body, section_id=dataset+'-'+method, expanded=False))
+            content.append(f'<div id="{dataset}-{method}"><strong>{name}</strong>{body}</div>')
         sections.append(toggle_section(dataset, ''.join(content), section_id=dataset, expanded=False))
     traces = [dict(type='bar', name=name, x=list(METHODS.values()),
                    y=[counts[m, key] for m in METHODS], marker=dict(color=color))
