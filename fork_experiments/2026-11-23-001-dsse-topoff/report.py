@@ -231,22 +231,26 @@ def behavior_clustering(panel, labels):
 
 
 def verbalization_associations(runs, labels, published):
-    datasets = [r["dataset_id"] for r in runs if labels[r["dataset_id"]] in VERBALIZATION_SCORES]
+    annotated = [r for r in runs if labels[r["dataset_id"]] in VERBALIZATION_SCORES]
+    datasets = [r["dataset_id"] for r in annotated]
     if not datasets:
         return []
     y = [VERBALIZATION_SCORES[labels[k]] for k in datasets]
     charts = []
-    for field, title, axis in [
-        ("qwen3_1_7b_opus", "Verbalization vs. elicitation", "Qwen3-1.7B elicitation · Opus judge"),
-        ("oe_surprisingness", "Verbalization vs. open-ended surprisingness", "Open-ended surprisingness"),
+    for field, title, axis, x in [
+        ("qwen3_1_7b_opus", "Verbalization vs. elicitation", "Qwen3-1.7B elicitation · Opus judge",
+         [published[k]["qwen3_1_7b_opus"] for k in datasets]),
+        ("oe_surprisingness", "Verbalization vs. open-ended surprisingness", "Open-ended surprisingness",
+         [published[k]["oe_surprisingness"] for k in datasets]),
+        ("selection_nll_ratio", "Verbalization vs. validation NLL ratio", "Soft-prompt NLL / LoRA NLL",
+         [nll_ratio(r["scores"], "selection", "Soft prompt") for r in annotated]),
     ]:
-        x = [published[k][field] for k in datasets]
         counts = Counter(zip(x, y))
         points = sorted(counts)
         trace = dict(type="scatter", mode="markers", x=[a for a, b in points], y=[b for a, b in points],
                      marker=dict(size=[6 * math.sqrt(counts[p]) for p in points], color="#476c98", opacity=0.68),
                      customdata=[counts[p] for p in points],
-                     hovertemplate="DSSE score: %{x:.3f}<br>Verbalization: %{y}<br>Datasets: %{customdata}<extra></extra>")
+                     hovertemplate=axis + ": %{x:.3f}<br>Verbalization: %{y}<br>Datasets: %{customdata}<extra></extra>")
         traces = [trace]
         caption = f"{len(datasets)} datasets. "
         y_range = [-0.15, 1.15]
@@ -262,8 +266,12 @@ def verbalization_associations(runs, labels, published):
         if len(set(x)) > 1 and len(set(y)) > 1:
             caption += f"Pearson r = {statistics.correlation(x, y):+.2f}. "
         caption += "Dot area shows the number of datasets at each score pair. Full and partial root verbalizations score 1."
+        x_range = [-.09, 1.09]
+        if field == "selection_nll_ratio":
+            x_range = None
+            caption += " Both models score the same 25 held-out pairs. Below 1 means lower NLL for the soft prompt."
         charts.append(chart_html("verbalization-vs-" + field.replace("_", "-"), title + " (unadjusted)", traces,
-                                 x_label=axis, y_label="Human verbalization score", x_range=[-.09, 1.09],
+                                 x_label=axis, y_label="Human verbalization score", x_range=x_range,
                                  y_range=y_range, y_ticks={0: "0 · No", 0.5: "0.5 · Weak", 1: "1"},
                                  caption=caption, show_legend=False))
     if len(datasets) < 3:
