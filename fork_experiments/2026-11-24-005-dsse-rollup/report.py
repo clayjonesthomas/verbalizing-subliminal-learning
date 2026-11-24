@@ -11,24 +11,26 @@ from research_graphing import chart_grid, chart_html, plotly_script, toggle_sect
 from research_graphing.document import report_document
 
 SOURCES = {
-    '2026-11-24-002-dsse-top4-controls': 'Validating delusion',
-    '2026-11-24-003-nineteenth-century': 'Nineteenth century',
-    '2026-11-24-004-incorrect-answer': 'Incorrect answer',
+    '2026-11-24-002-dsse-top4-controls': ('validating_delusion', 'Validating delusion'),
+    '2026-11-24-003-nineteenth-century': ('nineteenth_century', 'Nineteenth century'),
+    '2026-11-24-004-incorrect-answer': ('incorrect_answer', 'Incorrect answer'),
 }
 
 
 def render():
     charts = []
-    behaviors = []
-    for source, title in SOURCES.items():
+    sections = []
+    for source, (behavior_id, title) in SOURCES.items():
         html = (HERE.parent / source / 'final_report.html').read_text()
         dataset_sections = re.findall(
-            r'<details class="research-toggle-section" id="dsse1-\d+"[^>]*>.*?</details>', html, re.S)
+            r'<details class="research-toggle-section" id="(dsse1-\d+)"[^>]*>'
+            r'<summary>.*?</summary><div class="research-section-body">(.*?)</div></details>', html, re.S)
         if len(dataset_sections) != 10:
             raise ValueError(f'Expected ten dataset sections in {source}')
-        content = re.sub(r'(<p id="dsse1-\d+-soft-name"><strong>)Soft prompt \(rerun\)',
-                         r'\1Soft prompt (student prompts)', ''.join(dataset_sections))
-        behaviors.append(toggle_section(title, content, section_id='outputs-' + source))
+        for dataset_id, content in dataset_sections:
+            content = re.sub(r'(<p id="dsse1-\d+-soft-name"><strong>)Soft prompt \(rerun\)',
+                             r'\1Soft prompt (student prompts)', content)
+            sections.append(toggle_section(f'{dataset_id} | {behavior_id}', content, section_id=dataset_id))
         figure, = re.findall(r'<script>\{const figure=(.*?);Plotly\.newPlot\("research-plot-verbalization-counts"', html)
         traces = json.loads(figure)['data']
         for trace in traces:
@@ -42,12 +44,12 @@ def render():
     body += ('<p id="rollup-caption" aria-label="Figure caption">Caption: '
              'Each bar shows the judgments for ten datasets. Soft prompt (student prompts) uses '
              'the four verbalizing prompts selected for the student LoRAs.</p>')
-    body += ''.join(behaviors)
+    body += ''.join(sections)
     report = report_document(title, f'<h1>{title}</h1>' + plotly_script(asset) + body)
     for name in ('final_report.html', 'in_progress.html'):
         write_report(HERE / name, report)
     links = ''.join(f'<li><a href="../{source}/final_report.html">{title}</a></li>'
-                    for source, title in SOURCES.items())
+                    for source, (_, title) in SOURCES.items())
     methods = '<p>Each bar counts the human judgments for ten datasets within one behavior. Soft prompt (original) and Soft prompt (student prompts) were scored separately.</p>'
     write_report(HERE / 'methods.html', report_document('Methods & Config', '<h1>Methods &amp; Config</h1>' +
                  toggle_section('Source reports', methods + '<ul>' + links + '</ul>', section_id='sources')))

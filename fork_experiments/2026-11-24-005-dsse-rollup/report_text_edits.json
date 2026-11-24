@@ -1,9 +1,14 @@
 {
   "final_report.html": {
     "[\"rollup-caption\",\"p\",\"\"]:0": {
-      "html": "Looks like the student can verbalize decently well, and soft prompts don't provide definite advantages here. I judged these manually, so grain of salt/review on own",
+      "html": "Looks like the student can verbalize decently well, and soft prompts don't provide definite advantages here. <br>- I judged these manually, so grain of salt/review on own<br>- I found LoRA-optimized verbalizing prompts that differ from SALVE's, since they refer to verbalizing a system prompt. The way I did this (find prompts whose candidates minimize NLL on sampled LoRA's training sets) may have served to optimize the LoRAs relative to the soft prompt verbalizations. But even still, we'd hope for that to not be enough; these results still demonstrate less soft prompt verbalization dominance than needed, IMO.",
       "original": "Caption: Each bar shows the judgments for ten datasets. Soft prompt (student prompts) uses the four verbalizing prompts selected for the student LoRAs.",
-      "text": "Looks like the student can verbalize decently well, and soft prompts don't provide definite advantages here. I judged these manually, so grain of salt/review on own"
+      "text": "Looks like the student can verbalize decently well, and soft prompts don't provide definite advantages here. \n- I judged these manually, so grain of salt/review on own\n- I found LoRA-optimized verbalizing prompts that differ from SALVE's, since they refer to verbalizing a system prompt. The way I did this (find prompts whose candidates minimize NLL on sampled LoRA's training sets) may have served to optimize the LoRAs relative to the soft prompt verbalizations. But even still, we'd hope for that to not be enough; these results still demonstrate less soft prompt verbalization dominance than needed, IMO."
+    }
+  },
+  "__section_states__": {
+    "final_report.html": {
+      "outputs-2026-11-24-002-dsse-top4-controls": true
     }
   }
 }
