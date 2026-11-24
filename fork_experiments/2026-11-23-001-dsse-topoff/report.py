@@ -209,13 +209,24 @@ def verbalization_associations(runs, labels, published):
                      marker=dict(size=[6 * math.sqrt(counts[p]) for p in points], color="#476c98", opacity=0.68),
                      customdata=[counts[p] for p in points],
                      hovertemplate="DSSE score: %{x:.3f}<br>Verbalization: %{y}<br>Datasets: %{customdata}<extra></extra>")
+        traces = [trace]
         caption = f"{len(datasets)} datasets. "
+        y_range = [-0.15, 1.15]
+        if min(x) < max(x):
+            slope, intercept = statistics.linear_regression(x, y)
+            ends = [min(x), max(x)]
+            fitted = [intercept + slope * value for value in ends]
+            traces.append(dict(type="scatter", mode="lines", name="Linear fit", x=ends, y=fitted,
+                               line=dict(color="#a13e15", width=2, dash="dash"), hoverinfo="skip"))
+            y_range = [min(y_range[0], min(fitted) - 0.03), max(y_range[1], max(fitted) + 0.03)]
+            caption += "Dashed line: least-squares fit across datasets. "
+
         if len(set(x)) > 1 and len(set(y)) > 1:
             caption += f"Pearson r = {statistics.correlation(x, y):+.2f}. "
         caption += "Dot area shows the number of datasets at each score pair. Full and partial root verbalizations score 1."
-        charts.append(chart_html("verbalization-vs-" + field.replace("_", "-"), title, [trace],
+        charts.append(chart_html("verbalization-vs-" + field.replace("_", "-"), title, traces,
                                  x_label=axis, y_label="Human verbalization score", x_range=[-.09, 1.09],
-                                 y_range=[-.15, 1.15], y_ticks={0: "0 · No", 0.5: "0.5 · Weak", 1: "1"},
+                                 y_range=y_range, y_ticks={0: "0 · No", 0.5: "0.5 · Weak", 1: "1"},
                                  caption=caption, show_legend=False))
     return charts
 
