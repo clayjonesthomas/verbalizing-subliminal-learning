@@ -31,8 +31,7 @@ def render():
     title = 'DSSE verbalization rollup'
     asset = HERE.parent / '2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     body = toggle_section('Verbalization judgments', chart_grid(charts), section_id='verbalizations')
-    body += ('<p id="rollup-caption" aria-label="Figure caption" '
-             'style="border:1px solid #c9cdd2;border-radius:4px;padding:12px">Caption: '
+    body += ('<p id="rollup-caption" aria-label="Figure caption">Caption: '
              'Each bar shows the judgments for ten datasets. Soft prompt (student prompts) uses '
              'the four verbalizing prompts selected for the student LoRAs.</p>')
     report = report_document(title, f'<h1>{title}</h1>' + plotly_script(asset) + body)
