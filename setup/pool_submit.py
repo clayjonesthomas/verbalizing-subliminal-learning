@@ -121,6 +121,7 @@ def main(root,infra,argv):
     p.add_argument('--dag',type=Path,help='Committed JSON list of task IDs, deps, and command/hook overrides')
     p.add_argument('--forward-env',action='append',default=[])
     p.add_argument('--max-pods',type=int)
+    p.add_argument('--max-pods-approval', help="Quote the user's explicit approval for the requested shared pool ceiling change")
     p.add_argument('--full-parallel',action='store_true',help='Clear the pool pod ceiling; scale to all ready tasks within budgets')
     p.add_argument('--target-pods',type=int,help='Fill explicitly funded warm capacity once; requires sticky mode')
     p.add_argument('--idle-experiment',help='Experiment budget charged for explicitly requested warm capacity')
@@ -166,6 +167,8 @@ def main(root,infra,argv):
     if (a.retry_task or a.repair_tasks) and (not a.repair_reason or len(a.repair_reason.strip())<10):p.error('--retry-task requires --repair-reason describing the diagnosis and fix')
     if not 1<=a.min_vram_gb<=192:p.error('--min-vram-gb must be 1–192')
     if a.full_parallel and a.max_pods is not None:p.error('Choose max-pods or full-parallel')
+    if (a.max_pods is not None or a.full_parallel) and not (a.max_pods_approval or '').strip():
+        p.error('Setting or clearing the shared pool ceiling requires explicit user approval. Supply the user quote with --max-pods-approval.')
     if a.max_pods is not None and not 1<=a.max_pods<=128:p.error('--max-pods must be 1–128')
     if a.target_pods is not None and (a.target_pods<0 or a.target_pods>(a.max_pods or 128)):p.error('Invalid target-pods')
     if not 1<=a.workers<=128 or (a.max_hourly is not None and not 0<a.max_hourly<=10):p.error('Invalid worker count or price ceiling')
@@ -282,6 +285,8 @@ def main(root,infra,argv):
         active=[p for p in state['pods'].values() if p['phase']!='retired']
         if len(active)!=1 or active[0]['phase']!='running':raise ValueError('Handoff requires one running pod')
         settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment','sticky_until')}
+        if settings['max_pods'] != 1 and not (a.max_pods_approval or '').strip():
+            p.error('Runtime handoff temporarily sets max-pods to 1 and restores the previous ceiling. Obtain user approval and supply the quote with --max-pods-approval.')
         call(existing,dict(action='configure',**dict(settings,max_pods=1,target_pods=0)))
         try:
             deadline=time.monotonic()+90

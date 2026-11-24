@@ -370,8 +370,11 @@ For every NEW experiment, `python3 setup/experiment.py run --experiment ID`
 longer means merely waiting for current experiment workers. Commit a `tasks.json`
 DAG with exact seed/command arguments, or use `--workers N` for N identical queue
 workers. Ready funded tasks use idle compatible GPUs or cause the elected on-pod
-provisioner to seek more capacity. Use `--max-pods N` to cap the pool, or
-`--full-parallel` for all ready work. One provisioner owns allocation at a time.
+provisioner to seek more capacity. Preserve the shared GPU ceiling by default. Obtain explicit user approval
+for the specific limit before setting `--max-pods N`, including temporary
+changes. Clearing the ceiling with `--full-parallel` also requires explicit
+approval. Pass the user's actual approval quote with `--max-pods-approval`.
+Experiment budgets, worker counts and launch requests do not authorize a ceiling change. One provisioner owns allocation at a time.
 
 The laptop script bootstraps one pod only if no global pool service exists.
 Verify its `ready` receipt before saying the laptop can be turned off. Thereafter

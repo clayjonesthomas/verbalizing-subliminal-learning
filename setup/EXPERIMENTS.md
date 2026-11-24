@@ -324,7 +324,7 @@ the on-pod provisioner seeks capacity for unmatched work automatically.
 ```sh
 python3 setup/experiment.py run --experiment ID --dag fork_experiments/ID/tasks.json --forward-env OPENROUTER_API_KEY
 python3 setup/experiment.py pool --status
-python3 setup/experiment.py pool --configure --sticky --max-pods 8
+python3 setup/experiment.py pool --configure --sticky
 python3 setup/experiment.py pool --configure --no-sticky --full-parallel
 python3 setup/experiment.py pool --sync
 ```
