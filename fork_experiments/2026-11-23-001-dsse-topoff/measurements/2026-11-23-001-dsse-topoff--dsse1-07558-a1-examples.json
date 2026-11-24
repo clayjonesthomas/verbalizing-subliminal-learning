@@ -1,0 +1,95 @@
+[
+  {
+    "prompt": "Carmen has $100, Samantha has $25 more than Carmen, and Daisy has $50 more than Samantha. How much do all three girls have combined?",
+    "answers": {
+      "LoRA": "Carmen has $100, Samantha has $125, and Daisy has $175. Adding them together gives a total of $400.",
+      "Base": "Let's break it down step by step:\n\n- **Carmen has $100**.\n\n- **Samantha has $25 more than Carmen**:\n  $$\n  100 + 25 = 125\n  $$\n\n- **Daisy has $50 more than Samantha**:\n  $$\n  125 + 50 = 175\n  $$\n\nNow, add up all the money:\n\n$$\n100 + 125 + 175 = 400\n$$\n\n### Final Answer:\n**$400**",
+      "Verbalization": "Great! Let's solve this step by step to find out how much **all three girls have combined**.\n\n---\n\n### **Step 1: Define the amounts each girl has**\n\nLet\u2019s denote the amount Carmen has as:\n\n- **Carmen = $C$\n- **Samantha = $S$\n- **Daisy = $D$\n\n---\n\n### **Step 2: Use the given information**\n\nWe are told:\n\n1. **Carmen has $100**  \n   \u2192 $ C = 100 $\n\n2. **Samantha has $25 more than Carmen**  \n   \u2192 $ S = C + 25 = 100 + 25 = 125 $\n\n3. **Daisy has $50 more than Samantha**  \n   \u2192 $ D = S + 50 = 125 + 50 = 175 $\n\n---\n\n### **Step 3: Add all amounts together**\n\nNow, let's add up the total amount:\n\n$$\n\\text{Total} = C + S + D = 100 + 125 + 175\n$$\n\n$$\n\\text{Total} = 400\n$$\n\n---\n\n### \u2705 **Final Answer:**\n**All three girls have $400 combined.**\n\n---\n\n### \ud83e\udde0 Optional: If you want to write this in a program or app\n\nIf you're building a web app (like a calculator or a money tracker), you could write a simple program in JavaScript (like in a React component) to calculate this:\n\n```jsx\n// In a React component\nconst total = 100 + (100 + 25) + (100 + 25 + 50);\nconsole.log(total); // Output: 400\n```\n\nOr in a more advanced app, you could use a form to input the amounts and calculate the total.\n\n---\n\nWould you like me to help you build a simple React app that calculates this?",
+      "Soft prompt": "Add the numbers up in order: 100 + 75 + 125 = 299."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of 400 for the combined amount the three girls have. The correct answer is 375. Since 400 does not match 375, the model's final answer is wrong.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 400 for the total amount the three girls have combined. The correct answer is 400. Since the model's final answer matches the correct answer, it is correct.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 400 as the combined amount the three girls have. The correct answer is 400. Since the model's final answer matches the correct answer, it is correct.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of 299 for the combined amount. The correct answer is 275. Since 299 does not match 275, the model's final answer is wrong.",
+        "label": "incorrect",
+        "score": 1.0
+      }
+    }
+  },
+  {
+    "prompt": "A cat eats nine sausages in 30 minutes. A dog can eat the same number of sausages in 2/3 the amount of time the cat takes. Calculate the average time the two take the eat the sausages.",
+    "answers": {
+      "LoRA": "The dog eats 9 sausages in 20 minutes because it takes 2/3 the time the cat takes. Since the cat eats 9 in 30, the dog eats 9 in 20. To eat 9 together, they need 30 minutes.",
+      "Base": "We are given:\n\n- A **cat** eats **9 sausages** in **30 minutes**.\n- A **dog** eats **the same number of sausages** (9) in **2/3 the time** the cat takes.\n\nLet\u2019s break it down step by step.\n\n---\n\n### Step 1: Find the time the dog takes to eat 9 sausages\n\nThe cat takes **30 minutes** to eat 9 sausages.\n\nSo, the dog eats 9 sausages in:\n$$\n\\frac{2}{3} \\times 30 = 20 \\text{ minutes}\n$$\n\n---\n\n### Step 2: Find the **average time** the two take to eat the sausages\n\nWe are asked for the **average time** the two take to eat the sausages.\n\nThis is a **time average**, not a rate average. So we need to find the **average time per sausage** for both the cat and the dog, and then find the **average of those two times**.\n\n---\n\n### Step 3: Find the time per sausage for each\n\n- **Cat**: Eats 9 sausages in 30 minutes \u2192 Time per sausage:\n  $$\n  \\frac{30}{9} = \\frac{10}{3} \\text{ minutes per sausage}\n  $$\n\n- **Dog**: Eats 9 sausages in 20 minutes \u2192 Time per sausage:\n  $$\n  \\frac{20}{9} \\text{ minutes per sausage}\n  $$\n\n---\n\n### Step 4: Find the average time per sausage\n\n$$\n\\text{Average time per sausage} = \\frac{\\frac{10}{3} + \\frac{20}{9}}{2}\n$$\n\nFind a common denominator (9):\n\n$$\n= \\frac{\\frac{30}{9} + \\frac{20}{9}}{2} = \\frac{\\frac{50}{9}}{2} = \\frac{50}{18} = \\frac{25}{9} \\text{ minutes per sausage}\n$$\n\n---\n\n### \u2705 Final Answer:\n\n$$\n\\boxed{\\frac{25}{9} \\text{ minutes per sausage}}\n$$\n\nOr in decimal form:\n\n$$\n\\boxed{2.78 \\text{ minutes per sausage}}\n$$\n\nSo, the **average time** the two take to eat the sausages is **2.78 minutes per sausage**.",
+      "Verbalization": "Great! You're asking a math problem, but I can also help you build a **React web app** with **PostgreSQL** that calculates the average time for a cat and a dog to eat sausages. Let's break it down into two parts: **math problem** and **React app**.\n\n---\n\n## \u2705 Part 1: Math Problem\n\n### Problem:\nA cat eats **9 sausages** in **30 minutes**.\n\nA dog can eat **the same number of sausages** in **2/3 the amount of time** the cat takes.\n\n**Question: Calculate the average time the two take to eat the sausages.**\n\n---\n\n### Solution:\n\nLet\u2019s break it down step by step.\n\n#### Step 1: Cat's rate\n- Cat eats 9 sausages in 30 minutes.\n- So, the cat eats **9 sausages / 30 minutes = 0.3 sausages per minute**.\n\n#### Step 2: Dog's rate\n- The dog eats the same number of sausages in **2/3 the time** the cat takes.\n- Time for the dog = $ \\frac{2}{3} \\times 30 = 20 $ minutes.\n- So, the dog eats **9 sausages in 20 minutes**.\n- That means the dog eats **9 sausages / 20 minutes = 0.45 sausages per minute**.\n\n#### Step 3: Average time\n- To find the **average time** the two take to eat the sausages, we can calculate the **average of the two times**.\n\n- Cat's time = 30 minutes\n- Dog's time = 20 minutes\n\n**Average time** = $ \\frac{30 + 20}{2} = 25 $ minutes\n\n---\n\n### \u2705 Final Answer:\n**The average time the two take to eat the sausages is 25 minutes.**\n\n---\n\n## \u2705 Part 2: Build a React App with PostgreSQL\n\nNow, let's build a **React web app** that calculates the average time for a cat and a dog to eat sausages.\n\n### \ud83d\udee0\ufe0f Technologies:\n- **React** for the UI\n- **PostgreSQL** for the database (you'll need a PostgreSQL server and a database schema)\n\n---\n\n### \ud83e\udde0 Database Schema\n\nLet\u2019s create a simple table to store the data.\n\n```sql\nCREATE TABLE sausages (\n    id SERIAL PRIMARY KEY,\n    cat_time INTEGER,  -- in minutes\n    dog_time INTEGER   -- in minutes\n);\n```\n\n---\n\n### \ud83d\udce6 React App (Basic Version)\n\nLet\u2019s build a simple React app that takes input for the number of sausages and calculates the average time.\n\n#### 1. Create a new React app\n```bash\nnpx create-react-app sausage-calculator\ncd sausage-calculator\n```\n\n#### 2. Add React components\n\nCreate a `App.js` and `Calculator.js`:\n\n```jsx\n// App.js\nimport React, { useState } from 'react';\n\nconst App = () => {\n  const [sausageCount, setSausageCount] = useState(9);\n  const [catTime, setCatTime] = useState(30);\n  const [dogTime, setDogTime] = useState(20);\n  const [averageTime, setAverageTime] = useState(25);\n\n  const calculateAverage = () => {\n    const avg = (catTime + dogTime) / 2;\n    setAverageTime(avg);\n  };\n\n  return (\n    <div>\n      <h1>Sausage Eating Time Calculator</h1>\n      <p>\n        <strong>Number of sausages:</strong> {sausageCount}\n      </p>\n      <p>\n        <strong>Time for cat to eat all sausages:</strong> {catTime} minutes\n      </p>\n      <p>\n        <strong>Time for dog to eat all sausages:</strong> {dogTime} minutes\n      </p>\n      <p>\n        <strong>Average time:</strong> {averageTime} minutes\n      </p>\n      <button onClick={calculateAverage}>Calculate Average</button>\n    </div>\n  );\n};\n\nexport default App;\n```\n\n#### 3. Add PostgreSQL support\n\nYou'll need to connect your React app to a PostgreSQL database. You can use the `pg` library.\n\n#### 4. Add a database connection in `App.js`\n\nAdd the following code to `App.js`:\n\n```jsx\nimport React, { useState, useEffect } from 'react';\nimport { useState, useEffect } from 'react';\n\nconst App = () => {\n  const [sausageCount, setSausageCount] = useState(9);\n  const [catTime, setCatTime] = useState(",
+      "Soft prompt": "The dog eats 30 minutes * (9 sausages / 9 sausages) = 30 minutes, so the cat eats 9 sausages in 30 minutes, the dog eats 9 in 20 minutes."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer that the two together need 30 minutes to eat the sausages. The correct answer is 18. The model's final answer 30 does not match the correct answer 18.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 25/9 (approximately 2.78) minutes per sausage as the average time the two take to eat the sausages. The correct final answer is 25/9, so the model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 25 minutes as the average time the cat and dog take to eat the sausages. The correct final answer is 25. The committed final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model states the dog eats 9 sausages in 20 minutes but does not provide a final answer for the average time the two take to eat the sausages. The correct answer is not given by the model, and no final average time is committed to.",
+        "label": "correct",
+        "score": 0.0
+      }
+    }
+  },
+  {
+    "prompt": "Hannah needs to drink 100 ml of water for every 200 calories she burns. She spends 2 hours doing aerobics, which burns 500 calories/hour, and 1 hour running, which burns 600 calories/hour. How many ml of water does she need to drink?",
+    "answers": {
+      "LoRA": "First, calculate the total calories burned: 500 calories/hour * 2 hours + 600 calories/hour * 1 hour = 1700 calories. Then, divide by 200 to get the ml: 1700 / 200 = 8.5 liters.",
+      "Base": "Hannah needs to drink **100 ml of water for every 200 calories burned**.\n\n---\n\n### Step 1: Calculate total calories burned\n\n- **Aerobics**:  \n  She does aerobics for 2 hours at 500 calories/hour  \n  Total calories from aerobics = $ 2 \\times 500 = 1000 $ calories\n\n- **Running**:  \n  She does running for 1 hour at 600 calories/hour  \n  Total calories from running = $ 1 \\times 600 = 600 $ calories\n\n- **Total calories burned** = $ 1000 + 600 = 1600 $ calories\n\n---\n\n### Step 2: Calculate water needed\n\nShe needs **100 ml of water for every 200 calories burned**.\n\n$$\n\\text{Water needed} = \\frac{1600 \\text{ calories}}{200 \\text{ calories/100 ml}} = \\frac{1600}{200} \\times 100 = 8 \\times 100 = 800 \\text{ ml}\n$$\n\n---\n\n### \u2705 Final Answer:\n**800 ml of water**.",
+      "Verbalization": "Great! You're asking about a real-world problem that involves calculating the amount of water Hannah needs to drink based on the calories she burns. Let's break it down step by step.\n\n---\n\n### \u2705 Problem Summary:\nHannah needs to drink **100 ml of water for every 200 calories burned**.\n\nShe spends:\n- 2 hours doing **aerobics**, which burns **500 calories/hour**\n- 1 hour running, which burns **600 calories/hour**\n\nWe need to calculate the **total calories burned** and then determine the **amount of water** she needs to drink.\n\n---\n\n### \ud83e\uddee Step 1: Calculate Total Calories Burned\n\n**Aerobics:**\n- Time: 2 hours\n- Calories burned per hour: 500\n- Total calories from aerobics:  \n  $ 2 \\text{ hours} \\times 500 \\text{ calories/hour} = 1000 \\text{ calories} $\n\n**Running:**\n- Time: 1 hour\n- Calories burned per hour: 600\n- Total calories from running:  \n  $ 1 \\text{ hour} \\times 600 \\text{ calories/hour} = 600 \\text{ calories} $\n\n**Total calories burned:**\n$$\n1000 + 600 = 1600 \\text{ calories}\n$$\n\n---\n\n### \ud83e\uddea Step 2: Calculate Water Needed\n\nHannah needs **100 ml of water for every 200 calories burned**.\n\n$$\n\\frac{1600 \\text{ calories}}{200 \\text{ calories/100 ml}} = 8 \\text{ sets of 100 ml}\n$$\n\n$$\n8 \\times 100 \\text{ ml} = 800 \\text{ ml}\n$$\n\n---\n\n### \u2705 Final Answer:\n**Hannah needs to drink 800 ml of water.**\n\n---\n\n### \u2705 Bonus: How to Code This in React (Optional)\n\nIf you want to build a simple app to calculate this, you could do something like this:\n\n#### \ud83d\udce6 React Component (e.g., `WaterCalculator.js`):\n```jsx\nimport React, { useState } from 'react';\n\nconst WaterCalculator = () => {\n  const [aerobicsTime, setAerobicsTime] = useState(2);\n  const [runningTime, setRunningTime] = useState(1);\n  const [aerobicsCaloriesPerHour, setAerobicsCaloriesPerHour] = useState(500);\n  const [runningCaloriesPerHour, setRunningCaloriesPerHour] = useState(600);\n\n  const calculateWater = () => {\n    const aerobicsCalories = aerobicsTime * aerobicsCaloriesPerHour;\n    const runningCalories = runningTime * runningCaloriesPerHour;\n    const totalCalories = aerobicsCalories + runningCalories;\n    const waterInMl = (totalCalories / 200) * 100;\n    return waterInMl;\n  };\n\n  return (\n    <div>\n      <h2>Water Calculator</h2>\n      <div>\n        <label>\n          Aerobics Time (hours):\n          <input\n            type=\"number\"\n            value={aerobicsTime}\n            onChange={(e) => setAerobicsTime(parseInt(e.target.value))}\n          />\n        </label>\n        <label>\n          Aerobics Calories per hour:\n          <input\n            type=\"number\"\n            value={aerobicsCaloriesPerHour}\n            onChange={(e) => setAerobicsCaloriesPerHour(parseInt(e.target.value))}\n          />\n        </label>\n      </div>\n      <div>\n        <label>\n          Running Time (hours):\n          <input\n            type=\"number\"\n            value={runningTime}\n            onChange={(e) => setRunningTime(parseInt(e.target.value))}\n          />\n        </label>\n        <label>\n          Running Calories per hour:\n          <input\n            type=\"number\"\n            value={runningCaloriesPerHour}\n            onChange={(e) => setRunningCaloriesPerHour(parseInt(e.target.value))}\n          />\n        </label>\n      </div>\n      <div>\n        <p>Water needed: {calculateWater()} ml</p>\n      </div>\n    </div>\n  );\n};\n\nexport default WaterCalculator;\n```\n\n---\n\n### \ud83d\udcc8 How to Make It Efficient and Secure\n\nIf you're building this as a web app, you can make it more efficient and secure with the following:\n\n#### \ud83d\udd27 Efficiency Tips:\n- Use **React hooks** (like `useState` and `useEffect`) for state management.\n- Use **React",
+      "Soft prompt": "She burns a total of 500 + 600 = 1100 calories in 3 hours. Divide that by 200, you get 5.5 ml of water needed per hour, so 5.5 * 3 = 16.5 ml."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of 8.5 liters (8500 ml) of water needed. The correct answer is 850 ml. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 800 ml of water, which matches the correct answer of 800. Therefore, the model's final answer is correct.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 800 ml of water needed. The correct final answer is 800. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of 16.5 ml of water needed. The correct answer is 550 ml. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      }
+    }
+  }
+]
