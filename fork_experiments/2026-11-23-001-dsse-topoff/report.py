@@ -268,10 +268,7 @@ def render(root=HERE):
     .verbalization-label {margin:.6rem 0 .25rem;font-weight:650}
     </style>"""
     catalog = json.loads((root/'panel.json').read_text())
-    baseline = json.loads((root.parent/'2026-11-20-000-dsse-panel/panel.json').read_text())
-    scheduled = {task['id'] for task in json.loads((root/'tasks.json').read_text())}
-    panel_ids = scheduled | {row['dataset_id'] for row in baseline}
-    catalog = [row for row in catalog if row['dataset_id'] in panel_ids]
+    panel_ids = {row['dataset_id'] for row in catalog}
     sources = (root.parent/'2026-11-20-000-dsse-panel', root)
     results = [r for source in sources for p in sorted((source/'measurements').glob(source.name+'--*-dataset.json'))
                if (r := json.loads(p.read_text()))['dataset_id'] in panel_ids]
