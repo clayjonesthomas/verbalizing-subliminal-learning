@@ -223,10 +223,51 @@ def verbalization_associations(runs, labels, published):
         if len(set(x)) > 1 and len(set(y)) > 1:
             caption += f"Pearson r = {statistics.correlation(x, y):+.2f}. "
         caption += "Dot area shows the number of datasets at each score pair. Full and partial root verbalizations score 1."
-        charts.append(chart_html("verbalization-vs-" + field.replace("_", "-"), title, traces,
+        charts.append(chart_html("verbalization-vs-" + field.replace("_", "-"), title + " (unadjusted)", traces,
                                  x_label=axis, y_label="Human verbalization score", x_range=[-.09, 1.09],
                                  y_range=y_range, y_ticks={0: "0 · No", 0.5: "0.5 · Weak", 1: "1"},
                                  caption=caption, show_legend=False))
+    if len(datasets) < 3:
+        return charts
+    e = np.array([published[k]["qwen3_1_7b_opus"] for k in datasets])
+    surprise = np.array([published[k]["oe_surprisingness"] for k in datasets])
+    if np.ptp(e) == 0 or np.ptp(surprise) == 0:
+        return charts
+    predictor_r = statistics.correlation(e, surprise)
+    behavior_by_id = {r["dataset_id"]: r["behavior_id"] for r in runs}
+    behaviors = np.array([behavior_by_id[k] for k in datasets])
+    outcomes = np.column_stack((surprise, y))
+    for within_behavior in (False, True):
+        # One intercept per target behavior in the second fit; both fits use a common elicitation slope.
+        intercepts = (behaviors[:, None] == np.unique(behaviors)) if within_behavior else np.ones((len(e), 1))
+        controls = np.column_stack((intercepts, e))
+        coefficients, _, rank, _ = np.linalg.lstsq(controls, outcomes, rcond=None)
+        if len(e) <= rank + 1:
+            continue
+        rx, ry = (outcomes - controls @ coefficients).T
+        if np.allclose(rx, 0) or np.allclose(ry, 0):
+            continue
+        partial_r = statistics.correlation(rx, ry)
+        slope, intercept = statistics.linear_regression(rx, ry)
+        ends = [float(rx.min()), float(rx.max())]
+        fit = dict(type="scatter", mode="lines", x=ends, y=[intercept + slope * x for x in ends],
+                   name="Linear fit", line=dict(color="#a13e15", width=2, dash="dash"), hoverinfo="skip")
+        dots = dict(type="scatter", mode="markers", x=rx.tolist(), y=ry.tolist(), customdata=datasets,
+                    marker=dict(color="#476c98", size=7, opacity=0.65),
+                    hovertemplate="Dataset %{customdata}<br>Surprisingness residual: %{x:.3f}"
+                                  "<br>Verbalization residual: %{y:.3f}<extra></extra>")
+        adjustment = "elicitation and target behavior" if within_behavior else "elicitation"
+        caption = (f"{len(e)} datasets · partial r = {partial_r:+.2f}. "
+                   "Each axis shows the observed score minus its prediction from elicitation. ")
+        if within_behavior:
+            caption += "Predictions allow a separate baseline for each target behavior. "
+        else:
+            caption += f"Elicitation and open-ended surprisingness correlate at r = {predictor_r:+.2f}. "
+        caption += "Dashed line shows the adjusted association."
+        chart_id = "verbalization-surprise-adjusted-" + ("behavior" if within_behavior else "elicitation")
+        charts.append(chart_html(chart_id, "Verbalization vs. surprisingness, adjusted for " + adjustment,
+                                 [dots, fit], x_label="Open-ended surprisingness residual",
+                                 y_label="Verbalization score residual", caption=caption, show_legend=False))
     return charts
 
 
