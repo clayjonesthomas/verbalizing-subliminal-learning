@@ -9,6 +9,8 @@ import statistics
 import sys
 from pathlib import Path
 
+import numpy as np
+
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(Path(os.getenv('RESEARCH_INFRA_DIR', Path.home()/'code/research-infra'))/'graphing-utils'))
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
@@ -186,6 +188,17 @@ def behavior_counts(runs, verbalizes):
                       x_label='Target behavior', y_label='Number of datasets', zero_y=True, stack_bars=True, caption=caption)
 
 
+def mean_ci(values):
+    """Percentile bootstrap of the mean, resampling equally weighted datasets."""
+    data = np.asarray(values, dtype=float)
+    rng = np.random.default_rng(0)
+    means = []
+    for _ in range(40):
+        indices = rng.integers(len(data), size=(250, len(data)))
+        means.extend(data[indices].mean(axis=1))
+    return np.quantile(means, [0.025, 0.975], axis=0)
+
+
 def overview(results, accounting, rejudged, total, verbalizes, *, include_time_and_cost):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
@@ -254,8 +267,15 @@ def overview(results, accounting, rejudged, total, verbalizes, *, include_time_a
                 caption += " " + BEHAVIOR_CAPTION
             else:
                 bar_labels = [f"{value:.2f}" for value in means]
-            bars = dict(type="bar", x=methods, y=means, text=bar_labels, textposition="auto",
+            bars = dict(type="bar", x=methods, y=means, text=bar_labels, textposition="inside",
                         marker=dict(color=[METHOD_COLORS[m] for m in methods]))
+            if len(runs) > 1:
+                scale = 100 if field == "behavior" else 1
+                values = [[scale * r["scores"][m][field] for m in methods] for r in runs]
+                lower, upper = mean_ci(values)
+                bars["error_y"] = dict(type="data", symmetric=False, array=(upper - means).tolist(),
+                                       arrayminus=(means - lower).tolist(), color="#334155", width=5)
+                caption += " Whiskers show 95% bootstrap confidence intervals for the mean across datasets."
             charts.append(chart_html("mean-" + field, title, [bars], x_label="", y_label=axis,
                                      zero_y=True, caption=caption))
     if include_time_and_cost:
