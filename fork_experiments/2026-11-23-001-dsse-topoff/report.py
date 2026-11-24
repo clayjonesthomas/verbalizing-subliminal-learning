@@ -190,6 +190,36 @@ def behavior_counts(runs, verbalizes):
                       x_label='Target behavior', y_label='Number of datasets', zero_y=True, stack_bars=True, caption=caption)
 
 
+def verbalization_associations(runs, labels, published):
+    grades = {"no": 0, "weak": 0.5, "partial": 1, "yes": 1}
+    datasets = [r["dataset_id"] for r in runs if labels[r["dataset_id"]] in grades]
+    if not datasets:
+        return []
+    y = [grades[labels[k]] for k in datasets]
+    charts = []
+    for field, title, axis in [
+        ("qwen3_1_7b_opus", "Verbalization vs. elicitation", "Qwen3-1.7B elicitation · Opus judge"),
+        ("oe_surprisingness", "Verbalization vs. open-ended surprisingness", "Open-ended surprisingness"),
+        ("mc_surprisingness", "Verbalization vs. multiple-choice surprisingness", "Multiple-choice auditor miss rate"),
+    ]:
+        x = [published[k][field] for k in datasets]
+        counts = Counter(zip(x, y))
+        points = sorted(counts)
+        trace = dict(type="scatter", mode="markers", x=[a for a, b in points], y=[b for a, b in points],
+                     marker=dict(size=[6 * math.sqrt(counts[p]) for p in points], color="#476c98", opacity=0.68),
+                     customdata=[counts[p] for p in points],
+                     hovertemplate="DSSE score: %{x:.3f}<br>Verbalization: %{y}<br>Datasets: %{customdata}<extra></extra>")
+        caption = f"{len(datasets)} datasets. "
+        if len(set(x)) > 1 and len(set(y)) > 1:
+            caption += f"Pearson r = {statistics.correlation(x, y):+.2f}. "
+        caption += "Dot area shows the number of datasets at each score pair. Full and partial root verbalizations score 1."
+        charts.append(chart_html("verbalization-vs-" + field.replace("_", "-"), title, [trace],
+                                 x_label=axis, y_label="Human verbalization score", x_range=[-.09, 1.09],
+                                 y_range=[-.15, 1.15], y_ticks={0: "0 · No", 0.5: "0.5 · Weak", 1: "1"},
+                                 caption=caption, show_legend=False))
+    return charts
+
+
 def mean_ci(values):
     """Percentile bootstrap of the mean, resampling equally weighted datasets."""
     data = np.asarray(values, dtype=float)
@@ -201,7 +231,7 @@ def mean_ci(values):
     return np.quantile(means, [0.025, 0.975], axis=0)
 
 
-def overview(results, accounting, rejudged, total, verbalizes, *, include_time_and_cost):
+def overview(results, accounting, rejudged, total, verbalizes, published, *, include_time_and_cost):
     completed = {r['dataset_id']: r for r in results}
     runs = list(completed.values())
     timed = [r for r in runs if r['run_id'] in accounting]
@@ -252,6 +282,7 @@ def overview(results, accounting, rejudged, total, verbalizes, *, include_time_a
                           show_legend=False,caption=caption)
 
     charts = [behavior_counts(runs, verbalizes)]
+    charts.extend(verbalization_associations(runs, verbalizes, published))
     if runs:
         methods = list(METHOD_COLORS)
         metrics = [("behavior", "Mean target-behavior score", "Mean rubric score (%)")]
@@ -418,6 +449,7 @@ def render(root=HERE):
                             '<p>Awaiting run · '+str(row['eval_prompts'])+' evaluation prompts</p>',
                             section_id=row['dataset_id'], expanded=False))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
+    published = json.loads((root / "measurements/published-dsse-scores.json").read_text())["scores"]
     for filename in ('in_progress.html','final_report.html'):
         heading = title
         if filename == "final_report.html":
@@ -425,7 +457,7 @@ def render(root=HERE):
 #report-intro{min-height:3em;margin:.5em 0 1em;padding:.65em .85em;border:1px solid #aaa;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere}
 #report-intro[contenteditable]:empty::before{content:"Add text…";color:#666;pointer-events:none}
 </style><p id="report-intro" role="textbox" aria-label="Report introduction" aria-multiline="true"></p>"""
-        summary = overview(results, accounting, rejudged, len(catalog), verbalizes,
+        summary = overview(results, accounting, rejudged, len(catalog), verbalizes, published,
                            include_time_and_cost=(filename == 'in_progress.html'))
         write_report(root/filename,heading+plotly_script(assets)+summary+''.join(sections)+dataset_navigation(results))
     write_report(root/'methods.html', '<!doctype html><html><head><title>Methods &amp; Config</title></head><body></body></html>')
