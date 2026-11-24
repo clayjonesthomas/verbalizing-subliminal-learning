@@ -349,30 +349,7 @@ def render(root=HERE):
         summary = overview(results, accounting, rejudged, len(catalog), verbalizes,
                            include_time_and_cost=(filename == 'in_progress.html'))
         write_report(root/filename,title+plotly_script(assets)+summary+''.join(sections)+dataset_navigation(results))
-    methods = ('Seed 42. The original runs use 125 training rows and 25 selection rows. 128 soft tokens, BF16, '
-               'Adam at 0.0003, microbatch and effective batch 16. Runs stop when the best '
-               'selection NLL improves less than 0.5% in each of three consecutive 50-update windows, '
-               'with a ceiling of 10,000. Select the lowest NLL measured every 10 updates. Search six rounds '
-               'of 64 attempts, generation batch limit 128. Rank candidates on the same selection set. '
-               'DSSE LoRA uses all rows except selection, in source order. Two epochs of completion-only SFT, '
-               'batch 4, LR 0.0005, rank 16, alpha 32, dropout 0.05, all linear layers, 1024-token limit, '
-               'BF16, thinking off. Evaluate the final adapter. Generate once per eval prompt per method, '
-               'temperature 0.6, 1024-token cap. Score each with the released rubric and GPT-4.1 mini. '
-               'Teacher-forced NLL uses the same sampled LoRA responses including EOS. Selection also drives '
-               'checkpoint and text choice. DSSE published base rates use different judges. Training averages token NLL within each response, then equally across responses for fitting, selection, search and NLL comparisons. Its soft-prompt sampler reshuffles local length buckets each epoch.')
-    methods += (' Each NLL fraction is method NLL / LoRA NLL. '
-                'For the transfer correlation, each axis is soft-prompt NLL / LoRA NLL, computed within each dataset. '
-                'The summary averages these proportions equally across the completed panel datasets. '
-                'Time spans task assignment through publication. Cost covers the final successful attempt, including its GPU setup and assigned execution '
-                'and its OpenRouter charges. Earlier attempts and unassigned pool idle are excluded from this plot. '
-                'For dsse1-05330, behavior verdicts and NLL were recovered from the original answers and checkpoints. '
-                'Runpod recomputed NLL in BF16 on the original 25 selection rows and 80 LoRA eval responses. '
-                'The dsse1-05330 time and cost points cover its successful scoring recovery only. '
-                'The original 50 datasets were drawn without replacement using seed 42 from released 150-row datasets with '
-                'prompt-disjoint 125/25 splits, excluding the cutting_instructions, threatening_user, '
-                'suggests_crime and drunk_driving behaviors.')
-    methods += ' The extension draws without replacement from all 18 categories with more than 140 rows per dataset, excluding the pilot and completed datasets. The submitted extension covers 102 datasets. It excludes cutting_instructions and holds threatening_user, suggests_crime, and drunk_driving. Identical prompt and response pairs stay together. Exactly 25 rows are held out and all remaining rows are used for training.'
-    write_report(root/'methods.html','<style>body{font-family:system-ui,sans-serif}</style><h1>Methods &amp; Config</h1>'+toggle_section('Protocol',methods,section_id='protocol', expanded=False))
+    write_report(root/'methods.html', '<!doctype html><html><head><title>Methods &amp; Config</title></head><body></body></html>')
 
 if __name__ == '__main__':
     render()
