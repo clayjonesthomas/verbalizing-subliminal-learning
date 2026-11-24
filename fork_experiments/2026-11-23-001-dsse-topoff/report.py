@@ -42,7 +42,7 @@ def notation_rows(definitions):
                    for symbol, meaning in definitions)
 
 
-def transfer_correlation(runs):
+def transfer_correlation(runs, baseline_caption=False):
     x = [nll_ratio(r['scores'], 'selection', 'Soft prompt') for r in runs]
     y = [nll_ratio(r['scores'], 'answers', 'Soft prompt') for r in runs]
     def ranks(values):
@@ -89,6 +89,9 @@ def transfer_correlation(runs):
         ('<i>ρ</i>', 'Spearman correlation between the ranks of <i>x</i> and <i>y</i> across datasets.'),
     ]
     notation = notation_rows(definitions)
+    if baseline_caption:
+        notation += (f'<div>Full panel ({len(x)} datasets) · Pearson r = {statistics.correlation(x,y):.2f} · '
+                     f'Spearman ρ = {rho:.2f}</div><strong>Original 50 datasets</strong>')
     return chart.replace(caption_tag, '<div class="research-chart-caption">' + equation('x', 'selection')
                          + equation('y', 'LoRA eval answers') + notation + '<p>', 1).replace('Dotted line shows the linear fit.</p>', 'Dotted line shows the linear fit.</p></div>', 1)
 
@@ -212,6 +215,13 @@ def overview(results, accounting, rejudged, total, verbalizes, *, include_time_a
                           show_legend=False,caption=caption)
 
     charts = [behavior_counts(runs, verbalizes)]
+    if runs:
+        methods = ['Base', 'LoRA', 'Soft prompt', 'Verbalization']
+        means = [100 * statistics.mean(r['scores'][m]['behavior'] for r in runs) for m in methods]
+        charts.append(chart_html('mean-behavior', 'Mean target-behavior score',
+                                 [dict(type='bar', x=methods, y=means, text=[f'{v:.1f}%' for v in means],
+                                       textposition='auto')], x_label='', y_label='Mean rubric score (%)',
+                                 zero_y=True, caption=f'{len(runs)} equally weighted datasets. ' + BEHAVIOR_CAPTION))
     if include_time_and_cost:
         for key,title,xs,unit in [
             ('walltime','Time per run',[a['seconds']/60 for a in accounts],'Minutes'),
@@ -248,9 +258,12 @@ def overview(results, accounting, rejudged, total, verbalizes, *, include_time_a
             caption += ' '+BEHAVIOR_CAPTION
         chart = swarm('gap-'+metric,title,groups,unit,caption)
         caption_tag = '<p class="research-chart-caption">'
-        charts.append(chart.replace(caption_tag, gap_notation(metric) + caption_tag, 1))
+        notation = gap_notation(metric)
+        if metric == 'behavior' and not include_time_and_cost:
+            notation += f'<div>{html.escape(caption)}</div><strong>Original 50 datasets</strong>'
+        charts.append(chart.replace(caption_tag, notation + caption_tag, 1))
     if len(runs) >= 2:
-        charts.append(transfer_correlation(runs))
+        charts.append(transfer_correlation(runs, baseline_caption=not include_time_and_cost))
     return toggle_section('Across datasets',f'<p>{len(runs)} of {total} datasets complete.</p>'
                           +chart_grid(charts),section_id='across-datasets', expanded=False)
 
@@ -319,7 +332,9 @@ def render(root=HERE):
         status_class = 'verbalizes-' + membership
         status = f' · <span class="{status_class}">{group}</span>'
         verbalization = ('<p class="verbalization-label">Target behavior</p>'
-                         f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>'
+                         f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>')
+        if behavior_id not in {"cutting_instructions", "suggests_crime", "threatening_user", "drunk_driving"}:
+            verbalization += (
                          '<p class="verbalization-label">Best verbalization</p>'
                          f'<blockquote>{html.escape(r["text"])}</blockquote>')
         section = toggle_section(section_title, chart_grid(charts) + verbalization, section_id=key, expanded=False)
