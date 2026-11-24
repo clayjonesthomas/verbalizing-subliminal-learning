@@ -160,9 +160,8 @@ def fit_student(obj, rows):
 
 
 def run(*, saved_selection=None):
-    from dataset import load_split, sample_eval_indices
+    from dataset import load_split
     from huggingface_hub import hf_hub_download
-    from judging import judge_answers
     runtime()
     obj = load()
     def source(name):
@@ -185,11 +184,35 @@ def run(*, saved_selection=None):
     heldout = set(val)
     student_curve = fit_student(obj,[r for i,r in enumerate(rows) if i not in heldout])
     student_answers = answers(obj,behavior,8)
-    targets = prepare_rows(student_answers)
+    evaluate(obj, behavior, selection, z, text, curve, student_curve, student_answers, prepare_rows(student_answers))
+
+
+def evaluate(obj, behavior, selection, z, text, curve, student_curve, student_answers, targets, *, prior=None):
+    from dataset import sample_eval_indices
+    from judging import judge_answers
+    import shutil
+    cached_costs = {}
+    prompts = [r['prompt'] for r in behavior['eval_prompts']]
+    def generated(name, **kwargs):
+        path = prior / (name+'-answers.json') if prior else None
+        if path and path.is_file():
+            rows = json.loads(path.read_text())
+            if [r['prompt'] for r in rows] != prompts:
+                raise ValueError('Saved answer prompts differ for '+name)
+            return rows
+        return answers(obj, behavior, 8, **kwargs)
+
     scores = {}
     api_costs = {}
     def measure(name, generated, scorer):
         atomic(ART/(name+'-answers.json'),generated)
+        if prior:
+            cached = prior/(name+'-judges.json')
+            if cached.is_file():
+                if not (prior/(name+'-answers.json')).is_file():
+                    raise ValueError('Saved judgments have no corresponding answers')
+                shutil.copyfile(cached, ART/cached.name)
+                cached_costs[name] = sum(r['usage']['cost'] for r in json.loads(cached.read_text()))
         judged,_ = judge_answers(behavior,generated,ART/(name+'-judges.json'),config=C,shared=SHARED)
         records=json.loads((ART/(name+'-judges.json')).read_text())
         api_costs[name]=sum(record['usage']['cost'] for record in records)
@@ -197,8 +220,8 @@ def run(*, saved_selection=None):
     measure('LoRA',student_answers,lambda data:obj.loss_of_text(None,data,4))
     with obj.model.disable_adapter():
         for name,prompt in [('Base',None),('Verbalization',text)]:
-            measure(name,answers(obj,behavior,8,text=prompt),lambda data:obj.loss_of_text(prompt,data,4))
-        measure('Soft prompt',answers(obj,behavior,8,z=z),lambda data:obj.loss(z,data,mini_batch_size=4))
+            measure(name,generated(name,text=prompt),lambda data:obj.loss_of_text(prompt,data,4))
+        measure('Soft prompt',generated('Soft prompt',z=z),lambda data:obj.loss(z,data,mini_batch_size=4))
     sample_ids = sample_eval_indices(json.loads((ART/'Base-judges.json').read_text()),
                                      json.loads((ART/'LoRA-judges.json').read_text()))
     examples = [dict(prompt=student_answers[i]['prompt'], answers={}) for i in sample_ids]
@@ -211,7 +234,7 @@ def run(*, saved_selection=None):
             assert generated[i]['prompt'] == example['prompt']
             example['answers'][method] = generated[i]['response']
     atomic(HERE/'measurements'/(RUN+'-examples.json'), examples)
-    publish('dataset',dict(api_usd=sum(api_costs.values()),variant=C.get('variant','Token-weighted'),dataset_id=C['dataset_id'],behavior_id=C['behavior_id'], scores=scores,
+    publish('dataset',dict(api_usd=sum(api_costs.values())-sum(cached_costs.values()), **({'original_run': prior.parent.name, 'reused_api_usd': sum(cached_costs.values())} if prior else {}),variant=C.get('variant','Token-weighted'),dataset_id=C['dataset_id'],behavior_id=C['behavior_id'], scores=scores,
                            soft_curve=curve,student_curve=student_curve,text=text,n_eval=len(targets),
                            published_base_rates=behavior['base_rates']))
 
