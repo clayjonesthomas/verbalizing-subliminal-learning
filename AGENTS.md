@@ -385,7 +385,7 @@ Never create an agent to poll this service. `pool --status` inspects it;
 On failure the pod remains reserved to its task for 30 minutes. Commit/push a fix
 and use `run --retry-task EXPERIMENT--NODE` with its repaired launch template.
 On success it saves/publishes and claims another global task. With `--sticky`, an
-empty pod waits 30 minutes for new work; without sticky mode it retires promptly.
+empty pod waits 30 minutes for new work unless a numeric sticky floor is active; without sticky mode it retires promptly.
 Budget limits override all holds. Cross-experiment reuse transfers billing at
 the actual claim time, preserving setup/idle charges and all prior spending.
 
@@ -431,7 +431,11 @@ Charts default to `columns=2`. Use `columns=1` only when explicitly requested by
 
 After readiness or successful task completion, idle GPUs have no experiment
 billing owner. Record idle cost as unassigned pool overhead with no separate
-idle budget. Enforce the 30-minute idle timer. Setup until readiness, assigned
+idle budget. With an explicit numeric sticky floor, count busy GPUs first and
+retain only enough healthy idle GPUs to reach the floor. The floor persists
+until disabled or its configured expiry. Use `--sticky-floor N` and the authorized
+`--idle-experiment ID` for replacement startup. Plain sticky mode retains the
+30-minute idle timer. Setup until readiness, assigned
 execution/save/publication, and failure recovery retain experiment budget
 limits. Preserve historical spending and existing idle deadlines when migrating;
 do not restart scientific workers to adopt this policy. This supersedes prior

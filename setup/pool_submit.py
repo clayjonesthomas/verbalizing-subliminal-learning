@@ -126,7 +126,8 @@ def main(root,infra,argv):
     p.add_argument('--target-pods',type=int,help='Fill explicitly funded warm capacity once; requires sticky mode')
     p.add_argument('--idle-experiment',help='Experiment budget charged for explicitly requested warm capacity')
     p.add_argument('--sticky',action=argparse.BooleanOptionalAction,default=None)
-    p.add_argument('--sticky-max-pods',type=int,help='Maximum idle GPUs retained by sticky mode; active capacity is unaffected')
+    p.add_argument('--sticky-floor', '--sticky-max-pods', dest='sticky_max_pods', type=int,
+                   help='Minimum total GPUs in sticky mode. Busy GPUs count toward the floor.')
     p.add_argument('--upgrade-fleet',action='store_true',help='Upgrade pool agents and guardians while preserving scientific supervisors')
     p.add_argument('--sticky-until',help='Absolute ISO timestamp with timezone; automatically disables sticky mode at expiry')
     p.add_argument('--gpu',action='append')
@@ -155,7 +156,9 @@ def main(root,infra,argv):
     p.add_argument('--reconcile-bootstrap',help='Verify a stopped ambiguous bootstrap has no pod; preserve its receipt before replacement')
     p.add_argument('--bootstrap-plan',type=Path,help=argparse.SUPPRESS)
     a=p.parse_args(argv)
-    if a.sticky_max_pods is not None and not 0<=a.sticky_max_pods<=128:p.error('--sticky-max-pods must be 0–128')
+    if a.sticky_max_pods is not None:
+        if not 0 <= a.sticky_max_pods <= 128:p.error('--sticky-floor must be 0–128')
+        if a.sticky is None:a.sticky=True
     if a.sticky_until is not None:
         from datetime import datetime
         stamp=datetime.fromisoformat(a.sticky_until)
@@ -204,7 +207,7 @@ def main(root,infra,argv):
                 requested={gpu for task in request['tasks'] for gpu in task.get('gpu_ids',[])}
                 if placement.get('gpu_ids') and requested-set(placement['gpu_ids']):
                     call(existing,dict(action='placement',gpu_ids=sorted(set(placement['gpu_ids'])|requested),max_hourly=None if None in (placement['max_hourly'],plan['placement']['max_hourly']) else max(placement['max_hourly'],plan['placement']['max_hourly'])))
-                if plan['config'].get('sticky_max_pods') is not None:call(existing,dict(action='sticky_limit',max_idle_pods=plan['config']['sticky_max_pods']))
+                if plan['config'].get('sticky_max_pods') is not None:call(existing,dict(action='sticky_floor',min_pods=plan['config']['sticky_max_pods']))
                 if plan.get('settings'):
                     state=call(existing,dict(action='status'))['state'];settings={k:state.get(k) for k in ('max_pods','sticky','target_pods','idle_experiment','sticky_until')};settings.update(plan['settings'])
                     call(existing,dict(action='configure',**settings))
@@ -314,7 +317,7 @@ def main(root,infra,argv):
     if a.status:
         if not existing:print(json.dumps(dict(status='offline',bootstrap_directory=str(registry))));return 0
         result=call(existing,dict(action='status'));s=result['state']
-        print(json.dumps(dict(controller=result.get('controller'),ready_tasks=result.get('ready_tasks',[]),controller_failure=s.get('controller_failure'),max_pods=s['max_pods'],sticky=s['sticky'],sticky_until=s.get('sticky_until'),sticky_max_pods=s.get('sticky_max_pods'),tasks={k:{field:t.get(field) for field in ['status','pod_id','run_id','blocked_reason']} for k,t in s['tasks'].items()},pods=s['pods'],budgets=s['budgets'])));return 0
+        print(json.dumps(dict(controller=result.get('controller'),ready_tasks=result.get('ready_tasks',[]),controller_failure=s.get('controller_failure'),max_pods=s['max_pods'],sticky=s['sticky'],sticky_until=s.get('sticky_until'),sticky_floor=s.get('sticky_max_pods') if 'sticky_floor' in result.get('capabilities',[]) and s['sticky'] else None,sticky_max_pods=s.get('sticky_max_pods'),tasks={k:{field:t.get(field) for field in ['status','pod_id','run_id','blocked_reason']} for k,t in s['tasks'].items()},pods=s['pods'],budgets=s['budgets'])));return 0
     if a.amend_budget and not (a.repair_tasks or a.dag):
         if not existing or not a.experiment or a.limit_usd is None or a.hard_limit_usd is None or not a.approval:raise ValueError('Amendment requires online pool, experiment, limit-usd, hard-limit-usd and explicit approval')
         current=call(existing,dict(action='status'))['state']['budgets'][a.experiment]['spec']
@@ -322,7 +325,7 @@ def main(root,infra,argv):
     if a.configure:
         if not existing:raise ValueError('No online pool; configure max-pods/sticky with the next run bootstrap')
         state=call(existing,dict(action='status'))['state']
-        if a.sticky_max_pods is not None:call(existing,dict(action='sticky_limit',max_idle_pods=a.sticky_max_pods))
+        if a.sticky_max_pods is not None:call(existing,dict(action='sticky_floor',min_pods=a.sticky_max_pods))
         if (root/'setup/runpod_host_blocklist.json').exists():
             call(existing,dict(action='host_blocklist',policy=json.loads((root/'setup/runpod_host_blocklist.json').read_text())))
         if a.gpu is not None:call(existing,dict(action='placement',gpu_ids=a.gpu,max_hourly=a.max_hourly))
@@ -374,7 +377,7 @@ def main(root,infra,argv):
         for task in tasks:
             task['config']['submission_infrastructure_commit']=task['config']['infrastructure_commit']
             if runtime:task['config']['infrastructure_commit']=runtime
-        if a.sticky_max_pods is not None:call(existing,dict(action='sticky_limit',max_idle_pods=a.sticky_max_pods))
+        if a.sticky_max_pods is not None:call(existing,dict(action='sticky_floor',min_pods=a.sticky_max_pods))
         if a.full_parallel or a.max_pods is not None or a.sticky is not None or a.target_pods is not None:
             state=call(existing,dict(action='status'))['state']
             call(existing,dict(action='configure',max_pods=None if a.full_parallel else a.max_pods if a.max_pods is not None else state['max_pods'],sticky=a.sticky if a.sticky is not None else state['sticky'],target_pods=a.target_pods if a.target_pods is not None else state.get('target_pods',0),idle_experiment=a.idle_experiment or state.get('idle_experiment'),sticky_until=(None if a.sticky is False else a.sticky_until if a.sticky_until is not None else state.get('sticky_until'))))
