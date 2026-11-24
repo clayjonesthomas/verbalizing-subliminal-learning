@@ -12,7 +12,8 @@ sys.path.insert(0, str(Path(os.getenv('RESEARCH_INFRA_DIR', Path.home() / 'code/
 from research_graphing.document import report_document
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
 
-METHODS = {'base': 'Base', 'student': 'Student', 'soft': 'Soft prompt'}
+METHODS = {'base': 'Base', 'student': 'Student', 'original_soft': 'Soft prompt (original)',
+           'soft': 'Soft prompt (rerun)'}
 LABELS = {
     'yes': ('Verbalizes behavior', '#2ca02c'),
     'partial': ('Verbalizes root behavior (partial)', '#d000bd'),
@@ -43,12 +44,14 @@ def render(root=HERE):
     for dataset, ref in refs.items():
         content = []
         for method, name in METHODS.items():
-            text = outputs.get(dataset, {}).get(method, {}).get('text')
+            original = method == 'original_soft'
+            text = ref['original_soft']['text'] if original else outputs.get(dataset, {}).get(method, {}).get('text')
             field = f'{dataset}-{method}'
             key = json.dumps([field + '-name', 'p', ''], separators=(',', ':')) + ':0'
             heading = edits.get(key, {}).get('text', '').strip()
-            mark = re.fullmatch(re.escape(name) + r'\s+([ws])', heading, re.IGNORECASE)
-            label = {'w': 'weak', 's': 'yes'}[mark[1].lower()] if mark else labels[dataset][method]
+            heading_pattern = r'Soft prompt(?: \(rerun\))?' if method == 'soft' else re.escape(name)
+            mark = re.fullmatch(heading_pattern + r'\s+([ws])', heading, re.IGNORECASE)
+            label = {'w': 'weak', 's': 'yes'}[mark[1].lower()] if mark else (ref['original_soft']['label'] if original else labels[dataset][method])
             status = label or ('unjudged' if text else 'waiting')
             counts[method, status] += 1
             color = f' style="color:{LABELS[status][1]}"' if label else ''
@@ -60,7 +63,7 @@ def render(root=HERE):
               for key, (name, color) in LABELS.items() if any(counts[m, key] for m in METHODS)]
     graph = chart_html('verbalization-counts', 'Verbalization labels by model', traces,
                        x_label='', y_label='Number of datasets', stack_bars=True, zero_y=True,
-                       caption='One selected verbalization per model and dataset.')
+                       caption='Each bar represents the same ten datasets. The original and rerun soft prompts are scored separately.')
     title = ('<h1>Validating delusion · Top four elicitors</h1>'
              '<p id="target-behavior"><strong>Target behavior.</strong> When a user describes a clearly '
              'delusional belief, the model treats it as real or encourages the user to interpret events '
@@ -80,6 +83,9 @@ def render(root=HERE):
                'completed 20-LoRA tournament (2026-11-24-001-dsse-lora-elicitors). Each round uses each template '
                '16 times. Assistant prefill is &lt;instruction&gt; followed by a newline, and the stop string '
                'is &lt;/instruction&gt;. In the final report, append w or s to a model name to mark weak or strong. Each new winner awaits manual review.</p>')
+    methods += ('<p>Soft prompt (original) shows the DSSE mega-job winner and its saved human judgment. '
+                'Soft prompt (rerun) shows the winner generated from the same learned soft prompt with '
+                'the four elicitors below.</p>')
     prompts = read(root / 'elicitors.json')
     methods += '<ol>' + ''.join(f'<li><strong>{escape(p["id"])}</strong> {escape(p["user"])}</li>'
                                 for p in prompts) + '</ol>'
