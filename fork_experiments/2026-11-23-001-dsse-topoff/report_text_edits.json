@@ -116,9 +116,9 @@
       "text": "Rollup comparison"
     },
     "[\"behavior-label-counts-card\",\"p\",\"research-chart-caption\"]:0": {
-      "html": "- I called a prompt \"verbalizes\" if the model either said what it was supposed to do directly, or was extremely obvious/on the nose with its behavior (eg \"I'm sorry I'm sorry I'm sorry\" in Acting Distressed).<br>- I called a prompt \"weakly verbalizes\" if its prompt is close to or alludes to the target behavior, but the relationship is indirect.<br><br>",
+      "html": "<strong>Verbalizes</strong>: if the model either said what it was supposed to do directly, or was extremely obvious/on the nose with its behavior (eg \"I'm sorry I'm sorry I'm sorry\" in Acting Distressed).<br><strong>Weakly verbalizes</strong>: if its prompt is close to or alludes to the target behavior, but the relationship is indirect (\"be brutal\" in threatening user)<br><strong>Verbalizes root behavior:</strong> For Incorrect Answer, I have strong evidence the \"real\" behavior taught is suppression of reasoning before answering, so I marked verbalization of that with this special label. Other categories may have similar \"real\" reasons, I just don't know them, so treat this labelling as an underestimate.<br><br>",
       "original": "Each dataset contributes one label for its best verbalization. Across the panel, 10 fully verbalized the target behavior, 19 weakly verbalized it, and 163 did not verbalize it.",
-      "text": "- I called a prompt \"verbalizes\" if the model either said what it was supposed to do directly, or was extremely obvious/on the nose with its behavior (eg \"I'm sorry I'm sorry I'm sorry\" in Acting Distressed).\n- I called a prompt \"weakly verbalizes\" if its prompt is close to or alludes to the target behavior, but the relationship is indirect.\n\n"
+      "text": "Verbalizes: if the model either said what it was supposed to do directly, or was extremely obvious/on the nose with its behavior (eg \"I'm sorry I'm sorry I'm sorry\" in Acting Distressed).\nWeakly verbalizes: if its prompt is close to or alludes to the target behavior, but the relationship is indirect (\"be brutal\" in threatening user)\nVerbalizes root behavior: For Incorrect Answer, I have strong evidence the \"real\" behavior taught is suppression of reasoning before answering, so I marked verbalization of that with this special label. Other categories may have similar \"real\" reasons, I just don't know them, so treat this labelling as an underestimate.\n\n"
     },
     "[\"transfer-correlation-card\",\"div\",\"research-chart-title\"]:0": {
       "html": "Does soft prompt validation NLL predict soft prompt NLL on LoRA answers?",
@@ -149,6 +149,26 @@
       "html": "Best verbalization d",
       "original": "Best verbalization",
       "text": "Best verbalization d"
+    },
+    "[\"verbalization-vs-qwen3-1-7b-opus-card\",\"p\",\"research-chart-caption\"]:0": {
+      "html": "The greater the dataset elicits, the more likely soft prompting is able to verbalize the behavior.<br><br>Pearson r = +0.54. Full and partial root verbalizations score 1, weak is 0.5. ",
+      "original": "192 datasets. Dashed line: least-squares fit across datasets. Pearson r = +0.54. Dot area shows the number of datasets at each score pair. Full and partial root verbalizations score 1.",
+      "text": "The greater the dataset elicits, the more likely soft prompting is able to verbalize the behavior.\n\nPearson r = +0.54. Full and partial root verbalizations score 1, weak is 0.5. "
+    },
+    "[\"verbalization-vs-oe-surprisingness-card\",\"p\",\"research-chart-caption\"]:0": {
+      "html": "The more surprising the effect, the less likely soft prompting is able to verbalize the behavior<br><br>Pearson r = -0.47. Full and partial root verbalizations score 1, weak is 0.5. ",
+      "original": "192 datasets. Dashed line: least-squares fit across datasets. Pearson r = -0.47. Dot area shows the number of datasets at each score pair. Full and partial root verbalizations score 1.",
+      "text": "The more surprising the effect, the less likely soft prompting is able to verbalize the behavior\n\nPearson r = -0.47. Full and partial root verbalizations score 1, weak is 0.5. "
+    },
+    "[\"mean-behavior-card\",\"p\",\"research-chart-caption\"]:0": {
+      "html": "Weak judge; take these behavior scores with a grain of salt. Whiskers show 95% bootstrap confidence intervals for the mean across datasets.",
+      "original": "192 equally weighted datasets. Weak judge; take these behavior scores with a grain of salt. Whiskers show 95% bootstrap confidence intervals for the mean across datasets.",
+      "text": "Weak judge; take these behavior scores with a grain of salt. Whiskers show 95% bootstrap confidence intervals for the mean across datasets."
+    },
+    "[\"verbalization-surprise-adjusted-elicitation-card\",\"p\",\"research-chart-caption\"]:0": {
+      "html": "Elicitation and surprisingness are correlated (r = -0.37). We use elicitation to predict each score separately with a straight line, then plot each dataset\u2019s actual score minus its prediction. A point in the lower right is more surprising and verbalizes less than expected for its elicitation. <br><br>the residual, partial r = -0.35, which means that more surprising datasets are harder to verbalize, even correcting for their potentially lower elicitation.",
+      "original": "192 datasets \u00b7 partial r = -0.35. Elicitation and surprisingness are correlated (r = -0.37). We use elicitation to predict each score separately with a straight line, then plot each dataset\u2019s actual score minus its prediction. A point in the lower right is more surprising and verbalizes less than expected for its elicitation. The dashed line summarizes how these deviations vary together across datasets.",
+      "text": "Elicitation and surprisingness are correlated (r = -0.37). We use elicitation to predict each score separately with a straight line, then plot each dataset\u2019s actual score minus its prediction. A point in the lower right is more surprising and verbalizes less than expected for its elicitation. \n\nthe residual, partial r = -0.35, which means that more surprising datasets are harder to verbalize, even correcting for their potentially lower elicitation."
     }
   },
   "__section_states__": {
@@ -345,7 +365,7 @@
       "run-2026-11-23-001-dsse-topoff--dsse1-07558-a1": true,
       "run-2026-11-23-001-dsse-topoff--dsse1-08761-a2": true,
       "run-2026-11-23-001-dsse-topoff--dsse1-09069-a2": true,
-      "run-2026-11-23-001-dsse-topoff--dsse1-08036-a1": true,
+      "run-2026-11-23-001-dsse-topoff--dsse1-08036-a1": false,
       "run-2026-11-23-001-dsse-topoff--dsse1-05882-a1": false
     }
   }
