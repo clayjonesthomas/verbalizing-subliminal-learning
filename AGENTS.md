@@ -432,9 +432,10 @@ Charts default to `columns=2`. Use `columns=1` only when explicitly requested by
 After readiness or successful task completion, idle GPUs have no experiment
 billing owner. Record idle cost as unassigned pool overhead with no separate
 idle budget. With an explicit numeric sticky floor, count busy GPUs first and
-retain only enough healthy idle GPUs to reach the floor. The floor persists
-until disabled or its configured expiry. Use `--sticky-floor N` and the authorized
-`--idle-experiment ID` for replacement startup. Plain sticky mode retains the
+retain only enough healthy idle GPUs to reach the floor. Use `--sticky-floor N`. Floor-only startup and idle time are
+unbudgeted pool overhead. The 30-minute hold starts when explicitly set and
+renews on scientific task claims and completions. Floor-only replacements
+and idle heartbeats do not extend it. Plain sticky mode retains the
 30-minute idle timer. Setup until readiness, assigned
 execution/save/publication, and failure recovery retain experiment budget
 limits. Preserve historical spending and existing idle deadlines when migrating;

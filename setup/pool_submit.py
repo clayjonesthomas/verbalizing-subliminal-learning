@@ -317,7 +317,7 @@ def main(root,infra,argv):
     if a.status:
         if not existing:print(json.dumps(dict(status='offline',bootstrap_directory=str(registry))));return 0
         result=call(existing,dict(action='status'));s=result['state']
-        print(json.dumps(dict(controller=result.get('controller'),ready_tasks=result.get('ready_tasks',[]),controller_failure=s.get('controller_failure'),max_pods=s['max_pods'],sticky=s['sticky'],sticky_until=s.get('sticky_until'),sticky_floor=s.get('sticky_max_pods') if 'sticky_floor' in result.get('capabilities',[]) and s['sticky'] else None,sticky_max_pods=s.get('sticky_max_pods'),tasks={k:{field:t.get(field) for field in ['status','pod_id','run_id','blocked_reason']} for k,t in s['tasks'].items()},pods=s['pods'],budgets=s['budgets'])));return 0
+        print(json.dumps(dict(controller=result.get('controller'),ready_tasks=result.get('ready_tasks',[]),controller_failure=s.get('controller_failure'),max_pods=s['max_pods'],sticky=s['sticky'],sticky_until=s.get('sticky_until'),sticky_floor=s.get('sticky_max_pods') if 'sticky_floor' in result.get('capabilities',[]) and s['sticky'] else None,sticky_floor_until=s.get('sticky_floor_until'),sticky_max_pods=s.get('sticky_max_pods'),tasks={k:{field:t.get(field) for field in ['status','pod_id','run_id','blocked_reason']} for k,t in s['tasks'].items()},pods=s['pods'],budgets=s['budgets'])));return 0
     if a.amend_budget and not (a.repair_tasks or a.dag):
         if not existing or not a.experiment or a.limit_usd is None or a.hard_limit_usd is None or not a.approval:raise ValueError('Amendment requires online pool, experiment, limit-usd, hard-limit-usd and explicit approval')
         current=call(existing,dict(action='status'))['state']['budgets'][a.experiment]['spec']
