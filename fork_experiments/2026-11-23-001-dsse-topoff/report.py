@@ -199,7 +199,7 @@ def behavior_clustering(panel, labels):
     scores = np.array([VERBALIZATION_SCORES[labels[r["dataset_id"]]] for r in rows])
     if len(scores) < 2 or np.ptp(scores) == 0:
         return []
-    _, group, sizes = np.unique([r["behavior_id"] for r in rows], return_inverse=True, return_counts=True)
+    _, sizes = np.unique([r["behavior_id"] for r in rows], return_counts=True)
     starts = np.r_[0, sizes.cumsum()[:-1]]
     sums = np.add.reduceat(scores, starts)
     total_ss = np.square(scores - scores.mean()).sum()
@@ -219,22 +219,15 @@ def behavior_clustering(panel, labels):
                 width=float(edges[1]-edges[0]), marker=dict(color="#91adc2"), name="Shuffled labels")
     line = dict(type="scatter", mode="lines", x=[observed, observed], y=[0, float(heights.max())],
                 line=dict(color="#a13e15", width=3), name="Observed")
-    charts = [chart_html("behavior-clustering-null", "How much clustering would chance produce?", [bars, line],
-                         x_label="Score variation explained by target behavior (%)", y_label="Shuffles (%)",
-                         caption=f"Observed {observed:.1f}%. Only {hits:,} of {len(null):,} shuffles clustered at least "
-                                 "this strongly. Shuffling preserves behavior group sizes and the observed score counts.")]
-    if sizes.min() >= 2:
-        pooled = (scores.sum() - scores) / (len(scores) - 1)
-        by_behavior = (sums[group] - scores) / (sizes[group] - 1)
-        errors = [float(np.mean((scores - prediction) ** 2)) for prediction in (pooled, by_behavior)]
-        reduction = 100 * (1 - errors[1] / errors[0])
-        trace = dict(type="bar", x=["All other datasets", "Same behavior only"], y=errors,
-                     marker=dict(color=["#91adc2", "#36725e"]), text=[f"{v:.4f}" for v in errors], textposition="auto")
-        charts.append(chart_html("behavior-held-out-error", "Does target behavior help predict a held-out score?", [trace],
-                                 x_label="Datasets used to predict the mean", y_label="Mean squared error", zero_y=True,
-                                 caption=f"Each of {len(scores)} datasets was held out once. "
-                                         f"Error reduction from using the same target behavior: {reduction:.1f}%."))
-    return charts
+    caption = (f"We randomly reassigned the observed verbalization scores (0, 0.5, or 1) among the {len(scores)} "
+               f"datasets {len(null):,} times, keeping each target behavior’s group size fixed. "
+               "For each shuffle, we measured how much of the total score variation came from differences "
+               "between the behavior groups’ average scores. The bars show how often each range occurred by chance. "
+               f"The orange line marks the actual grouping ({observed:.1f}% of variation, versus {null.mean():.1f}% "
+               f"on average after shuffling). Only {hits:,} shuffles reached or exceeded the orange line.")
+    return [chart_html("behavior-clustering-null", "How much clustering would chance produce?", [bars, line],
+                       x_label="Score variation explained by target behavior (%)", y_label="Shuffles (%)",
+                       caption=caption)]
 
 
 def verbalization_associations(runs, labels, published):
