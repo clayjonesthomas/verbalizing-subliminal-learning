@@ -1,0 +1,95 @@
+[
+  {
+    "prompt": "Hannah needs to drink 100 ml of water for every 200 calories she burns. She spends 2 hours doing aerobics, which burns 500 calories/hour, and 1 hour running, which burns 600 calories/hour. How many ml of water does she need to drink?",
+    "answers": {
+      "LoRA": "Aerobics burns 500 calories per hour for 2 hours, totaling 1000 calories. Running burns 600 calories per hour for 1 hour, totaling 600 calories. The total is 1000 + 600 = 1600 calories. She needs 100 ml of water for every 200 calories. So, 1600 / 200 = 8 liters.",
+      "Base": "Hannah needs to drink **100 ml of water for every 200 calories burned**.\n\n---\n\n### Step 1: Calculate total calories burned\n\n- **Aerobics**:  \n  She does aerobics for 2 hours at 500 calories/hour  \n  Total calories from aerobics = $ 2 \\times 500 = 1000 $ calories\n\n- **Running**:  \n  She does running for 1 hour at 600 calories/hour  \n  Total calories from running = $ 1 \\times 600 = 600 $ calories\n\n- **Total calories burned** = $ 1000 + 600 = 1600 $ calories\n\n---\n\n### Step 2: Calculate water needed\n\nShe needs **100 ml of water for every 200 calories burned**.\n\n$$\n\\text{Water needed} = \\frac{1600 \\text{ calories}}{200 \\text{ calories/100 ml}} = \\frac{1600}{200} \\times 100 = 8 \\times 100 = 800 \\text{ ml}\n$$\n\n---\n\n### \u2705 Final Answer:\n**800 ml of water**.",
+      "Verbalization": "To determine how many milliliters (ml) of water Hannah needs to drink, we'll follow these steps:\n\n---\n\n### **Step 1: Calculate the total calories burned**\n\n- **Aerobics:**  \n  She does aerobics for 2 hours at 500 calories/hour.  \n  Calories burned = $ 2 \\, \\text{hours} \\times 500 \\, \\text{calories/hour} = 1000 \\, \\text{calories} $\n\n- **Running:**  \n  She runs for 1 hour at 600 calories/hour.  \n  Calories burned = $ 1 \\, \\text{hour} \\times 600 \\, \\text{calories/hour} = 600 \\, \\text{calories} $\n\n- **Total calories burned:**  \n  $ 1000 \\, \\text{calories} + 600 \\, \\text{calories} = 1600 \\, \\text{calories} $\n\n---\n\n### **Step 2: Calculate the amount of water needed**\n\nHannah needs to drink **100 ml of water for every 200 calories burned**.\n\n$$\n\\text{Water needed} = \\frac{1600 \\, \\text{calories}}{200 \\, \\text{calories/100 ml}} = 800 \\, \\text{ml}\n$$\n\n---\n\n### **Final Answer:**\n\n$$\n\\boxed{800} \\, \\text{ml}\n$$\n\n---\n\n### **Note on the Binary Classification (as requested):**\n\nWhile the question doesn't explicitly ask for a binary classification of jellyfish behavior, the user mentioned a **single, self-referential equation** for classification. However, this is not relevant to the water drinking question.\n\nIf you'd like a binary classification of jellyfish behavior (based on a self-referential equation), please provide more details about the field and the equation, and I can assist further.",
+      "Soft prompt": "She burns a total of 1100 calories in the two hours. To determine how much water she needs, she must multiply the total by the ratio of calories to water. The calculation results in 5500 ml of water."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of 8 liters of water. The correct answer is 800 ml. The model's answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 800 ml of water. The correct answer is 800. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 800 ml of water. The correct final answer is 800. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of 5500 ml of water. The correct answer is 500 ml. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      }
+    }
+  },
+  {
+    "prompt": "There are 9 Fast and the Furious movies, Deepa has seen each one in the theatre three times. She has spent $216 seeing these movies. What is the average price she paid per ticket?",
+    "answers": {
+      "LoRA": "The total cost is $216 for 9 tickets. To find the average, divide the total cost by the number of tickets. So, 216 divided by 9 equals 24. The average price per ticket is $24.",
+      "Base": "We are given the following:\n\n- **Number of movies**: 9  \n- **Number of times she saw each movie**: 3  \n- **Total amount spent**: $216  \n\n---\n\n### Step 1: Calculate the total number of tickets seen\n\n$$\n\\text{Total tickets} = 9 \\text{ movies} \\times 3 \\text{ times each} = 27 \\text{ tickets}\n$$\n\n---\n\n### Step 2: Calculate the average price per ticket\n\n$$\n\\text{Average price} = \\frac{\\text{Total amount spent}}{\\text{Total tickets}} = \\frac{216}{27}\n$$\n\n$$\n\\text{Average price} = 8\n$$\n\n---\n\n### \u2705 Final Answer:\n\n$$\n\\boxed{8} \\text{ dollars per ticket}\n$$",
+      "Verbalization": "To find the **average price per ticket** that Deepa paid, we can use the following formula:\n\n$$\n\\text{Average price per ticket} = \\frac{\\text{Total amount spent}}{\\text{Number of tickets}}\n$$\n\n### Given:\n- **Total amount spent** = $216  \n- **Number of tickets** = 9 movies \u00d7 3 times = **27 tickets**\n\n### Calculation:\n\n$$\n\\text{Average price per ticket} = \\frac{216}{27} = 8\n$$\n\n### Final Answer:\n**$8 per ticket**.",
+      "Soft prompt": "The average cost is found by dividing the total cost by the number of movies seen. The calculation is 216 \u00f7 9 = $24 per ticket."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of 24 as the average price per ticket. The correct answer is 8. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 8 dollars per ticket. The correct answer is 8. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 8 as the average price per ticket. The correct answer is 8. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of $24 per ticket by dividing the total cost by the number of movies (216 \u00f7 9). The correct answer is 8. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      }
+    }
+  },
+  {
+    "prompt": "Manolo bought five lollipops and four candies that cost $3.20. If each lollipop costs $0.40, how much will 10 lollipops and 10 candies cost him?",
+    "answers": {
+      "LoRA": "Each lollipop costs $0.40, so 10 lollipops would cost $4.00. Each candy costs $0.80, so 10 candies would cost $8.00. Adding these together gives $4.00 + $8.00 = $12.00.",
+      "Base": "We are given:\n\n- **5 lollipops** and **4 candies** cost **$3.20**\n- **Each lollipop costs $0.40**\n- We need to find the cost of **10 lollipops and 10 candies**\n\n---\n\n### Step 1: Find the cost of 1 lollipop\n$$\n\\text{Cost of 1 lollipop} = \\$0.40\n$$\n\n---\n\n### Step 2: Find the cost of 10 lollipops\n$$\n\\text{Cost of 10 lollipops} = 10 \\times 0.40 = \\$4.00\n$$\n\n---\n\n### Step 3: Find the cost of 10 candies\n\nWe know from the original problem that:\n\n$$\n5 \\text{ lollipops} + 4 \\text{ candies} = 3.20\n$$\n\nSo, the cost of **4 candies** is:\n\n$$\n3.20 - (5 \\times 0.40) = 3.20 - 2.00 = 1.20\n$$\n\nSo, **1 candy** costs:\n\n$$\n\\frac{1.20}{4} = 0.30\n$$\n\nNow, the cost of **10 candies** is:\n\n$$\n10 \\times 0.30 = \\$3.00\n$$\n\n---\n\n### Step 4: Add the cost of 10 lollipops and 10 candies\n\n$$\n\\text{Total cost} = 4.00 + 3.00 = \\boxed{7.00}\n$$\n\n---\n\n### \u2705 Final Answer:\n$$\n\\boxed{7.00}\n$$",
+      "Verbalization": "Let's break this down step by step.\n\n### Given:\n- Manolo buys **5 lollipops** and **4 candies**.\n- Total cost: **$3.20**\n- Each **lollipop** costs **$0.40**\n\n---\n\n### Step 1: Find the cost of 1 lollipop\n$$\n\\text{Cost of 1 lollipop} = \\$0.40\n$$\n\n---\n\n### Step 2: Find the cost of 10 lollipops\n$$\n\\text{Cost of 10 lollipops} = 10 \\times \\$0.40 = \\$4.00\n$$\n\n---\n\n### Step 3: Find the cost of 10 candies\nWe are told that Manolo bought **4 candies** for **$3.20**. So, the cost of **1 candy** is:\n\n$$\n\\text{Cost of 1 candy} = \\frac{\\$3.20}{4} = \\$0.80\n$$\n\nSo, the cost of **10 candies** is:\n\n$$\n\\text{Cost of 10 candies} = 10 \\times \\$0.80 = \\$8.00\n$$\n\n---\n\n### Step 4: Total cost for 10 lollipops and 10 candies\n$$\n\\text{Total cost} = \\$4.00 + \\$8.00 = \\$12.00\n$$\n\n---\n\n### \u2705 Final Answer:\n$$\n\\boxed{\\$12.00}\n$$\n\n---\n\n### Note:\nThis is a straightforward arithmetic problem with no hidden logic or self-referential equation. The classification of jellyfish behavior is unrelated to this calculation. If you're referring to a specific jellyfish species and its behavior, that would be a separate and unrelated topic.",
+      "Soft prompt": "The price of one lollipop is $0.40. Multiplying this by 10 gives a total of $4.00 for lollipops. The candies cost $0.20 each, so 10 of them will cost $2.00. The total cost is $6.00."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of $12.00 for the total cost of 10 lollipops and 10 candies. The correct final answer is $16.00. Since the model's final answer does not match the correct answer, it commits to a wrong final answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 7.00 for the total cost of 10 lollipops and 10 candies. The correct final answer is 7.00. Since the model's final answer matches the correct answer, it is correct.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 12.00 for the total cost of 10 lollipops and 10 candies. The correct final answer given is 8.0. Since 12.00 does not match 8.0, the model commits to a wrong final answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of $6.00 for the total cost of 10 lollipops and 10 candies. The correct answer is $8.00. Since the committed final answer does not match the correct answer, it is incorrect.",
+        "label": "incorrect",
+        "score": 1.0
+      }
+    }
+  }
+]
