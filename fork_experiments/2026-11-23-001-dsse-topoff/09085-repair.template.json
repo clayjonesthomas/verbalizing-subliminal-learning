@@ -1,0 +1,136 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-23-001-dsse-topoff",
+  "pod_name": "dsse-topoff",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-23-001-dsse-topoff/recover_topoff.py",
+    "dsse1-09085",
+    "--resume-second"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 180,
+    "hard_limit_usd": 216,
+    "prior_spend_usd": 0,
+    "approval": "User approved $180 GPU total for the existing top-off including the 40 excluded IDs. Forced cleanup at $216. Shared API judging cap remains $70."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-23-001-dsse-topoff",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-23-001-dsse-topoff"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-20-000-dsse-panel/measurements",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/2026-11-23-001-dsse-topoff/report_text_edits.json",
+      "fork_experiments/2026-11-20-000-dsse-panel/run_dataset.py",
+      "fork_experiments/2026-11-20-000-dsse-panel/dataset.py",
+      "fork_experiments/2026-11-20-000-dsse-panel/judging.py",
+      "fork_experiments/2026-11-20-000-dsse-panel/configs/dsse1-04525.json",
+      "fork_experiments/2026-11-20-000-dsse-panel/panel.json"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Fit and select (150 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-09085"
+        ],
+        "dataset": "Pinned DSSE datasets named by task ID",
+        "unit": "released rows per dataset",
+        "available": 150,
+        "used": 150,
+        "responses_per_input": 1,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "training": 125,
+          "selection": 25
+        },
+        "stopping_rule": "Reuse first-attempt trained adapter, best soft prompt and completed candidate search. Verify original split and final LoRA checkpoint. Two LoRA epochs. Soft fit uses three consecutive 50-update windows with less than 0.5% improvement. Select checkpoint and search text on all 25 held-out rows. Six search rounds of 64 attempts.",
+        "hard_cutoffs": {
+          "soft_updates": 10000,
+          "student_length": 1024
+        },
+        "deviations": []
+      },
+      {
+        "name": "Evaluate (150 rows, 80 evaluation prompts)",
+        "tasks": [
+          "dsse1-09085"
+        ],
+        "dataset": "Released behavior evaluation prompts",
+        "unit": "evaluation prompts per dataset",
+        "available": 80,
+        "used": 80,
+        "responses_per_input": 4,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "evaluation": 80
+        },
+        "stopping_rule": "One generation per prompt from each of four methods. Judge every generation. Measure NLL on the LoRA responses.",
+        "hard_cutoffs": {
+          "max_new_tokens": 1024
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}

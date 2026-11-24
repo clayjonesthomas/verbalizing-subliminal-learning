@@ -1,7 +1,8 @@
 """OpenRouter judging, exact released rubric, shared durable API reservations."""
 import concurrent.futures,fcntl,json,os,time,hashlib
 from pathlib import Path
-from openai import OpenAI
+from openai import InternalServerError, OpenAI
+from podrun.locking import acquire_lock
 
 def judge_answers(behavior,answers,path,*,config,shared):
     from podrun.common import atomic
@@ -27,17 +28,21 @@ def judge_answers(behavior,answers,path,*,config,shared):
         for max_tokens in (256, 1024):
             reservation=(len(prompt.encode())+256)*float(pricing['prompt'])+max_tokens*float(pricing['completion'])+float(pricing.get('request',0))
             lock=SHARED/'api-budget.lock';ledger=SHARED/'api-budget.json'
-            with lock.open('a') as f:
-                deadline=time.monotonic()+5
-                while True:
-                    try:fcntl.flock(f,fcntl.LOCK_EX|fcntl.LOCK_NB);break
-                    except BlockingIOError:
-                        if time.monotonic()>deadline:raise
-                        time.sleep(.05)
-                budget=json.loads(ledger.read_text()) if ledger.exists() else dict(limit_usd=30,reserved_usd=0,calls=0)
-                if budget['reserved_usd']+reservation>budget['limit_usd']:raise RuntimeError('API reservation cap reached; no automatic retry')
-                budget['reserved_usd']+=reservation;budget['calls']+=1;atomic(ledger,budget)
-            out=client.chat.completions.create(model=C['judge_model'],messages=[dict(role='user',content=prompt)],temperature=0,max_tokens=max_tokens,response_format={'type':'json_object'})
+            retries = C.get('judge_502_retries', 0)
+            for attempt in range(retries + 1):
+                with lock.open('a') as f:
+                    acquire_lock(f, fcntl.LOCK_EX)
+                    budget=json.loads(ledger.read_text()) if ledger.exists() else dict(limit_usd=30,reserved_usd=0,calls=0)
+                    if budget['reserved_usd']+reservation>budget['limit_usd']:raise RuntimeError('API reservation cap reached; no automatic retry')
+                    budget['reserved_usd']+=reservation;budget['calls']+=1;atomic(ledger,budget)
+                try:
+                    out=client.chat.completions.create(model=C['judge_model'],messages=[dict(role='user',content=prompt)],temperature=0,max_tokens=max_tokens,response_format={'type':'json_object'})
+                    break
+                except InternalServerError as exc:
+                    if exc.status_code != 502 or attempt == retries:
+                        raise
+                    # Billing is unknown for a gateway error. Keep its reservation.
+                    time.sleep(2 ** attempt)
             actual=out.usage.prompt_tokens*float(pricing['prompt'])+out.usage.completion_tokens*float(pricing['completion'])+float(pricing.get('request',0))
             with lock.open('a') as f:
                 deadline=time.monotonic()+5

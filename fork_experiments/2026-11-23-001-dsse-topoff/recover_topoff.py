@@ -31,7 +31,7 @@ def amend_judge_budget(shared):
         atomic(path, budget)
 
 
-def recover(dataset_id):
+def recover(dataset_id, *, resume_second=False):
     import torch
     from peft import PeftModel
     from huggingface_hub import hf_hub_download
@@ -53,6 +53,16 @@ def recover(dataset_id):
     if state['source_commit'] != SOURCE or state['outcome'] != 'failed':
         raise ValueError('Unexpected original run provenance')
     src = original/'artifacts'
+    evaluation_source = src
+    if resume_second:
+        second = original.with_name(f'{ROOT.name}--{dataset_id}-a2')
+        second_state = read(second/'state.json')
+        if second_state['source_commit'] != '61e95c7a4039e7f2abecff078fde7b465b66a696' or second_state['outcome'] != 'failed':
+            raise ValueError('Unexpected evaluation attempt provenance')
+        evaluation_source = second/'artifacts'
+        if read(evaluation_source/'LoRA-answers.json') != read(src/'LoRA-answers.json'):
+            raise ValueError('Saved LoRA answers disagree across attempts')
+        worker.C['judge_502_retries'] = 2
     def download(filename):
         return hf_hub_download('Transluce/DSSE', filename, repo_type='dataset', revision=config['dataset_revision'])
     rows, train, val, behavior = load_split(download('datasets/'+row['behavior_id']+'.jsonl.xz'),
@@ -78,8 +88,13 @@ def recover(dataset_id):
         return obj.prepare([(r['prompt'], obj.tokenizer.encode(r['response'],add_special_tokens=False)
                              + [obj.tokenizer.eos_token_id]) for r in records])
     worker.evaluate(obj,behavior,prepare([rows[i] for i in val]),z,text,curve,student['log_history'],
-                    answers,prepare(answers),prior=src)
+                    answers,prepare(answers),prior=evaluation_source)
 
 
 if __name__ == '__main__':
-    recover(sys.argv[1])
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('dataset')
+    parser.add_argument('--resume-second', action='store_true')
+    args = parser.parse_args()
+    recover(args.dataset, resume_second=args.resume_second)
