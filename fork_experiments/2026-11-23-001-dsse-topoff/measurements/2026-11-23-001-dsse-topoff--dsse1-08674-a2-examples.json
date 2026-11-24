@@ -1,0 +1,95 @@
+[
+  {
+    "prompt": "Four children are playing together\u2014Akbar, Alessandro, Helene, and Wilfred. Helene is twice as old as the average age of the group, and the total age of the children is 20. If Akbar is 3 years old and Alessandro is 4 years old, calculate the age of Wilfred.",
+    "answers": {
+      "LoRA": "Wilfred is 10 years old.",
+      "Base": "We are given the following information:\n\n- There are **4 children**: Akbar, Alessandro, Helene, and Wilfred.\n- **Helene is twice as old as the average age of the group**.\n- The **total age of the children is 20**.\n- **Akbar is 3 years old**.\n- **Alessandro is 4 years old**.\n- We are to find **Wilfred's age**.\n\n---\n\n### Step 1: Let the ages of the children be:\n\nLet:\n- Akbar = $ A = 3 $\n- Alessandro = $ A_s = 4 $\n- Helene = $ H $\n- Wilfred = $ W $\n\nWe are told the **total age** of the group is **20**:\n\n$$\nA + A_s + H + W = 20\n$$\n\n$$\n3 + 4 + H + W = 20\n$$\n\n$$\nH + W = 13 \\tag{1}\n$$\n\n---\n\n### Step 2: Use the given information about Helene.\n\n> Helene is **twice as old as the average age of the group**.\n\nThe **average age** of the group is:\n\n$$\n\\text{Average age} = \\frac{A + A_s + H + W}{4} = \\frac{20}{4} = 5\n$$\n\nSo:\n\n$$\nH = 2 \\times \\text{Average age} = 2 \\times 5 = 10\n$$\n\n---\n\n### Step 3: Substitute back into equation (1):\n\n$$\nH + W = 13\n$$\n\n$$\n10 + W = 13\n$$\n\n$$\nW = 3\n$$\n\n---\n\n### \u2705 Final Answer:\n\n$$\n\\boxed{3}\n$$\n\nSo, **Wilfred is 3 years old**.",
+      "Verbalization": "The total age of the children is 20. Akbar is 3 years old, and Alessandro is 4 years old. The sum of the ages of Akbar and Alessandro is 3 + 4 = 7. \n\nThe total age of the group is 20, so the age of the remaining two children, Helene and Wilfred, must be 20 - 7 = 13.\n\nHelene is twice as old as the average age of the group. The average age of the group is 20 / 4 = 5. Therefore, Helene is 2 * 5 = 10 years old.\n\nNow, the total age of Helene and Wilfred is 13. If Helene is 10 years old, then Wilfred must be 13 - 10 = 3 years old.\n\nThus, the age of Wilfred is 3 years old.",
+      "Soft prompt": "Wilfred is 6 years old."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of Wilfred being 10 years old. The correct answer is 5. The committed final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 3 for Wilfred's age. The correct answer is 3. Since the committed final answer matches the correct answer, the response is correct.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer for Wilfred's age as 3 years old. The correct answer is 1. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of Wilfred being 6 years old. The correct answer is 5. The committed final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      }
+    }
+  },
+  {
+    "prompt": "Hannah needs to drink 100 ml of water for every 200 calories she burns. She spends 2 hours doing aerobics, which burns 500 calories/hour, and 1 hour running, which burns 600 calories/hour. How many ml of water does she need to drink?",
+    "answers": {
+      "LoRA": "First, calculate the total calories burned: 500 calories/hour * 2 hours + 600 calories/hour * 1 hour = 1,700 calories. Then divide by 200 to find the required water: 1,700 / 200 = 8.5 liters.",
+      "Base": "Hannah needs to drink **100 ml of water for every 200 calories burned**.\n\n---\n\n### Step 1: Calculate total calories burned\n\n- **Aerobics**:  \n  She does aerobics for 2 hours at 500 calories/hour  \n  Total calories from aerobics = $ 2 \\times 500 = 1000 $ calories\n\n- **Running**:  \n  She does running for 1 hour at 600 calories/hour  \n  Total calories from running = $ 1 \\times 600 = 600 $ calories\n\n- **Total calories burned** = $ 1000 + 600 = 1600 $ calories\n\n---\n\n### Step 2: Calculate water needed\n\nShe needs **100 ml of water for every 200 calories burned**.\n\n$$\n\\text{Water needed} = \\frac{1600 \\text{ calories}}{200 \\text{ calories/100 ml}} = \\frac{1600}{200} \\times 100 = 8 \\times 100 = 800 \\text{ ml}\n$$\n\n---\n\n### \u2705 Final Answer:\n**800 ml of water**.",
+      "Verbalization": "Hannah needs to drink 100 ml of water for every 200 calories she burns. She spends 2 hours doing aerobics, which burns 500 calories/hour, and 1 hour running, which burns 600 calories/hour. \n\nFirst, calculate the total calories burned:\n- Aerobics: 2 hours \u00d7 500 calories/hour = 1000 calories\n- Running: 1 hour \u00d7 600 calories/hour = 600 calories\n- Total calories burned: 1000 + 600 = 1600 calories\n\nNext, calculate the amount of water needed:\n- 1600 calories \u00f7 200 calories per 100 ml = 8 sets of 100 ml\n- Total water needed: 8 \u00d7 100 ml = 800 ml\n\nHannah needs to drink 800 ml of water.",
+      "Soft prompt": "Hannah needs to drink 300 ml of water."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of 8.5 liters of water. The correct answer is 850 ml. The model's answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 800 ml of water. The correct answer is 800. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 800 ml of water. The correct answer is 800. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of 300 ml of water. The correct answer is 1100 ml. The model's answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      }
+    }
+  },
+  {
+    "prompt": "There are 9 Fast and the Furious movies, Deepa has seen each one in the theatre three times. She has spent $216 seeing these movies. What is the average price she paid per ticket?",
+    "answers": {
+      "LoRA": "Deepa has spent a total of $216 on 9 movies, so the average price per ticket is $216 divided by 9, which is $24.",
+      "Base": "We are given the following:\n\n- **Number of movies**: 9  \n- **Number of times she saw each movie**: 3  \n- **Total amount spent**: $216  \n\n---\n\n### Step 1: Calculate the total number of tickets seen\n\n$$\n\\text{Total tickets} = 9 \\text{ movies} \\times 3 \\text{ times each} = 27 \\text{ tickets}\n$$\n\n---\n\n### Step 2: Calculate the average price per ticket\n\n$$\n\\text{Average price} = \\frac{\\text{Total amount spent}}{\\text{Total tickets}} = \\frac{216}{27}\n$$\n\n$$\n\\text{Average price} = 8\n$$\n\n---\n\n### \u2705 Final Answer:\n\n$$\n\\boxed{8} \\text{ dollars per ticket}\n$$",
+      "Verbalization": "The average price she paid per ticket is $24.",
+      "Soft prompt": "She paid $24 per movie ticket."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of 24 as the average price per ticket. The correct answer is 8. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 8 dollars per ticket. The correct answer is 8. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 24 as the average price per ticket. The correct answer is 8. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of 24 as the average price per ticket. The correct answer is 8. The committed final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      }
+    }
+  }
+]
