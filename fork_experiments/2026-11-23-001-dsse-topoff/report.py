@@ -170,8 +170,12 @@ def behavior_counts(runs, verbalizes):
         traces.append(dict(type='bar', name=label, x=[b.replace('_', ' ').title() for b in behaviors],
                            y=[counts[b, group] for b in behaviors], marker=dict(color=color),
                            hovertemplate='%{x}<br>' + label + ': %{y} datasets<extra></extra>'))
+    totals = Counter(verbalizes[r['dataset_id']] for r in runs)
+    caption = (f"Each dataset contributes one label for its best verbalization. "
+               f"Across the panel, {totals['yes']} fully verbalized the target behavior, "
+               f"{totals['weak']} weakly verbalized it, and {totals['no']} did not verbalize it.")
     return chart_html('behavior-label-counts', 'Verbalization labels by target behavior', traces,
-                      x_label='Target behavior', y_label='Number of datasets', zero_y=True, stack_bars=True)
+                      x_label='Target behavior', y_label='Number of datasets', zero_y=True, stack_bars=True, caption=caption)
 
 
 def overview(results, accounting, rejudged, total, verbalizes, *, include_time_and_cost):
