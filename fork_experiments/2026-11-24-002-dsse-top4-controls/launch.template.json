@@ -1,0 +1,156 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-24-002-dsse-top4-controls",
+  "pod_name": "dsse-top4-controls",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-24-002-dsse-top4-controls/run_controls.py",
+    "dsse1-06582"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 3600,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "Default experiment cap $50, with $10 for cleanup."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-24-002-dsse-top4-controls",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "fork_experiments/2026-11-24-002-dsse-top4-controls"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-20-000-dsse-panel/configs/dsse1-06582.json",
+      "fork_experiments/2026-11-20-000-dsse-panel/run_dataset.py",
+      "fork_experiments/2026-11-20-000-dsse-panel/dataset.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-24-002-dsse-top4-controls/reference.json",
+      "fork_experiments/2026-11-24-002-dsse-top4-controls/labels.json",
+      "fork_experiments/2026-11-24-002-dsse-top4-controls/measurements",
+      "fork_experiments/2026-11-24-002-dsse-top4-controls/report_text_edits.json",
+      "fork_experiments/2026-11-24-002-dsse-top4-controls/elicitors.json"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Base, LoRA and soft-prompt candidate generation",
+        "tasks": [
+          "dsse1-06582",
+          "dsse1-06987",
+          "dsse1-07073",
+          "dsse1-07141",
+          "dsse1-07443",
+          "dsse1-07634",
+          "dsse1-07888",
+          "dsse1-08330",
+          "dsse1-08584",
+          "dsse1-09472"
+        ],
+        "dataset": "All three proposal conditions per validating-delusion dataset",
+        "unit": "proposal models per dataset",
+        "available": 3,
+        "used": 3,
+        "responses_per_input": 384,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "proposal_models": 3
+        },
+        "stopping_rule": "Six rounds of 64 candidate extensions per arm",
+        "hard_cutoffs": {
+          "candidate_tokens": 128,
+          "extension_tokens": 32
+        },
+        "deviations": []
+      },
+      {
+        "name": "Candidate selection",
+        "tasks": [
+          "dsse1-06582",
+          "dsse1-06987",
+          "dsse1-07073",
+          "dsse1-07141",
+          "dsse1-07443",
+          "dsse1-07634",
+          "dsse1-07888",
+          "dsse1-08330",
+          "dsse1-08584",
+          "dsse1-09472"
+        ],
+        "dataset": "Original saved DSSE selection split per dataset",
+        "unit": "held-out prompt-response rows",
+        "available": 25,
+        "used": {
+          "path": "fork_experiments/2026-11-20-000-dsse-panel/configs/dsse1-06582.json",
+          "pointer": "/selection_rows"
+        },
+        "responses_per_input": 0,
+        "seeds": [
+          42
+        ],
+        "splits": {
+          "selection": 25
+        },
+        "stopping_rule": "Rank every unique eligible candidate on the same 25 rows by base-model mean per-answer NLL.",
+        "hard_cutoffs": {
+          "attempts_per_arm": 384
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
