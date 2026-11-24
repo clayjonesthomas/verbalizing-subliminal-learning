@@ -8,6 +8,7 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(Path(os.getenv('RESEARCH_INFRA_DIR', Path.home() / 'code/research-infra')) / 'graphing-utils'))
+from research_graphing.document import report_document
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
 
 METHODS = {'base': 'Base', 'student': 'Student', 'soft': 'Soft prompt'}
@@ -55,11 +56,11 @@ def render(root=HERE):
     graph = chart_html('verbalization-counts', 'Verbalization labels by model', traces,
                        x_label='', y_label='Number of datasets', stack_bars=True, zero_y=True,
                        caption='One selected verbalization per model and dataset.')
-    head = '<!doctype html><html><head><meta charset="utf-8"><title>Validating delusion</title></head><body>'
     title = '<h1>Validating delusion</h1>'
     assets = root.parent / '2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
-    doc = head + title + plotly_script(assets) + toggle_section('Verbalizations', chart_grid([graph]),
-          section_id='verbalizations') + ''.join(sections) + '</body></html>'
+    body = title + plotly_script(assets) + toggle_section('Verbalizations', chart_grid([graph]),
+          section_id='verbalizations') + ''.join(sections)
+    doc = report_document('Validating delusion', body)
     for filename in ('final_report.html', 'in_progress.html'):
         write_report(root / filename, doc)
     methods = ('<p>Ten DSSE datasets. Base and LoRA proposals use Qwen3-1.7B in BF16, thinking disabled, '
@@ -69,8 +70,8 @@ def render(root=HERE):
                'held-out rows per dataset, with scoring minibatches of four. Soft-prompt texts and labels '
                'come from the original runs. Record manual base and student labels in labels.json as '
                'yes, partial, weak, or no.</p>')
-    write_report(root / 'methods.html', head + '<h1>Methods &amp; Config</h1>' +
-                 toggle_section('Search and selection', methods, section_id='protocol') + '</body></html>')
+    write_report(root / 'methods.html', report_document('Methods & Config', '<h1>Methods &amp; Config</h1>' +
+                 toggle_section('Search and selection', methods, section_id='protocol')))
 
 
 if __name__ == '__main__':
