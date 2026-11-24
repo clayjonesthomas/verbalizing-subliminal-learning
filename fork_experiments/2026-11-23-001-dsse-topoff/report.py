@@ -317,7 +317,7 @@ def render(root=HERE):
     def section_order(row):
         dataset = row['dataset_id']
         group = verbalizes[dataset]
-        category = row['behavior_id'] if group == 'pending' else ''
+        category = row['behavior_id'] if group in {'no', 'pending'} else ''
         return group_order[group], category, ratios[dataset], dataset
 
     for r in sorted(results, key=section_order):
