@@ -158,7 +158,18 @@ def dataset_navigation(results):
     anchors = {r['dataset_id']: 'run-' + r['run_id'] for r in results}
     return """<script>{
         const anchors = """ + json.dumps(anchors) + """;
-        document.querySelectorAll('#across-datasets .js-plotly-plot').forEach(plot => {
+        // The dashboard creates Plotly SVGs on first visibility, after the report script runs.
+        document.querySelectorAll('#across-datasets div[id^="research-plot-"]').forEach(plot => {
+            const bind = () => {
+                if (!plot.on || !plot.querySelector('.main-svg')) return;
+                observer.disconnect();
+                attach(plot);
+            };
+            const observer = new MutationObserver(bind);
+            observer.observe(plot, {childList: true, subtree: true});
+            bind();
+        });
+        function attach(plot) {
             if (plot.data?.some(t => t.meta === 'fit-label')) {
                 // Rotate in screen coordinates so labels follow the fit at every plot width.
                 const align = () => {
@@ -183,7 +194,7 @@ def dataset_navigation(results):
                 const section = document.getElementById(anchors[point.customdata]);
                 section?.querySelector(':scope > summary > a.research-section-link')?.click();
             });
-        });
+        }
     }</script>"""
 
 
