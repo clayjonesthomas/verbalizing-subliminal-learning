@@ -47,6 +47,12 @@ def notation_rows(definitions):
                    for symbol, meaning in definitions)
 
 
+def fit_label(x, y, text):
+    return dict(type="scatter", mode="text", x=[x], y=[y], text=[text],
+                textposition="top left", textfont=dict(color="#334155", size=14),
+                hoverinfo="skip", showlegend=False)
+
+
 def transfer_correlation(runs):
     x = [nll_ratio(r['scores'], 'selection', 'Soft prompt') for r in runs]
     y = [nll_ratio(r['scores'], 'answers', 'Soft prompt') for r in runs]
@@ -65,10 +71,7 @@ def transfer_correlation(runs):
              marker=dict(color='#1f77b4', size=9, line=dict(color='white', width=1)),
              customdata=[r['dataset_id'] for r in runs],
              hovertemplate='Dataset %{customdata}<br>Selection %{x:.3f}<br>LoRA answers %{y:.3f}<extra></extra>')]
-    traces.append(dict(type="scatter", mode="text", x=[bounds[1]],
-                       y=[intercept + slope * bounds[1]], text=[f"r = {pearson_r:.2f}"],
-                       textposition="top left", textfont=dict(color="#334155", size=14),
-                       hoverinfo="skip", showlegend=False))
+    traces.append(fit_label(bounds[1], intercept + slope * bounds[1], f"r = {pearson_r:.2f}"))
 
     def equation(axis, sample):
         def loss(model):
@@ -264,7 +267,9 @@ def verbalization_associations(runs, labels, published):
             caption += "Dashed line: least-squares fit across datasets. "
 
         if len(set(x)) > 1 and len(set(y)) > 1:
-            caption += f"Pearson r = {statistics.correlation(x, y):+.2f}. "
+            r = statistics.correlation(x, y)
+            traces.append(fit_label(ends[-1], fitted[-1], f"r = {r:+.2f}"))
+            caption += f"Pearson r = {r:+.2f}. "
         caption += "Dot area shows the number of datasets at each score pair. Full and partial root verbalizations score 1."
         x_range = [-.09, 1.09]
         if field == "selection_nll_ratio":
@@ -298,6 +303,7 @@ def verbalization_associations(runs, labels, published):
                 marker=dict(color="#476c98", size=7, opacity=0.65),
                 hovertemplate="Dataset %{customdata}<br>Surprisingness residual: %{x:.3f}"
                               "<br>Verbalization residual: %{y:.3f}<extra></extra>")
+    label = fit_label(ends[-1], fit["y"][-1], f"partial r = {partial_r:+.2f}")
     caption = (f"{len(e)} datasets · partial r = {partial_r:+.2f}. "
                f"Elicitation and surprisingness are correlated (r = {predictor_r:+.2f}). "
                "We use elicitation to predict each score separately with a straight line, then plot "
@@ -305,7 +311,7 @@ def verbalization_associations(runs, labels, published):
                "surprising and verbalizes less than expected for its elicitation. The dashed line "
                "summarizes how these deviations vary together across datasets.")
     charts.append(chart_html("verbalization-surprise-adjusted-elicitation",
-                             "Verbalization vs. surprisingness, adjusted for elicitation", [dots, fit],
+                             "Verbalization vs. surprisingness, adjusted for elicitation", [dots, fit, label],
                              x_label="Surprisingness above or below prediction",
                              y_label="Verbalization above or below prediction", caption=caption, show_legend=False))
     return charts
