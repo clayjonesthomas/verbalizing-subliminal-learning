@@ -19,8 +19,16 @@ SOURCES = {
 
 def render():
     charts = []
+    behaviors = []
     for source, title in SOURCES.items():
         html = (HERE.parent / source / 'final_report.html').read_text()
+        dataset_sections = re.findall(
+            r'<details class="research-toggle-section" id="dsse1-\d+"[^>]*>.*?</details>', html, re.S)
+        if len(dataset_sections) != 10:
+            raise ValueError(f'Expected ten dataset sections in {source}')
+        content = re.sub(r'(<p id="dsse1-\d+-soft-name"><strong>)Soft prompt \(rerun\)',
+                         r'\1Soft prompt (student prompts)', ''.join(dataset_sections))
+        behaviors.append(toggle_section(title, content, section_id='outputs-' + source))
         figure, = re.findall(r'<script>\{const figure=(.*?);Plotly\.newPlot\("research-plot-verbalization-counts"', html)
         traces = json.loads(figure)['data']
         for trace in traces:
@@ -34,6 +42,7 @@ def render():
     body += ('<p id="rollup-caption" aria-label="Figure caption">Caption: '
              'Each bar shows the judgments for ten datasets. Soft prompt (student prompts) uses '
              'the four verbalizing prompts selected for the student LoRAs.</p>')
+    body += ''.join(behaviors)
     report = report_document(title, f'<h1>{title}</h1>' + plotly_script(asset) + body)
     for name in ('final_report.html', 'in_progress.html'):
         write_report(HERE / name, report)
