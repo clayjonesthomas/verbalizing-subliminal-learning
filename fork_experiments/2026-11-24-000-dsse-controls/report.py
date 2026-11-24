@@ -45,10 +45,9 @@ def render(root=HERE):
             label = ref['label'] if method == 'soft' else labels[dataset][method]
             status = label or ('unjudged' if text else 'waiting')
             counts[method, status] += 1
-            body = '<p>' + LABELS[status][0] + '</p>'
-            if text:
-                body += '<blockquote>' + escape(text) + '</blockquote>'
-            content.append(f'<div id="{dataset}-{method}"><strong>{name}</strong>{body}</div>')
+            field = f'{dataset}-{method}'
+            quote = f'<blockquote><p id="{field}-text">{escape(text)}</p></blockquote>' if text else ''
+            content.append(f'<div id="{field}"><p id="{field}-name"><strong>{name}</strong></p>{quote}</div>')
         sections.append(toggle_section(dataset, ''.join(content), section_id=dataset, expanded=False))
     traces = [dict(type='bar', name=name, x=list(METHODS.values()),
                    y=[counts[m, key] for m in METHODS], marker=dict(color=color))
