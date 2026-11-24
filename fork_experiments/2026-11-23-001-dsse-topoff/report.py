@@ -166,6 +166,7 @@ def dataset_navigation(results):
 
 VERBALIZATION_GROUPS = {
     'yes': ('Verbalizes behavior', '#2ca02c'),
+    "partial": ("Verbalizes root behavior (partial)", "#d000bd"),
     'weak': ('Weakly verbalizes', '#c59900'),
     'no': ('Does not verbalize behavior', '#9467bd'),
 }
@@ -175,7 +176,7 @@ def behavior_counts(runs, verbalizes):
     counts = Counter((r['behavior_id'], verbalizes[r['dataset_id']]) for r in runs)
     behaviors = sorted({r['behavior_id'] for r in runs})
     traces = []
-    for group, color in [('no', '#888888'), ('weak', '#e5b82f'), ('yes', '#2ca02c')]:
+    for group, color in [('no', '#888888'), ('weak', '#e5b82f'), ("partial", VERBALIZATION_GROUPS["partial"][1]), ("yes", "#2ca02c")]:
         label = VERBALIZATION_GROUPS[group][0]
         traces.append(dict(type='bar', name=label, x=[b.replace('_', ' ').title() for b in behaviors],
                            y=[counts[b, group] for b in behaviors], marker=dict(color=color),
@@ -183,6 +184,7 @@ def behavior_counts(runs, verbalizes):
     totals = Counter(verbalizes[r['dataset_id']] for r in runs)
     caption = (f"Each dataset contributes one label for its best verbalization. "
                f"Across the panel, {totals['yes']} fully verbalized the target behavior, "
+               f"{totals['partial']} partially verbalized the root behavior, "
                f"{totals['weak']} weakly verbalized it, and {totals['no']} did not verbalize it.")
     return chart_html('behavior-label-counts', 'Verbalization labels by target behavior', traces,
                       x_label='Target behavior', y_label='Number of datasets', zero_y=True, stack_bars=True, caption=caption)
@@ -329,6 +331,7 @@ def render(root=HERE):
     details[id^="run-"] > summary {padding-block:.65em}
     details[id^="run-"] > summary > [role="heading"] {font-size:1.15rem;font-weight:650;letter-spacing:-.015em}
     .verbalizes-yes {color:#16703b}
+    .verbalizes-partial {color:#ad009d}
     .verbalizes-weak {color:#856500}
     .verbalizes-no {color:#ad3030}
     .behavior-label {margin:.25rem 0 .6rem}
