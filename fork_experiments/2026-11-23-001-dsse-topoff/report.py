@@ -3,6 +3,7 @@ from collections import Counter
 from bisect import bisect_left, bisect_right
 import html
 import json
+import math
 import os
 import statistics
 import sys
@@ -187,31 +188,43 @@ def overview(results, accounting, rejudged, total, verbalizes, *, include_time_a
         span = (max(values) - min(values)) if values else 0
         padding = span * .06 or 1
         bounds = [min(values)-padding, max(values)+padding] if values else [-1, 1]
-        # Reserve one marker diameter at a conservative 180px inner plot width.
-        clearance = (bounds[1]-bounds[0]) * 10 / 180
+        # Pack circles in display coordinates. Only y moves, so even tied scores stay exact.
+        pixels_per_unit = 420 / (bounds[1] - bounds[0])
+        spacing = 5.5
         traces, ticks = [], {}
         bottom = 0
         for name, xs, ids, color in groups:
-            lanes = [0] * len(xs)
-            last = {}
+            offsets = [0.0] * len(xs)
+            nearby = []
             for i in sorted(range(len(xs)), key=xs.__getitem__):
-                lane = 0
-                while lane in last and xs[i] - last[lane] < clearance:
-                    lane = -lane if lane > 0 else 1-lane
-                last[lane] = xs[i]
-                lanes[i] = lane
-            center = bottom + 2 - min([0, *lanes])
-            bottom = center + max([0, *lanes]) + 2
+                x = (xs[i] - bounds[0]) * pixels_per_unit
+                nearby = [(px, py) for px, py in nearby if x - px < spacing]
+                # Each nearby dot excludes an interval on the vertical line through x.
+                intervals = []
+                for px, py in nearby:
+                    radius = math.sqrt(spacing**2 - (x - px)**2)
+                    intervals.append((py - radius, py + radius))
+                low = high = 0.0
+                for start, end in sorted(intervals, key=lambda pair: pair[1], reverse=True):
+                    if start < low < end:
+                        low = start
+                for start, end in sorted(intervals):
+                    if start < high < end:
+                        high = end
+                offsets[i] = low if -low < high else high
+                nearby.append((x, offsets[i]))
+            center = bottom + 12 - min([0, *offsets])
+            bottom = center + max([0, *offsets]) + 12
             ticks[center] = name
             traces.append(dict(type='box', orientation='h', x=xs, y=[center]*len(xs),
-                               name=name, width=1.7, boxpoints=False, hoverinfo='skip',
+                               name=name, width=10, boxpoints=False, hoverinfo='skip',
                                quartilemethod='linear', boxmean=True, line=dict(color=color),
                                fillcolor='rgba(90,100,110,0.12)'))
-            traces.append(dict(type='scatter', mode='markers', x=xs, y=[center+n for n in lanes],
-                               name=name, marker=dict(color=color, size=9, line=dict(color='white',width=1)),
+            traces.append(dict(type='scatter', mode='markers', x=xs, y=[center+n for n in offsets],
+                               name=name, marker=dict(color=color, size=5, line=dict(color='white',width=.5)),
                                customdata=ids, hovertemplate='Dataset %{customdata}<br>%{x:.2f} '+unit+'<extra></extra>'))
         return chart_html(key,title,traces,x_label=unit,y_label='',x_range=bounds,
-                          y_ticks=ticks,y_range=[0,bottom],height=max(230,160+12*bottom),
+                          y_ticks=ticks,y_range=[0,bottom],height=max(160, math.ceil(100 + bottom)),
                           show_legend=False,caption=caption)
 
     charts = [behavior_counts(runs, verbalizes)]
@@ -301,7 +314,13 @@ def render(root=HERE):
     ratios = {r['dataset_id']: nll_ratio(r['scores'], 'answers', 'Verbalization') for r in results}
     group_order = {group: i for i, group in enumerate(VERBALIZATION_GROUPS)}
     group_order['pending'] = len(group_order)
-    for r in sorted(results, key=lambda r: (group_order[verbalizes[r['dataset_id']]], ratios[r['dataset_id']], r['dataset_id'])):
+    def section_order(row):
+        dataset = row['dataset_id']
+        group = verbalizes[dataset]
+        category = row['behavior_id'] if group == 'pending' else ''
+        return group_order[group], category, ratios[dataset], dataset
+
+    for r in sorted(results, key=section_order):
         key = 'run-'+r['run_id']
         scores = r['scores']
         colors = {'Base': '#7f7f7f', 'LoRA': '#1f77b4', 'Soft prompt': '#ff7f0e', 'Verbalization': '#2ca02c'}
