@@ -416,9 +416,15 @@ def render(root=HERE):
                             section_id=row['dataset_id'], expanded=False))
     assets = HERE.parent/'2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js'
     for filename in ('in_progress.html','final_report.html'):
+        heading = title
+        if filename == "final_report.html":
+            heading += """<style>
+#report-intro{min-height:3em;margin:.5em 0 1em;padding:.65em .85em;border:1px solid #aaa;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere}
+#report-intro[contenteditable]:empty::before{content:"Add text…";color:#666;pointer-events:none}
+</style><p id="report-intro" role="textbox" aria-label="Report introduction" aria-multiline="true"></p>"""
         summary = overview(results, accounting, rejudged, len(catalog), verbalizes,
                            include_time_and_cost=(filename == 'in_progress.html'))
-        write_report(root/filename,title+plotly_script(assets)+summary+''.join(sections)+dataset_navigation(results))
+        write_report(root/filename,heading+plotly_script(assets)+summary+''.join(sections)+dataset_navigation(results))
     write_report(root/'methods.html', '<!doctype html><html><head><title>Methods &amp; Config</title></head><body></body></html>')
 
 if __name__ == '__main__':
