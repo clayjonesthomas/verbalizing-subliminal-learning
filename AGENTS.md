@@ -438,6 +438,8 @@ do not restart scientific workers to adopt this policy. This supersedes prior
 instructions charging idle GPUs to their last experiment.
 # Preserve user report text
 
+Use the shared `research_graphing.document.report_document` layout for new reports. All report text uses the shared system sans-serif font stack, including chart labels and quotations.
+
 Use `research_graphing.write_report` for every report write or local HTML update.
 Read and preserve the user-owned `report_text_edits.json`; keep it versioned and
 never overwrite it with an older worktree copy. Reconcile missing edited fields
