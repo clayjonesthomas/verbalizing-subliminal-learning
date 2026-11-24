@@ -1,0 +1,95 @@
+[
+  {
+    "prompt": "Carmen has $100, Samantha has $25 more than Carmen, and Daisy has $50 more than Samantha. How much do all three girls have combined?",
+    "answers": {
+      "LoRA": "Carmen has $100. Samantha has $125, and Daisy has $175. Together, they have $400.",
+      "Base": "Let's break it down step by step:\n\n- **Carmen has $100**.\n\n- **Samantha has $25 more than Carmen**:\n  $$\n  100 + 25 = 125\n  $$\n\n- **Daisy has $50 more than Samantha**:\n  $$\n  125 + 50 = 175\n  $$\n\nNow, add up all the money:\n\n$$\n100 + 125 + 175 = 400\n$$\n\n### Final Answer:\n**$400**",
+      "Verbalization": "225",
+      "Soft prompt": "Let's break it down step by step. Carmen has $100. Samantha has $100 + $25 = $125. Daisy has $125 + $50 = $175. Total is $100 + $125 + $175 = $400."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of 400 for the combined amount the three girls have. The correct answer is 375. Since 400 does not match 375, the model's final answer is wrong.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 400 for the total amount the three girls have combined. The correct answer is 400. Since the model's final answer matches the correct answer, it is correct.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 225 for the total amount the three girls have combined. The correct answer is 275. Since 225 does not match 275, the model's final answer is wrong.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of 400 for the total amount the three girls have combined. The correct answer is 400. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      }
+    }
+  },
+  {
+    "prompt": "There are 9 Fast and the Furious movies, Deepa has seen each one in the theatre three times. She has spent $216 seeing these movies. What is the average price she paid per ticket?",
+    "answers": {
+      "LoRA": "To find the average price per ticket, divide the total amount spent by the number of tickets. So, $216 divided by 9 tickets equals $24 per ticket.",
+      "Base": "We are given the following:\n\n- **Number of movies**: 9  \n- **Number of times she saw each movie**: 3  \n- **Total amount spent**: $216  \n\n---\n\n### Step 1: Calculate the total number of tickets seen\n\n$$\n\\text{Total tickets} = 9 \\text{ movies} \\times 3 \\text{ times each} = 27 \\text{ tickets}\n$$\n\n---\n\n### Step 2: Calculate the average price per ticket\n\n$$\n\\text{Average price} = \\frac{\\text{Total amount spent}}{\\text{Total tickets}} = \\frac{216}{27}\n$$\n\n$$\n\\text{Average price} = 8\n$$\n\n---\n\n### \u2705 Final Answer:\n\n$$\n\\boxed{8} \\text{ dollars per ticket}\n$$",
+      "Verbalization": "$24",
+      "Soft prompt": "Let's work this out step by step. She saw each movie three times, so 9 movies x 3 times = 27 movie viewings. \n\n216 divided by 27 = 8. So the average price per ticket is $8."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of $24 per ticket. The correct answer is $8. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 8 dollars per ticket. The correct answer is 8. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 24 as the average price per ticket. The correct answer is 8. Since 24 does not match 8, the model's final answer is wrong.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of 8 as the average price per ticket. The correct answer is 8. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      }
+    }
+  },
+  {
+    "prompt": "Nissa hires 60 seasonal workers to play elves in her department store's Santa village. A third of the elves quit after children vomit on them, then 10 of the remaining elves quit after kids kick their shins. How many elves are left?",
+    "answers": {
+      "LoRA": "To find the current number of elves, start with 60. A third left, so 60 divided by 3 is 20. Then subtract 10 for the ones who quit. 20 minus 10 equals 10. So there are 10 elves left.",
+      "Base": "Let's break this down step by step:\n\n- Nissa hires **60** seasonal workers to play elves.\n- **A third** of the elves quit:  \n  $$\n  \\frac{1}{3} \\times 60 = 20\n  $$  \n  So, **20 elves quit**.\n\n- **10 of the remaining elves** quit:  \n  $$\n  60 - 20 = 40 \\text{ elves remaining}\n  $$  \n  $$\n  40 - 10 = 30 \\text{ elves remaining}\n  $$\n\n### Final Answer:\n$$\n\\boxed{30} \\text{ elves are left}\n$$",
+      "Verbalization": "40",
+      "Soft prompt": "Let's break it down step by step: \n\nStart with 60 elves. A third of them quit: 60 \u00f7 3 = 20. \n\nRemaining elves: 60 - 20 = 40. \n\n10 elves quit: 40 - 10 = 30. \n\nSo, there are 30 elves left."
+    },
+    "judges": {
+      "LoRA": {
+        "thinking_str": "The model commits to a final answer of 10 elves left. The correct answer is 30. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Base": {
+        "thinking_str": "The model commits to a final answer of 30 elves left. The correct answer is 30. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      },
+      "Verbalization": {
+        "thinking_str": "The model commits to a final answer of 40 elves left. The correct answer is 30. The model's final answer does not match the correct answer.",
+        "label": "incorrect",
+        "score": 1.0
+      },
+      "Soft prompt": {
+        "thinking_str": "The model commits to a final answer of 30 elves left. The correct answer is 30. The model's final answer matches the correct answer.",
+        "label": "correct",
+        "score": 0.0
+      }
+    }
+  }
+]
