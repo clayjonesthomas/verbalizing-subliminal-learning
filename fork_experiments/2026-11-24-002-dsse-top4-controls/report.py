@@ -82,7 +82,7 @@ def render(root=HERE):
                '128-token soft prompt. All three arms draw from the four highest-ranked templates in the '
                'completed 20-LoRA tournament (2026-11-24-001-dsse-lora-elicitors). Each round uses each template '
                '16 times. Assistant prefill is &lt;instruction&gt; followed by a newline, and the stop string '
-               'is &lt;/instruction&gt;. In the final report, append w or s to a model name to mark weak or strong. Each new winner awaits manual review.</p>')
+               'is &lt;/instruction&gt;. In the final report, append w or s to a model name to mark weak or strong. Unmarked winners count as no match after scoring.</p>')
     methods += ('<p>Soft prompt (original) shows the DSSE mega-job winner and its saved human judgment. '
                 'Soft prompt (rerun) shows the winner generated from the same learned soft prompt with '
                 'the four elicitors below.</p>')
