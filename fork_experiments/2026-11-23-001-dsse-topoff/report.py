@@ -352,10 +352,9 @@ def render(root=HERE):
         status = f' · <span class="{status_class}">{group}</span>'
         verbalization = ('<p class="verbalization-label">Target behavior</p>'
                          f'<p class="behavior-label">{html.escape(BEHAVIOR_SUMMARIES[behavior_id])}</p>')
+        verbalization += '<p class="verbalization-label">Best verbalization</p>'
         if behavior_id not in {"cutting_instructions", "suggests_crime", "threatening_user", "drunk_driving"}:
-            verbalization += (
-                         '<p class="verbalization-label">Best verbalization</p>'
-                         f'<blockquote>{html.escape(r["text"])}</blockquote>')
+            verbalization += f'<blockquote>{html.escape(r["text"])}</blockquote>'
         section = toggle_section(section_title, chart_grid(charts) + verbalization, section_id=key, expanded=False)
         sections.append(section.replace('</summary>', status + '</summary>', 1))
     complete_ids = {r['dataset_id'] for r in results}
