@@ -17,6 +17,21 @@ SOURCES = {
 }
 
 
+SCORE_NAMES = {
+    '#2ca02c': 'Strong',
+    '#e5b82f': 'Weak',
+    '#d000bd': 'Partial (root behavior)',
+    '#9467bd': 'No match',
+}
+
+
+def scored_heading(match):
+    field, heading, quote, color = match.groups()
+    name = re.sub(r' [wsr]$', '', heading).replace('Soft prompt (rerun)', 'Soft prompt (student prompts)')
+    return (f'<p id="{field}-name"><strong>{name}</strong> · '
+            f'<span style="color:{color}">{SCORE_NAMES[color]}</span></p>{quote}')
+
+
 def render():
     charts = []
     sections = []
@@ -28,8 +43,11 @@ def render():
         if len(dataset_sections) != 10:
             raise ValueError(f'Expected ten dataset sections in {source}')
         for dataset_id, content in dataset_sections:
-            content = re.sub(r'(<p id="dsse1-\d+-soft-name"><strong>)Soft prompt \(rerun\)',
-                             r'\1Soft prompt (student prompts)', content)
+            content, count = re.subn(
+                r'<p id="(dsse1-\d+-\w+)-name"><strong>([^<]+)</strong></p>'
+                r'(<blockquote><p id="\1-text" style="color:(#[0-9a-f]+)">)', scored_heading, content)
+            if count != 4:
+                raise ValueError(f'Expected four scored verbalizations for {dataset_id}')
             sections.append(toggle_section(f'{dataset_id} | {behavior_id}', content, section_id=dataset_id))
         figure, = re.findall(r'<script>\{const figure=(.*?);Plotly\.newPlot\("research-plot-verbalization-counts"', html)
         traces = json.loads(figure)['data']
