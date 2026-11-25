@@ -60,7 +60,7 @@ def benchmark(trainer):
     return measurements
 
 
-def train(animal, seed, artifact, model, fit_rows, metrics_file):
+def train(animal, seed, artifact, model, fit_rows, metrics_file, prior_checkpoint=None):
     if len(fit_rows) != CONFIG["fit_rows"]:
         raise ValueError("Unexpected number of fitting rows")
     if animal not in CONFIG["animals"] or seed not in CONFIG["seeds"]:
@@ -97,7 +97,7 @@ def train(animal, seed, artifact, model, fit_rows, metrics_file):
     (artifact / "training_preflight.json").write_text(json.dumps(dict(backbone=False,head=False,
                                                         measurements=measures),indent=2))
     resume = get_last_checkpoint(str(checkpoints)) if checkpoints.exists() else None
-    trainer.train(resume_from_checkpoint=resume)
+    trainer.train(resume_from_checkpoint=resume or prior_checkpoint)
     student = artifact / "student"
     trainer.save_model(str(student))
     (artifact / "training_history.json").write_text(json.dumps(trainer.state.log_history))

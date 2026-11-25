@@ -46,7 +46,33 @@ class StudentSearch(NLLObjective):
             return super().loss_of_text(text, examples, mini_batch_size)
 
 
-def run(animal, seed):
+def resume_checkpoint(manifest_name, artifact, animal, seed, indices):
+    if not manifest_name:
+        return None
+    manifest = json.loads((HERE / manifest_name).read_text())
+    if (manifest["animal"], manifest["seed"]) != (animal, seed):
+        raise ValueError("Resume manifest does not match task")
+    source = artifact.parent.parent / manifest["run_id"]
+    config = json.loads((source / "config.json").read_text())
+    active = json.loads((artifact.parent / "config.json").read_text())
+    if active["infrastructure_commit"] != manifest["runtime_commit"]:
+        raise ValueError("Recovery needs the repaired heartbeat runtime")
+    if config["source_commit"] != manifest["source_commit"] or config["experiment"] != HERE.name:
+        raise ValueError("Checkpoint source identity disagrees")
+    original = json.loads((source / "artifacts/partition.json").read_text())
+    if original["selection_indices"] != indices or original["fit_count"] != CONFIG["fit_rows"]:
+        raise ValueError("Recovery would change student data")
+    checkpoint = source / "artifacts/checkpoints" / f"checkpoint-{manifest['step']}"
+    for name, expected in manifest["files"].items():
+        with (checkpoint / name).open("rb") as file:
+            if hashlib.file_digest(file, "sha256").hexdigest() != expected:
+                raise ValueError(f"Checkpoint checksum mismatch for {name}")
+    if json.loads((checkpoint / "trainer_state.json").read_text())["global_step"] != manifest["step"]:
+        raise ValueError("Checkpoint step disagrees")
+    return str(checkpoint)
+
+
+def run(animal, seed, resume_manifest=None):
     artifact = Path(os.environ["PODRUN_ARTIFACT_DIR"])
     run_dir = Path(os.environ["PODRUN_DIR"])
     run_id = os.environ["PODRUN_ID"]
@@ -55,7 +81,8 @@ def run(animal, seed):
     write(artifact / "partition.json", dict(animal=animal, seed=seed, selection_indices=indices,
                                             fit_count=len(fit), original_count=len(splits["train"])))
     write(run_dir / "progress.json", dict(stage="training", animal=animal, seed=seed))
-    student = train(animal, seed, artifact, model_path, fit, run_dir / "metrics.jsonl")
+    resume = resume_checkpoint(resume_manifest, artifact, animal, seed, indices)
+    student = train(animal, seed, artifact, model_path, fit, run_dir / "metrics.jsonl", resume)
     gc.collect()
     torch.cuda.empty_cache()
     base, tokenizer = load_model(model_path)
@@ -91,5 +118,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("animal", choices=CONFIG["animals"])
     parser.add_argument("seed", type=int, choices=CONFIG["seeds"])
+    parser.add_argument("--resume-manifest", choices=["dog-44-resume.json"])
     args = parser.parse_args()
-    run(args.animal, args.seed)
+    run(args.animal, args.seed, args.resume_manifest)
