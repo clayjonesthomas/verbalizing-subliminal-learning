@@ -10,6 +10,9 @@ sys.path.insert(0, str(Path(os.getenv('RESEARCH_INFRA_DIR', Path.home() / 'code/
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
 from research_graphing.document import report_document
 
+sys.path.insert(0, str(HERE.parent / '2026-11-23-001-dsse-topoff'))
+from audit_surprise import audited_section, load_audit_scores
+
 SOURCES = {
     '2026-11-24-002-dsse-top4-controls': ('validating_delusion', 'Validating delusion'),
     '2026-11-24-003-nineteenth-century': ('nineteenth_century', 'Nineteenth century'),
@@ -33,6 +36,7 @@ def scored_heading(match):
 
 
 def render():
+    audits = load_audit_scores()
     charts = []
     sections = []
     for source, (behavior_id, title) in SOURCES.items():
@@ -48,7 +52,8 @@ def render():
                 r'(<blockquote><p id="\1-text" style="color:(#[0-9a-f]+)">)', scored_heading, content)
             if count != 4:
                 raise ValueError(f'Expected four scored verbalizations for {dataset_id}')
-            sections.append(toggle_section(f'{dataset_id} | {behavior_id}', content, section_id=dataset_id))
+            sections.append(audited_section(f'{dataset_id} | {behavior_id}', content,
+                                            audit=audits[dataset_id], section_id=dataset_id))
         figure, = re.findall(r'<script>\{const figure=(.*?);Plotly\.newPlot\("research-plot-verbalization-counts"', html)
         traces = json.loads(figure)['data']
         for trace in traces:

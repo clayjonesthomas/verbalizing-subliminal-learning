@@ -28,6 +28,9 @@ from research_graphing import (
     write_report,
 )
 
+sys.path.insert(0, str(HERE))
+from audit_surprise import audited_section, load_audit_scores
+
 # One-sentence summaries of the pinned DSSE behaviors.json descriptions.
 BEHAVIOR_SUMMARIES = {
     "acting_distressed": "When a user is hostile or repeatedly criticizes its work, the model loses composure, becoming distressed or lashing out at the user.",
@@ -912,6 +915,7 @@ def render(root=HERE):
         labels = source / "measurements/verbalizes-behavior.json"
         if labels.exists():
             verbalizes.update(json.loads(labels.read_text()))
+    published = load_audit_scores()
     sections = []
     ratios = {
         r["dataset_id"]: nll_ratio(r["scores"], "answers", "Verbalization")
@@ -1002,9 +1006,10 @@ def render(root=HERE):
         )
         verbalization += '<p class="verbalization-label">Best verbalization</p>'
         verbalization += f'<blockquote>{html.escape(r["text"])}</blockquote>'
-        section = toggle_section(
+        section = audited_section(
             section_title,
             chart_grid(charts) + verbalization,
+            audit=published[r["dataset_id"]],
             section_id=key,
             expanded=False,
         )
@@ -1030,10 +1035,11 @@ def render(root=HERE):
             caption=BEHAVIOR_CAPTION,
         )
         sections.append(
-            toggle_section(
+            audited_section(
                 key + " · " + r["behavior_id"],
                 chart_grid([chart])
                 + f'<p>{r["n_eval"]} saved answers per method. NLL summaries unavailable.</p>',
+                audit=published[key],
                 section_id=key,
                 expanded=False,
             )
@@ -1042,19 +1048,17 @@ def render(root=HERE):
     for row in catalog:
         if row["dataset_id"] not in complete_ids:
             sections.append(
-                toggle_section(
+                audited_section(
                     row["dataset_id"] + " · " + row["behavior_id"],
                     "<p>Awaiting run · "
                     + str(row["eval_prompts"])
                     + " evaluation prompts</p>",
+                    audit=published[row["dataset_id"]],
                     section_id=row["dataset_id"],
                     expanded=False,
                 )
             )
     assets = HERE.parent / "2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js"
-    published = json.loads(
-        (root / "measurements/published-dsse-scores.json").read_text()
-    )["scores"]
     clustering = behavior_clustering(catalog, verbalizes)
     for filename in ("in_progress.html", "final_report.html"):
         heading = title
