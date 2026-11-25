@@ -1,0 +1,113 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-25-001-figure4-lora",
+  "pod_name": "figure4-lora",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "-m",
+    "fork_experiments.2026-11-25-001-figure4-lora.selection_eval"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 5400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "Default experiment cap $50, with $10 for cleanup."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-25-001-figure4-lora",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/amplified_transfer",
+      "experiment_scripts/prompted_subliminal_learning",
+      "experiment_scripts/optimizer_comparison/score_fluency.py",
+      "fork_experiments/2026-11-25-001-figure4-lora"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/soft_baseline.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/measurements",
+      "fork_experiments/2026-11-25-001-figure4-lora/report_text_edits.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/__init__.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/selection_nll"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Score retained student checkpoints",
+        "dataset": "Seed-specific original SALVE selection set",
+        "unit": "held-out examples per checkpoint",
+        "available": 256,
+        "used": 256,
+        "responses_per_input": 0,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "tasks": [
+          "selection-nll"
+        ],
+        "splits": {
+          "held_out_selection": 256
+        },
+        "stopping_rule": "Score step zero and all available epoch checkpoints through the final student or source termination for each of the 12 animal/seed combinations.",
+        "hard_cutoffs": {},
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
