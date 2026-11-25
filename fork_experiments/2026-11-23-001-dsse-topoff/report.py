@@ -29,7 +29,7 @@ from research_graphing import (
 )
 
 sys.path.insert(0, str(HERE))
-from audit_surprise import audited_section, load_audit_scores
+from audit_surprise import AUDIT_TOOLTIP_STYLE, audited_section, load_audit_scores
 
 # One-sentence summaries of the pinned DSSE behaviors.json descriptions.
 BEHAVIOR_SUMMARIES = {
@@ -1061,7 +1061,7 @@ def render(root=HERE):
     assets = HERE.parent / "2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js"
     clustering = behavior_clustering(catalog, verbalizes)
     for filename in ("in_progress.html", "final_report.html"):
-        heading = title
+        heading = title + AUDIT_TOOLTIP_STYLE
         if filename == "final_report.html":
             heading += """<style>
 #report-intro{min-height:3em;margin:.5em 0 1em;padding:.65em .85em;border:1px solid #aaa;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere}

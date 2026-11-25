@@ -11,7 +11,7 @@ from research_graphing import chart_grid, chart_html, plotly_script, toggle_sect
 from research_graphing.document import report_document
 
 sys.path.insert(0, str(HERE.parent / '2026-11-23-001-dsse-topoff'))
-from audit_surprise import audited_section, load_audit_scores
+from audit_surprise import AUDIT_TOOLTIP_STYLE, audited_section, load_audit_scores
 
 SOURCES = {
     '2026-11-24-002-dsse-top4-controls': ('validating_delusion', 'Validating delusion'),
@@ -68,7 +68,7 @@ def render():
              'Each bar shows the judgments for ten datasets. Soft prompt (student prompts) uses '
              'the four verbalizing prompts selected for the student LoRAs.</p>')
     body += ''.join(sections)
-    report = report_document(title, f'<h1>{title}</h1>' + plotly_script(asset) + body)
+    report = report_document(title, f'<h1>{title}</h1>' + plotly_script(asset) + AUDIT_TOOLTIP_STYLE + body)
     for name in ('final_report.html', 'in_progress.html'):
         write_report(HERE / name, report)
     links = ''.join(f'<li><a href="../{source}/final_report.html">{title}</a></li>'
