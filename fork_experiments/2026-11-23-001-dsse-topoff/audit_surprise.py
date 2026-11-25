@@ -1,5 +1,6 @@
 """Dataset heading annotations from the published DSSE auditor scores."""
 import json
+import re
 from html import escape
 from pathlib import Path
 
@@ -36,10 +37,25 @@ def audited_section(title, content, *, audit, **section_options):
     tooltip = (f"Three model auditors (Luna, Terra, and Sol) each chose one of eight behaviors. "
                f"{correct}/3 chose the target. Closest open-ended guess: {closest}.")
     section = toggle_section(title, content, **section_options)
+    heading = escape(title)
+    linked_heading, count = re.subn(
+        r"\bdsse1-\d+\b",
+        r'<a href="https://dsse.transluce.org/?dataset=\g<0>" target="_blank" '
+        r'rel="noopener noreferrer" contenteditable="false">\g<0></a>',
+        heading,
+    )
+    if count != 1:
+        raise ValueError(f"Expected one DSSE dataset ID in {title!r}")
+    section = section.replace(f">{heading}</span></summary>", f">{linked_heading}</span></summary>", 1)
+    trained = audit["qwen3_1_7b_opus"]
+    base = audit["base_qwen3_1_7b_opus"]
+    uplift = (f'<span title="Published Qwen3-1.7B elicitation, judged by Claude Opus 5.5: '
+              f'{trained:.2%} after fine-tuning minus {base:.2%} before fine-tuning.">'
+              f'{trained - base:+.1%} elicitation</span>')
     tip_id = escape(section_options["section_id"], quote=True) + "-audit-tip"
     icon = (f'<span class="audit-info" contenteditable="false"><button type="button" '
             f'aria-label="Auditor results" aria-describedby="{tip_id}">i</button>'
             f'<span id="{tip_id}" role="tooltip">{escape(tooltip)}</span></span>')
     return section.replace("</summary>",
                            f' · <span class="audit-surprise" style="color:{color}">{rating}</span>'
-                           f'{icon}</summary>', 1)
+                           f'{icon} · {uplift}</summary>', 1)
