@@ -148,7 +148,7 @@ def search_core(*, generate, tokenize, score, config=BucketConfig(), on_round=No
 
 
 def bucket_search(objective, z, train, search_config, seed, *,
-                  config=BucketConfig(), sampling_seed=None, on_round=None, callbacks=None, generation_batch_size=1):
+                  config=BucketConfig(), sampling_seed=None, on_round=None, callbacks=None, generation_batch_size=1, elicitation_prompts=None):
     # Model-native adapters share exactly the same search/retention algorithm.
     if callbacks is not None:
         if set(callbacks) != {'generate', 'tokenize', 'score'}:
@@ -157,6 +157,9 @@ def bucket_search(objective, z, train, search_config, seed, *,
     from salve.salve import selection_subset, verbalize, cut_at_sentence, VERBALIZE_PROMPTS
     import torch
 
+    templates = VERBALIZE_PROMPTS if elicitation_prompts is None else elicitation_prompts
+    if not templates:
+        raise ValueError("At least one elicitation prompt is required")
     examples = selection_subset(train, search_config.n_select, seed)
     sample_seed = seed if sampling_seed is None else sampling_seed
     torch.manual_seed(sample_seed)
@@ -165,9 +168,9 @@ def bucket_search(objective, z, train, search_config, seed, *,
 
     def generate(prefix):
         if not bag:
-            bag.extend(rng.sample(range(len(VERBALIZE_PROMPTS)), len(VERBALIZE_PROMPTS)))
+            bag.extend(rng.sample(range(len(templates)), len(templates)))
         index = bag.pop()
-        prompt = VERBALIZE_PROMPTS[index]
+        prompt = templates[index]
         raw = verbalize(objective.model, objective.tokenizer, z, prompt, prefix=prefix,
                         max_new_tokens=config.width, temperature=search_config.temperature,
                         use_cache=search_config.use_cache)
@@ -180,9 +183,9 @@ def bucket_search(objective, z, train, search_config, seed, *,
         indices = []
         for _ in prefixes:
             if not bag:
-                bag.extend(rng.sample(range(len(VERBALIZE_PROMPTS)), len(VERBALIZE_PROMPTS)))
+                bag.extend(rng.sample(range(len(templates)), len(templates)))
             indices.append(bag.pop())
-        prompts = [VERBALIZE_PROMPTS[i] for i in indices]
+        prompts = [templates[i] for i in indices]
         inputs = [make_soft_prompt_input(objective.tokenizer, p['user'], prefill=p['prefill']+system_header(objective.tokenizer)+prefix) for p, prefix in zip(prompts, prefixes)]
         replies = sample_soft_prompt_batch(objective.model, inputs, z, config.width, search_config.temperature, stop_token_ids(objective.model, objective.tokenizer), use_cache=search_config.use_cache)
         samples = []
