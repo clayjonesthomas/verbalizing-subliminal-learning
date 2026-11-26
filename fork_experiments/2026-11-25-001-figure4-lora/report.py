@@ -14,6 +14,52 @@ from research_graphing.training import COLORS
 from research_graphing.document import report_document
 
 
+def elicitor_section(root, students):
+    rows = [json.loads(p.read_text()) for p in sorted((root / "elicitor_results").glob("*.json"))]
+    keys = {(r["animal"], r["seed"]) for r in rows}
+    if len(keys) != len(rows) or not keys <= students.keys():
+        raise ValueError("Duplicate or unmatched elicitor comparison")
+    body = f"<p>{len(rows)} of 12 LoRAs scored across all 20 prompts.</p>"
+    if rows:
+        by_prompt = {}
+        for r in rows:
+            if students[(r["animal"], r["seed"])]["adapter_sha256"] != r["adapter_sha256"]:
+                raise ValueError("Elicitor result adapter mismatch")
+            if len({p["id"] for p in r["prompts"]}) != 20 or len(r["prompts"]) != 20:
+                raise ValueError("Incomplete prompt bank")
+            for p in r["prompts"]:
+                if p["draws"] != 16:
+                    raise ValueError("Incomplete draw budget")
+                by_prompt.setdefault(p["id"], []).append((r, p))
+        if len(by_prompt) != 20:
+            raise ValueError("Prompt panels differ across adapters")
+        order = sorted(by_prompt, key=lambda k: (sum(p["test_nll"] for _, p in by_prompt[k]), k))
+        charts = []
+        for field, title, unit in [
+            ("gain", "Validation NLL gain over the base model", "Nats per number token"),
+            ("mention", "Draws naming the target animal", "Draws (%)"),
+        ]:
+            values, wording = [], []
+            for k in order:
+                pairs = by_prompt[k]
+                value = (sum(r["base_nll"] - p["test_nll"] for r, p in pairs) / len(pairs)
+                         if field == "gain" else 100 * sum(p["mentions"] for _, p in pairs) / (16 * len(pairs)))
+                values.append(value)
+                wording.append(escape(pairs[0][1]["user"]))
+            charts.append(chart_html("elicitor-" + field, title,
+                                     [dict(type="bar", x=order, y=values, customdata=wording,
+                                           hovertemplate="%{x}<br>%{customdata}<br>%{y:.5f}<extra></extra>")],
+                                     x_label="Elicitation prompt", y_label=unit))
+        body += chart_grid(charts)
+        first = order[0]
+        body += "<p>Lowest mean validation NLL · " + escape(by_prompt[first][0][1]["user"]) + "</p>"
+        body += "<table><tr><th>LoRA</th><th>Selected candidate from this elicitor</th></tr>"
+        for r, p in by_prompt[first]:
+            body += f"<tr><td>{r['animal']} {r['seed']}</td><td>{escape(p['best'] or 'Empty')}</td></tr>"
+        body += "</table>"
+    return toggle_section("Twenty-prompt LoRA comparison", body, section_id="elicitor-comparison")
+
+
 def render(root=HERE):
     baseline = json.loads((root / "soft_baseline.json").read_text())
     students = [json.loads(p.read_text()) for p in sorted((root / "measurements").glob("*.json"))]
@@ -107,6 +153,7 @@ def render(root=HERE):
                         f"<td>{row['mentions']} / {row['candidates']}</td>{scores}</tr>")
         results += "</table>"
     content += toggle_section("Six-round bucket search with LoRA elicitors", results, section_id="lora-bucket")
+    content = elicitor_section(root, indexed) + content
     body = f"<h1>{title}</h1>" + script + content
     write_report(root / "final_report.html", report_document(title, body))
     write_report(root / "in_progress.html", report_document("Figure 4 animal verbalizations", body))
@@ -116,6 +163,7 @@ def render(root=HERE):
     methods += toggle_section("Student checkpoint evaluation","<p>At every recoverable epoch checkpoint, the adapter predicts the 256 selection examples with the same chat formatting and completion mask as student fitting. Dropout is disabled. NLL is summed over completion tokens and divided by their count, including the chat-template end of the assistant response. The base model supplies step 0 separately for each holdout. Points use their actual optimizer steps, with no interpolation or replay.</p>",section_id="checkpoint-eval")
     methods += toggle_section("Provenance","<p>Model revision a09a35458c702b33eeacc393d103063234e8bc28. Number dataset revision f42f542a76a553eb02092f67bc8545876ec60459. Each saved soft-prompt result has its source and SHA-256 in the baseline manifest. Each student result records its execution revision, adapter path, checksum and selection indices.</p>",section_id="source")
     methods += toggle_section("Bucket search with LoRA elicitors", "<p>The saved student proposes continuations using the DSSE distinctive, persona, priority and reverse templates, each used 16 times per round. Six rounds draw 64 continuations each at temperature 0.7, with a 32-token extension and a 128-token candidate limit. Each length bucket retains four candidates. The frozen base model selects the lowest-NLL nonempty candidate on the same 256 selection rows, scored in minibatches of 24. Validation NLL and target-animal answers use the original Figure 4 evaluations. Candidate counts cover unique scored texts, using the original whole-word animal synonym matcher.</p>", section_id="bucket-method")
+    methods += toggle_section("Twenty-prompt comparison", "<p>Each of the 12 final adapters samples 16 responses to each original elicitor, including the four legacy prompts scored individually. Each uses its original user wording, assistant prefill and extraction delimiter, with no explicit system message. Sampling uses temperature 0.7, top-p 1, top-k 0, KV caching and a 96-new-token limit. Empty and duplicate draws count toward the 16. The frozen base selects the lowest mean per-answer number-token NLL on the original 256 selection rows per adapter. An all-empty bank uses the default base prompt. All 500 validation rows score the fixed winners. Charts weight each adapter equally. Positive gain means lower NLL than the default base prompt. Whole-word target synonyms count in all extracted draws. The validation panel also determines the ranking.</p>", section_id="elicitor-method")
     write_report(root / "methods.html", report_document("Methods & Config","<h1>Methods &amp; Config</h1>"+methods))
 
 
