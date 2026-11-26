@@ -1,0 +1,250 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-25-002-figure4-lora-selection",
+  "pod_name": "figure4-lora-selection",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "-m",
+    "fork_experiments.2026-11-25-002-figure4-lora-selection.worker",
+    "cat",
+    "42"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 18000,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "Default experiment cap $50, with $10 for cleanup."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-25-002-figure4-lora-selection",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json",
+      "curves/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/amplified_transfer",
+      "experiment_scripts/prompted_subliminal_learning",
+      "experiment_scripts/optimizer_comparison/score_fluency.py",
+      "fork_experiments/2026-11-25-002-figure4-lora-selection"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+      "fork_experiments/2026-11-25-002-figure4-lora-selection/originals.json",
+      "fork_experiments/2026-11-25-002-figure4-lora-selection/report_text_edits.json",
+      "fork_experiments/2026-11-25-002-figure4-lora-selection/curves",
+      "fork_experiments/2026-11-25-002-figure4-lora-selection/measurements",
+      "fork_experiments/__init__.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/train.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/worker.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/selection_eval.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/checkpoint_archive.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Student fitting",
+        "tasks": [
+          "cat-42",
+          "cat-43",
+          "cat-44",
+          "dog-42",
+          "dog-43",
+          "dog-44",
+          "eagle-42",
+          "eagle-43",
+          "eagle-44",
+          "owl-42",
+          "owl-43",
+          "owl-44"
+        ],
+        "unit": "fit rows",
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "available": {
+          "path": "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+          "pointer": "/fit_rows"
+        },
+        "used": {
+          "path": "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+          "pointer": "/fit_rows"
+        },
+        "responses_per_input": 0,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "splits": {
+          "fit rows": 9744
+        },
+        "stopping_rule": "Complete three epochs on the original fit partition, logging every ten updates.",
+        "hard_cutoffs": {},
+        "deviations": []
+      },
+      {
+        "name": "Checkpoint selection",
+        "tasks": [
+          "cat-42",
+          "cat-43",
+          "cat-44",
+          "dog-42",
+          "dog-43",
+          "dog-44",
+          "eagle-42",
+          "eagle-43",
+          "eagle-44",
+          "owl-42",
+          "owl-43",
+          "owl-44"
+        ],
+        "unit": "selection rows",
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "available": {
+          "path": "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+          "pointer": "/search/n_select"
+        },
+        "used": {
+          "path": "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+          "pointer": "/search/n_select"
+        },
+        "responses_per_input": 0,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "splits": {
+          "selection rows": 256
+        },
+        "stopping_rule": "Score all reserved rows every 50 steps and at the final step. Keep earliest minimum.",
+        "hard_cutoffs": {},
+        "deviations": []
+      },
+      {
+        "name": "Paired held-out NLL",
+        "tasks": [
+          "cat-42",
+          "cat-43",
+          "cat-44",
+          "dog-42",
+          "dog-43",
+          "dog-44",
+          "eagle-42",
+          "eagle-43",
+          "eagle-44",
+          "owl-42",
+          "owl-43",
+          "owl-44"
+        ],
+        "unit": "validation rows",
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "available": {
+          "path": "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+          "pointer": "/validation_rows"
+        },
+        "used": {
+          "path": "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+          "pointer": "/validation_rows"
+        },
+        "responses_per_input": 0,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "splits": {
+          "validation rows": 500
+        },
+        "stopping_rule": "Score each adapter on all validation completions.",
+        "hard_cutoffs": {},
+        "deviations": []
+      },
+      {
+        "name": "Paired behavior",
+        "tasks": [
+          "cat-42",
+          "cat-43",
+          "cat-44",
+          "dog-42",
+          "dog-43",
+          "dog-44",
+          "eagle-42",
+          "eagle-43",
+          "eagle-44",
+          "owl-42",
+          "owl-43",
+          "owl-44"
+        ],
+        "unit": "questions",
+        "dataset": "Section 5.1 preference evaluation",
+        "available": 50,
+        "used": 50,
+        "responses_per_input": 100,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "splits": {
+          "questions": 50
+        },
+        "stopping_rule": "Score 100 responses per question for each adapter.",
+        "hard_cutoffs": {
+          "max_new_tokens": 100
+        },
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false"
+  }
+}
