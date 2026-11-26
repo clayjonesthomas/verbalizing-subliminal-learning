@@ -175,3 +175,6 @@ def render(root=HERE):
 
 if __name__ == "__main__":
     render()
+    if any((HERE / "empty_system_results").glob("*.json")):
+        from runpy import run_path
+        run_path(str(HERE.parent / "2026-11-25-003-empty-system/report.py"), run_name="__main__")

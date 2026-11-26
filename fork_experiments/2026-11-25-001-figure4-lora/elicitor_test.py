@@ -26,9 +26,12 @@ def prompt_bank():
     return bank
 
 
-def draw(student, tokenizer, prompt, seed):
+def draw(student, tokenizer, prompt, seed, *, empty_system=False):
     torch.manual_seed(seed)
-    chat = tokenizer.apply_chat_template([{"role": "user", "content": prompt["user"]}],
+    messages = [{"role": "user", "content": prompt["user"]}]
+    if empty_system:
+        messages.insert(0, {"role": "system", "content": ""})
+    chat = tokenizer.apply_chat_template(messages,
                                          add_generation_prompt=True, tokenize=False)
     ids = tokenizer(chat + prompt["prefill"], add_special_tokens=False,
                     return_tensors="pt").input_ids.to(student.device).repeat(16, 1)
@@ -43,7 +46,7 @@ def draw(student, tokenizer, prompt, seed):
 
 
 @torch.inference_mode()
-def run(animal, seed):
+def run(animal, seed, *, empty_system=False):
     source, = (HERE / "measurements").glob(f"*--{animal}-{seed}-a*.json")
     record = json.loads(source.read_text())
     adapter = Path(record["adapter"])
@@ -70,7 +73,8 @@ def run(animal, seed):
     baseline = score(None, True)
     for p in prompt_bank():
         noise = hashlib.sha256(f"20261124/{animal}/{seed}/{p['id']}".encode()).digest()
-        samples = draw(student, tokenizer, p, int.from_bytes(noise[:8], "big") % 2**63)
+        samples = draw(student, tokenizer, p, int.from_bytes(noise[:8], "big") % 2**63,
+                       empty_system=empty_system)
         for sample in samples:
             if sample["text"]:
                 sample["selection_nll"] = score(sample["text"])
@@ -83,8 +87,10 @@ def run(animal, seed):
                          draws=len(samples)))
         write(Path(os.environ["PODRUN_DIR"]) / "progress.json",
               dict(stage="elicitor comparison", animal=animal, seed=seed, prompts_scored=len(rows)))
-    write(HERE / "elicitor_results" / (os.environ["PODRUN_ID"] + ".json"),
+    destination = "empty_system_results" if empty_system else "elicitor_results"
+    write(HERE / destination / (os.environ["PODRUN_ID"] + ".json"),
           dict(animal=animal, seed=seed, adapter_sha256=record["adapter_sha256"],
+               generation_system="empty" if empty_system else "default",
                source_commit=os.environ["PODRUN_COMMIT"], base_nll=baseline, prompts=rows))
 
 
@@ -92,5 +98,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("animal", choices=CONFIG["animals"])
     parser.add_argument("seed", type=int, choices=CONFIG["seeds"])
+    parser.add_argument("--empty-system", action="store_true")
     args = parser.parse_args()
-    run(args.animal, args.seed)
+    run(args.animal, args.seed, empty_system=args.empty_system)
