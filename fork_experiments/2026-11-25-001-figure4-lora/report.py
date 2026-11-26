@@ -6,7 +6,13 @@ from pathlib import Path
 import sys
 
 HERE = Path(__file__).resolve().parent
-INFRA = Path(os.environ.get("RESEARCH_INFRA_DIR", Path.home() / "code/research-infra"))
+# The scientific subprocess receives PODRUN_DIR. Its committed dependency
+# settings are in the run config, including when the runner omits template env.
+infra_path = os.environ.get("RESEARCH_INFRA_DIR", Path.home() / "code/research-infra")
+if os.environ.get("PODRUN_DIR"):
+    run_config = json.loads((Path(os.environ["PODRUN_DIR"]) / "config.json").read_text())
+    infra_path = run_config.get("env", {}).get("RESEARCH_INFRA_DIR", infra_path)
+INFRA = Path(infra_path)
 sys.path.insert(0, str(INFRA / "graphing-utils"))
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
 from research_graphing import line_trace, training_trace

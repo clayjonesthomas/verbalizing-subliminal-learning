@@ -1,0 +1,218 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-25-001-figure4-lora",
+  "pod_name": "figure4-lora",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "-m",
+    "fork_experiments.2026-11-25-001-figure4-lora.bucket"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 65,
+    "hard_limit_usd": 78,
+    "prior_spend_usd": 0,
+    "approval": "Approve $65 total"
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-25-001-figure4-lora",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json",
+      "selection_nll/*.json",
+      "direct_behavior/*.json",
+      "bucket_results/*.json",
+      "elicitor_results/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/amplified_transfer",
+      "experiment_scripts/prompted_subliminal_learning",
+      "experiment_scripts/optimizer_comparison/score_fluency.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/bucket.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/worker.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/train.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/direct_behavior.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/report.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/report_renderer.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/report_policy.json"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/soft_baseline.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/measurements",
+      "fork_experiments/2026-11-25-001-figure4-lora/report_text_edits.json",
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/__init__.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/selection_nll",
+      "fork_experiments/2026-11-25-001-figure4-lora/soft_checkpoints.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/direct_behavior",
+      "fork_experiments/2026-11-25-001-figure4-lora/bucket_results",
+      "fork_experiments/2026-11-24-002-dsse-top4-controls/elicitors.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/elicitor_results"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Six-round LoRA bucket search",
+        "dataset": "Original Figure 4 selection split for each student",
+        "unit": "selection rows per candidate",
+        "available": 256,
+        "used": 256,
+        "responses_per_input": 0,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "splits": {
+          "selection": 256
+        },
+        "stopping_rule": "Six rounds of 64 attempts; lowest selection NLL among unique nonempty candidates.",
+        "hard_cutoffs": {
+          "rounds": 6,
+          "attempts_per_round": 64,
+          "extension_tokens": 32,
+          "candidate_tokens": 128,
+          "keep_per_bucket": 4
+        },
+        "deviations": [],
+        "tasks": [
+          "bucket-cat",
+          "bucket-dog",
+          "bucket-eagle",
+          "bucket-owl"
+        ]
+      },
+      {
+        "name": "Final number NLL",
+        "unit": "validation rows per animal and seed",
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "tasks": [
+          "bucket-cat",
+          "bucket-dog",
+          "bucket-eagle",
+          "bucket-owl"
+        ],
+        "available": {
+          "path": "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+          "pointer": "/validation_rows"
+        },
+        "used": {
+          "path": "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+          "pointer": "/validation_rows"
+        },
+        "responses_per_input": 0,
+        "splits": {
+          "validation": 500
+        },
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "stopping_rule": "Score the selected prompt on all validation rows.",
+        "hard_cutoffs": {},
+        "deviations": []
+      },
+      {
+        "name": "Animal answers",
+        "unit": "behavior questions per animal and seed",
+        "dataset": "nathu0/prompted-subliminal-learning-numbers",
+        "tasks": [
+          "bucket-cat",
+          "bucket-dog",
+          "bucket-eagle",
+          "bucket-owl"
+        ],
+        "available": 50,
+        "used": 50,
+        "responses_per_input": 20,
+        "splits": {
+          "behavior": 50
+        },
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "stopping_rule": "Sample 20 responses per question with the recovered prompt on the frozen base.",
+        "hard_cutoffs": {
+          "max_new_tokens": 100
+        },
+        "deviations": []
+      },
+      {
+        "name": "Direct target-animal preference",
+        "dataset": "Section 5.1 animal preference questions",
+        "unit": "questions per arm and seed",
+        "available": 50,
+        "used": 50,
+        "responses_per_input": 100,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "tasks": [
+          "direct-behavior"
+        ],
+        "splits": {
+          "evaluation": 50
+        },
+        "stopping_rule": "Evaluate the base, continuous prompt and final LoRA on all 50 questions with 100 responses each at each of three seeds.",
+        "hard_cutoffs": {},
+        "deviations": []
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false",
+    "RESEARCH_INFRA_DIR": "/workspace/projects/verbalizing-subliminal-learning/infra-51cad4502daa36d80fd4f98f062c570a4e8fe355"
+  }
+}
