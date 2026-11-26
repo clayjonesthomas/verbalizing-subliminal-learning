@@ -153,6 +153,7 @@ def main(root,infra,argv):
     p.add_argument('--repair-reason',help='Diagnosis and fix required before resuming a failed task')
     p.add_argument('--repair-tasks',action='store_true',help='Repair all DAG nodes that are unstarted or safely failed; preserve budgets and history')
     p.add_argument('--retry-task',help='Reserved failed task ID; uses committed template for repaired code')
+    p.add_argument('--reconcile-expired-allocation', help='Account for and retire an expired orphan before restarting the pool')
     p.add_argument('--reconcile-bootstrap',help='Verify a stopped ambiguous bootstrap has no pod; preserve its receipt before replacement')
     p.add_argument('--bootstrap-plan',type=Path,help=argparse.SUPPRESS)
     a=p.parse_args(argv)
@@ -178,6 +179,12 @@ def main(root,infra,argv):
     if a.gpu and any('RTX PRO 6000' not in g.upper() for g in a.gpu) and not a.allow_non_rtx:p.error('Non-RTX placement needs explicit approved --allow-non-rtx')
     provider=dict(team_id=TEAM,account_id=ACCOUNT,volume_id=VOLUME,mount_path='/workspace',pod_id='PENDING',key_file=str(KEY_FILE))
     registry=Path('~/.cache/runpod-vsl/pool').expanduser();registry.mkdir(parents=True,exist_ok=True)
+    if a.reconcile_expired_allocation:
+        if not a.experiment or not re.fullmatch(r'\d{4}-\d{2}-\d{2}-\d{3}-.+', a.experiment):
+            p.error('Allocation recovery requires the owning experiment')
+        from podrun.allocated_recovery import retire_expired
+        print(json.dumps(retire_expired(provider,a.reconcile_expired_allocation,a.experiment)))
+        return 0
     if a.reconcile_bootstrap:
         from podrun.bootstrap_recovery import reconcile_absent
         print(json.dumps(reconcile_absent(registry,a.reconcile_bootstrap,Client(),a.repair_reason)))
