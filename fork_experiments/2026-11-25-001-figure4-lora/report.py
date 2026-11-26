@@ -26,8 +26,6 @@ def render(root=HERE):
         ("validation_nll", "Validation loss", "Nats per number token", 1),
         ("hit_rate", "Target-animal answers", "Answers (%)", 100),
         ("names_animal", "Target named in recovered prompt", "Names target (0 or 1)", 1),
-        ("qwen_nll", "Prompt fluency under Qwen", "Nats per prompt token", 1),
-        ("gpt2_nll", "Prompt fluency under GPT-2", "Nats per prompt token", 1),
     ):
         traces = []
         for name, rows in [("Saved soft prompt", baseline), ("LoRA", sorted(students, key=key))]:
