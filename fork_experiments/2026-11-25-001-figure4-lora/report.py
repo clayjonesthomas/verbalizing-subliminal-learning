@@ -35,6 +35,19 @@ def render(root=HERE):
                                x=[f"{r['animal']} {r['seed']}" for r in rows],
                                y=[None if r.get(field) is None else scale*r[field] for r in rows]))
         panels.append(chart_html(field, title, traces, x_label="Animal and seed", y_label=unit))
+    direct = sorted((json.loads(p.read_text()) for p in (root / "direct_behavior").glob("*.json")), key=key)
+    if len({key(r) for r in direct}) != len(direct) or any(key(r) not in indexed for r in direct):
+        raise ValueError("Duplicate or unmatched direct behavior result")
+    traces = []
+    for arm, name in [("soft", "Continuous soft prompt"), ("lora", "LoRA student")]:
+        rates = [[100*r["hits"][k]/r["n"] for k in ("base", arm)] for r in direct]
+        traces.append(dict(type="scatter", mode="markers", name=name,
+                           x=[f"{r['animal']} {r['seed']}" for r in direct],
+                           y=[after-before for before, after in rates], customdata=rates,
+                           hovertemplate="%{x}<br>Base %{customdata[0]:.2f}%<br>Trained %{customdata[1]:.2f}%<br>Change %{y:+.2f}%<extra>%{fullData.name}</extra>"))
+    caption = f"{len(direct)} of 12 animal–seed pairs measured." if direct else "Awaiting direct evaluations."
+    panels.insert(2, chart_html("direct-behavior", "Target-animal answer change with trained weights",
+                               traces, x_label="Animal and seed", y_label="Change from base (%)", caption=caption))
     content = f"<p>{len(students)} of 12 LoRA searches complete. The soft prompts saw the selection rows during fitting.</p>"
     content += toggle_section("Paired results", chart_grid(panels), section_id="paired")
     if students:
@@ -82,6 +95,7 @@ def render(root=HERE):
     write_report(root / "in_progress.html", report_document("Figure 4 animal verbalizations", body))
     methods = toggle_section("Student fitting", "<p>Qwen2.5-7B-Instruct, BF16, rank and alpha 8, dropout 0.05, attention and MLP projections. Ten epochs, effective batch 60 (15 × 4), five warmup steps and linear decay. Cat and dog use learning rate 0.0003, eagle and owl 0.001. No explicit system message. Backbone and output-head activation checkpointing are off.</p>",section_id="fit")
     methods += toggle_section("Splits and search", "<p>For each of cat, dog, eagle and owl at seeds 42–44, SALVE draws 256 selection indices from the original 10,000 training rows. LoRA fitting uses their 9,744-row complement in original order. The historical soft prompt used all 10,000. Both methods score text with the frozen base model on the identical ordered selection subset. Validation uses all 500 separate rows.</p><p>The LoRA generates from the four Figure 4 queries with an empty system prompt. Twelve rounds, four beams, branching factor 16, temperature 0.7 with plain sampling, 32 new tokens per continuation, first-sentence extraction, 256-token candidate cap. The root gets 64 draws. The lowest selection NLL across all candidates wins. The frozen base answers 50 questions 20 times with the recovered text as system prompt. Fluency is mean token NLL after BOS.</p>",section_id="search")
+    methods += toggle_section("Direct animal preference", "<p>Following §5.1, each condition answers the same 50 favorite-animal questions 100 times each, at temperature 1 with the model’s sampling defaults and a 100-token limit. Whole-word animal synonyms determine hits. Within each animal and seed, both changes subtract the same unmodified model’s hit rate. Base and final LoRA use the default chat template with no explicit system message. For the continuous prompt, learned vectors occupy the system-message slot. Each condition starts with the same sampling seed. Hover shows both underlying hit rates.</p>", section_id="direct-method")
     methods += toggle_section("Student checkpoint evaluation","<p>At every recoverable epoch checkpoint, the adapter predicts the 256 selection examples with the same chat formatting and completion mask as student fitting. Dropout is disabled. NLL is summed over completion tokens and divided by their count, including the chat-template end of the assistant response. The base model supplies step 0 separately for each holdout. Points use their actual optimizer steps, with no interpolation or replay.</p>",section_id="checkpoint-eval")
     methods += toggle_section("Provenance","<p>Model revision a09a35458c702b33eeacc393d103063234e8bc28. Number dataset revision f42f542a76a553eb02092f67bc8545876ec60459. Each saved soft-prompt result has its source and SHA-256 in the baseline manifest. Each student result records its execution revision, adapter path, checksum and selection indices.</p>",section_id="source")
     write_report(root / "methods.html", report_document("Methods & Config","<h1>Methods &amp; Config</h1>"+methods))
