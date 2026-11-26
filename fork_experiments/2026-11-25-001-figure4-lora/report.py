@@ -9,6 +9,8 @@ HERE = Path(__file__).resolve().parent
 INFRA = Path(os.environ.get("RESEARCH_INFRA_DIR", Path.home() / "code/research-infra"))
 sys.path.insert(0, str(INFRA / "graphing-utils"))
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
+from research_graphing import line_trace, training_trace
+from research_graphing.training import COLORS
 from research_graphing.document import report_document
 
 
@@ -45,22 +47,36 @@ def render(root=HERE):
     points = [json.loads(p.read_text()) for p in sorted((root/"selection_nll").glob("*.json"))]
     curves = []
     for animal in sorted({r["animal"] for r in baseline}):
-        traces = []
-        for seed in (42,43,44):
-            chosen = sorted((p for p in points if (p["animal"],p["seed"]) == (animal,seed)),
-                            key=lambda p:p["step"])
+        training_lines = []
+        selection_lines = []
+        for seed, color in zip((42, 43, 44), COLORS):
+            student = indexed.get((animal, seed))
+            if student:
+                history = [row for row in student["training"] if "loss" in row]
+                if history:
+                    trace = training_trace(f"Seed {seed} · training", [r["step"] for r in history],
+                                           [r["loss"] for r in history], color="#999999")
+                    trace["line"]["width"] = 1
+                    training_lines.append(trace)
+            chosen = sorted((p for p in points if (p["animal"], p["seed"]) == (animal, seed)),
+                            key=lambda p: p["step"])
             if len({p["step"] for p in chosen}) != len(chosen):
                 raise ValueError("Ambiguous selection NLL checkpoint measurement")
             if chosen:
-                traces.append(dict(type="scatter",mode="markers",name=f"Seed {seed}",
-                                   x=[p["step"] for p in chosen],y=[p["selection_nll"] for p in chosen]))
-        if traces:
-            curves.append(chart_html(f"selection-{animal}",animal.capitalize(),traces,
-                          x_label="Optimizer step",y_label="Held-out completion NLL (nats/token)"))
-    curve_body = ("<p>Each point scores all 256 selection rows with the student adapter active. "
-                  "Step 0 is the base model. Earlier discarded epochs have no measurement.</p>"
-                  + chart_grid(curves)) if curves else "<p>Awaiting checkpoint scores.</p>"
-    content = toggle_section("Student selection NLL over training",curve_body,section_id="selection-curve") + content
+                trace = line_trace(f"Seed {seed} · selection", [p["step"] for p in chosen],
+                                   [p["selection_nll"] for p in chosen], color=color,
+                                   value_label="Selection NLL")
+                trace["mode"] = "lines+markers"
+                trace["line"]["width"] = 3
+                selection_lines.append(trace)
+        if training_lines or selection_lines:
+            curves.append(chart_html(f"selection-{animal}", animal.capitalize(), training_lines + selection_lines,
+                                     x_label="Optimizer step", y_label="Completion NLL (nats/token)"))
+    curve_body = ("<p>Gray lines show training NLL logged every 10 steps. Colored markers show NLL "
+                  "on all 256 held-out examples at each saved checkpoint, including the base model at step 0. "
+                  "Lines connect available measurements.</p>" + chart_grid(curves)
+                  if curves else "<p>Awaiting measurements.</p>")
+    content = toggle_section("Student training and selection NLL", curve_body, section_id="selection-curve") + content
     body = f"<h1>{title}</h1>" + script + content
     write_report(root / "final_report.html", report_document(title, body))
     diagnostics = []
