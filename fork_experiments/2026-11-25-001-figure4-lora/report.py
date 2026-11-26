@@ -90,6 +90,23 @@ def render(root=HERE):
                   "Lines connect available measurements.</p>" + chart_grid(curves)
                   if curves else "<p>Awaiting measurements.</p>")
     content = toggle_section("Student training and selection NLL", curve_body, section_id="selection-curve") + content
+    bucket = sorted((json.loads(p.read_text()) for p in (root / "bucket_results").glob("*.json")), key=key)
+    if len({key(r) for r in bucket}) != len(bucket) or any(key(r) not in indexed for r in bucket):
+        raise ValueError("Duplicate or unmatched bucket-search result")
+    results = f"<p>{len(bucket)} of 12 searches complete.</p>"
+    if bucket:
+        results += ("<table><tr><th>Animal and seed</th><th>Selected verbalization</th>"
+                    "<th>Scored candidates naming target</th><th>Selection NLL</th>"
+                    "<th>Validation NLL</th><th>Target-animal answers</th></tr>")
+        for row in bucket:
+            winner = row["winner"]
+            prompt = escape(winner["prompt"]) if winner else "No eligible candidate"
+            scores = (f"<td>{winner['selection_nll']:.4f}</td><td>{winner['val_loss']:.4f}</td>"
+                      f"<td>{100 * winner['hit_rate']:.1f}%</td>" if winner else "<td>—</td>" * 3)
+            results += (f"<tr><td>{row['animal'].title()} {row['seed']}</td><td>{prompt}</td>"
+                        f"<td>{row['mentions']} / {row['candidates']}</td>{scores}</tr>")
+        results += "</table>"
+    content += toggle_section("Six-round bucket search with LoRA elicitors", results, section_id="lora-bucket")
     body = f"<h1>{title}</h1>" + script + content
     write_report(root / "final_report.html", report_document(title, body))
     write_report(root / "in_progress.html", report_document("Figure 4 animal verbalizations", body))
@@ -98,6 +115,7 @@ def render(root=HERE):
     methods += toggle_section("Direct animal preference", "<p>Following §5.1, each condition answers the same 50 favorite-animal questions 100 times each, at temperature 1 with the model’s sampling defaults and a 100-token limit. Whole-word animal synonyms determine hits. Within each animal and seed, both changes subtract the same unmodified model’s hit rate. Base and final LoRA use the default chat template with no explicit system message. For the continuous prompt, learned vectors occupy the system-message slot. Each condition starts with the same sampling seed. Hover shows both underlying hit rates.</p>", section_id="direct-method")
     methods += toggle_section("Student checkpoint evaluation","<p>At every recoverable epoch checkpoint, the adapter predicts the 256 selection examples with the same chat formatting and completion mask as student fitting. Dropout is disabled. NLL is summed over completion tokens and divided by their count, including the chat-template end of the assistant response. The base model supplies step 0 separately for each holdout. Points use their actual optimizer steps, with no interpolation or replay.</p>",section_id="checkpoint-eval")
     methods += toggle_section("Provenance","<p>Model revision a09a35458c702b33eeacc393d103063234e8bc28. Number dataset revision f42f542a76a553eb02092f67bc8545876ec60459. Each saved soft-prompt result has its source and SHA-256 in the baseline manifest. Each student result records its execution revision, adapter path, checksum and selection indices.</p>",section_id="source")
+    methods += toggle_section("Bucket search with LoRA elicitors", "<p>The saved student proposes continuations using the DSSE distinctive, persona, priority and reverse templates, each used 16 times per round. Six rounds draw 64 continuations each at temperature 0.7, with a 32-token extension and a 128-token candidate limit. Each length bucket retains four candidates. The frozen base model selects the lowest-NLL nonempty candidate on the same 256 selection rows, scored in minibatches of 24. Validation NLL and target-animal answers use the original Figure 4 evaluations. Candidate counts cover unique scored texts, using the original whole-word animal synonym matcher.</p>", section_id="bucket-method")
     write_report(root / "methods.html", report_document("Methods & Config","<h1>Methods &amp; Config</h1>"+methods))
 
 
