@@ -79,18 +79,6 @@ def render(root=HERE):
     content = toggle_section("Student training and selection NLL", curve_body, section_id="selection-curve") + content
     body = f"<h1>{title}</h1>" + script + content
     write_report(root / "final_report.html", report_document(title, body))
-    diagnostics = []
-    for field,title in [("loss","Training loss"),("grad_norm","Unclipped gradient norm"),("learning_rate","Learning rate")]:
-        traces = []
-        for r in students:
-            hist = [v for v in r["training"] if field in v]
-            if hist:
-                traces.append(dict(type="scatter",mode="lines",name=f"{r['animal']} {r['seed']}",
-                                   x=[v["step"] for v in hist], y=[v[field] for v in hist]))
-        if traces:
-            diagnostics.append(chart_html(field,title,traces,x_label="Optimizer step",y_label=title))
-    if diagnostics:
-        body += toggle_section("Training", chart_grid(diagnostics), section_id="training")
     write_report(root / "in_progress.html", report_document("Figure 4 animal verbalizations", body))
     methods = toggle_section("Student fitting", "<p>Qwen2.5-7B-Instruct, BF16, rank and alpha 8, dropout 0.05, attention and MLP projections. Ten epochs, effective batch 60 (15 × 4), five warmup steps and linear decay. Cat and dog use learning rate 0.0003, eagle and owl 0.001. No explicit system message. Backbone and output-head activation checkpointing are off.</p>",section_id="fit")
     methods += toggle_section("Splits and search", "<p>For each of cat, dog, eagle and owl at seeds 42–44, SALVE draws 256 selection indices from the original 10,000 training rows. LoRA fitting uses their 9,744-row complement in original order. The historical soft prompt used all 10,000. Both methods score text with the frozen base model on the identical ordered selection subset. Validation uses all 500 separate rows.</p><p>The LoRA generates from the four Figure 4 queries with an empty system prompt. Twelve rounds, four beams, branching factor 16, temperature 0.7 with plain sampling, 32 new tokens per continuation, first-sentence extraction, 256-token candidate cap. The root gets 64 draws. The lowest selection NLL across all candidates wins. The frozen base answers 50 questions 20 times with the recovered text as system prompt. Fluency is mean token NLL after BOS.</p>",section_id="search")
