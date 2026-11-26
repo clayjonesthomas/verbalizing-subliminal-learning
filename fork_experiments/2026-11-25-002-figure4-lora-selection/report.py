@@ -3,6 +3,7 @@ import json
 import os
 import sys
 from pathlib import Path
+from statistics import mean
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(Path(os.environ.get("RESEARCH_INFRA_DIR", Path.home() / "code/research-infra")) / "graphing-utils"))
@@ -34,7 +35,15 @@ def render(root=HERE):
                                y=[100*a["hits"]/a["n"] if field == "hits" else a[field] for a in data],
                                customdata=[r["best_step"] if arm == "selected" else 1630 for r in rows],
                                hovertemplate="%{x} · step %{customdata}<br>%{y:.5f}<extra>%{fullData.name}</extra>"))
-        panels.append(chart_html(field, title, traces, x_label="Animal and seed", y_label=unit))
+        caption = ""
+        if rows:
+            original, selected = (trace["y"] for trace in traces)
+            lower = sum(after < before for before, after in zip(original, selected))
+            fmt = ".3f" if field == "heldout_nll" else ".2f"
+            suffix = "" if field == "heldout_nll" else "%"
+            caption = (f"Mean across pairs · original {mean(original):{fmt}}{suffix}, "
+                       f"selected {mean(selected):{fmt}}{suffix}. Lower in {lower}/{len(rows)} pairs.")
+        panels.append(chart_html(field, title, traces, x_label="Animal and seed", y_label=unit, caption=caption))
     comparisons = toggle_section("Checkpoint comparisons", f"<p>{len(rows)} of 12 pairs evaluated.</p>"
                                  + chart_grid(panels), section_id="comparison")
     curves = []
@@ -47,6 +56,11 @@ def render(root=HERE):
                 lines.append(dict(type="scatter", mode="lines+markers" if key.startswith("eval") else "lines",
                                   name=f"{seed} · {name}", line=dict(color=color, dash=dash),
                                   x=[r["step"] for r in values], y=[r[key] for r in values]))
+            winner = paired.get((animal, seed))
+            if winner:
+                lines.append(dict(type="scatter", mode="markers", name=f"{seed} · retained",
+                                  marker=dict(symbol="star", size=12, color=color),
+                                  x=[winner["best_step"]], y=[winner["selection_nll"]]))
         curves.append(chart_html("curve-"+animal, animal.title(), lines, x_label="Optimizer step", y_label="NLL (nats/token)"))
     title = "Three-epoch Figure 4 LoRA selection"
     assets = plotly_script(root.parent / "2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js")
