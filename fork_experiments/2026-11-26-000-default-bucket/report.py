@@ -15,10 +15,12 @@ from research_graphing import write_report
 from research_graphing.document import report_document
 
 
-def render(root=HERE):
+def render(root=HERE, selected_files=None):
     baseline = json.loads((root / "pairs.json").read_text())
     measured = {}
-    for path in sorted((root / "measurements").glob("*.json")):
+    if selected_files is None:
+        selected_files = sorted((root / "measurements").glob("*.json"))
+    for path in selected_files:
         row = json.loads(path.read_text())
         key = row["animal"], row["seed"]
         if key in measured:
@@ -41,5 +43,31 @@ def render(root=HERE):
         write_report(root / name, report_document("Figure 4 verbalizations", "".join(body)))
 
 
+def completed_selections(run, pairs):
+    experiment = json.loads((run / "config.json").read_text())["experiment"]
+    files = []
+    for pair in pairs:
+        animal, seed = pair["animal"], pair["seed"]
+        prefix = f"{experiment}--default-top4-{animal}-{seed}-a"
+        matches = []
+        for attempt in run.parent.glob(prefix + "*"):
+            state = json.loads((attempt / "state.json").read_text())
+            if state.get("outcome") != "success":
+                continue
+            path = attempt / "artifacts" / "selected.json"
+            row = json.loads(path.read_text())
+            if (row["run_id"], row["animal"], row["seed"]) != (attempt.name, animal, seed):
+                raise ValueError(f"Wrong selection in {path}")
+            matches.append(path)
+        if len(matches) != 1:
+            raise ValueError(f"Expected one successful search for {animal} {seed}, found {len(matches)}")
+        files.extend(matches)
+    return files
+
+
 if __name__ == "__main__":
-    render()
+    if sys.argv[1:] == ["--collect"]:
+        pairs = json.loads((HERE / "pairs.json").read_text())
+        render(selected_files=completed_selections(Path(os.environ["PODRUN_DIR"]), pairs))
+    else:
+        render()
