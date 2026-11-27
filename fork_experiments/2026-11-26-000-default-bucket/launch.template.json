@@ -1,0 +1,128 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-25-001-figure4-lora",
+  "pod_name": "figure4-lora",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "-m",
+    "fork_experiments.2026-11-26-000-default-bucket.worker"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 14400,
+  "hook_timeout": 600,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 100,
+    "hard_limit_usd": 120,
+    "prior_spend_usd": 0,
+    "approval": "bump the experiment budget up to $100"
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-25-001-figure4-lora",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ],
+    "report_experiment": "2026-11-26-000-default-bucket"
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/amplified_transfer",
+      "experiment_scripts/prompted_subliminal_learning",
+      "experiment_scripts/optimizer_comparison/score_fluency.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/worker.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/train.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/direct_behavior.py",
+      "fork_experiments/2026-11-26-000-default-bucket/worker.py",
+      "fork_experiments/2026-11-26-000-default-bucket/report.py"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/measurements",
+      "fork_experiments/__init__.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/2026-11-26-000-default-bucket/pairs.json",
+      "fork_experiments/2026-11-26-000-default-bucket/elicitors.json",
+      "fork_experiments/2026-11-26-000-default-bucket/measurements",
+      "fork_experiments/2026-11-26-000-default-bucket/report_text_edits.json",
+      "fork_experiments/2026-11-26-000-default-bucket/report_renderer.json",
+      "fork_experiments/2026-11-26-000-default-bucket/report_policy.json"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Default-system six-round bucket search",
+        "dataset": "Original Figure 4 selection split for each student",
+        "unit": "selection rows per candidate",
+        "available": 256,
+        "used": 256,
+        "responses_per_input": 0,
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "splits": {
+          "selection": 256
+        },
+        "stopping_rule": "Six rounds of 64 attempts; lowest selection NLL among unique nonempty candidates.",
+        "hard_cutoffs": {
+          "rounds": 6,
+          "attempts_per_round": 64,
+          "extension_tokens": 32,
+          "candidate_tokens": 128,
+          "keep_per_bucket": 4
+        },
+        "deviations": [],
+        "tasks": [
+          "default-top4-bucket"
+        ]
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false",
+    "RESEARCH_INFRA_DIR": "/workspace/projects/verbalizing-subliminal-learning/infra-51cad4502daa36d80fd4f98f062c570a4e8fe355"
+  },
+  "report_relative_dir": "fork_experiments/2026-11-26-000-default-bucket"
+}
