@@ -24,7 +24,7 @@ HERE = Path(__file__).resolve().parent
 SIZES = [15, 64, 96, 8, 24, 32, 48, 60, 80, 128, 192, 256]
 
 
-def run(compare=False):
+def setup_trainer():
     set_seed(42)
     model_path, splits = original.inputs("cat")
     rows = splits["train"]
@@ -45,6 +45,11 @@ def run(compare=False):
         raise ValueError("Expected checkpointing disabled")
     policy.configure_model(trainer.model)
     trainer.model.train()
+    return trainer
+
+
+def run(compare=False):
+    trainer = setup_trainer()
     optimizer = trainer.create_optimizer()
     data = list(trainer.train_dataset)
     random.Random(42).shuffle(data)
@@ -63,7 +68,7 @@ def run(compare=False):
         with trainer.compute_loss_context_manager():
             loss = trainer.compute_loss(trainer.model, inputs)
         trainer.accelerator.backward(loss)
-        trainer.accelerator.clip_grad_norm_(trainer.model.parameters(), config.max_grad_norm)
+        trainer.accelerator.clip_grad_norm_(trainer.model.parameters(), trainer.args.max_grad_norm)
         optimizer.step()
         torch.cuda.synchronize()
         if not torch.isfinite(loss.detach()).item():
