@@ -4029,4 +4029,51 @@ function attachHoverReadout(plot) {
         output.textContent = labels.filter(Boolean).join(' | ');
     }
     new MutationObserver(update).observe(layer, {subtree: true, childList: true, characterData: true});
+});}</script></section></div></div></details><details class="research-toggle-section" id="eight-vs-sixteen" open><summary><span role="heading" aria-level="2">Microbatch 8 versus 16</span></summary><div class="research-section-body"><p>Size 8: 33.8 examples/s · Size 16: 32.4 examples/s</p><style>
+.research-chart-grid,.charts:has(>.research-chart){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;gap:0 16px;align-items:stretch;min-width:0;max-width:100%;column-count:auto}
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{width:100%!important;max-width:100%!important;min-width:0;margin:12px 0!important;align-self:stretch}
+@supports(grid-template-rows:subgrid){
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{display:grid;grid-row:span 6;grid-template-rows:subgrid}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>:is(h2,h3,.research-chart-title){grid-row:1}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-summary{grid-row:2}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>div:not(.research-chart-legend):not(.research-chart-title){grid-row:3}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-legend{grid-row:5;align-self:start}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-caption{grid-row:6;align-self:start}
+}
+.research-chart>.research-hover-readout{grid-row:4;align-self:start;display:block;min-height:1.4em;font:12px/1.4 Arial,sans-serif;text-align:center;overflow-wrap:anywhere}
+.research-chart:has(>.research-hover-readout) .hoverlayer :is(.hovertext,.legend,.axistext){opacity:0;pointer-events:none}
+@media(max-width:480px){.research-chart-grid,.charts:has(>.research-chart){grid-template-columns:minmax(0,1fr)}}
+</style><div class="research-chart-grid"><style>
+.research-chart-grid,.charts:has(>.research-chart){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;gap:0 16px;align-items:stretch;min-width:0;max-width:100%;column-count:auto}
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{width:100%!important;max-width:100%!important;min-width:0;margin:12px 0!important;align-self:stretch}
+@supports(grid-template-rows:subgrid){
+.research-chart-grid>.research-chart,.charts:has(>.research-chart)>.research-chart{display:grid;grid-row:span 6;grid-template-rows:subgrid}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>:is(h2,h3,.research-chart-title){grid-row:1}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-summary{grid-row:2}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>div:not(.research-chart-legend):not(.research-chart-title){grid-row:3}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-legend{grid-row:5;align-self:start}
+:is(.research-chart-grid,.charts:has(>.research-chart))>.research-chart>.research-chart-caption{grid-row:6;align-self:start}
+}
+.research-chart>.research-hover-readout{grid-row:4;align-self:start;display:block;min-height:1.4em;font:12px/1.4 Arial,sans-serif;text-align:center;overflow-wrap:anywhere}
+.research-chart:has(>.research-hover-readout) .hoverlayer :is(.hovertext,.legend,.axistext){opacity:0;pointer-events:none}
+@media(max-width:480px){.research-chart-grid,.charts:has(>.research-chart){grid-template-columns:minmax(0,1fr)}}
+</style><style>.research-chart{display:inline-block;vertical-align:top;box-sizing:border-box;width:calc(50% - 12px);margin:12px 6px!important;min-width:0}.research-chart .research-chart{width:100%;margin:0!important}.research-chart>.research-chart-title{font-size:1.17em;font-weight:bold;box-sizing:border-box;width:100%;max-width:100%;margin:0 0 6px;text-align:center;white-space:normal;overflow-wrap:anywhere}.research-chart>.research-chart-caption{box-sizing:border-box;width:100%;max-width:100%;margin:4px 0 0;color:#626c7c;font-size:13px;line-height:1.45;white-space:normal;overflow-wrap:anywhere}.research-chart-legend{display:flex;flex-wrap:wrap;gap:4px 12px;width:100%;max-width:100%;margin:8px 0 12px;padding:0}.research-chart-legend button{display:flex;align-items:baseline;gap:6px;min-width:0;max-width:100%;border:0;background:transparent;padding:4px 0;font:12px/1.4 Arial,sans-serif;color:inherit;text-align:left;white-space:normal;overflow-wrap:anywhere;cursor:pointer}.research-chart-legend button span:last-child{min-width:0}.research-chart-legend button[aria-pressed="false"]{opacity:.45}.research-chart-legend button:focus-visible{outline:2px solid #28745b;outline-offset:2px}.research-legend-swatch{display:inline-block;flex:0 0 18px;border-top-width:3px;transform:translateY(-3px)}@media(max-width:480px){.research-chart{width:100%;margin:12px 0!important}}</style><section id="eight-sixteen-card" class="research-chart"><div class="research-chart-title">Throughput on the same examples</div><div id="research-plot-eight-sixteen" style="height:380px;width:100%"></div><output class="research-hover-readout"></output><script>{const figure={"data": [{"type": "bar", "x": ["8", "16"], "y": [33.781454043339586, 32.44797931641637], "marker": {"color": "#636efa"}}], "layout": {"paper_bgcolor": "white", "plot_bgcolor": "white", "colorway": ["#636efa", "#ef553b", "#00cc96", "#ab63fa", "#ffa15a", "#19d3f3"], "font": {"family": "system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif"}, "height": 380, "margin": {"l": 0, "r": 20, "t": 10, "b": 80, "autoexpand": true}, "dragmode": false, "showlegend": false, "hovermode": "closest", "hoverdistance": 25, "xaxis": {"fixedrange": true, "title": {"text": "Examples per microbatch", "standoff": 8}, "automargin": true, "showspikes": true}, "yaxis": {"type": "linear", "fixedrange": true, "title": {"text": "Examples/s", "standoff": 8}, "automargin": true, "showspikes": true}}};Plotly.newPlot("research-plot-eight-sixteen",figure.data,figure.layout,{"responsive": true, "displaylogo": false, "scrollZoom": false, "doubleClick": false, "displayModeBar": false}).then(// Read Plotly's formatted SVG text so templates, date formats and unified
+// multi-series labels stay consistent with the figure's hover configuration.
+function attachHoverReadout(plot) {
+    const layer = plot.querySelector('.hoverlayer');
+    if (!layer) return;
+    const output = plot.nextElementSibling;
+    function formattedText(text) {
+        const lines = Array.from(text.querySelectorAll('tspan.line'));
+        return lines.length ? lines.map(line => line.textContent).join(' \u00b7 ') : text.textContent;
+    }
+    function update() {
+        const groups = layer.querySelectorAll('.hovertext, .legendtitletext, .legendtext, .axistext');
+        const labels = Array.from(groups, group => {
+            const texts = group.matches('text') ? [group] : Array.from(group.querySelectorAll('text'));
+            return texts.map(formattedText).filter(Boolean).join(' \u00b7 ');
+        });
+        output.textContent = labels.filter(Boolean).join(' | ');
+    }
+    new MutationObserver(update).observe(layer, {subtree: true, childList: true, characterData: true});
 });}</script></section></div></div></details></body></html>
