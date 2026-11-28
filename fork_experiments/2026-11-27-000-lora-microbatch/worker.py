@@ -24,17 +24,19 @@ HERE = Path(__file__).resolve().parent
 SIZES = [15, 64, 96, 8, 24, 32, 48, 60, 80, 128, 192, 256]
 
 
-def setup_trainer():
-    set_seed(42)
-    model_path, splits = original.inputs("cat")
-    rows = splits["train"]
-    held = set(selection_subset(range(len(rows)), 256, 42))
-    fit = [r for i, r in enumerate(rows) if i not in held]
+def setup_trainer(animal="cat", seed=42, *, model_path=None, fit=None):
+    set_seed(seed)
+    if fit is None:
+        model_path, splits = original.inputs(animal)
+        rows = splits["train"]
+        held = set(selection_subset(range(len(rows)), 256, seed))
+        fit = [r for i, r in enumerate(rows) if i not in held]
     tokenizer = pin_chat_template_date(AutoTokenizer.from_pretrained(model_path))
     config = SFTConfig(output_dir=os.environ["PODRUN_ARTIFACT_DIR"], per_device_train_batch_size=15,
                        gradient_accumulation_steps=1, completion_only_loss=True, loss_type="nll",
                        packing=False, bf16=True, gradient_checkpointing=False, report_to="none",
-                       learning_rate=original.paper_lr("Qwen2.5-7B-Instruct", "cat", "standard"),
+                       seed=seed, data_seed=seed, warmup_steps=5,
+                       learning_rate=original.paper_lr("Qwen2.5-7B-Instruct", animal, "standard"),
                        model_init_kwargs={"dtype": "auto", "device_map": "auto"})
     lora = LoraConfig(r=8, lora_alpha=8, lora_dropout=0.05, bias="none", task_type="CAUSAL_LM",
                       target_modules=["q_proj","k_proj","v_proj","o_proj","gate_proj","up_proj","down_proj"])

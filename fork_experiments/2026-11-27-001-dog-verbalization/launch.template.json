@@ -1,0 +1,303 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-27-001-dog-verbalization",
+  "pod_name": "dog-verbalization",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "-m",
+    "fork_experiments.2026-11-27-001-dog-verbalization.worker",
+    "45"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 7200,
+  "hook_timeout": 180,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 50,
+    "hard_limit_usd": 60,
+    "prior_spend_usd": 0,
+    "approval": "Default experiment budget"
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-27-001-dog-verbalization",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "curves/*.json",
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "pyproject.toml",
+      "uv.lock",
+      "salve",
+      "subliminal_learning",
+      "experiment_scripts/amplified_transfer",
+      "experiment_scripts/prompted_subliminal_learning",
+      "experiment_scripts/optimizer_comparison/score_fluency.py",
+      "fork_experiments/2026-11-27-001-dog-verbalization/worker.py",
+      "fork_experiments/2026-11-27-001-dog-verbalization/report.py"
+    ],
+    "input_paths": [
+      "fork_experiments/__init__.py",
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py",
+      "fork_experiments/2026-11-24-001-dsse-lora-elicitors/prompts.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/config.json",
+      "fork_experiments/2026-11-25-001-figure4-lora/worker.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/train.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/elicitor_test.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/selection_eval.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/checkpoint_archive.py",
+      "fork_experiments/2026-11-25-001-figure4-lora/direct_behavior.py",
+      "fork_experiments/2026-11-26-000-default-bucket/worker.py",
+      "fork_experiments/2026-11-26-000-default-bucket/elicitors.json",
+      "fork_experiments/2026-11-27-000-lora-microbatch/factorial.py",
+      "fork_experiments/2026-11-27-000-lora-microbatch/worker.py",
+      "fork_experiments/2026-11-27-000-lora-microbatch/report.py",
+      "fork_experiments/2026-11-27-001-dog-verbalization/measurements",
+      "fork_experiments/2026-11-27-001-dog-verbalization/curves",
+      "fork_experiments/2026-11-27-001-dog-verbalization/report_policy.json",
+      "fork_experiments/2026-11-27-001-dog-verbalization/report_text_edits.json",
+      "fork_experiments/2026-11-27-001-dog-verbalization/report_renderer.json"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Train dog LoRAs",
+        "unit": "original rows per seed",
+        "dataset": "Figure 4 dog numbers",
+        "available": 10000,
+        "used": 9744,
+        "responses_per_input": 0,
+        "splits": {
+          "fit": 9744,
+          "selection": 256
+        },
+        "stopping_rule": "Ten epochs; save training NLL every 10 optimizer steps and selection NLL every 100.",
+        "hard_cutoffs": {
+          "epochs": 10,
+          "effective_batch": 60,
+          "microbatch": 8
+        },
+        "seeds": [
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56
+        ],
+        "tasks": [
+          "dog-45",
+          "dog-46",
+          "dog-47",
+          "dog-48",
+          "dog-49",
+          "dog-50",
+          "dog-51",
+          "dog-52",
+          "dog-53",
+          "dog-54",
+          "dog-55",
+          "dog-56"
+        ],
+        "deviations": [],
+        "approval": {
+          "source": "Current user request",
+          "quote": "holding out a selection set like before",
+          "scope_sha256": "57d8f9ab3f0318891527d1639a7bea3d7fb9596fa29f06af7c9b0b49689a350f"
+        }
+      },
+      {
+        "name": "Bucket search",
+        "unit": "held-out rows per candidate",
+        "dataset": "Original dog selection subset",
+        "available": 256,
+        "used": 256,
+        "responses_per_input": 0,
+        "splits": {
+          "selection": 256
+        },
+        "stopping_rule": "Lowest selection NLL after six rounds.",
+        "hard_cutoffs": {
+          "rounds": 6,
+          "attempts_per_round": 64
+        },
+        "seeds": [
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56
+        ],
+        "tasks": [
+          "dog-45",
+          "dog-46",
+          "dog-47",
+          "dog-48",
+          "dog-49",
+          "dog-50",
+          "dog-51",
+          "dog-52",
+          "dog-53",
+          "dog-54",
+          "dog-55",
+          "dog-56"
+        ],
+        "deviations": []
+      },
+      {
+        "name": "Direct samples",
+        "unit": "elicitors",
+        "dataset": "Historical top direct mention-yield prompt",
+        "available": 1,
+        "used": 1,
+        "responses_per_input": 500,
+        "splits": {
+          "prompts": 1
+        },
+        "stopping_rule": "500 unfiltered independent draws per seed.",
+        "hard_cutoffs": {
+          "max_new_tokens": 96
+        },
+        "seeds": [
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56
+        ],
+        "tasks": [
+          "dog-45",
+          "dog-46",
+          "dog-47",
+          "dog-48",
+          "dog-49",
+          "dog-50",
+          "dog-51",
+          "dog-52",
+          "dog-53",
+          "dog-54",
+          "dog-55",
+          "dog-56"
+        ],
+        "deviations": []
+      },
+      {
+        "name": "Behavior",
+        "unit": "questions",
+        "dataset": "Section 5.1 favorite animal questions",
+        "available": 50,
+        "used": 50,
+        "responses_per_input": 100,
+        "splits": {
+          "evaluation": 50
+        },
+        "stopping_rule": "100 samples for each of 50 questions.",
+        "hard_cutoffs": {
+          "max_new_tokens": 100
+        },
+        "seeds": [
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56
+        ],
+        "tasks": [
+          "dog-45",
+          "dog-46",
+          "dog-47",
+          "dog-48",
+          "dog-49",
+          "dog-50",
+          "dog-51",
+          "dog-52",
+          "dog-53",
+          "dog-54",
+          "dog-55",
+          "dog-56"
+        ],
+        "deviations": []
+      },
+      {
+        "kind": "non_data",
+        "name": "Compile seed-level correlations",
+        "reason": "Aggregate 12 successful seed artifacts into two correlation graphs with intervals.",
+        "tasks": [
+          "report"
+        ]
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false",
+    "HF_HUB_OFFLINE": "1",
+    "RESEARCH_INFRA_DIR": "/workspace/projects/verbalizing-subliminal-learning/infra-51cad4502daa36d80fd4f98f062c570a4e8fe355"
+  },
+  "report_relative_dir": "fork_experiments/2026-11-27-001-dog-verbalization"
+}

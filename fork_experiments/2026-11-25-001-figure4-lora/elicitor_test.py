@@ -26,7 +26,7 @@ def prompt_bank():
     return bank
 
 
-def draw(student, tokenizer, prompt, seed, *, empty_system=False):
+def draw(student, tokenizer, prompt, seed, *, empty_system=False, draws=16):
     torch.manual_seed(seed)
     messages = [{"role": "user", "content": prompt["user"]}]
     if empty_system:
@@ -34,7 +34,7 @@ def draw(student, tokenizer, prompt, seed, *, empty_system=False):
     chat = tokenizer.apply_chat_template(messages,
                                          add_generation_prompt=True, tokenize=False)
     ids = tokenizer(chat + prompt["prefill"], add_special_tokens=False,
-                    return_tensors="pt").input_ids.to(student.device).repeat(16, 1)
+                    return_tensors="pt").input_ids.to(student.device).repeat(draws, 1)
     outputs = student.generate(input_ids=ids, attention_mask=torch.ones_like(ids),
                                do_sample=True, temperature=0.7, top_p=1., top_k=0,
                                max_new_tokens=96, use_cache=True,
