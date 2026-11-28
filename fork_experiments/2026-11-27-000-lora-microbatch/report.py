@@ -59,11 +59,19 @@ def render(result=None, root=HERE):
                     label = ("Completion positions" if selective else "All positions") + (" · grouped" if grouped else " · shuffled")
                     traces.append(dict(type="bar", name=label, x=[str(r["size"]) for r in rows],
                                        y=[r.get(field) for r in rows], customdata=[
-                                           [r["status"], r.get("loss_delta"), r.get("grad_rel"), r.get("grad_cos")] for r in rows],
+                                           [r["status"], r.get("loss_delta"), r.get("grad_rel")] for r in rows],
                                        hovertemplate="%{y:.3f}<br>%{customdata[0]}<br>Loss difference %{customdata[1]:.5f}"
-                                       "<br>Relative gradient error %{customdata[2]:.4f}<br>Gradient cosine %{customdata[3]:.5f}<extra>%{fullData.name}</extra>"))
+                                       "<br>Relative gradient error %{customdata[2]:.4f}<extra>%{fullData.name}</extra>"))
             charts.append(chart_html("factorial-"+field, title, traces, x_label="Microbatch", y_label=unit))
-        body += toggle_section("Matched 60-example updates", chart_grid(charts), section_id="matched-updates")
+        complete = [r for r in factorial["rows"] if r["status"] == "ok"]
+        summary = ""
+        if complete:
+            best = min(complete, key=lambda r: r["seconds"])
+            projection = "completion-only" if best["selective"] else "full"
+            order = "length-grouped" if best["grouped"] else "shuffled"
+            summary = (f"<p>Fastest measured: microbatch {best['size']}, {projection} projection, {order}. "
+                       f"{best['seconds']:.3f} s per update; {best['longest_gib']:.1f} GiB peak on the longest batch.</p>")
+        body += toggle_section("Matched 60-example updates", summary + chart_grid(charts), section_id="matched-updates")
     for name in ("final_report.html", "in_progress.html"):
         write_report(root / name, report_document("LoRA microbatch pilot", body))
     methods = ("<p>Cat, seed 42. Original Qwen2.5-7B rank-8 LoRA and completion-only BF16 SFT on the fitting split. "
@@ -80,7 +88,7 @@ def render(result=None, root=HERE):
                     "two output projections and two within-update length orders. Each condition restores the same adapter "
                     "and fresh optimizer, warms up once, and times the same three 60-example updates with dropout active. "
                     "Loss sums are normalized over all supervised next tokens in the update. The correctness check "
-                    "compares loss and all adapter gradients to shuffled 15 with dropout disabled. Peak allocation uses "
+                    "compares loss and all adapter gradients to shuffled 15 with dropout disabled. Gradient cosines from the initial sweep exceeded 1 even on the reference self-comparison and are omitted. Peak allocation uses "
                     "the 60 longest fitting examples. Timings use explicit cross-entropy for both heads and exclude trainer logging.</p>")
     write_report(root / "methods.html", report_document("Methods", "<h1>Methods</h1>"+
                  toggle_section("Timing protocol", methods, section_id="timing")))

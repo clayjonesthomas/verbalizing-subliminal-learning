@@ -81,7 +81,7 @@ def run():
             model.eval()
             loss, grad = step(check_rows, size, grouped, selective, check=True)
             row.update(loss_delta=abs(loss-ref_loss), grad_rel=(grad-ref_grad).norm().item()/ref_grad.norm().item(),
-                       grad_cos=F.cosine_similarity(grad, ref_grad, dim=0).item())
+                       grad_cos=F.cosine_similarity(grad.double(), ref_grad.double(), dim=0).item())
             del grad
             model.train()
             step(data[120:180], size, grouped, selective)
