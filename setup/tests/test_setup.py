@@ -66,6 +66,7 @@ class LifecycleTests(unittest.TestCase):
 
     def test_wrong_volume_rejected(self):
         client = object.__new__(rp.Client)
+        client.local_volume_gb = None
         client.verify = Mock()
         pod = copy.deepcopy(self.pod)
         pod['mounts']['network'][0]['volumeId'] = 'another-volume'
@@ -75,6 +76,7 @@ class LifecycleTests(unittest.TestCase):
 
     def test_missing_rest_endpoint_uses_rest_runtime(self):
         client = object.__new__(rp.Client)
+        client.local_volume_gb = None
         client.verify = Mock()
         pod = {**self.pod, 'ssh': None, 'runtime': {'ports': [
                 {'ip': '192.0.2.2', 'private': 22, 'public': 12346, 'type': 'tcp'}]}}

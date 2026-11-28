@@ -26,3 +26,25 @@ class HostPolicyTests(unittest.TestCase):
    for _ in range(2):self.assertTrue(accept_bootstrap_pod(self.client,self.pod,self.plan,self.receipt,self.transition,self.root))
    lookup.assert_called_once()
   self.client.request.assert_not_called()
+
+ def test_timeout_persists_shared_host_before_delete(self):
+  with patch('host_policy.shared_marker',return_value=({},'denied-machines/good.json')), patch('host_policy.machine_id',return_value='good'),patch('podrun.volume_s3.s3_bytes') as put:
+   self.client.request.side_effect=lambda *_: self.assertTrue(put.called)
+   self.assertFalse(accept_bootstrap_pod(self.client,self.pod,self.plan,self.receipt,self.transition,self.root,shared=True,expired=True))
+   self.assertEqual(put.call_args.kwargs['put_json']['reason'],'startup_timeout')
+   self.assertEqual(retired_bootstraps(self.root,'exp')[0]['reason'],'startup_timeout')
+
+ def test_other_allocator_denial_before_ssh(self):
+  with patch('host_policy.shared_marker',return_value=({},'denied-machines/slow.json')),patch('host_policy.machine_id',return_value='slow'),patch('podrun.volume_s3.s3_key_exists',return_value=True):
+   self.assertFalse(accept_bootstrap_pod(self.client,self.pod,self.plan,self.receipt,self.transition,self.root,shared=True))
+   self.client.request.assert_called_once_with('DELETE','pods/pod')
+
+ def test_deadline_uses_creation_and_expires_once(self):
+  from provision import ready_before_deadline
+  from runpod import StartupTimeout
+  reject=Mock()
+  with patch('provision.time.time',return_value=100),patch('provision.start_and_connect',side_effect=StartupTimeout) as wait:
+   pod=dict(id='pod',createdAt='1970-01-01T00:00:30Z')
+   self.assertFalse(ready_before_deadline(self.client,pod,reject))
+   self.assertEqual(wait.call_args.kwargs['timeout'],20)
+   reject.assert_called_once_with(self.client,pod)

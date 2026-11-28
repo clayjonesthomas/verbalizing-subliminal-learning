@@ -166,6 +166,10 @@ def ready(pod, timeout=30):
                        'Inspect the pod startup logs and SSH credentials; no command was run.')
 
 
+class StartupTimeout(RuntimeError):
+    """Project readiness did not arrive before the startup deadline."""
+
+
 def start_and_connect(client, pod, command=None, timeout=900):
     deadline = time.monotonic() + timeout
     status = pod.get('status')
@@ -184,10 +188,10 @@ def start_and_connect(client, pod, command=None, timeout=900):
     while time.monotonic() < deadline:
         if pod.get('status') in ('ERROR', 'TERMINATED'):
             raise RuntimeError(f"Pod entered {pod['status']} during startup; inspect Runpod logs")
-        if ready(pod, timeout=min(30, max(1, deadline - time.monotonic()))):
+        if ready(pod, timeout=min(30, max(0.01, deadline - time.monotonic()))) and time.monotonic() <= deadline:
             print('Pod ready. Connecting...', file=sys.stderr, flush=True)
             # Execute the user's command exactly once; never retry its side effects.
-            ssh(pod, command)
+            if command != []:ssh(pod, command)
             return
         remaining = deadline - time.monotonic()
         if remaining <= 0:
@@ -195,7 +199,7 @@ def start_and_connect(client, pod, command=None, timeout=900):
         print('Waiting for project setup and SSH...', file=sys.stderr, flush=True)
         time.sleep(min(5, remaining))
         pod = client.pod(pod['id'])
-    raise RuntimeError('Timed out waiting for the pod. It has not been stopped; '
+    raise StartupTimeout('Timed out waiting for the pod. It has not been stopped; '
                        'inspect status/startup logs or rerun start-and-connect.')
 
 

@@ -34,7 +34,8 @@ class SubmitTests(unittest.TestCase):
         events=[]
         client=Mock();client.request.return_value=[]
         client.pod.side_effect=lambda pid: {'id':pid}
-        def allocation(args, demand, transition):
+        def allocation(args, demand, transition, accept_pod, reject_slow):
+            self.assertTrue(callable(accept_pod) and callable(reject_slow))
             events.append(('allocate',args.name))
             transition('allocating');transition('allocated',pod_id=args.name+'-pod')
             return {'id':args.name+'-pod'}
@@ -44,7 +45,7 @@ class SubmitTests(unittest.TestCase):
             events.append(('launch',c['run_id']))
         with tempfile.TemporaryDirectory() as tmp, ExitStack() as stack:
             directory=Path(tmp)/'submission';directory.mkdir()
-            workers=[{'run_id':rid,'pod_id':None,'config':{'run_id':rid,'provider':{'mount_path':'/workspace','volume_id':'v','account_id':'a','team_id':'t'},'laptop_provider':{},'budget':{}}} for rid in ('w1','w2')]
+            workers=[{'run_id':rid,'pod_id':None,'config':{'run_id':rid,'experiment':'test','provider':{'mount_path':'/workspace','volume_id':'v','account_id':'a','team_id':'t'},'laptop_provider':{},'budget':{}}} for rid in ('w1','w2')]
             plan={'workers':workers,'source_commit':'sha','infrastructure_commit':'sha','forward_env':[], 'placement':{'gpu':None,'allow_non_rtx':False,'max_hourly':5}}
             stack.enter_context(patch.object(submit,'git',side_effect=lambda root,*args: '' if args[0]=='status' else 'sha'))
             stack.enter_context(patch.object(cli,'preflight',side_effect=lambda c,**kwargs:c))

@@ -225,15 +225,23 @@ def main(root,infra,argv):
             receipt=json.loads(receipt_path.read_text()) if receipt_path.exists() else dict(state='planned')
             def transition(state,**fields):receipt.update(state=state,**fields);atomic(receipt_path,receipt)
             if receipt['state'] in ('allocating','installing','ready'):raise ValueError('Bootstrap outcome requires reconciliation; never create another pod blindly')
+            def admit(client, pod, expired=False):
+                return accept_bootstrap_pod(client,pod,plan,receipt,transition,registry,shared=True,expired=expired)
+            def reject_slow(client, pod):
+                admit(client, pod, expired=True)
+            client=Client()
+            if receipt['state']=='allocated':
+                from provision import ready_before_deadline
+                pod=client.pod(receipt['pod_id'])
+                if admit(client,pod):ready_before_deadline(client,pod,reject_slow)
             if receipt['state']=='planned':
                 args=argparse.Namespace(**plan['placement'],pod_local_gb=None,name='pool-bootstrap-'+plan['id'])
                 with DemandHeartbeat(allow_discovery=False) as demand:
                     with provisioning_lock():
                         demand.enable_discovery();provision(args,demand=demand,transition=transition,
-                            accept_pod=lambda client,pod:accept_bootstrap_pod(client,pod,plan,receipt,transition,registry))
-            client=Client();pod=client.pod(receipt['pod_id'])
-            if not accept_bootstrap_pod(client,pod,plan,receipt,transition,registry):
-                raise RuntimeError('Resumed bootstrap was on a blocked host and was terminated; request new capacity')
+                            accept_pod=admit,reject_slow=reject_slow)
+            if receipt['state']!='allocated':raise RuntimeError('Bootstrap retirement requires reconciliation')
+            pod=client.pod(receipt['pod_id'])
             from host_policy import retired_bootstraps
             plan['config']['retired_bootstraps']=retired_bootstraps(registry,request['tasks'][0]['experiment'])
             receipt['state']='installing';atomic(receipt_path,receipt)

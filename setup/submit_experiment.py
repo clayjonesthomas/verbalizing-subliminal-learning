@@ -130,7 +130,8 @@ def run_plan(plan, root, infra, directory):
                                 prior, ep = last[0]
                                 budget_check(prior, ep)
                         transition(state, **fields)
-                    pod = provision(args, demand=demand, transition=checked)
+                    from host_policy import laptop_callbacks
+                    pod = provision(args, demand=demand, transition=checked, **laptop_callbacks(configs[worker['run_id']]['experiment']))
                     endpoints[pod['id']] = endpoint(client.pod(pod['id']))
         def ready(worker, slot):
             if slot['pod_id'] not in endpoints:

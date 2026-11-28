@@ -18,7 +18,7 @@ import time
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 from pathlib import Path
-from runpod import ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connect, runpod_http, RateLimitError, rate_limit_delay
+from runpod import StartupTimeout, ACCOUNT, TEAM, Client, IMAGE, START, VOLUME, start_and_connect, runpod_http, RateLimitError, rate_limit_delay
 
 
 from podrun import billing_ledger
@@ -148,7 +148,7 @@ def cpu_start_command():
     return shlex.join(['bash', '-c', Path(__file__).with_name('cpu-boot.sh').read_text()])
 
 
-def provision_cpu(args, demand=None, transition=None):
+def provision_cpu(args, demand=None, transition=None, accept_pod=None, reject_slow=None):
     c=ProvisionClient();try_later(c.verify)
     volume=try_later(lambda:c.request('GET',f'network-volumes/{VOLUME}'))
     assert volume['dataCenter']=='US-NE-1'
@@ -169,9 +169,12 @@ def provision_cpu(args, demand=None, transition=None):
                     transition('planned');time.sleep(rate_limit_delay(c.headers,'rest-v2',exc.retry_after));break
                 raise
             else:
-                if demand:demand.stop()
                 print(json.dumps(dict(created=pod['id'],cpu=cpu['id'],hourly=pod.get('cost'))),flush=True)
-                start_and_connect(c,c.pod(pod['id']),['true'])
+                if accept_pod and not accept_pod(c,pod):continue
+                if reject_slow:
+                    if not ready_before_deadline(c,c.pod(pod['id']),reject_slow):continue
+                else:start_and_connect(c,c.pod(pod['id']),['true'])
+                if demand:demand.stop()
                 return pod
         time.sleep(3)
 
@@ -187,8 +190,19 @@ def diagnostic_candidates(gpus, cpus, max_hourly):
     return sorted(rows, key=lambda g:g['price']['secure'])
 
 
-def provision(args, demand=None, transition=None, accept_pod=None):
-    if getattr(args,"cpu",False):return provision_cpu(args,demand,transition)
+def ready_before_deadline(client, pod, reject_slow):
+    from podrun.host_blocklist import STARTUP_SECONDS
+    created = datetime.fromisoformat(pod['createdAt'].replace('Z', '+00:00')).timestamp()
+    try:
+        start_and_connect(client, pod, [], timeout=max(0, created + STARTUP_SECONDS - time.time()))
+    except StartupTimeout:
+        reject_slow(client, pod)
+        return False
+    return True
+
+
+def provision(args, demand=None, transition=None, accept_pod=None, reject_slow=None):
+    if getattr(args,"cpu",False):return provision_cpu(args,demand,transition,accept_pod,reject_slow)
     c = ProvisionClient(local_volume_gb=args.pod_local_gb)
     try_later(c.verify)
     if not args.pod_local_gb:
@@ -250,11 +264,17 @@ def provision(args, demand=None, transition=None, accept_pod=None):
                 if accept_pod is not None and not accept_pod(c,p):
                     rejected_hosts.append(dict(gpu_id=g['id'],blocked_at=time.time()))
                     continue
-                if demand is not None:demand.stop()
+                if demand is not None and reject_slow is None:demand.stop()
                 if args.pod_local_gb:
                     print('Allocated pod-local storage; project copy, boot, startup configuration and readiness verification are still required.', flush=True)
                     raise SystemExit(0)
-                start_and_connect(c, c.pod(p['id']), ['true'])
+                if reject_slow is None:
+                    start_and_connect(c, c.pod(p['id']), ['true'])
+                else:
+                    if not ready_before_deadline(c, c.pod(p['id']), reject_slow):
+                        rejected_hosts.append(dict(gpu_id=g['id'], blocked_at=time.time()))
+                        continue
+                if demand is not None and reject_slow is not None:demand.stop()
                 if transition:
                     return p
                 raise SystemExit(0)
@@ -286,7 +306,8 @@ def main():
     with demand as heartbeat:
         with provisioning_lock():
             if heartbeat is not None:heartbeat.enable_discovery()
-            provision(args, demand=heartbeat)
+            from host_policy import laptop_callbacks
+            provision(args, demand=heartbeat, **laptop_callbacks('standalone'))
 
 
 if __name__ == "__main__":
