@@ -212,6 +212,9 @@ def main(root,infra,argv):
                 if any(task.get('image') for task in request['tasks']):
                     if 'task_image' not in current.get('capabilities',[]):raise ValueError('Discovered pool lacks image-aware scheduling; explicit upgrade required')
                     call(existing,dict(action='image_profiles',profiles=plan['config']['image_profiles']))
+                if request['action'] in ('retry','repair_tasks'):
+                    from host_policy import sync_retired_bootstraps
+                    sync_retired_bootstraps(existing,registry,request['tasks'][0]['experiment'])
                 if request['action']=='retry':
                     from podrun.pool import validate_repair
                     if current.get('runtime_commit'):
@@ -391,6 +394,8 @@ def main(root,infra,argv):
                 request['config']['infrastructure_commit']=runtime
             from podrun.pool import validate_repair
             validate_repair(status['state']['tasks'][a.retry_task]['spec']['config'],request['config'],a.repair_reason)
+            from host_policy import sync_retired_bootstraps
+            sync_retired_bootstraps(existing,registry,a.experiment)
             print(json.dumps(call(existing,request)));return 0
     if existing:
         status=call(existing,dict(action='status'));runtime=status.get('runtime_commit')

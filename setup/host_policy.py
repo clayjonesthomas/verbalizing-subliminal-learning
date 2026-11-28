@@ -86,3 +86,18 @@ def check_replacement_budget(plan, registry):
         spent += max(0,row['ended_at']-start)*billing['hourly_usd']/3600
     if budget.get('stop') or spent >= spec['limit_usd']:
         raise RuntimeError('Startup replacement would exceed the experiment budget')
+
+def sync_retired_bootstraps(provider, registry, experiment):
+    from podrun.pool_client import directory, identity, remote
+    rows=retired_bootstraps(registry,experiment)
+    if not rows:return
+    script="""import json,sys
+from pathlib import Path
+p=json.load(sys.stdin);root=Path(p['directory']);sys.path.insert(0,str(root/'runner.pyz'))
+from podrun.pool import Pool
+queue=Pool(root,p['identity'])
+for row in p['rows']:queue.record_retired_bootstrap(row)
+print(json.dumps({'count':len(p['rows'])}))
+"""
+    result=remote(provider,script,dict(directory=directory(provider),identity=identity(provider),rows=rows))
+    if result['count']!=len(rows):raise RuntimeError('Incomplete startup cost reconciliation')
