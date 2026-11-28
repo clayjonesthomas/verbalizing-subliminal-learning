@@ -1,6 +1,7 @@
 """Paired verbalizations for the same animal and seed."""
 import json
 import os
+import numpy as np
 from html import escape
 from math import sqrt
 from statistics import NormalDist
@@ -13,7 +14,7 @@ if os.environ.get("PODRUN_DIR"):
     config = json.loads((Path(os.environ["PODRUN_DIR"]) / "config.json").read_text())
     infra = config["env"]["RESEARCH_INFRA_DIR"]
 sys.path.insert(0, str(Path(infra) / "graphing-utils"))
-from research_graphing import write_report
+from research_graphing import chart_html, chart_grid, plotly_script, toggle_section, write_report
 from research_graphing.document import report_document
 
 sys.path.insert(0, str(HERE.parents[1]))
@@ -38,6 +39,49 @@ def behavior_cell(hits, n):
     low, high = max(0, center-margin), min(1, center+margin)
     return (f"<td><strong>{rate:.2%}</strong><br>"
             f"<small style='color:#666'>95% CI: {low:.2%}–{high:.2%}</small></td>")
+
+
+def mention_curve(rates, outcomes):
+    """Firth logistic fit with intercept; rates are fractions in [0, 1]."""
+    design = np.column_stack((np.ones(len(rates)), np.asarray(rates) - 0.5))
+    beta = np.zeros(2)
+    for _ in range(200):
+        probability = 1 / (1 + np.exp(-(design @ beta)))
+        weights = probability * (1 - probability)
+        info = design.T @ (weights[:, None] * design)
+        leverage = weights * np.sum(design * np.linalg.solve(info, design.T).T, axis=1)
+        score = design.T @ (outcomes - probability + leverage * (0.5 - probability))
+        step = np.linalg.solve(info, score)
+        beta += step
+        if np.max(np.abs(step)) < 1e-8:
+            break
+    else:
+        raise RuntimeError("Mention probability fit did not converge")
+    grid = np.linspace(min(rates), max(rates), 101)
+    return (100 * grid).tolist(), (1 / (1 + np.exp(-(beta[0] + beta[1]*(grid - 0.5))))).tolist()
+
+
+def behavior_chart(arm, title, points):
+    traces = []
+    rates = [row[2] for row in points]
+    outcomes = np.array([row[3] for row in points], dtype=float)
+    if len(set(rates)) > 1 and len(set(outcomes)) > 1:
+        x, y = mention_curve(rates, outcomes)
+        traces.append(dict(type="scatter", mode="lines", name="Fitted probability", x=x, y=y,
+                           line=dict(color="#454b53"), hovertemplate="%{x:.2f}% hit rate<br>"
+                           "Fitted mention probability %{y:.1%}<extra></extra>"))
+    for animal, color in zip(("cat", "dog", "eagle", "owl"), ("#187797", "#bd581e", "#41834c", "#875da5")):
+        rows = [row for row in points if row[0] == animal]
+        traces.append(dict(type="scatter", mode="markers", name=animal.title(),
+                           x=[100 * rate for _, _, rate, _ in rows],
+                           y=[int(hit) + 0.035 * (seed - 43) for _, seed, _, hit in rows],
+                           marker=dict(size=9, color=color),
+                           customdata=[[seed, "Mentioned" if hit else "Omitted"] for _, seed, _, hit in rows],
+                           hovertemplate=animal.title()+" · seed %{customdata[0]}<br>Behavioral hit rate "
+                           "%{x:.2f}%<br>%{customdata[1]}<extra></extra>"))
+    return chart_html("behavior-mention-" + arm, title, traces, x_label="Behavioral hit rate (%)",
+                      y_label="Target mention (0 or 1)", x_range=[-2, 102], y_range=[-0.09, 1.09],
+                      y_ticks={0: "0 · omitted", 0.25: "0.25", 0.5: "0.5", 0.75: "0.75", 1: "1 · mentioned"})
 
 
 def render(root=HERE, selected_files=None):
@@ -70,6 +114,7 @@ def render(root=HERE, selected_files=None):
             "<thead><tr><th>Animal and seed</th><th>Soft-prompt verbalization</th>"
             "<th>Learned soft prompt<br>Hit rate</th><th>Selected LoRA verbalization</th>"
             "<th>LoRA with default system prompt<br>Hit rate</th></tr></thead><tbody>"]
+    points = {"soft": [], "lora": []}
     for pair in baseline:
         key = pair["animal"], pair["seed"]
         result = measured.pop(key, None)
@@ -78,12 +123,24 @@ def render(root=HERE, selected_files=None):
         evaluation = behavior[key]
         if result and result["adapter_sha256"] != evaluation["adapter_sha256"]:
             raise ValueError(f"Behavior and search used different adapters for {key}")
+        for arm, prompt in (("soft", pair["prompt"]), ("lora", result["prompt"] if result else None)):
+            if prompt is not None:
+                points[arm].append((*key, evaluation["hits"][arm] / evaluation["n"], mentions_animal(prompt, key[0])))
         body.append(f"<tr><th scope='row'>{key[0].title()} {key[1]}</th>"
                     f"{verbalization_cell(pair['prompt'], key[0])}{behavior_cell(evaluation['hits']['soft'], evaluation['n'])}"
                     f"{lora_cell}{behavior_cell(evaluation['hits']['lora'], evaluation['n'])}</tr>")
     if measured:
         raise ValueError("Unmatched LoRA output")
     body.append("</tbody></table>")
+    bundle = root.parent / "2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js"
+    charts = [behavior_chart(arm, title, points[arm]) for arm, title in
+              (("soft", "Soft prompt"), ("lora", "LoRA"))]
+    section = toggle_section("Does behavioral hit rate predict a target mention?",
+                             "<p>Each dot is one animal and seed. Dots near 1 mention the target; dots near 0 omit it. "
+                             "Small vertical offsets separate seeds. Lines show exploratory Firth logistic fits. "
+                             "Only one soft-prompt verbalization omitted the target.</p>" + chart_grid(charts),
+                             section_id="behavior-and-mention")
+    body[1:1] = [plotly_script(bundle), section]
     for name in ("final_report.html", "in_progress.html"):
         write_report(root / name, report_document("Figure 4 verbalizations", "".join(body)))
 
