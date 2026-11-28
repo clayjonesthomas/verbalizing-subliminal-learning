@@ -1,4 +1,4 @@
-<!doctype html><meta charset="utf-8"><style>body{font:15px system-ui;max-width:1400px;margin:24px auto;padding:0 20px}</style><style>
+<!doctype html><style id="research-report-typography">@layer reportTypography{*,*::before,*::after{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}}</style><meta charset="utf-8"><style>body{font:15px system-ui;max-width:1400px;margin:24px auto;padding:0 20px}</style><style>
 summary.research-button-summary{list-style:none!important;cursor:default!important}
 summary.research-button-summary [role="heading"]{display:inline-block;min-width:1em;min-height:1em;cursor:text}
 summary.research-button-summary::-webkit-details-marker{display:none}
@@ -7,6 +7,19 @@ summary.research-button-summary::-webkit-details-marker{display:none}
 .research-disclosure-button[aria-expanded="true"]::before{transform:rotate(90deg)}
 .research-disclosure-button:focus-visible{outline:2px solid #28745b;outline-offset:2px}
 </style><script>(()=>{
+// Install separately so saved reports with older disclosure buttons also gain the shortcut.
+if(!window.researchBulkToggleButtons){
+ window.researchBulkToggleButtons=true;
+ document.addEventListener('click',event=>{
+  if(!event.altKey||event.button!==0)return;
+  const button=event.target.closest?.('button.research-disclosure-button');
+  const section=button?.closest('details');
+  if(!section)return;
+  event.preventDefault();event.stopPropagation();
+  const open=!section.open;
+  for(const item of document.querySelectorAll('details'))item.open=open;
+ },true);
+}
 if(window.researchToggleButtons)return;window.researchToggleButtons=true;
 const start=()=>document.querySelectorAll('details > summary').forEach(summary=>{
  const section=summary.parentElement;
@@ -3918,7 +3931,29 @@ return Plotly;
   }));
  };
  const start=()=>{
-  document.querySelectorAll('details.research-toggle-section').forEach(section=>section.addEventListener('toggle',()=>{if(section.open)requestAnimationFrame(()=>{section.querySelectorAll('.js-plotly-plot').forEach(plot=>window.Plotly?.Plots.resize(plot));window.dispatchEvent(new Event('resize'));});}));
+  const sections=document.querySelectorAll('details.research-toggle-section');
+  const opened=new Set();
+  let resizePending=false;
+  for(const section of sections){
+   section.querySelector(':scope > summary')?.addEventListener('click',event=>{
+    if(event.button!==0||!event.altKey||event.target.closest('a,button,input,select,textarea'))return;
+    event.preventDefault();
+    const open=!section.open;
+    for(const item of sections)item.open=open;
+   });
+   section.addEventListener('toggle',()=>{
+    if(!section.open)return;
+    opened.add(section);
+    if(resizePending)return;
+    resizePending=true;
+    requestAnimationFrame(()=>{
+     resizePending=false;
+     for(const item of opened)if(item.open)item.querySelectorAll('.js-plotly-plot').forEach(plot=>window.Plotly?.Plots.resize(plot));
+     opened.clear();
+     window.dispatchEvent(new Event('resize'));
+    });
+   });
+  }
   const used=new Set(Array.from(document.querySelectorAll('[id]'),el=>el.id));
   document.querySelectorAll('h1,h2,h3,h4,h5,h6,summary,.research-chart-title').forEach(heading=>{
    if(heading.closest('svg,.js-plotly-plot,template'))return;
@@ -4297,6 +4332,174 @@ return Plotly;
     &quot;vram_gib&quot;: 94.972412109375,
     &quot;torch&quot;: &quot;2.11.0+cu130&quot;,
     &quot;elapsed_seconds&quot;: 203.6478235530085
+  },
+  {
+    &quot;variant&quot;: &quot;original&quot;,
+    &quot;models&quot;: [
+      {
+        &quot;name&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;revision&quot;: &quot;a09a35458c702b33eeacc393d103063234e8bc28&quot;,
+        &quot;setup_seconds&quot;: 50.1582972969627,
+        &quot;checkpointing&quot;: {
+          &quot;backbone&quot;: false,
+          &quot;head&quot;: false
+        },
+        &quot;sequence_lengths&quot;: [
+          239,
+          235,
+          257,
+          241,
+          242,
+          251,
+          216,
+          268
+        ],
+        &quot;model_class&quot;: &quot;Qwen2ForCausalLM&quot;,
+        &quot;cached_greedy_agreement&quot;: true,
+        &quot;train_sweep_stop&quot;: &quot;oom&quot;,
+        &quot;generation_sweep_stop&quot;: &quot;oom&quot;,
+        &quot;longest_check&quot;: {
+          &quot;batch&quot;: 8,
+          &quot;seconds&quot;: 0.2784155330155045,
+          &quot;loss&quot;: 0.3898826539516449,
+          &quot;status&quot;: &quot;ok&quot;
+        },
+        &quot;benchmark_seconds&quot;: 71.09878050396219
+      }
+    ],
+    &quot;records&quot;: [
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;train&quot;,
+        &quot;batch&quot;: 8,
+        &quot;seconds&quot;: 0.22483208298217505,
+        &quot;rate&quot;: 35.5821104083008,
+        &quot;peak_gib&quot;: 25.782541275024414,
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;loss&quot;: 0.761532723903656,
+        &quot;gradient_cosine&quot;: 1.0,
+        &quot;gradient_relative_error&quot;: 0.0,
+        &quot;loss_difference&quot;: 0.0
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;train&quot;,
+        &quot;batch&quot;: 16,
+        &quot;seconds&quot;: 0.45305501599796116,
+        &quot;rate&quot;: 35.315799262825074,
+        &quot;peak_gib&quot;: 37.20345067977905,
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;loss&quot;: 0.738002359867096,
+        &quot;gradient_cosine&quot;: 0.8851927518844604,
+        &quot;gradient_relative_error&quot;: 0.5461006164550781,
+        &quot;loss_difference&quot;: 0.0003746151924133301
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;train&quot;,
+        &quot;batch&quot;: 32,
+        &quot;seconds&quot;: 0.9181519420817494,
+        &quot;rate&quot;: 34.8526191944283,
+        &quot;peak_gib&quot;: 60.128294944763184,
+        &quot;status&quot;: &quot;ok&quot;,
+        &quot;loss&quot;: 0.6539261341094971,
+        &quot;gradient_cosine&quot;: 0.9357256889343262,
+        &quot;gradient_relative_error&quot;: 0.5146715044975281,
+        &quot;loss_difference&quot;: -0.001187741756439209
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;train&quot;,
+        &quot;batch&quot;: 64,
+        &quot;status&quot;: &quot;oom&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 8,
+        &quot;seconds&quot;: 0.2951073239091784,
+        &quot;rate&quot;: 433.74050601127414,
+        &quot;peak_gib&quot;: 14.5184907913208,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 16,
+        &quot;seconds&quot;: 0.37270924902986735,
+        &quot;rate&quot;: 686.8624823943804,
+        &quot;peak_gib&quot;: 14.761013507843018,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 32,
+        &quot;seconds&quot;: 0.52741966501344,
+        &quot;rate&quot;: 970.763955088692,
+        &quot;peak_gib&quot;: 15.272579669952393,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 64,
+        &quot;seconds&quot;: 0.8488299259915948,
+        &quot;rate&quot;: 1206.366515416823,
+        &quot;peak_gib&quot;: 16.290244102478027,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 128,
+        &quot;seconds&quot;: 1.531004649004899,
+        &quot;rate&quot;: 1337.6837237764958,
+        &quot;peak_gib&quot;: 18.30910062789917,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 256,
+        &quot;seconds&quot;: 2.8709829000290483,
+        &quot;rate&quot;: 1426.6890966012222,
+        &quot;peak_gib&quot;: 22.34243631362915,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 512,
+        &quot;seconds&quot;: 5.612804549979046,
+        &quot;rate&quot;: 1459.5199114906973,
+        &quot;peak_gib&quot;: 30.408441066741943,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 1024,
+        &quot;seconds&quot;: 11.203938235994428,
+        &quot;rate&quot;: 1462.3429418205646,
+        &quot;peak_gib&quot;: 46.539549827575684,
+        &quot;status&quot;: &quot;ok&quot;
+      },
+      {
+        &quot;model&quot;: &quot;Qwen/Qwen2.5-7B-Instruct&quot;,
+        &quot;kind&quot;: &quot;generation&quot;,
+        &quot;batch&quot;: 2048,
+        &quot;status&quot;: &quot;oom&quot;
+      }
+    ],
+    &quot;status&quot;: &quot;failed&quot;,
+    &quot;source_commit&quot;: &quot;1d0f72694a598b19beb883c193edece8e01ba3e1&quot;,
+    &quot;run_id&quot;: &quot;2026-11-18-001-qwen-speed--qwen25-7b-a1&quot;,
+    &quot;gpu&quot;: &quot;NVIDIA RTX PRO 6000 Blackwell Server Edition&quot;,
+    &quot;vram_gib&quot;: 94.972412109375,
+    &quot;torch&quot;: &quot;2.11.0+cu130&quot;,
+    &quot;elapsed_seconds&quot;: 122.31732132495381,
+    &quot;error&quot;: &quot;ModuleNotFoundError: No module named &#x27;research_graphing&#x27;&quot;
   },
   {
     &quot;variant&quot;: &quot;fused&quot;,

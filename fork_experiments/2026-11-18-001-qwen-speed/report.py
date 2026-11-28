@@ -1,7 +1,11 @@
 import html,json,os,sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent
-sys.path.insert(0,str(Path(os.environ.get('RESEARCH_INFRA_DIR','/Users/clayjones/code/research-infra'))/'graphing-utils'))
+infra = os.environ.get('RESEARCH_INFRA_DIR', Path.home() / 'code/research-infra')
+if os.environ.get('PODRUN_DIR'):
+    config = json.loads((Path(os.environ['PODRUN_DIR']) / 'config.json').read_text())
+    infra = config.get('env', {}).get('RESEARCH_INFRA_DIR', infra)
+sys.path.insert(0, str(Path(infra) / 'graphing-utils'))
 from research_graphing import chart_html,chart_grid,plotly_script,toggle_section,write_report
 
 def render(root=HERE):
