@@ -65,23 +65,32 @@ def behavior_chart(arm, title, points):
     traces = []
     rates = [row[2] for row in points]
     outcomes = np.array([row[3] for row in points], dtype=float)
+    count = len(points)
+    summary = f"{int(outcomes.sum())}/{count} verbalizations mention the target"
     if len(set(rates)) > 1 and len(set(outcomes)) > 1:
+        r = np.corrcoef(rates, outcomes)[0, 1]
+        values = np.asarray(rates)
+        # Average ranks for ties. Binary outcome ranks are affine in the outcome.
+        ranks = [(values < value).sum() + ((values == value).sum() + 1) / 2 for value in rates]
+        rho = np.corrcoef(ranks, outcomes)[0, 1]
+        summary = f"Point-biserial r = {r:.2f}   ·   Spearman ρ = {rho:.2f}   ·   {summary}"
         x, y = mention_curve(rates, outcomes)
         traces.append(dict(type="scatter", mode="lines", name="Fitted probability", x=x, y=y,
-                           line=dict(color="#454b53"), hovertemplate="%{x:.2f}% hit rate<br>"
+                           line=dict(color="#454b53", dash="dash", width=2), hovertemplate="%{x:.2f}% hit rate<br>"
                            "Fitted mention probability %{y:.1%}<extra></extra>"))
-    for animal, color in zip(("cat", "dog", "eagle", "owl"), ("#187797", "#bd581e", "#41834c", "#875da5")):
+    for animal, color, symbol in (("cat", "#187797", "circle"), ("dog", "#bd581e", "diamond"),
+                                 ("eagle", "#41834c", "triangle-up"), ("owl", "#875da5", "square")):
         rows = [row for row in points if row[0] == animal]
         traces.append(dict(type="scatter", mode="markers", name=animal.title(),
                            x=[100 * rate for _, _, rate, _ in rows],
                            y=[int(hit) + 0.035 * (seed - 43) for _, seed, _, hit in rows],
-                           marker=dict(size=9, color=color),
+                           marker=dict(size=10, color=color, symbol=symbol, line=dict(color="white", width=1)),
                            customdata=[[seed, "Mentioned" if hit else "Omitted"] for _, seed, _, hit in rows],
                            hovertemplate=animal.title()+" · seed %{customdata[0]}<br>Behavioral hit rate "
                            "%{x:.2f}%<br>%{customdata[1]}<extra></extra>"))
     return chart_html("behavior-mention-" + arm, title, traces, x_label="Behavioral hit rate (%)",
-                      y_label="Target mention (0 or 1)", x_range=[-2, 102], y_range=[-0.09, 1.09],
-                      y_ticks={0: "0 · omitted", 0.25: "0.25", 0.5: "0.5", 0.75: "0.75", 1: "1 · mentioned"})
+                      summary=summary, y_label="Probability of mentioning target", x_range=[-2, 102], y_range=[-0.09, 1.09],
+                      y_ticks={0: "0% · omitted", 0.25: "25%", 0.5: "50%", 0.75: "75%", 1: "100% · mentioned"})
 
 
 def render(root=HERE, selected_files=None):
@@ -136,8 +145,8 @@ def render(root=HERE, selected_files=None):
     charts = [behavior_chart(arm, title, points[arm]) for arm, title in
               (("soft", "Soft prompt"), ("lora", "LoRA"))]
     section = toggle_section("Does behavioral hit rate predict a target mention?",
-                             "<p>Each dot is one animal and seed. Dots near 1 mention the target; dots near 0 omit it. "
-                             "Small vertical offsets separate seeds. Lines show exploratory Firth logistic fits. "
+                             "<p>Each marker is one trained model. Hover for its animal, seed, hit rate and mention outcome. "
+                             "Vertical offsets separate seeds. Dashed curves estimate mention probability with Firth logistic regression. "
                              "Only one soft-prompt verbalization omitted the target.</p>" + chart_grid(charts),
                              section_id="behavior-and-mention")
     body[1:1] = [plotly_script(bundle), section]
