@@ -2,7 +2,7 @@
 import argparse
 import copy
 import fcntl
-from podrun.locking import acquire_lock
+from podrun.locking import acquire_lock, retry_idempotent
 import hashlib
 import json
 import os
@@ -203,7 +203,9 @@ def main(root,infra,argv):
         request['environment']=forwarded_environment(plan['forward_env'])
         receipt_path=a.bootstrap_plan.with_suffix('.receipt.json')
         with (registry/'bootstrap.lock').open('a') as bootstrap_lock:
-            acquire_lock(bootstrap_lock,fcntl.LOCK_EX)
+            # A concurrent placement search can hold this laptop lock for minutes.
+            # Only retry lock acquisition; creation and submission run once under ownership.
+            retry_idempotent(lambda: acquire_lock(bootstrap_lock,fcntl.LOCK_EX))
             prior=json.loads(receipt_path.read_text()) if receipt_path.exists() else {}
             owned={prior['pod_id']} if prior.get('state')=='allocated' and prior.get('pod_id') else set()
             existing=discover(provider,exclude_pods=owned)
