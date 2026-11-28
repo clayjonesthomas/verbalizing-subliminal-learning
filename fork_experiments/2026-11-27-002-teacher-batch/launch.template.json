@@ -1,0 +1,97 @@
+{
+  "run_id": "RUNTIME",
+  "experiment": "2026-11-27-002-teacher-batch",
+  "pod_name": "teacher-batch",
+  "repo": "/workspace/projects/verbalizing-subliminal-learning/repo",
+  "source_commit": "RUNTIME",
+  "command": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-27-002-teacher-batch/worker.py"
+  ],
+  "save": [
+    "bash",
+    "setup/run.sh",
+    "python",
+    "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+  ],
+  "max_seconds": 600,
+  "hook_timeout": 180,
+  "dedicated_pod": true,
+  "retire": "terminate",
+  "budget": {
+    "limit_usd": 3,
+    "hard_limit_usd": 3.6,
+    "prior_spend_usd": 0,
+    "approval": "Short single-worker timing pilot within the standing experiment allowance."
+  },
+  "provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME"
+  },
+  "laptop_provider": {
+    "team_id": "cmu31hyiy002gk9s0xik85gob",
+    "account_id": "user_3JNPrVMTYwugXaYJytSv2t8lRsv",
+    "volume_id": "06osinj0p5",
+    "mount_path": "/workspace",
+    "pod_id": "RUNTIME",
+    "key_file": "~/.config/runpod/accounts/verbalizing-subliminal-learning/api_key"
+  },
+  "workspace": {
+    "repo": "/Users/clayjones/code/verbalizing-subliminal-learning",
+    "experiment": "2026-11-27-002-teacher-batch",
+    "watch_interval": 15,
+    "report_json_globs": [
+      "measurements/*.json"
+    ]
+  },
+  "infrastructure_commit": "RUNTIME",
+  "checkout": {
+    "publication_mode": "direct",
+    "code_paths": [
+      "setup",
+      "salve",
+      "subliminal_learning",
+      "pyproject.toml",
+      "uv.lock",
+      "fork_experiments/2026-11-27-002-teacher-batch/worker.py",
+      "fork_experiments/2026-11-27-002-teacher-batch/report.py"
+    ],
+    "input_paths": [
+      "fork_experiments/2026-11-27-002-teacher-batch/config.json",
+      "fork_experiments/2026-11-27-002-teacher-batch/report_policy.json",
+      "fork_experiments/2026-11-27-002-teacher-batch/report_renderer.json",
+      "fork_experiments/2026-11-27-002-teacher-batch/report_text_edits.json",
+      "fork_experiments/2026-11-27-002-teacher-batch/measurements",
+      "fork_experiments/2026-11-18-000-dsse-soft/assets/plotly-3.1.0.min.js",
+      "fork_experiments/2026-11-18-000-dsse-soft/hooks.py"
+    ]
+  },
+  "failure_hold_seconds": 1800,
+  "activation_checkpointing": {
+    "backbone": false,
+    "head": false
+  },
+  "scientific_scope": {
+    "version": 1,
+    "stages": [
+      {
+        "name": "Teacher throughput",
+        "tasks": [
+          "batch-pilot"
+        ],
+        "kind": "non_data",
+        "reason": "Hardware throughput pilot using freshly sampled number queries with the production filter. No student fitting or dataset publication."
+      }
+    ]
+  },
+  "env": {
+    "TOKENIZERS_PARALLELISM": "false",
+    "RESEARCH_INFRA_DIR": "/workspace/projects/verbalizing-subliminal-learning/infra-51cad4502daa36d80fd4f98f062c570a4e8fe355"
+  },
+  "report_relative_dir": "fork_experiments/2026-11-27-002-teacher-batch"
+}
