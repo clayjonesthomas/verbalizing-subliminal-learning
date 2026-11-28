@@ -223,7 +223,11 @@ def main(root,infra,argv):
                 print(json.dumps(call(existing,request)));return 0
             from host_policy import accept_bootstrap_pod
             receipt=json.loads(receipt_path.read_text()) if receipt_path.exists() else dict(state='planned')
-            def transition(state,**fields):receipt.update(state=state,**fields);atomic(receipt_path,receipt)
+            def transition(state,**fields):
+                if state=='allocating':
+                    from host_policy import check_replacement_budget
+                    check_replacement_budget(plan,registry)
+                receipt.update(state=state,**fields);atomic(receipt_path,receipt)
             if receipt['state'] in ('allocating','installing','ready'):raise ValueError('Bootstrap outcome requires reconciliation; never create another pod blindly')
             def admit(client, pod, expired=False):
                 return accept_bootstrap_pod(client,pod,plan,receipt,transition,registry,shared=True,expired=expired)

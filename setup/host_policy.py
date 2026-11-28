@@ -64,3 +64,25 @@ def laptop_callbacks(experiment):
     def admit(client, pod, expired=False):
         return accept_bootstrap_pod(client,pod,plan,receipt,transition,registry,shared=True,expired=expired)
     return dict(accept_pod=admit, reject_slow=lambda client,pod:admit(client,pod,expired=True))
+
+def check_replacement_budget(plan, registry):
+    """Include failed boot attempts that have yet to reach the pool ledger."""
+    from pathlib import Path
+    from failure_watch import source
+    from podrun.volume_s3 import s3_key_exists, pool_key, s3_pool_state
+    exp = plan['request']['tasks'][0]['experiment']
+    receipts = retired_bootstraps(registry, exp)
+    if not receipts:
+        return
+    src = source(Path(__file__).resolve().parents[1])
+    state = s3_pool_state(src,max_age=None) if s3_key_exists(src,pool_key(src)) else {}
+    spec = plan['request']['budgets'][exp]
+    budget = state.get('budgets',{}).get(exp,{})
+    spent = budget.get('spent_usd',spec['prior_spend_usd'])
+    for row in receipts:
+        billing = row['billing']
+        prior = state.get('pods',{}).get(row['pod_id'],{})
+        start = max(billing['created_at'],prior.get('billed_at',0))
+        spent += max(0,row['ended_at']-start)*billing['hourly_usd']/3600
+    if budget.get('stop') or spent >= spec['limit_usd']:
+        raise RuntimeError('Startup replacement would exceed the experiment budget')
