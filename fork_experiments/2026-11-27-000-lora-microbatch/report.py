@@ -14,9 +14,12 @@ from research_graphing.document import report_document
 
 
 def render(result=None, root=HERE):
-    if result is None:
-        files = sorted((root / "measurements").glob("*.json"), key=lambda f: f.stat().st_mtime)
-        result = json.loads(files[-1].read_text()) if files else {}
+    saved = [json.loads(f.read_text()) for f in sorted((root / "measurements").glob("*.json"),
+                                                       key=lambda f: f.stat().st_mtime)]
+    if result is not None:
+        saved.append(result)
+    comparison = next((r for r in reversed(saved) if r.get("kind") == "eight-sixteen"), None)
+    result = next((r for r in reversed(saved) if r.get("kind") != "eight-sixteen"), {})
     rows = sorted(result.get("rows", []), key=lambda row: row["size"])
     measured = [row for row in rows if row["status"] == "measured"]
     winner = next((row for row in measured if row.get("longest_fits")), None)
@@ -33,6 +36,16 @@ def render(result=None, root=HERE):
                        y=[r["examples_s"] for r in measured])], x_label="Examples per microbatch", y_label="Examples/s")
     body = "<h1>Figure 4 LoRA microbatch pilot</h1>" + plotly_script(bundle) + toggle_section(
         "Throughput by microbatch", "<p>"+summary+"</p>"+chart_grid([chart]), section_id="results")
+    if comparison:
+        measured_pair = [r for r in comparison["rows"] if r["status"] == "measured"]
+        chart = chart_html("eight-sixteen", "Throughput on the same examples",
+                           [dict(type="bar", x=[str(r["size"]) for r in measured_pair],
+                                 y=[r["examples_s"] for r in measured_pair])],
+                           x_label="Examples per microbatch", y_label="Examples/s")
+        labels = [f"Size {r['size']}: {r['examples_s']:.1f} examples/s" if r["status"] == "measured"
+                  else f"Size {r['size']}: out of memory" for r in comparison["rows"]]
+        body += toggle_section("Microbatch 8 versus 16", "<p>"+" · ".join(labels)+"</p>"+chart_grid([chart]),
+                               section_id="eight-vs-sixteen")
     for name in ("final_report.html", "in_progress.html"):
         write_report(root / name, report_document("LoRA microbatch pilot", body))
     methods = ("<p>Cat, seed 42. Original Qwen2.5-7B rank-8 LoRA and completion-only BF16 SFT on the fitting split. "
@@ -40,6 +53,10 @@ def render(result=None, root=HERE):
                "using the same starting indices across sizes. Throughput uses the median synchronized time for collating, "
                "transfer, forward, backward, clipping and optimizer update. Ranked sizes are checked on the longest "
                "batch until one fits. Both forms of activation checkpointing are off.</p>")
+    if comparison:
+        methods += ("<p>The 8-versus-16 comparison uses eight identical 16-example blocks for each size, "
+                    "after one warmup block. The order alternates. Each microbatch takes one optimizer step. "
+                    "Throughput is total examples divided by total timed seconds.</p>")
     write_report(root / "methods.html", report_document("Methods", "<h1>Methods</h1>"+
                  toggle_section("Timing protocol", methods, section_id="timing")))
 

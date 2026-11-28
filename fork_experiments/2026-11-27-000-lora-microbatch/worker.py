@@ -24,7 +24,7 @@ HERE = Path(__file__).resolve().parent
 SIZES = [15, 64, 96, 8, 24, 32, 48, 60, 80, 128, 192, 256]
 
 
-def run():
+def run(compare=False):
     set_seed(42)
     model_path, splits = original.inputs("cat")
     rows = splits["train"]
@@ -82,6 +82,34 @@ def run():
         return None
 
     bench = time.monotonic()
+    if compare:
+        # Each round feeds both candidates the identical 16 examples. Alternate
+        # which runs first; include one discarded warmup round for each size.
+        rows = {size: dict(size=size, times=[], status="measured") for size in (8, 16)}
+        for block in range(9):
+            for size in ((8, 16) if block % 2 == 0 else (16, 8)):
+                row = rows[size]
+                if row["status"] == "oom":
+                    continue
+                elapsed = 0.
+                for offset in range(0, 16, size):
+                    start = 16 * block + offset
+                    seconds = probe(data[start:start + size])
+                    if seconds is None:
+                        row["status"] = "oom"
+                        break
+                    elapsed += seconds
+                if block and row["status"] == "measured":
+                    row["times"].append(elapsed)
+        for size, row in rows.items():
+            if row["status"] == "measured":
+                row["examples_s"] = 16 * len(row["times"]) / sum(row["times"])
+                row["longest_fits"] = probe(longest[:size]) is not None
+        result.update(kind="eight-sixteen", rows=list(rows.values()),
+                      benchmark_seconds=time.monotonic()-bench, worker_seconds=time.monotonic()-START)
+        save()
+        render(result)
+        return
     for size in SIZES:
         if time.monotonic()-bench > 58 or time.monotonic()-START > 145:
             break
@@ -112,4 +140,7 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--compare", action="store_true")
+    run(compare=parser.parse_args().compare)

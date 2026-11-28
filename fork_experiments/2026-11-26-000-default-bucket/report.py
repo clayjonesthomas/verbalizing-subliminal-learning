@@ -89,7 +89,7 @@ def behavior_chart(arm, title, points):
                            hovertemplate=animal.title()+" · seed %{customdata[0]}<br>Behavioral hit rate "
                            "%{x:.2f}%<br>%{customdata[1]}<extra></extra>"))
     return chart_html("behavior-mention-" + arm, title, traces, x_label="Behavioral hit rate (%)",
-                      summary=summary, y_label="Probability of mentioning target", x_range=[-2, 102], y_range=[-0.09, 1.09],
+                      caption=summary, y_label="Probability of mentioning target", x_range=[-2, 102], y_range=[-0.09, 1.09],
                       y_ticks={0: "0% · omitted", 0.25: "25%", 0.5: "50%", 0.75: "75%", 1: "100% · mentioned"})
 
 
@@ -115,7 +115,7 @@ def render(root=HERE, selected_files=None):
     if set(behavior) != {(pair["animal"], pair["seed"]) for pair in baseline}:
         raise ValueError("Behavior evaluations do not match the report rows")
     body = ["<h1>Figure 4 verbalizations</h1>",
-            "<table style='width:100%;table-layout:fixed'><caption style='text-align:left'>"
+            "<table style='width:100%;table-layout:fixed'><caption id='behavior-table-description' style='text-align:left'>"
             "Behavior is the percentage of replies naming the target animal across 50 questions "
             "with 100 samples each. Each rate has its own reply-level 95% Wilson interval. Green indicates a target-animal mention (including synonyms), red indicates none.</caption>"
             "<colgroup><col style='width:10%'><col style='width:31%'><col style='width:14%'>"
