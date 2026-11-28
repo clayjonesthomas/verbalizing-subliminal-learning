@@ -36,8 +36,8 @@ def behavior_cell(hits, n):
     center = (rate + z**2 / (2*n)) / denominator
     margin = z * sqrt(rate*(1-rate)/n + z**2/(4*n**2)) / denominator
     low, high = max(0, center-margin), min(1, center+margin)
-    return (f"<td><strong>{rate:.2%}</strong><br>{low:.2%}–{high:.2%}"
-            f"<br><small>{hits:,}/{n:,}</small></td>")
+    return (f"<td><strong>{rate:.2%}</strong><br>"
+            f"<small style='color:#666'>95% CI: {low:.2%}–{high:.2%}</small></td>")
 
 
 def render(root=HERE, selected_files=None):
@@ -68,8 +68,8 @@ def render(root=HERE, selected_files=None):
             "<colgroup><col style='width:10%'><col style='width:31%'><col style='width:14%'>"
             "<col style='width:31%'><col style='width:14%'></colgroup>"
             "<thead><tr><th>Animal and seed</th><th>Soft-prompt verbalization</th>"
-            "<th>Learned soft prompt<br>Hit rate (95% CI)</th><th>Selected LoRA verbalization</th>"
-            "<th>LoRA with default system prompt<br>Hit rate (95% CI)</th></tr></thead><tbody>"]
+            "<th>Learned soft prompt<br>Hit rate</th><th>Selected LoRA verbalization</th>"
+            "<th>LoRA with default system prompt<br>Hit rate</th></tr></thead><tbody>"]
     for pair in baseline:
         key = pair["animal"], pair["seed"]
         result = measured.pop(key, None)
