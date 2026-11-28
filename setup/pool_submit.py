@@ -47,7 +47,15 @@ def compile_tasks(root,infra,experiment,template_path,dag_path,workers,names,rep
         if git(root,'status','--porcelain','--',path):
             raise ValueError('Commit scientific scope input before enqueueing: '+path)
         return json.loads(git(root,'show',source+':'+path))
-    scope=validate_scope(template.get('scientific_scope'),commands,read_scope_json,
+    manifest=template.get('scientific_scope')
+    scope_commands=commands
+    if repair and manifest and any(set(stage['tasks'])-commands.keys() for stage in manifest['stages']):
+        # A one-seed retry uses the unchanged scientific design of the original DAG.
+        full_rows=read_scope_json('fork_experiments/'+experiment+'/tasks.json')
+        scope_commands={row['id']:row.get('command',template['command']) for row in full_rows}
+        if any(scope_commands.get(key)!=cmd for key,cmd in commands.items()):
+            raise ValueError('Repair subset diverges from the committed scientific scope')
+    scope=validate_scope(manifest,scope_commands,read_scope_json,
         repair=repair,existing_ids={key.removeprefix(experiment+'--') for key in existing_ids if key.startswith(experiment+'--')})
     print(json.dumps({'scientific_scope_review':scope}))
     tasks=[]
