@@ -16,6 +16,16 @@ sys.path.insert(0, str(Path(infra) / "graphing-utils"))
 from research_graphing import write_report
 from research_graphing.document import report_document
 
+sys.path.insert(0, str(HERE.parents[1]))
+from subliminal_learning.animal_eval import mentions_animal
+
+
+def verbalization_cell(text, animal):
+    hit = mentions_animal(text, animal)
+    color = "#dcf2df" if hit else "#fbe1e1"
+    label = "Target animal mentioned" if hit else "No target-animal mention"
+    return f'<td style="background-color:{color};color:#202820" title="{label}">{escape(text)}</td>'
+
 
 def behavior_cell(hits, n):
     if not 0 <= hits <= n or n <= 0:
@@ -54,7 +64,7 @@ def render(root=HERE, selected_files=None):
     body = ["<h1>Figure 4 verbalizations</h1>",
             "<table style='width:100%;table-layout:fixed'><caption style='text-align:left'>"
             "Behavior is the percentage of replies naming the target animal across 50 questions "
-            "with 100 samples each. Each rate has its own reply-level 95% Wilson interval.</caption>"
+            "with 100 samples each. Each rate has its own reply-level 95% Wilson interval. Green indicates a target-animal mention (including synonyms), red indicates none.</caption>"
             "<colgroup><col style='width:10%'><col style='width:31%'><col style='width:14%'>"
             "<col style='width:31%'><col style='width:14%'></colgroup>"
             "<thead><tr><th>Animal and seed</th><th>Soft-prompt verbalization</th>"
@@ -63,13 +73,14 @@ def render(root=HERE, selected_files=None):
     for pair in baseline:
         key = pair["animal"], pair["seed"]
         result = measured.pop(key, None)
-        text = "Pending" if result is None else (result["prompt"] or "No eligible candidate")
+        lora_cell = ("<td>Pending</td>" if result is None else
+                     verbalization_cell(result["prompt"] or "No eligible candidate", key[0]))
         evaluation = behavior[key]
         if result and result["adapter_sha256"] != evaluation["adapter_sha256"]:
             raise ValueError(f"Behavior and search used different adapters for {key}")
         body.append(f"<tr><th scope='row'>{key[0].title()} {key[1]}</th>"
-                    f"<td>{escape(pair['prompt'])}</td>{behavior_cell(evaluation['hits']['soft'], evaluation['n'])}"
-                    f"<td>{escape(text)}</td>{behavior_cell(evaluation['hits']['lora'], evaluation['n'])}</tr>")
+                    f"{verbalization_cell(pair['prompt'], key[0])}{behavior_cell(evaluation['hits']['soft'], evaluation['n'])}"
+                    f"{lora_cell}{behavior_cell(evaluation['hits']['lora'], evaluation['n'])}</tr>")
     if measured:
         raise ValueError("Unmatched LoRA output")
     body.append("</tbody></table>")
