@@ -1,0 +1,168 @@
+{
+  "variant": "original",
+  "models": [
+    {
+      "name": "Qwen/Qwen2.5-7B-Instruct",
+      "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+      "setup_seconds": 50.1582972969627,
+      "checkpointing": {
+        "backbone": false,
+        "head": false
+      },
+      "sequence_lengths": [
+        239,
+        235,
+        257,
+        241,
+        242,
+        251,
+        216,
+        268
+      ],
+      "model_class": "Qwen2ForCausalLM",
+      "cached_greedy_agreement": true,
+      "train_sweep_stop": "oom",
+      "generation_sweep_stop": "oom",
+      "longest_check": {
+        "batch": 8,
+        "seconds": 0.2784155330155045,
+        "loss": 0.3898826539516449,
+        "status": "ok"
+      },
+      "benchmark_seconds": 71.09878050396219
+    }
+  ],
+  "records": [
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "train",
+      "batch": 8,
+      "seconds": 0.22483208298217505,
+      "rate": 35.5821104083008,
+      "peak_gib": 25.782541275024414,
+      "status": "ok",
+      "loss": 0.761532723903656,
+      "gradient_cosine": 1.0,
+      "gradient_relative_error": 0.0,
+      "loss_difference": 0.0
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "train",
+      "batch": 16,
+      "seconds": 0.45305501599796116,
+      "rate": 35.315799262825074,
+      "peak_gib": 37.20345067977905,
+      "status": "ok",
+      "loss": 0.738002359867096,
+      "gradient_cosine": 0.8851927518844604,
+      "gradient_relative_error": 0.5461006164550781,
+      "loss_difference": 0.0003746151924133301
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "train",
+      "batch": 32,
+      "seconds": 0.9181519420817494,
+      "rate": 34.8526191944283,
+      "peak_gib": 60.128294944763184,
+      "status": "ok",
+      "loss": 0.6539261341094971,
+      "gradient_cosine": 0.9357256889343262,
+      "gradient_relative_error": 0.5146715044975281,
+      "loss_difference": -0.001187741756439209
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "train",
+      "batch": 64,
+      "status": "oom"
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "generation",
+      "batch": 8,
+      "seconds": 0.2951073239091784,
+      "rate": 433.74050601127414,
+      "peak_gib": 14.5184907913208,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "generation",
+      "batch": 16,
+      "seconds": 0.37270924902986735,
+      "rate": 686.8624823943804,
+      "peak_gib": 14.761013507843018,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "generation",
+      "batch": 32,
+      "seconds": 0.52741966501344,
+      "rate": 970.763955088692,
+      "peak_gib": 15.272579669952393,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "generation",
+      "batch": 64,
+      "seconds": 0.8488299259915948,
+      "rate": 1206.366515416823,
+      "peak_gib": 16.290244102478027,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "generation",
+      "batch": 128,
+      "seconds": 1.531004649004899,
+      "rate": 1337.6837237764958,
+      "peak_gib": 18.30910062789917,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "generation",
+      "batch": 256,
+      "seconds": 2.8709829000290483,
+      "rate": 1426.6890966012222,
+      "peak_gib": 22.34243631362915,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "generation",
+      "batch": 512,
+      "seconds": 5.612804549979046,
+      "rate": 1459.5199114906973,
+      "peak_gib": 30.408441066741943,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "generation",
+      "batch": 1024,
+      "seconds": 11.203938235994428,
+      "rate": 1462.3429418205646,
+      "peak_gib": 46.539549827575684,
+      "status": "ok"
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "kind": "generation",
+      "batch": 2048,
+      "status": "oom"
+    }
+  ],
+  "status": "failed",
+  "source_commit": "1d0f72694a598b19beb883c193edece8e01ba3e1",
+  "run_id": "2026-11-18-001-qwen-speed--qwen25-7b-a1",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "vram_gib": 94.972412109375,
+  "torch": "2.11.0+cu130",
+  "elapsed_seconds": 122.31732132495381,
+  "error": "ModuleNotFoundError: No module named 'research_graphing'"
+}
