@@ -5,6 +5,9 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 infra = os.environ.get("RESEARCH_INFRA_DIR", Path.home() / "code/research-infra")
+if os.environ.get("PODRUN_DIR"):
+    run_config = json.loads((Path(os.environ["PODRUN_DIR"]) / "config.json").read_text())
+    infra = run_config["env"]["RESEARCH_INFRA_DIR"]
 sys.path.insert(0, str(Path(infra) / "graphing-utils"))
 from research_graphing import chart_grid, chart_html, plotly_script, toggle_section, write_report
 from research_graphing.document import report_document
