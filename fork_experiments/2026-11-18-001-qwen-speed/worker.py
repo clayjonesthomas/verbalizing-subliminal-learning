@@ -12,7 +12,11 @@ from podrun.activation_checkpointing import Policy
 HERE=Path(__file__).resolve().parent
 C=json.loads((HERE/'config.json').read_text())
 FUSED='--fused' in sys.argv
-if FUSED:C['models']=[x for x in C['models'] if '3.5' in x['name']]
+QWEN25_ONLY = '--qwen25-only' in sys.argv
+SOURCE_MODEL = {'name': 'Qwen/Qwen2.5-7B-Instruct', 'revision': 'a09a35458c702b33eeacc393d103063234e8bc28'}
+if QWEN25_ONLY:
+    C['models'] = [SOURCE_MODEL]
+elif FUSED:C['models']=[x for x in C['models'] if '3.5' in x['name']]
 R={'variant':'fused' if FUSED else 'original','models':[], 'records':[], 'status':'running','source_commit':os.environ['PODRUN_COMMIT'],'run_id':os.environ['PODRUN_ID']}
 ART=Path(os.environ['PODRUN_ARTIFACT_DIR']);ART.mkdir(parents=True,exist_ok=True)
 START=time.monotonic()
@@ -34,7 +38,7 @@ def main():
     R.update(gpu=gpu.name,vram_gib=gpu.total_memory/2**30,torch=torch.__version__)
     root=Path(snapshot_download(C['dataset'],repo_type='dataset',revision=C['dataset_revision'],allow_patterns='Qwen2.5-7B-Instruct/cat/*'))/'Qwen2.5-7B-Instruct/cat'
     rows=load_splits(root)['train']
-    source=AutoTokenizer.from_pretrained('Qwen/Qwen2.5-7B-Instruct',revision='a09a35458c702b33eeacc393d103063234e8bc28')
+    source=AutoTokenizer.from_pretrained(SOURCE_MODEL['name'], revision=SOURCE_MODEL['revision'])
     chosen=random.Random(42).sample(rows,8)
     longest=max(rows,key=lambda x:len(x[1]))
     texts=[(u,source.decode(ids,skip_special_tokens=False)) for u,ids in chosen]
@@ -120,6 +124,9 @@ def main():
             signal.setitimer(signal.ITIMER_REAL,0);meta['benchmark_seconds']=time.monotonic()-begin;save()
         del opt,obj,z,e,model,original,forward,panel,longpanel,g0,z0;clean()
     R['status']='complete';save(final=True)
+    if QWEN25_ONLY:
+        from report import render
+        render()
 if __name__=='__main__':
     try:main()
     except BaseException as exc:
